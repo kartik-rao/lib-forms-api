@@ -30,6 +30,18 @@ type Form {
     errorRedirect: String
 }
 
+type FormInput {
+  name: String!
+  desc: String
+  content: AWSJSON!
+  layout: AWSJSON
+  formLayoutOptions: AWSJSON
+  stopSubmit: Boolean
+  submitTarget: String
+  successRedirect: String
+  errorRedirect: String
+}
+
 type PaginatedForm {
   items: [Form!]!
   nextToken: String
@@ -271,11 +283,29 @@ type Query {
 }
 
 type Mutation {
-  addAccount(id: ID!, name: String!, planId: String!, content: AWSJSON): MasterData!
-  @aws_auth(cognito_groups: ["Admin", "AccountAdmin"])
+  addPlanType(input: PlanTypeInput): PlanType!
+  addPlan(input: Plan): Plan!
+  addAccount(input: AccountInput): Account!
+  addUser(input: UserInput): User!
+  addIntegrationType(input: IntegrationTypeInput): IntegrationType!
+  addIntegration(input: IntegrationInput): IntegrationInput!
+  addForm(input: FormInput): Form!
 
-  deleteAccount(AccountId: ID!): MasterData!
-  @aws_auth(cognito_groups: ["Admin"])
+  updatePlanType(input: PlanTypeInput): PlanType!
+  updatePlan(input: PlanInput): Plan!
+  updateAccount(input: AccountInput): Account!
+  updateUser(input: UserInput): User!
+  updateIntegrationType(input: IntegrationTypeInput): IntegrationType!
+  updateIntegration(input: IntegrationInput): Integration!
+  updateForm(input: FormInput): Form!
+
+  deletePlanType(input: planTypeId): PlanType!
+  deletePlan(input: planId): Plan!
+  deleteAccount(input: accountId): Account!
+  deleteUser(input: userId): User!
+  deleteIntegrationType(input: integrationTypeId): IntegrationType!
+  deleteIntegration(input: integrationId): Integration!
+  deleteForm(input: formId): Form!
 }
 
 type Schema {
