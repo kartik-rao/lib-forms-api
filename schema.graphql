@@ -2,6 +2,7 @@ type MasterData @model {
     partitionKey: ID!
     sortKey: ID!
     indexKey: String!
+    type: String!
     data: AWSJSON!
 }
 
@@ -9,105 +10,213 @@ type FormEntry @model {
     partitionKey: ID!
     sortKey: ID!
     indexKey: String!
-    data : AWSJSON!
+    data: AWSJSON!
 }
 
-type PaginatedMasterData {
-    items: [MasterData!]!
-    nextToken: String
+type Form {
+    id: ID!
+    owner: ID!
+    exid: String
+    desc: String
+    name: String!
+    tenant: AWSJSON
+    status: AWSJSON
+    content: AWSJSON!
+    layout: AWSJSON
+    formLayoutOptions: AWSJSON
+    stopSubmit: Boolean
+    submitTarget: String
+    successRedirect: String
+    errorRedirect: String
 }
 
-type PaginatedFormEntries {
-    items: [FormEntry!]!
-    nextToken: String
+type PaginatedForm {
+  items: [Form!]!
+  nextToken: String
+}
+
+type User {
+  id: ID!
+  owner: ID!
+  accountId: String!
+  email: String!
+  group: String!
+  given_name: String!
+  family_name: String!
+  phone_number: AWSPhone
+  createdAt: AWSDate
+}
+
+type UserInput {
+  email: String!
+  group: String!
+  given_name: String!
+  family_name: String!
+  phone_number: AWSPhone
+}
+
+type PaginatedUser {
+  items: [User!]!
+  nextToken: String
+}
+
+type Account {
+  id: ID!
+  name: String!
+  owner: ID!
+  planId: ID!
+  lastBillDate: AWSDate
+}
+
+type AccountInput {
+  name: String!
+  owner: ID!
+  planId: ID!
+}
+
+type PaginatedAccount {
+  items: [Account!]!
+  nextToken: String!
+}
+
+type PlanType {
+  planTypeId: ID!
+  name: String!
+  active: Boolean!
+}
+
+type PaginatedPlanType {
+  items: [PlanType!]!
+  nextToken: String!
+}
+
+type Plan {
+  planId: ID!
+  planTypeId: ID!
+  startDate: AWSDate!
+  endDate: AWSDate
+  active: Boolean
+}
+
+type PaginatedPlan {
+  items: [Plan!]!
+  nextToken: String
+}
+
+type IntegrationType {
+  integrationTypeId: ID!
+  active: Boolean!
+}
+
+type PaginatedIntegrationType {
+  items: [IntegrationType!]!
+  nextToken: String
+}
+
+type Integration {
+  integrationId: ID!
+  integrationPlanTypeId: ID!
+  accountId: ID!
+  formId: ID!
+  active: Boolean!
+  type: String
+  authType: String
+  auth: AWSJSON
+  target: String
+  method: String
+}
+
+type PaginatedIntegration {
+  items: [Integration!]!
+  nextToken: String
 }
 
 type Query {
-  getAccount(accountId: ID!): MasterData!
+  getAccount(accountId: ID!): Account!
   @aws_auth(cognito_groups: ["Admin", "AccountAdmin"])
 
-  listAllAccounts(limit: Int, nextToken: String): PaginatedMasterData!
+  listAllAccounts(limit: Int, nextToken: String): PaginatedAccount!
   @aws_auth(cognito_groups: ["Admin"])
 
-  getUser(userId: String!): MasterData!
+  getUser(userId: String!): User!
   @aws_auth(cognito_groups: ["Admin", "AccountAdmin"])
 
-  listAllUsers(limit: Int, nextToken: String) : PaginatedMasterData!
+  listAllUsers(limit: Int, nextToken: String) : PaginatedUser!
   @aws_auth(cognito_groups: ["Admin"])
 
-  listAllAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedMasterData!
+  listAllAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedUser!
   @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
 
-  listAllAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedMasterData!
+  listAllAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedUser!
   @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
 
-  listAccountUsersInGroup(accountId: String!, group: String!, limit: Int, nextToken: String): PaginatedMasterData!
+  listAccountUsersInGroup(accountId: String!, group: String!, limit: Int, nextToken: String): PaginatedUser!
   @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
 
-  getPlan(planId: String!): MasterData!
+  getPlan(planId: String!): Plan!
   @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
 
-  listAllPlans(limit: Int, nextToken: String): PaginatedMasterData!
+  listAllPlans(limit: Int, nextToken: String): PaginatedPlan!
   @aws_auth(cognito_groups: ["Admin"])
 
-  listAllAccountPlans(accountId: String!, limit: Int, nextToken: String): PaginatedMasterData!
+  listAllAccountPlans(accountId: String!, limit: Int, nextToken: String): PaginatedPlan!
   @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
 
-  getActiveAccountPlan(accountId: String!): MasterData!
+  getActiveAccountPlan(accountId: String!): PaginatedPlan!
   @aws_auth(cognito_groups: ["AccountAdmin", "User", "Admin"])
 
-  getPlanType(planTypeId: String!): MasterData!
+  getPlanType(planTypeId: String!): PlanType!
   @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
 
-  listAllPlanTypes(limit: Int, nextToken: String): PaginatedMasterData!
+  listAllPlanTypes(limit: Int, nextToken: String): PaginatedPlanType!
   @aws_auth(cognito_groups: ["Admin"])
 
-  listAllActivePlanTypes(limit: Int, nextToken: String): PaginatedMasterData!
+  listAllActivePlanTypes(limit: Int, nextToken: String): PaginatedPlanType!
   @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
 
-  getForm(formId: String!) : MasterData!
+  getForm(formId: String!) : Form!
   @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
 
-  listAllForms(limit: Int, nextToken: String) : PaginatedMasterData!
+  listAllForms(limit: Int, nextToken: String) : PaginatedForm!
   @aws_auth(cognito_groups: ["Admin"])
 
-  listAllAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedMasterData!
+  listAllAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedForm!
   @aws_auth(cognito_groups: ["AccountAdmin", "Admin", "User"])
 
-  listAllAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedMasterData!
+  listAllAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!
   @aws_auth(cognito_groups: ["AccountAdmin", "Admin", "User"])
 
-  listAllAccountFormsByUser(accountId: String!, userId: String!, limit: Int, nextToken: String) : PaginatedMasterData!
+  listAllAccountFormsByUser(accountId: String!, userId: String!, limit: Int, nextToken: String) : PaginatedForm!
   @aws_auth(cognito_groups: ["AccountAdmin", "Admin", "User"])
 
-  listAllAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int, nextToken: String) : PaginatedMasterData!
+  listAllAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!
   @aws_auth(cognito_groups: ["AccountAdmin", "Admin", "User"])
 
-  getIntegrationType(integrationTypeId: String!): MasterData!
+  getIntegrationType(integrationTypeId: String!): IntegrationType!
   @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
 
-  listAllIntegrationTypes(limit: Int, nextToken: String): PaginatedMasterData!
+  listAllIntegrationTypes(limit: Int, nextToken: String): PaginatedIntegrationType!
   @aws_auth(cognito_groups: ["Admin"])
 
-  listAllIntegrationTypesByPlanType(planTypeId: String!, limit: Int, nextToken: String): PaginatedMasterData!
+  listAllIntegrationTypesByPlanType(planTypeId: String!, limit: Int, nextToken: String): PaginatedIntegrationType!
   @aws_auth(cognito_groups: ["Admin"])
 
-  listAllIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int, nextToken: String): PaginatedMasterData!
+  listAllIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegrationType!
   @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
 
-  getIntegration(integrationId: String!): MasterData
+  getIntegration(integrationId: String!): Integration!
   @aws_auth(cognito_groups: ["Admin"])
 
-  listAllIntegrations(limit: Int, nextToken: String): PaginatedMasterData!
+  listAllIntegrations(limit: Int, nextToken: String): PaginatedIntegration!
   @aws_auth(cognito_groups: ["Admin"])
 
-  listAllAccountIntegrations(accountId: String!, limit: Int, nextToken: String): PaginatedMasterData!
+  listAllAccountIntegrations(accountId: String!, limit: Int, nextToken: String): PaginatedIntegration!
   @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
 
-  listAllAccountFormIntegrations(accountId: String!, formId: String!, limit: Int, nextToken: String): PaginatedMasterData!
+  listAllAccountFormIntegrations(accountId: String!, formId: String!, limit: Int, nextToken: String): PaginatedIntegration!
   @aws_auth(cognito_groups: ["AccountAdmin", "Admin", "User"])
 
-  listAllAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int, nextToken: String): PaginatedMasterData!
+  listAllAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegration!
   @aws_auth(cognito_groups: ["AccountAdmin"])
 
   getFormEntry(formEntryId: String!): FormEntry!
@@ -121,7 +230,7 @@ type Query {
 }
 
 type Mutation {
-  saveAccount(accountId: ID!, planId: String!, content: String!): MasterData!
+  addAccount(id: ID!, name: String!, planId: String!, content: AWSJSON): MasterData!
   @aws_auth(cognito_groups: ["Admin", "AccountAdmin"])
 
   deleteAccount(AccountId: ID!): MasterData!
