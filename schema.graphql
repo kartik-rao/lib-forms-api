@@ -65,12 +65,13 @@ type Account {
   name: String!
   owner: ID!
   planId: ID!
+  createdAt: AWSDate!
+  updatedDate: AWSDate!
   lastBillDate: AWSDate
 }
 
 type AccountInput {
   name: String!
-  owner: ID!
   planId: ID!
 }
 
@@ -81,8 +82,17 @@ type PaginatedAccount {
 
 type PlanType {
   planTypeId: ID!
+  owner: ID!
   name: String!
+  cost: Float!
   active: Boolean!
+  billingTerm: String!
+}
+
+type PlanTypeInput {
+  name: String!
+  cost: Float!
+  billingTerm: String!
 }
 
 type PaginatedPlanType {
@@ -92,9 +102,19 @@ type PaginatedPlanType {
 
 type Plan {
   planId: ID!
+  accountId: ID!
+  owner: ID!
   planTypeId: ID!
   startDate: AWSDate!
   endDate: AWSDate
+  active: Boolean
+  lastBillDate: AWSDate
+}
+
+type PlanInput {
+  accountId: ID!
+  planTypeId: ID!
+  endDate: AWSData
   active: Boolean
 }
 
@@ -105,7 +125,14 @@ type PaginatedPlan {
 
 type IntegrationType {
   integrationTypeId: ID!
+  PlanTypeId: ID!
+  name: String!
   active: Boolean!
+}
+
+type IntegrationTypeInput {
+  name: String!
+  active: Boolean
 }
 
 type PaginatedIntegrationType {
@@ -115,11 +142,25 @@ type PaginatedIntegrationType {
 
 type Integration {
   integrationId: ID!
-  integrationPlanTypeId: ID!
+  integrationTypeId: ID!
+  owner: ID!
   accountId: ID!
   formId: ID!
   active: Boolean!
-  type: String
+  authType: String
+  auth: AWSJSON
+  target: String
+  method: String
+  lastExecuted: AWSDate
+  lastExecutionResult: Boolean
+  lastExecutionResultMessage: String
+}
+
+type IntegrationInput {
+  integrationTypeId: ID!
+  accountId: ID!
+  formId: ID!
+  active: Boolean
   authType: String
   auth: AWSJSON
   target: String
