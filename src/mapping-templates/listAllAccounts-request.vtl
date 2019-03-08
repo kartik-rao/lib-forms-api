@@ -1,12 +1,17 @@
 {
-  "version" : "2017-02-28",
-  "operation" : "Query",
-  "query" : {
-    "expression": "partitionKey = :accountId",
-    "expressionValues" : {
-      ":accountId" : {
-        "S": "${ctx.args.accountId}"
-       }
-    }
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "index": "masterDataGSI"
+    "query" : {
+      "expression": "sortKey = :objectType",
+      "expressionValues" : {
+        ":objectType" : { "S": "ACCOUNT" }
+      }
   }
+  #if( ${context.arguments.limit} )
+      ,"limit": ${context.arguments.limit}
+  #end
+  #if( ${context.arguments.nextToken} )
+      ,"nextToken": "${context.arguments.nextToken}"
+  #end
 }

@@ -335,8 +335,8 @@
         },
         "TypeName": "Query",
         "FieldName": "listAllAccounts",
-        "RequestMappingTemplate": "{\n  \"version\" : \"2017-02-28\",\n  \"operation\" : \"Query\",\n  \"query\" : {\n    \"expression\": \"partitionKey = :accountId\",\n    \"expressionValues\" : {\n      \":accountId\" : {\n        \"S\": \"${ctx.args.accountId}\"\n       }\n    }\n  }\n}",
-        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
+        "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"Query\",\n    \"index\": \"masterDataGSI\"\n    \"query\" : {\n      \"expression\": \"sortKey = :objectType\",\n      \"expressionValues\" : {\n        \":objectType\" : { \"S\": \"ACCOUNT\" }\n      }\n  }\n  #if( ${context.arguments.limit} )\n      ,\"limit\": ${context.arguments.limit}\n  #end\n  #if( ${context.arguments.nextToken} )\n      ,\"nextToken\": \"${context.arguments.nextToken}\"\n  #end\n}",
+        "ResponseMappingTemplate": "{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
         "DataSourceName": {
           "Fn::GetAtt": [
             "GraphQlDstableformsgraphqldevmasterdata",
@@ -379,8 +379,8 @@
         },
         "TypeName": "Query",
         "FieldName": "getPlanType",
-        "RequestMappingTemplate": "",
-        "ResponseMappingTemplate": "",
+        "RequestMappingTemplate": "{\n  \"version\" : \"2017-02-28\",\n  \"operation\" : \"GetItem\",\n  \"key\": {\n        \"partitionKey\": $util.dynamodb.toDynamoDBJson($context.arguments.input.planTypeId)\n  }\n}",
+        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
         "DataSourceName": {
           "Fn::GetAtt": [
             "GraphQlDstableformsgraphqldevmasterdata",
@@ -446,7 +446,7 @@
         "TypeName": "Mutation",
         "FieldName": "addPlan",
         "RequestMappingTemplate": "#set($attribs = $util.dynamodb.toMapValues($context.arguments.input))\n#set($attribs.id = $util.dynamodb.toMapValues($util.autoId()))\n#set($attribs.owner = $util.dynamodb.toDynamoDB($context.identity.sub))\n#set($attribs.createdAt = $util.dynamodb.toDynamoDB($util.time.nowISO8601()))\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"partitionKey\": {\"S\": \"${attribs.id}\"},\n        \"sortKey\"     : {\"S\": \"ACCOUNT\"},\n        \"indexKey\"    : {\"S\": ${attribs.planId}}\n    },\n    \"attributeValues\": {\n        \"type\"      : {\"S\" :\"ACCOUNT\"},\n        \"data\"      : {\"S\": \"$util.toJson($attribs)\"},\n        \"isDeleted\" : {\"BOOL\": false }\n    },\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#partitionKey)\",\n        \"expressionNames\": {\n        \"#partitionKey\": \"id\",\n        }\n    }\n}",
-        "ResponseMappingTemplate": "",
+        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
         "DataSourceName": {
           "Fn::GetAtt": [
             "GraphQlDstableformsgraphqldevmasterdata",
