@@ -3,6 +3,10 @@ type MasterData @model {
     sortKey: ID!
     indexKey: String!
     type: String!
+    owner: ID!
+    createdAt: AWSDate
+    updatedAt: AWSDate
+    isDeleted: Boolean
     data: AWSJSON!
 }
 
@@ -11,6 +15,15 @@ type FormEntry @model {
     sortKey: ID!
     indexKey: String!
     data: AWSJSON!
+}
+
+input AddFormEntryInput {
+  data: AWSJSON!
+}
+
+type PaginatedFormEntries {
+  items: [FormEntry!]!
+  nextToken: String
 }
 
 type Form {
@@ -30,7 +43,7 @@ type Form {
     errorRedirect: String
 }
 
-type FormInput {
+input AddFormInput {
   name: String!
   desc: String
   content: AWSJSON!
@@ -40,6 +53,11 @@ type FormInput {
   submitTarget: String
   successRedirect: String
   errorRedirect: String
+}
+
+input UpdateFormInput  {
+  id: ID!
+  data: AddFormInput!
 }
 
 type PaginatedForm {
@@ -59,7 +77,19 @@ type User {
   createdAt: AWSDate
 }
 
-type UserInput {
+input UpdateUserInputData {
+  group: String!
+  given_name: String!
+  family_name: String!
+  phone_number: AWSPhone
+}
+
+input UpdateUserInput {
+  id: ID!
+  data: UpdateUserInputData!
+}
+
+input AddUserInput {
   email: String!
   group: String!
   given_name: String!
@@ -82,7 +112,12 @@ type Account {
   lastBillDate: AWSDate
 }
 
-type AccountInput {
+input UpdateAccountInput {
+  id: ID!
+  data: AddAccountInput!
+}
+
+input AddAccountInput {
   name: String!
   planId: ID!
 }
@@ -98,13 +133,21 @@ type PlanType {
   name: String!
   cost: Float!
   active: Boolean!
+  createdAt: AWSDate
+  updatedAt: AWSDate
   billingTerm: String!
 }
 
-type PlanTypeInput {
+input AddPlanTypeInput {
   name: String!
   cost: Float!
   billingTerm: String!
+  active: Boolean!
+}
+
+input UpdatePlanTypeInput {
+  id: ID!
+  data: AddPlanTypeInput!
 }
 
 type PaginatedPlanType {
@@ -123,11 +166,18 @@ type Plan {
   lastBillDate: AWSDate
 }
 
-type PlanInput {
+input AddPlanInput {
   accountId: ID!
+  owner: ID!
   planTypeId: ID!
-  endDate: AWSData
+  endDate: AWSDate
   active: Boolean
+}
+
+input UpdatePlanInput {
+  id: ID!
+  endDate: AWSDate
+  active: Boolean!
 }
 
 type PaginatedPlan {
@@ -137,14 +187,20 @@ type PaginatedPlan {
 
 type IntegrationType {
   integrationTypeId: ID!
+  owner: ID!
   PlanTypeId: ID!
   name: String!
   active: Boolean!
 }
 
-type IntegrationTypeInput {
+input AddIntegrationTypeInput {
   name: String!
   active: Boolean
+}
+
+input UpdateIntegrationTypeInput {
+  id: ID!
+  data: AddIntegrationTypeInput!
 }
 
 type PaginatedIntegrationType {
@@ -168,7 +224,7 @@ type Integration {
   lastExecutionResultMessage: String
 }
 
-type IntegrationInput {
+input AddIntegrationInput {
   integrationTypeId: ID!
   accountId: ID!
   formId: ID!
@@ -177,6 +233,19 @@ type IntegrationInput {
   auth: AWSJSON
   target: String
   method: String
+}
+
+input UpdateIntegrationTypeInputData {
+  active: Boolean
+  authType: String
+  auth: AWSJSON
+  target: String
+  method: String
+}
+
+input UpdateIntegrationInput {
+  id: ID!
+  data: UpdateIntegrationTypeInputData!
 }
 
 type PaginatedIntegration {
@@ -283,29 +352,31 @@ type Query {
 }
 
 type Mutation {
-  addPlanType(input: PlanTypeInput): PlanType!
-  addPlan(input: Plan): Plan!
-  addAccount(input: AccountInput): Account!
-  addUser(input: UserInput): User!
-  addIntegrationType(input: IntegrationTypeInput): IntegrationType!
-  addIntegration(input: IntegrationInput): IntegrationInput!
-  addForm(input: FormInput): Form!
+  addPlanType(input: AddPlanTypeInput): PlanType!
+  addPlan(input: AddPlanInput): Plan!
+  addAccount(input: AddAccountInput): Account!
+  addUser(input: AddUserInput): User!
+  addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!
+  addIntegration(input: AddIntegrationInput): Integration!
+  addForm(input: AddFormInput): Form!
 
-  updatePlanType(input: PlanTypeInput): PlanType!
-  updatePlan(input: PlanInput): Plan!
-  updateAccount(input: AccountInput): Account!
-  updateUser(input: UserInput): User!
-  updateIntegrationType(input: IntegrationTypeInput): IntegrationType!
-  updateIntegration(input: IntegrationInput): Integration!
-  updateForm(input: FormInput): Form!
+  updatePlanType(input: UpdatePlanTypeInput): PlanType!
+  updatePlan(input: UpdatePlanInput): Plan!
+  updateAccount(input: UpdateAccountInput): Account!
+  updateUser(input: UpdateUserInput): User!
+  updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!
+  updateIntegration(input: UpdateIntegrationInput): Integration!
+  updateForm(input: UpdateFormInput): Form!
 
-  deletePlanType(input: planTypeId): PlanType!
-  deletePlan(input: planId): Plan!
-  deleteAccount(input: accountId): Account!
-  deleteUser(input: userId): User!
-  deleteIntegrationType(input: integrationTypeId): IntegrationType!
-  deleteIntegration(input: integrationId): Integration!
-  deleteForm(input: formId): Form!
+  deletePlanType(id: ID!): PlanType!
+  deletePlan(id: ID!): Plan!
+  deleteAccount(id: ID!): Account!
+  deleteUser(id: ID!): User!
+  deleteIntegrationType(id: ID!): IntegrationType!
+  deleteIntegration(id: ID!): Integration!
+  deleteForm(id: ID!): Form!
+
+  addFormEntry(input: AddFormEntryInput!): FormEntry!
 }
 
 type Schema {
