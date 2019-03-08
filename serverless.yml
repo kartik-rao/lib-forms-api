@@ -1,16 +1,16 @@
 #serverless.yml
 
-service: api-forms-backend
+service: formsgraphql
 
 provider:
   name: aws
   runtime: nodejs8.10
   stage: ${opt:stage, 'dev'}
   region: ${opt:stage, 'ap-southeast-2'}
-  profile: ai-infrastructure
+  profile: default
   environment:
-    TBL_FORM_ENTRY: ${self:service}-${self:provider.stage}-table-formentries
-    TBL_MASTER_DATA: ${self:service}-${self:provider.stage}-table-masterdata
+    TBL_FORM_ENTRY: table_${self:service}_${self:provider.stage}_entries
+    TBL_MASTER_DATA: table_${self:service}_${self:provider.stage}_masterdata
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -28,16 +28,25 @@ plugins:
   - serverless-appsync-offline
   - serverless-offline
 
+resources:
+  - ${file(resources/dynamodb.yml)}
+  - ${file(resources/cognito.userpool.yml)}
+  - ${file(resources/s3.yml)}
 
 custom:
   TBL_MASTER_DATA: ${self:provider.environment.TBL_MASTER_DATA}
   TBL_FORM_ENTRY: ${self:provider.environment.TBL_FORM_ENTRY}
+  bucket: ${self:service}-${self:provider.stage}-data
   appsync-offline:
     port: 62222
     dynamodb:
-      server:
-        port: 8000
-  stage: ${opt:stage, $self:provider.stage}
+      client:
+        endpoint: "http://localhost:8000"
+        region: localhost
+  dynamodb:
+    start:
+      port: 8000
+      inMemory: true
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -49,10 +58,11 @@ custom:
     userPoolConfig:
       awsRegion: ${self:provider.region}
       defaultAction: ALLOW
-      userPoolId: {Ref: UserPoolId}
-    logConfig:
-      loggingRoleArn: { Fn::GetAtt: [AppSyncLoggingServiceRole, Arn] } # Where AppSyncLoggingServiceRole is a role with CloudWatch Logs write access
-      level: ALL # Logging Level: NONE | ERROR | ALL
+      userPoolId: { "Fn::GetAtt": ["CognitoUserPool", "Arn" ] }
+    # logConfig:
+    #   loggingRoleArn: { Fn::GetAtt: [AppSyncLoggingServiceRole, Arn] } # Where AppSyncLoggingServiceRole is a role with CloudWatch Logs write access
+    #   level: ALL # Logging Level: NONE | ERROR | ALL
+    mappingTemplatesLocation: src/mapping-templates
     mappingTemplates:
       - dataSource: ${self:custom.TBL_MASTER_DATA}
         type: Query
@@ -63,7 +73,7 @@ custom:
     dataSources:
       - type: AMAZON_DYNAMODB
         name: ${self:custom.TBL_MASTER_DATA}
-        description: # DynamoDB Table Description
+        description: Master Table
         config:
           tableName: ${self:custom.TBL_MASTER_DATA} # Where MasterDataTable is a dynamodb table defined in Resources
           iamRoleStatements: # custom IAM Role statements for this DataSource. Ignored if `serviceRoleArn` is present. Auto-generated if both `serviceRoleArn` and `iamRoleStatements` are omitted
@@ -75,8 +85,3 @@ custom:
                 - "arn:aws:dynamodb:${self:provider.region}:*:${self:custom.TBL_MASTER_DATA}"
                 - "arn:aws:dynamodb:${self:provider.region}:*:${self:custom.TBL_MASTER_DATA}/*"
 
-functions:
-  graphql:
-    handler: src/handler.graphql
-
-resources:

@@ -5,31 +5,29 @@ Resources:
             TableName: ${self:custom.TBL_MASTER_DATA}
             AttributeDefinitions:
                 - AttributeName: partitionKey
-                AttributeType: S
+                  AttributeType: S
                 - AttributeName: sortKey
-                AttributeType: S
+                  AttributeType: S
                 - AttributeName: indexKey
-                AttributeType: S
+                  AttributeType: S
             KeySchema:
                 - AttributeName: partitionKey
-                KeyType: HASH
+                  KeyType: HASH
                 - AttributeName: sortKey
-                KeyType: RANGE
+                  KeyType: RANGE
             ProvisionedThroughput:
                 ReadCapacityUnits: 1
                 WriteCapacityUnits: 1
             GlobalSecondaryIndexes:
-                - IndexName: masterDataGlobalIndex
-                KeySchema:
+                - IndexName: masterDataGSI
+                  KeySchema:
                     - AttributeName: sortKey
-                    KeyType: HASH
+                      KeyType: HASH
                     - AttributeName: indexKey
-                    KeyType: RANGE
-                Projection:
-                    NonKeyAttributes:
-                        - Album
-                    ProjectionType: INCLUDE
-                ProvisionedThroughput:
+                      KeyType: RANGE
+                  Projection:
+                    ProjectionType: ALL
+                  ProvisionedThroughput:
                     ReadCapacityUnits: 5
                     WriteCapacityUnits: 5
     EntriesTable:
@@ -38,16 +36,28 @@ Resources:
             TableName: ${self:custom.TBL_FORM_ENTRY}
             AttributeDefinitions:
                 - AttributeName: partitionKey
-                AttributeType: S
+                  AttributeType: S
                 - AttributeName: sortKey
-                AttributeType: S
+                  AttributeType: S
                 - AttributeName: indexKey
-                AttributeType: S
+                  AttributeType: S
             KeySchema:
                 - AttributeName: partitionKey
-                KeyType: HASH
+                  KeyType: HASH
                 - AttributeName: sortKey
-                KeyType: RANGE
+                  KeyType: RANGE
             ProvisionedThroughput:
                 ReadCapacityUnits: 5
                 WriteCapacityUnits: 5
+            GlobalSecondaryIndexes:
+                - IndexName: formEntriesGSI
+                  KeySchema:
+                    - AttributeName: sortKey
+                      KeyType: HASH
+                    - AttributeName: indexKey
+                      KeyType: RANGE
+                  Projection:
+                    ProjectionType: ALL
+                  ProvisionedThroughput:
+                    ReadCapacityUnits: 5
+                    WriteCapacityUnits: 5

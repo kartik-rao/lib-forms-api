@@ -2,7 +2,7 @@ Resources:
   AttachmentsBucket:
     Type: AWS::S3::Bucket
     Properties:
-        BucketName:
+        BucketName: ${self:custom.bucket}
         # Set the CORS policy
         CorsConfiguration:
             CorsRules:

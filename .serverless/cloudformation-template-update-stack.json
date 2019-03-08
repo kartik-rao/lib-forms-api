@@ -1,0 +1,320 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "ServerlessDeploymentBucket": {
+      "Type": "AWS::S3::Bucket"
+    },
+    "MasterDataTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "table_formsgraphql_dev_masterdata",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "partitionKey",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "sortKey",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "indexKey",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "partitionKey",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "sortKey",
+            "KeyType": "RANGE"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 1,
+          "WriteCapacityUnits": 1
+        },
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": "masterDataGSI",
+            "KeySchema": [
+              {
+                "AttributeName": "sortKey",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "indexKey",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "ALL"
+            },
+            "ProvisionedThroughput": {
+              "ReadCapacityUnits": 5,
+              "WriteCapacityUnits": 5
+            }
+          }
+        ]
+      }
+    },
+    "EntriesTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Properties": {
+        "TableName": "table_formsgraphql_dev_entries",
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "partitionKey",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "sortKey",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "indexKey",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "partitionKey",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "sortKey",
+            "KeyType": "RANGE"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": 5,
+          "WriteCapacityUnits": 5
+        },
+        "GlobalSecondaryIndexes": [
+          {
+            "IndexName": "formEntriesGSI",
+            "KeySchema": [
+              {
+                "AttributeName": "sortKey",
+                "KeyType": "HASH"
+              },
+              {
+                "AttributeName": "indexKey",
+                "KeyType": "RANGE"
+              }
+            ],
+            "Projection": {
+              "ProjectionType": "ALL"
+            },
+            "ProvisionedThroughput": {
+              "ReadCapacityUnits": 5,
+              "WriteCapacityUnits": 5
+            }
+          }
+        ]
+      }
+    },
+    "CognitoUserPool": {
+      "Type": "AWS::Cognito::UserPool",
+      "Properties": {
+        "UserPoolName": "dev-user-pool",
+        "UsernameAttributes": [
+          "email"
+        ],
+        "AutoVerifiedAttributes": [
+          "email"
+        ]
+      }
+    },
+    "CognitoUserPoolClient": {
+      "Type": "AWS::Cognito::UserPoolClient",
+      "Properties": {
+        "ClientName": "dev-userpoolclient",
+        "UserPoolId": {
+          "Ref": "CognitoUserPool"
+        },
+        "ExplicitAuthFlows": [
+          "ADMIN_NO_SRP_AUTH"
+        ],
+        "GenerateSecret": false
+      }
+    },
+    "AttachmentsBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": "formsgraphql-dev-data",
+        "CorsConfiguration": {
+          "CorsRules": [
+            {
+              "AllowedOrigins": [
+                "*"
+              ],
+              "AllowedHeaders": [
+                "*"
+              ],
+              "AllowedMethods": [
+                "GET",
+                "PUT",
+                "POST",
+                "DELETE",
+                "HEAD"
+              ],
+              "MaxAge": 3000
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlApi": {
+      "Type": "AWS::AppSync::GraphQLApi",
+      "Properties": {
+        "Name": "ai-forms-backend-dev",
+        "AuthenticationType": "AMAZON_COGNITO_USER_POOLS",
+        "UserPoolConfig": {
+          "AwsRegion": "ap-southeast-2",
+          "DefaultAction": "ALLOW",
+          "UserPoolId": {
+            "Fn::GetAtt": [
+              "CognitoUserPool",
+              "Arn"
+            ]
+          }
+        }
+      }
+    },
+    "GraphQlSchema": {
+      "Type": "AWS::AppSync::GraphQLSchema",
+      "Properties": {
+        "Definition": "type MasterData @model {\n    partitionKey: ID!\n    sortKey: ID!\n    indexKey: String!\n    data: AWSJSON!\n}\n\ntype FormEntry @model {\n    partitionKey: ID!\n    sortKey: ID!\n    indexKey: String!\n    data : AWSJSON!\n}\n\ntype PaginatedMasterData {\n    items: [MasterData!]!\n    nextToken: String\n}\n\ntype PaginatedFormEntries {\n    items: [FormEntry!]!\n    nextToken: String\n}\n\ntype Query {\n  getAccount(accountId: ID!): MasterData!\n  @aws_auth(cognito_groups: [\"Admin\", \"AccountAdmin\"])\n\n  listAllAccounts(limit: Int, nextToken: String): PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  getUser(userId: String!): MasterData!\n  @aws_auth(cognito_groups: [\"Admin\", \"AccountAdmin\"])\n\n  listAllUsers(limit: Int, nextToken: String) : PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAccountUsersInGroup(accountId: String!, group: String!, limit: Int, nextToken: String): PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getPlan(planId: String!): MasterData!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllPlans(limit: Int, nextToken: String): PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountPlans(accountId: String!, limit: Int, nextToken: String): PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getActiveAccountPlan(accountId: String!): MasterData!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"User\", \"Admin\"])\n\n  getPlanType(planTypeId: String!): MasterData!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllPlanTypes(limit: Int, nextToken: String): PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllActivePlanTypes(limit: Int, nextToken: String): PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getForm(formId: String!) : MasterData!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllForms(limit: Int, nextToken: String) : PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"User\"])\n\n  listAllAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"User\"])\n\n  listAllAccountFormsByUser(accountId: String!, userId: String!, limit: Int, nextToken: String) : PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"User\"])\n\n  listAllAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int, nextToken: String) : PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"User\"])\n\n  getIntegrationType(integrationTypeId: String!): MasterData!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllIntegrationTypes(limit: Int, nextToken: String): PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllIntegrationTypesByPlanType(planTypeId: String!, limit: Int, nextToken: String): PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int, nextToken: String): PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getIntegration(integrationId: String!): MasterData\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllIntegrations(limit: Int, nextToken: String): PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountIntegrations(accountId: String!, limit: Int, nextToken: String): PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllAccountFormIntegrations(accountId: String!, formId: String!, limit: Int, nextToken: String): PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"User\"])\n\n  listAllAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int, nextToken: String): PaginatedMasterData!\n  @aws_auth(cognito_groups: [\"AccountAdmin\"])\n\n  getFormEntry(formEntryId: String!): FormEntry!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"User\"])\n\n  listAllFormEntries(formId: String!) : PaginatedFormEntries!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"User\"])\n\n  listAllFormEntriesByTime(formId: String!, timestampPrefix: String!): PaginatedFormEntries!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"User\"])\n}\n\ntype Mutation {\n  saveAccount(accountId: ID!, planId: String!, content: String!): MasterData!\n  @aws_auth(cognito_groups: [\"Admin\", \"AccountAdmin\"])\n\n  deleteAccount(AccountId: ID!): MasterData!\n  @aws_auth(cognito_groups: [\"Admin\"])\n}\n\ntype Schema {\n  query: Query\n  mutation: Mutation\n}",
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        }
+      }
+    },
+    "GraphQlDstableformsgraphqldevmasterdataRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "appsync.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "GraphQlDstableformsgraphqldevmasterdataPolicy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem",
+                    "dynamodb:PutItem"
+                  ],
+                  "Resource": [
+                    "arn:aws:dynamodb:ap-southeast-2:*:table_formsgraphql_dev_masterdata",
+                    "arn:aws:dynamodb:ap-southeast-2:*:table_formsgraphql_dev_masterdata/*"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "GraphQlDstableformsgraphqldevmasterdata": {
+      "Type": "AWS::AppSync::DataSource",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "table_formsgraphql_dev_masterdata",
+        "Description": "Master Table",
+        "Type": "AMAZON_DYNAMODB",
+        "ServiceRoleArn": {
+          "Fn::GetAtt": [
+            "GraphQlDstableformsgraphqldevmasterdataRole",
+            "Arn"
+          ]
+        },
+        "DynamoDBConfig": {
+          "AwsRegion": "ap-southeast-2",
+          "TableName": "table_formsgraphql_dev_masterdata",
+          "UseCallerCredentials": false
+        }
+      }
+    },
+    "GraphQlResolverQuerygetAccount": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Query",
+        "FieldName": "getAccount",
+        "RequestMappingTemplate": "{\n  \"version\" : \"2017-02-28\",\n  \"operation\" : \"Query\",\n  \"query\" : {\n    \"expression\": \"partitionKey = :accountId\",\n    \"expressionValues\" : {\n      \":accountId\" : {\n        \"S\": \"${ctx.args.accountId}\"\n       }\n    }\n  }\n}",
+        "ResponseMappingTemplate": "$util.toJson($ctx.result)",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDstableformsgraphqldevmasterdata",
+            "Name"
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": {
+        "Ref": "ServerlessDeploymentBucket"
+      }
+    },
+    "UserPoolId": {
+      "Value": {
+        "Ref": "CognitoUserPool"
+      }
+    },
+    "UserPoolClientId": {
+      "Value": {
+        "Ref": "CognitoUserPoolClient"
+      }
+    },
+    "AttachmentsBucketName": {
+      "Value": {
+        "Ref": "AttachmentsBucket"
+      }
+    },
+    "GraphQlApiUrl": {
+      "Value": {
+        "Fn::GetAtt": [
+          "GraphQlApi",
+          "GraphQLUrl"
+        ]
+      }
+    }
+  }
+}

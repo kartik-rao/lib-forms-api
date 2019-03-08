@@ -116,15 +116,15 @@ type Query {
   listAllFormEntries(formId: String!) : PaginatedFormEntries!
   @aws_auth(cognito_groups: ["AccountAdmin", "Admin", "User"])
 
-  listAllFormEntriesByTime(formId: String!, timestampPrefix: String!)
+  listAllFormEntriesByTime(formId: String!, timestampPrefix: String!): PaginatedFormEntries!
   @aws_auth(cognito_groups: ["AccountAdmin", "Admin", "User"])
 }
 
 type Mutation {
-  saveAccount(accountId: ID!, planId: String!, content: String!): Note
+  saveAccount(accountId: ID!, planId: String!, content: String!): MasterData!
   @aws_auth(cognito_groups: ["Admin", "AccountAdmin"])
 
-  deleteAccount(AccountId: ID!): Account
+  deleteAccount(AccountId: ID!): MasterData!
   @aws_auth(cognito_groups: ["Admin"])
 }
 
