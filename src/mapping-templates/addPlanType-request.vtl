@@ -1,4 +1,3 @@
-// This checks if the user is part of the Admin group and makes the call
 #foreach($group in $context.identity.claims.get("cognito:groups"))
     #if($group == "Admin")
         #set($inCognitoGroup = true)
@@ -17,11 +16,11 @@
             "sortKey"     : {"S" : "PLANTYPE"}
         },
         "attributeValues": {
-            "indexKey"    : {"S" : "$context.arguments.input.active"},
+            "indexKey"   : {"S" : "$context.arguments.input.active"},
             "type"      : {"S" : "PLANTYPE"},
             "owner"     : {"S" : "$context.identity.sub"},
             "isDeleted" : {"BOOL" : false },
-            "data"      : {"S" : "$util.toJson($attribs)"}
+            "data"      : $util.dynamodb.toDynamoDBJson($attribs)
         },
         "condition": {
             "expression": "attribute_not_exists(#partitionKey)",

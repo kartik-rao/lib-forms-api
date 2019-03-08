@@ -20,7 +20,7 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
-      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.TBL_MASTER_DATA}"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TBL_MASTER_DATA}"
 
 plugins:
   - serverless-appsync-plugin
@@ -29,6 +29,7 @@ plugins:
   - serverless-offline
 
 resources:
+  - ${file(resources/iam.yml)}
   - ${file(resources/dynamodb.yml)}
   - ${file(resources/cognito.userpool.yml)}
   - ${file(resources/s3.yml)}

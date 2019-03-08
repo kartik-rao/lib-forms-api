@@ -1,8 +1,8 @@
-// This checks if the user is part of the Admin group and makes the call
+
 #foreach($group in $context.identity.claims.get("cognito:groups"))
-#if($group == "Admin" || $context.arguments.input.accountId == $context.identity.claims["custom:account"])
-    #set($inCognitoGroup = true)
-#end
+  #if($group == "Admin" || $context.arguments.input.accountId == $context.identity.claims["custom:account"])
+      #set($inCognitoGroup = true)
+  #end
 #if($inCognitoGroup)
 {
   "version" : "2017-02-28",

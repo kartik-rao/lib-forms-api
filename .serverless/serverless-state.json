@@ -38,6 +38,49 @@
           "ServerlessDeploymentBucket": {
             "Type": "AWS::S3::Bucket"
           },
+          "AppSyncRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "appsync.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": "formsgraphql-ap-southeast-2-dev-appsync-policy",
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "dynamodb:PutItem",
+                          "dynamodb:UpdateItem",
+                          "dynamodb:DeleteItem",
+                          "dynamodb:GetItem",
+                          "dynamodb:Query",
+                          "dynamodb:Scan"
+                        ],
+                        "Resource": "arn:aws:dynamodb:ap-southeast-2:*:table/table_formsgraphql_dev_masterdata"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
           "MasterDataTable": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
@@ -346,7 +389,7 @@
               },
               "TypeName": "Query",
               "FieldName": "getAccount",
-              "RequestMappingTemplate": "// This checks if the user is part of the Admin group and makes the call\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n#if($group == \"Admin\" || $context.arguments.input.accountId == $context.identity.claims[\"custom:account\"])\n    #set($inCognitoGroup = true)\n#end\n#if($inCognitoGroup)\n{\n  \"version\" : \"2017-02-28\",\n  \"operation\" : \"GetItem\",\n  \"key\": {\n        \"partitionKey\": $util.dynamodb.toDynamoDBJson($context.arguments.input.accountId)\n  }\n}\n#else\n    $utils.unauthorized()\n#end",
+              "RequestMappingTemplate": "\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n  #if($group == \"Admin\" || $context.arguments.input.accountId == $context.identity.claims[\"custom:account\"])\n      #set($inCognitoGroup = true)\n  #end\n#if($inCognitoGroup)\n{\n  \"version\" : \"2017-02-28\",\n  \"operation\" : \"GetItem\",\n  \"key\": {\n        \"partitionKey\": $util.dynamodb.toDynamoDBJson($context.arguments.input.accountId)\n  }\n}\n#else\n    $utils.unauthorized()\n#end",
               "ResponseMappingTemplate": "#set($accountId = $context.identity.claims[\"custom:account\"])\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n    #end\n#end\n// If is Admin or record owner or belongs to same account\n#if($isAdmin || $context.result.owner == $context.identity.sub || $context.result.partitionKey == $accountId)\n{\n    $utils.toJson($context.result)\n}\n#else\n    $utils.unauthorized()\n#end",
               "DataSourceName": {
                 "Fn::GetAtt": [
@@ -390,7 +433,7 @@
               },
               "TypeName": "Query",
               "FieldName": "getPlan",
-              "RequestMappingTemplate": "// This checks if the user is part of the Admin group and makes the call\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n#if($group == \"Admin\" || $context.arguments.input.accountId == $context.identity.claims[\"custom:account\"])\n    #set($inCognitoGroup = true)\n#end\n#if($inCognitoGroup)\n{\n  \"version\" : \"2017-02-28\",\n  \"operation\" : \"GetItem\",\n  \"key\": {\n        \"partitionKey\": $util.dynamodb.toDynamoDBJson($context.arguments.input.planId)\n  }\n}\n#else\n    $utils.unauthorized()\n#end",
+              "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n  #if($group == \"Admin\" || $context.arguments.input.accountId == $context.identity.claims[\"custom:account\"])\n      #set($inCognitoGroup = true)\n#end\n#if($inCognitoGroup)\n{\n  \"version\" : \"2017-02-28\",\n  \"operation\" : \"GetItem\",\n  \"key\": {\n        \"partitionKey\": $util.dynamodb.toDynamoDBJson($context.arguments.input.planId)\n  }\n}\n#else\n    $utils.unauthorized()\n#end",
               "ResponseMappingTemplate": "#set($accountId = $context.identity.claims[\"custom:account\"])\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n    #end\n#end\n// If is Admin or record owner or belongs to same account\n#if($isAdmin || $context.result.owner == $context.identity.sub || $util.parseJson($context.result.data).accountId == $accountId)\n{\n    $utils.toJson($context.result)\n}\n#else\n    $utils.unauthorized()\n#end",
               "DataSourceName": {
                 "Fn::GetAtt": [
@@ -456,7 +499,7 @@
               },
               "TypeName": "Mutation",
               "FieldName": "addPlanType",
-              "RequestMappingTemplate": "// This checks if the user is part of the Admin group and makes the call\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($inCognitoGroup = true)\n    #end\n#end\n#if($inCognitoGroup)\n    #set($attribs = $context.arguments.input)\n    #set($attribs.id = $util.autoId())\n    #set($attribs.owner = $context.identity.sub)\n    #set($attribs.createdAt = $util.time.nowISO8601())\n    {\n        \"version\": \"2017-02-28\",\n        \"operation\": \"PutItem\",\n        \"key\": {\n            \"partitionKey\": {\"S\" : \"${attribs.id}\"},\n            \"sortKey\"     : {\"S\" : \"PLANTYPE\"}\n        },\n        \"attributeValues\": {\n            \"indexKey\"    : {\"S\" : \"$context.arguments.input.active\"},\n            \"type\"      : {\"S\" : \"PLANTYPE\"},\n            \"owner\"     : {\"S\" : \"$context.identity.sub\"},\n            \"isDeleted\" : {\"BOOL\" : false },\n            \"data\"      : {\"S\" : \"$util.toJson($attribs)\"}\n        },\n        \"condition\": {\n            \"expression\": \"attribute_not_exists(#partitionKey)\",\n                \"expressionNames\": {\n                \"#partitionKey\": \"partitionKey\",\n            }\n        }\n    }\n#else\n    $utils.unauthorized()\n#end",
+              "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($inCognitoGroup = true)\n    #end\n#end\n#if($inCognitoGroup)\n    #set($attribs = $context.arguments.input)\n    #set($attribs.id = $util.autoId())\n    #set($attribs.owner = $context.identity.sub)\n    #set($attribs.createdAt = $util.time.nowISO8601())\n    {\n        \"version\": \"2017-02-28\",\n        \"operation\": \"PutItem\",\n        \"key\": {\n            \"partitionKey\": {\"S\" : \"${attribs.id}\"},\n            \"sortKey\"     : {\"S\" : \"PLANTYPE\"}\n        },\n        \"attributeValues\": {\n            \"indexKey\"   : {\"S\" : \"$context.arguments.input.active\"},\n            \"type\"      : {\"S\" : \"PLANTYPE\"},\n            \"owner\"     : {\"S\" : \"$context.identity.sub\"},\n            \"isDeleted\" : {\"BOOL\" : false },\n            \"data\"      : $util.dynamodb.toDynamoDBJson($attribs)\n        },\n        \"condition\": {\n            \"expression\": \"attribute_not_exists(#partitionKey)\",\n                \"expressionNames\": {\n                \"#partitionKey\": \"partitionKey\",\n            }\n        }\n    }\n#else\n    $utils.unauthorized()\n#end",
               "ResponseMappingTemplate": "$util.toJson($ctx.result)",
               "DataSourceName": {
                 "Fn::GetAtt": [
@@ -664,6 +707,49 @@
     "functions": {},
     "resources": {
       "Resources": {
+        "AppSyncRole": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "appsync.amazonaws.com"
+                    ]
+                  },
+                  "Action": [
+                    "sts:AssumeRole"
+                  ]
+                }
+              ]
+            },
+            "Policies": [
+              {
+                "PolicyName": "formsgraphql-ap-southeast-2-dev-appsync-policy",
+                "PolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "dynamodb:PutItem",
+                        "dynamodb:UpdateItem",
+                        "dynamodb:DeleteItem",
+                        "dynamodb:GetItem",
+                        "dynamodb:Query",
+                        "dynamodb:Scan"
+                      ],
+                      "Resource": "arn:aws:dynamodb:ap-southeast-2:*:table/table_formsgraphql_dev_masterdata"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
         "MasterDataTable": {
           "Type": "AWS::DynamoDB::Table",
           "Properties": {
@@ -888,7 +974,7 @@
     }
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsgraphql/dev/1552049364779-2019-03-08T12:49:24.779Z",
+    "artifactDirectoryName": "serverless/formsgraphql/dev/1552050767936-2019-03-08T13:12:47.936Z",
     "artifact": ""
   }
 }
