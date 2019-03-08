@@ -1,0 +1,24 @@
+#set($attribs = $util.dynamodb.toMapValues($context.arguments.input))
+#set($attribs.id = $util.dynamodb.toMapValues($util.autoId()))
+#set($attribs.owner = $util.dynamodb.toDynamoDB($context.identity.sub))
+#set($attribs.createdAt = $util.dynamodb.toDynamoDB($util.time.nowISO8601()))
+{
+    "version": "2017-02-28",
+    "operation": "PutItem",
+    "key": {
+        "partitionKey": {"S": "${attribs.id}"},
+        "sortKey"     : {"S": "ACCOUNT"},
+        "indexKey"    : {"S": ${attribs.planId}}
+    },
+    "attributeValues": {
+        "type"      : {"S" :"ACCOUNT"},
+        "data"      : {"S": "$util.toJson($attribs)"},
+        "isDeleted" : {"BOOL": false }
+    },
+    "condition": {
+        "expression": "attribute_not_exists(#partitionKey)",
+        "expressionNames": {
+        "#partitionKey": "id",
+        }
+    }
+}

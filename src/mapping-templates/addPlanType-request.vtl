@@ -1,0 +1,36 @@
+// This checks if the user is part of the Admin group and makes the call
+#foreach($group in $context.identity.claims.get("cognito:groups"))
+    #if($group == "Admin")
+        #set($inCognitoGroup = true)
+    #end
+#end
+#if($inCognitoGroup)
+{
+    #set($attribs = $util.dynamodb.toMapValues($context.arguments.input))
+    #set($attribs.id = $util.dynamodb.toMapValues($util.autoId()))
+    #set($attribs.owner = $util.dynamodb.toDynamoDB($context.identity.sub))
+    #set($attribs.createdAt = $util.dynamodb.toDynamoDB($util.time.nowISO8601()))
+    {
+        "version": "2017-02-28",
+        "operation": "PutItem",
+        "key": {
+            "partitionKey": {"S": "${attribs.id}"},
+            "sortKey"     : {"S": "PLANTYPE"},
+            "indexKey"    : {"S": ${attribs.active}}
+        },
+        "attributeValues": {
+            "type"      : {"S" :"PLANTYPE"},
+            "data"      : {"S": "$util.toJson($attribs)"},
+            "isDeleted" : {"BOOL": false }
+        },
+        "condition": {
+            "expression": "attribute_not_exists(#partitionKey)",
+            "expressionNames": {
+                "#partitionKey": "id"
+            }
+        }
+    }
+}
+#else
+    $utils.unauthorized()
+#end

@@ -20,13 +20,39 @@ Resources:
       ExplicitAuthFlows:
         - ADMIN_NO_SRP_AUTH
       GenerateSecret: false
-
+  CognitoAppAdminGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      Description: Application Admin
+      GroupName: Admin
+      UserPoolId:
+        Ref: CognitoUserPool
+  CognitoAccountAdminGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      Description: Account admin
+      GroupName: AccountAdmin
+      UserPoolId:
+        Ref: CognitoUserPool
+  CognitoAccountEditorGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      Description: Account editor user
+      GroupName: Editor
+      UserPoolId:
+        Ref: CognitoUserPool
+  CognitoAccountViewerGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      Description: Account read only user
+      GroupName: Viewer
+      UserPoolId:
+        Ref: CognitoUserPool
 # Print out the Id of the User Pool that is created
 Outputs:
   UserPoolId:
     Value:
       Ref: CognitoUserPool
-
   UserPoolClientId:
     Value:
       Ref: CognitoUserPoolClient

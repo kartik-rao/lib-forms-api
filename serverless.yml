@@ -50,6 +50,18 @@ custom:
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
+  CognitoAddCustomAttributes:
+    CognitoUserPoolIdOutputKey:
+      Ref: CognitoUserPool              # The key of the outputted UserPool Ref
+    CognitoUserPoolClientIdOutputKey:
+      Ref: CognitoUserPoolClient  # The key of the outputted UserPoolClient Ref
+    CustomAttributes:
+      -
+        AttributeDataType: String
+        DeveloperOnlyAttribute: False
+        Mutable: True
+        Name: "tenant" # this will end up being custom:tenant
+        Required: False
   appSync:
     name:  ai-forms-backend-${self:provider.stage}
     # apiKey # only required for update-appsync/delete-appsync
@@ -70,6 +82,36 @@ custom:
         field: getAccount
         request: getAccount-request.vtl
         response: getAccount-response.vtl
+      - dataSource: ${self:custom.TBL_MASTER_DATA}
+        type: Query
+        field: listAllAccounts
+        request: listAllAccounts-request.vtl
+        response: listAllAccounts-response.vtl
+      - dataSource: ${self:custom.TBL_MASTER_DATA}
+        type: Query
+        field: getPlan
+        request: getPlan-request.vtl
+        response: getPlan-response.vtl
+      - dataSource: ${self:custom.TBL_MASTER_DATA}
+        type: Query
+        field: getPlanType
+        request: getPlanType-request.vtl
+        response: getPlanType-response.vtl
+      - dataSource: ${self:custom.TBL_MASTER_DATA}
+        type: Mutation
+        field: addAccount
+        request: addAccount-request.vtl
+        response: addAccount-response.vtl
+      - dataSource: ${self:custom.TBL_MASTER_DATA}
+        type: Mutation
+        field: addPlanType
+        request: addPlanType-request.vtl
+        response: addPlanType-response.vtl
+      - dataSource: ${self:custom.TBL_MASTER_DATA}
+        type: Mutation
+        field: addPlan
+        request: addPlan-request.vtl
+        response: addPlan-response.vtl
     schema: schema.graphql
     dataSources:
       - type: AMAZON_DYNAMODB

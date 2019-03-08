@@ -5,7 +5,7 @@
     #end
 #end
 // If is Admin or record owner or belongs to same account
-#if($isAdmin || $context.result.owner == $context.identity.sub || $context.result.partitionKey == $accountId)
+#if($isAdmin || $context.result.owner == $context.identity.sub || $util.parseJson($context.result.data).accountId == $accountId)
 {
     $utils.toJson($context.result)
 }
