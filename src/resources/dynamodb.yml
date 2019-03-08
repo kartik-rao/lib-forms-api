@@ -1,0 +1,53 @@
+Resources:
+    MasterDataTable:
+        Type: 'AWS::DynamoDB::Table'
+        Properties:
+            TableName: ${self:custom.TBL_MASTER_DATA}
+            AttributeDefinitions:
+                - AttributeName: partitionKey
+                AttributeType: S
+                - AttributeName: sortKey
+                AttributeType: S
+                - AttributeName: indexKey
+                AttributeType: S
+            KeySchema:
+                - AttributeName: partitionKey
+                KeyType: HASH
+                - AttributeName: sortKey
+                KeyType: RANGE
+            ProvisionedThroughput:
+                ReadCapacityUnits: 1
+                WriteCapacityUnits: 1
+            GlobalSecondaryIndexes:
+                - IndexName: masterDataGlobalIndex
+                KeySchema:
+                    - AttributeName: sortKey
+                    KeyType: HASH
+                    - AttributeName: indexKey
+                    KeyType: RANGE
+                Projection:
+                    NonKeyAttributes:
+                        - Album
+                    ProjectionType: INCLUDE
+                ProvisionedThroughput:
+                    ReadCapacityUnits: 5
+                    WriteCapacityUnits: 5
+    EntriesTable:
+        Type: 'AWS::DynamoDB::Table'
+        Properties:
+            TableName: ${self:custom.TBL_FORM_ENTRY}
+            AttributeDefinitions:
+                - AttributeName: partitionKey
+                AttributeType: S
+                - AttributeName: sortKey
+                AttributeType: S
+                - AttributeName: indexKey
+                AttributeType: S
+            KeySchema:
+                - AttributeName: partitionKey
+                KeyType: HASH
+                - AttributeName: sortKey
+                KeyType: RANGE
+            ProvisionedThroughput:
+                ReadCapacityUnits: 5
+                WriteCapacityUnits: 5

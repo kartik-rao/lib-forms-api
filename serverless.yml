@@ -1,0 +1,82 @@
+#serverless.yml
+
+service: api-forms-backend
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:stage, 'ap-southeast-2'}
+  profile: ai-infrastructure
+  environment:
+    TBL_FORM_ENTRY: ${self:service}-${self:provider.stage}-table-formentries
+    TBL_MASTER_DATA: ${self:service}-${self:provider.stage}-table-masterdata
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.TBL_MASTER_DATA}"
+
+plugins:
+  - serverless-appsync-plugin
+  - serverless-dynamodb-local
+  - serverless-appsync-offline
+  - serverless-offline
+
+
+custom:
+  TBL_MASTER_DATA: ${self:provider.environment.TBL_MASTER_DATA}
+  TBL_FORM_ENTRY: ${self:provider.environment.TBL_FORM_ENTRY}
+  appsync-offline:
+    port: 62222
+    dynamodb:
+      server:
+        port: 8000
+  stage: ${opt:stage, $self:provider.stage}
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+  appSync:
+    name:  ai-forms-backend-${self:provider.stage}
+    # apiKey # only required for update-appsync/delete-appsync
+    authenticationType: AMAZON_COGNITO_USER_POOLS
+    # if AMAZON_COGNITO_USER_POOLS
+    userPoolConfig:
+      awsRegion: ${self:provider.region}
+      defaultAction: ALLOW
+      userPoolId: {Ref: UserPoolId}
+    logConfig:
+      loggingRoleArn: { Fn::GetAtt: [AppSyncLoggingServiceRole, Arn] } # Where AppSyncLoggingServiceRole is a role with CloudWatch Logs write access
+      level: ALL # Logging Level: NONE | ERROR | ALL
+    mappingTemplates:
+      - dataSource: ${self:custom.TBL_MASTER_DATA}
+        type: Query
+        field: getAccount
+        request: getAccount-request.vtl
+        response: getAccount-response.vtl
+    schema: schema.graphql
+    dataSources:
+      - type: AMAZON_DYNAMODB
+        name: ${self:custom.TBL_MASTER_DATA}
+        description: # DynamoDB Table Description
+        config:
+          tableName: ${self:custom.TBL_MASTER_DATA} # Where MasterDataTable is a dynamodb table defined in Resources
+          iamRoleStatements: # custom IAM Role statements for this DataSource. Ignored if `serviceRoleArn` is present. Auto-generated if both `serviceRoleArn` and `iamRoleStatements` are omitted
+            - Effect: "Allow"
+              Action:
+                - "dynamodb:GetItem"
+                - "dynamodb:PutItem"
+              Resource:
+                - "arn:aws:dynamodb:${self:provider.region}:*:${self:custom.TBL_MASTER_DATA}"
+                - "arn:aws:dynamodb:${self:provider.region}:*:${self:custom.TBL_MASTER_DATA}/*"
+
+functions:
+  graphql:
+    handler: src/handler.graphql
+
+resources:
