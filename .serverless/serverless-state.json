@@ -434,7 +434,7 @@
               },
               "TypeName": "Mutation",
               "FieldName": "addAccount",
-              "RequestMappingTemplate": "#set($attribs = $util.dynamodb.toMapValues($context.arguments.input))\n#set($attribs.id = $util.dynamodb.toMapValues($util.autoId()))\n#set($attribs.owner = $util.dynamodb.toDynamoDB($context.identity.sub))\n#set($attribs.createdAt = $util.dynamodb.toDynamoDB($util.time.nowISO8601()))\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"partitionKey\": {\"S\": \"${attribs.id}\"},\n        \"sortKey\"     : {\"S\": \"ACCOUNT\"},\n        \"indexKey\"    : {\"S\": ${attribs.planId}}\n    },\n    \"attributeValues\": {\n        \"type\"      : {\"S\" :\"ACCOUNT\"},\n        \"data\"      : {\"S\": \"$util.toJson($attribs)\"},\n        \"isDeleted\" : {\"BOOL\": false }\n    },\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#partitionKey)\",\n        \"expressionNames\": {\n        \"#partitionKey\": \"id\"\n        }\n    }\n}",
+              "RequestMappingTemplate": "#set($attribs = $util.dynamodb.toMapValues($context.arguments.input))\n#set($attribs.id = $util.autoId())\n#set($attribs.owner = $util.dynamodb.toDynamoDB($context.identity.sub))\n#set($attribs.createdAt = $util.dynamodb.toDynamoDB($util.time.nowISO8601()))\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"partitionKey\": {\"S\" : \"${attribs.id}\"},\n        \"sortKey\"     : {\"S\" : \"ACCOUNT\"},\n        \"indexKey\"    : {\"S\" : \"$context.arguments.input.planId\"}\n    },\n    \"attributeValues\": {\n        \"type\"      : {\"S\" : \"ACCOUNT\"},\n        \"owner\"     : {\"S\" : \"$context.identity.sub\"},\n        \"data\"      : {\"S\" : \"$util.toJson($attribs)\"},\n        \"isDeleted\" : {\"BOOL\": false }\n    },\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(partitionKey)\"\n    }\n}",
               "ResponseMappingTemplate": "$util.toJson($ctx.result)",
               "DataSourceName": {
                 "Fn::GetAtt": [
@@ -456,7 +456,7 @@
               },
               "TypeName": "Mutation",
               "FieldName": "addPlanType",
-              "RequestMappingTemplate": "// This checks if the user is part of the Admin group and makes the call\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($inCognitoGroup = true)\n    #end\n#end\n#if($inCognitoGroup)\n{\n    #set($attribs = $util.dynamodb.toMapValues($context.arguments.input))\n    #set($attribs.id = $util.dynamodb.toMapValues($util.autoId()))\n    #set($attribs.owner = $util.dynamodb.toDynamoDB($context.identity.sub))\n    #set($attribs.createdAt = $util.dynamodb.toDynamoDB($util.time.nowISO8601()))\n    {\n        \"version\": \"2017-02-28\",\n        \"operation\": \"PutItem\",\n        \"key\": {\n            \"partitionKey\": {\"S\": \"${attribs.id}\"},\n            \"sortKey\"     : {\"S\": \"PLANTYPE\"},\n            \"indexKey\"    : {\"S\": ${attribs.active}}\n        },\n        \"attributeValues\": {\n            \"type\"      : {\"S\" :\"PLANTYPE\"},\n            \"data\"      : {\"S\": \"$util.toJson($attribs)\"},\n            \"isDeleted\" : {\"BOOL\": false }\n        },\n        \"condition\": {\n            \"expression\": \"attribute_not_exists(#partitionKey)\",\n            \"expressionNames\": {\n                \"#partitionKey\": \"id\"\n            }\n        }\n    }\n}\n#else\n    $utils.unauthorized()\n#end",
+              "RequestMappingTemplate": "// This checks if the user is part of the Admin group and makes the call\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($inCognitoGroup = true)\n    #end\n#end\n#if($inCognitoGroup)\n    #set($attribs = $context.arguments.input)\n    #set($attribs.id = $util.autoId())\n    #set($attribs.owner = $context.identity.sub)\n    #set($attribs.createdAt = $util.time.nowISO8601())\n    {\n        \"version\": \"2017-02-28\",\n        \"operation\": \"PutItem\",\n        \"key\": {\n            \"partitionKey\": {\"S\" : \"${attribs.id}\"},\n            \"sortKey\"     : {\"S\" : \"PLANTYPE\"}\n        },\n        \"attributeValues\": {\n            \"indexKey\"    : {\"S\" : \"$context.arguments.input.active\"},\n            \"type\"      : {\"S\" : \"PLANTYPE\"},\n            \"owner\"     : {\"S\" : \"$context.identity.sub\"},\n            \"isDeleted\" : {\"BOOL\" : false },\n            \"data\"      : {\"S\" : \"$util.toJson($attribs)\"}\n        },\n        \"condition\": {\n            \"expression\": \"attribute_not_exists(#partitionKey)\",\n                \"expressionNames\": {\n                \"#partitionKey\": \"partitionKey\",\n            }\n        }\n    }\n#else\n    $utils.unauthorized()\n#end",
               "ResponseMappingTemplate": "$util.toJson($ctx.result)",
               "DataSourceName": {
                 "Fn::GetAtt": [
@@ -888,7 +888,7 @@
     }
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsgraphql/dev/1552044246216-2019-03-08T11:24:06.216Z",
+    "artifactDirectoryName": "serverless/formsgraphql/dev/1552049364779-2019-03-08T12:49:24.779Z",
     "artifact": ""
   }
 }

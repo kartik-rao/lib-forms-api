@@ -5,32 +5,31 @@
     #end
 #end
 #if($inCognitoGroup)
-{
-    #set($attribs = $util.dynamodb.toMapValues($context.arguments.input))
-    #set($attribs.id = $util.dynamodb.toMapValues($util.autoId()))
-    #set($attribs.owner = $util.dynamodb.toDynamoDB($context.identity.sub))
-    #set($attribs.createdAt = $util.dynamodb.toDynamoDB($util.time.nowISO8601()))
+    #set($attribs = $context.arguments.input)
+    #set($attribs.id = $util.autoId())
+    #set($attribs.owner = $context.identity.sub)
+    #set($attribs.createdAt = $util.time.nowISO8601())
     {
         "version": "2017-02-28",
         "operation": "PutItem",
         "key": {
-            "partitionKey": {"S": "${attribs.id}"},
-            "sortKey"     : {"S": "PLANTYPE"},
-            "indexKey"    : {"S": ${attribs.active}}
+            "partitionKey": {"S" : "${attribs.id}"},
+            "sortKey"     : {"S" : "PLANTYPE"}
         },
         "attributeValues": {
-            "type"      : {"S" :"PLANTYPE"},
-            "data"      : {"S": "$util.toJson($attribs)"},
-            "isDeleted" : {"BOOL": false }
+            "indexKey"    : {"S" : "$context.arguments.input.active"},
+            "type"      : {"S" : "PLANTYPE"},
+            "owner"     : {"S" : "$context.identity.sub"},
+            "isDeleted" : {"BOOL" : false },
+            "data"      : {"S" : "$util.toJson($attribs)"}
         },
         "condition": {
             "expression": "attribute_not_exists(#partitionKey)",
-            "expressionNames": {
-                "#partitionKey": "id"
+                "expressionNames": {
+                "#partitionKey": "partitionKey",
             }
         }
     }
-}
 #else
     $utils.unauthorized()
 #end
