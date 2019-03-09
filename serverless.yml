@@ -23,6 +23,7 @@ provider:
       Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TBL_MASTER_DATA}"
 
 plugins:
+  - serverless-cognito-add-custom-attributes
   - serverless-appsync-plugin
   - serverless-dynamodb-local
   - serverless-appsync-offline
@@ -35,6 +36,16 @@ resources:
   - ${file(resources/s3.yml)}
 
 custom:
+  CognitoAddCustomAttributes:
+    CognitoUserPoolIdOutputKey: "UserPoolId"              # The key of the outputted UserPool Ref
+    CognitoUserPoolClientIdOutputKey: "UserPoolClientId"  # The key of the outputted UserPoolClient Ref
+    CustomAttributes:
+      -
+        AttributeDataType: String
+        DeveloperOnlyAttribute: False
+        Mutable: True
+        Name: "tenant" # this will end up being custom:another
+        Required: False
   TBL_MASTER_DATA: ${self:provider.environment.TBL_MASTER_DATA}
   TBL_FORM_ENTRY: ${self:provider.environment.TBL_FORM_ENTRY}
   bucket: ${self:service}-${self:provider.stage}-data
@@ -51,31 +62,20 @@ custom:
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
-  CognitoAddCustomAttributes:
-    CognitoUserPoolIdOutputKey:
-      Ref: CognitoUserPool              # The key of the outputted UserPool Ref
-    CognitoUserPoolClientIdOutputKey:
-      Ref: CognitoUserPoolClient  # The key of the outputted UserPoolClient Ref
-    CustomAttributes:
-      -
-        AttributeDataType: String
-        DeveloperOnlyAttribute: False
-        Mutable: True
-        Name: "tenant" # this will end up being custom:tenant
-        Required: False
   appSync:
     name:  ai-forms-backend-${self:provider.stage}
     # apiKey # only required for update-appsync/delete-appsync
     authenticationType: AMAZON_COGNITO_USER_POOLS
     # if AMAZON_COGNITO_USER_POOLS
+    serviceRoleArn: { Fn::GetAtt: [AppSyncDynamoDBRole, Arn] }
     userPoolConfig:
       awsRegion: ${self:provider.region}
       defaultAction: ALLOW
       userPoolId:
         Ref: CognitoUserPool
-    # logConfig:
-    #   loggingRoleArn: { Fn::GetAtt: [AppSyncLoggingServiceRole, Arn] } # Where AppSyncLoggingServiceRole is a role with CloudWatch Logs write access
-    #   level: ALL # Logging Level: NONE | ERROR | ALL
+    logConfig:
+      loggingRoleArn: { Fn::GetAtt: [AppSyncCloudWatchRole, Arn] } # Where AppSyncLoggingServiceRole is a role with CloudWatch Logs write access
+      level: ALL
     mappingTemplatesLocation: src/mapping-templates
     mappingTemplates:
       - dataSource: ${self:custom.TBL_MASTER_DATA}
@@ -120,12 +120,3 @@ custom:
         description: Master Table
         config:
           tableName: ${self:custom.TBL_MASTER_DATA} # Where MasterDataTable is a dynamodb table defined in Resources
-          iamRoleStatements: # custom IAM Role statements for this DataSource. Ignored if `serviceRoleArn` is present. Auto-generated if both `serviceRoleArn` and `iamRoleStatements` are omitted
-            - Effect: "Allow"
-              Action:
-                - "dynamodb:GetItem"
-                - "dynamodb:PutItem"
-              Resource:
-                - "arn:aws:dynamodb:${self:provider.region}:*:${self:custom.TBL_MASTER_DATA}"
-                - "arn:aws:dynamodb:${self:provider.region}:*:${self:custom.TBL_MASTER_DATA}/*"
-

@@ -1,30 +1,71 @@
 Resources:
-  AppSyncRole:
+  AppSyncDynamoDBRole:
     Type: "AWS::IAM::Role"
     Properties:
+      RoleName: "${self:service}-${self:provider.region}-${self:provider.stage}-appsync-iam-role"
+      ManagedPolicyArns:
+        - Ref: AppSyncDynamoDBPolicy
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
-          -
-            Effect: "Allow"
+          - Effect: "Allow"
+            Action:
+              - "sts:AssumeRole"
             Principal:
               Service:
                 - "appsync.amazonaws.com"
+    DependsOn:
+      - AppSyncDynamoDBPolicy
+  AppSyncDynamoDBPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Allow AWS AppSync to access dynamodb.
+      Path: /deepdish/
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:DeleteItem
+              - dynamodb:UpdateItem
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:BatchGetItem
+              - dynamodb:BatchWriteItem
+            Resource:
+              - Fn::Join:
+                - ""
+                - - Fn::GetAtt: MasterDataTable.Arn
+                  - "*"
+  AppSyncCloudWatchRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "${self:service}-${self:provider.region}-${self:provider.stage}-appsync--logging-iam-role"
+      ManagedPolicyArns:
+        - Ref: AppSyncCloudWatchPolicy
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
             Action:
               - "sts:AssumeRole"
-      Policies:
-        -
-          PolicyName: "${self:service}-${self:provider.region}-${self:provider.stage}-appsync-policy"
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              -
-                Effect: "Allow"
-                Action:
-                  - "dynamodb:PutItem"
-                  - "dynamodb:UpdateItem"
-                  - "dynamodb:DeleteItem"
-                  - "dynamodb:GetItem"
-                  - "dynamodb:Query"
-                  - "dynamodb:Scan"
-                Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TBL_MASTER_DATA}"
+            Principal:
+              Service:
+                - "appsync.amazonaws.com"
+    DependsOn:
+      - AppSyncCloudWatchPolicy
+  AppSyncCloudWatchPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Allow AWS AppSync to write logs
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: "*"

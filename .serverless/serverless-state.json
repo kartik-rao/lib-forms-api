@@ -38,47 +38,122 @@
           "ServerlessDeploymentBucket": {
             "Type": "AWS::S3::Bucket"
           },
-          "AppSyncRole": {
+          "AppSyncDynamoDBRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
+              "RoleName": "formsgraphql-ap-southeast-2-dev-appsync-iam-role",
+              "ManagedPolicyArns": [
+                {
+                  "Ref": "AppSyncDynamoDBPolicy"
+                }
+              ],
               "AssumeRolePolicyDocument": {
                 "Version": "2012-10-17",
                 "Statement": [
                   {
                     "Effect": "Allow",
+                    "Action": [
+                      "sts:AssumeRole"
+                    ],
                     "Principal": {
                       "Service": [
                         "appsync.amazonaws.com"
                       ]
-                    },
-                    "Action": [
-                      "sts:AssumeRole"
-                    ]
+                    }
                   }
                 ]
-              },
-              "Policies": [
-                {
-                  "PolicyName": "formsgraphql-ap-southeast-2-dev-appsync-policy",
-                  "PolicyDocument": {
-                    "Version": "2012-10-17",
-                    "Statement": [
+              }
+            },
+            "DependsOn": [
+              "AppSyncDynamoDBPolicy"
+            ]
+          },
+          "AppSyncDynamoDBPolicy": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+              "Description": "Allow AWS AppSync to access dynamodb.",
+              "Path": "/deepdish/",
+              "PolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "dynamodb:GetItem",
+                      "dynamodb:PutItem",
+                      "dynamodb:DeleteItem",
+                      "dynamodb:UpdateItem",
+                      "dynamodb:Query",
+                      "dynamodb:Scan",
+                      "dynamodb:BatchGetItem",
+                      "dynamodb:BatchWriteItem"
+                    ],
+                    "Resource": [
                       {
-                        "Effect": "Allow",
-                        "Action": [
-                          "dynamodb:PutItem",
-                          "dynamodb:UpdateItem",
-                          "dynamodb:DeleteItem",
-                          "dynamodb:GetItem",
-                          "dynamodb:Query",
-                          "dynamodb:Scan"
-                        ],
-                        "Resource": "arn:aws:dynamodb:ap-southeast-2:*:table/table_formsgraphql_dev_masterdata"
+                        "Fn::Join": [
+                          "",
+                          [
+                            {
+                              "Fn::GetAtt": "MasterDataTable.Arn"
+                            },
+                            "*"
+                          ]
+                        ]
                       }
                     ]
                   }
+                ]
+              }
+            }
+          },
+          "AppSyncCloudWatchRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "RoleName": "formsgraphql-ap-southeast-2-dev-appsync--logging-iam-role",
+              "ManagedPolicyArns": [
+                {
+                  "Ref": "AppSyncCloudWatchPolicy"
                 }
-              ]
+              ],
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "sts:AssumeRole"
+                    ],
+                    "Principal": {
+                      "Service": [
+                        "appsync.amazonaws.com"
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "DependsOn": [
+              "AppSyncCloudWatchPolicy"
+            ]
+          },
+          "AppSyncCloudWatchPolicy": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+              "Description": "Allow AWS AppSync to write logs",
+              "PolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "logs:CreateLogGroup",
+                      "logs:CreateLogStream",
+                      "logs:PutLogEvents"
+                    ],
+                    "Resource": "*"
+                  }
+                ]
+              }
             }
           },
           "MasterDataTable": {
@@ -295,6 +370,34 @@
                 "UserPoolId": {
                   "Ref": "CognitoUserPool"
                 }
+              },
+              "LogConfig": {
+                "CloudWatchLogsRoleArn": {
+                  "Fn::GetAtt": [
+                    "AppSyncCloudWatchRole",
+                    "Arn"
+                  ]
+                },
+                "FieldLogLevel": "ALL"
+              }
+            }
+          },
+          "GraphQlApiLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": {
+                "Fn::Join": [
+                  "/",
+                  [
+                    "/aws/appsync/apis",
+                    {
+                      "Fn::GetAtt": [
+                        "GraphQlApi",
+                        "ApiId"
+                      ]
+                    }
+                  ]
+                ]
               }
             }
           },
@@ -338,12 +441,50 @@
                       {
                         "Effect": "Allow",
                         "Action": [
+                          "dynamodb:DeleteItem",
                           "dynamodb:GetItem",
-                          "dynamodb:PutItem"
+                          "dynamodb:PutItem",
+                          "dynamodb:Query",
+                          "dynamodb:Scan",
+                          "dynamodb:UpdateItem",
+                          "dynamodb:BatchGetItem",
+                          "dynamodb:BatchWriteItem"
                         ],
                         "Resource": [
-                          "arn:aws:dynamodb:ap-southeast-2:*:table_formsgraphql_dev_masterdata",
-                          "arn:aws:dynamodb:ap-southeast-2:*:table_formsgraphql_dev_masterdata/*"
+                          {
+                            "Fn::Join": [
+                              ":",
+                              [
+                                "arn",
+                                "aws",
+                                "dynamodb",
+                                "ap-southeast-2",
+                                {
+                                  "Ref": "AWS::AccountId"
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "/",
+                                    [
+                                      "table",
+                                      "table_formsgraphql_dev_masterdata"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          },
+                          {
+                            "Fn::Join": [
+                              "/",
+                              [
+                                {
+                                  "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GraphQlDstableformsgraphqldevmasterdataRole\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][0][\"Resource\"][0]"
+                                },
+                                "*"
+                              ]
+                            ]
+                          }
                         ]
                       }
                     ]
@@ -581,6 +722,19 @@
       }
     },
     "custom": {
+      "CognitoAddCustomAttributes": {
+        "CognitoUserPoolIdOutputKey": "UserPoolId",
+        "CognitoUserPoolClientIdOutputKey": "UserPoolClientId",
+        "CustomAttributes": [
+          {
+            "AttributeDataType": "String",
+            "DeveloperOnlyAttribute": false,
+            "Mutable": true,
+            "Name": "tenant",
+            "Required": false
+          }
+        ]
+      },
       "TBL_MASTER_DATA": "table_formsgraphql_dev_masterdata",
       "TBL_FORM_ENTRY": "table_formsgraphql_dev_entries",
       "bucket": "formsgraphql-dev-data",
@@ -603,32 +757,27 @@
         "webpackConfig": "./webpack.config.js",
         "includeModules": true
       },
-      "CognitoAddCustomAttributes": {
-        "CognitoUserPoolIdOutputKey": {
-          "Ref": "CognitoUserPool"
-        },
-        "CognitoUserPoolClientIdOutputKey": {
-          "Ref": "CognitoUserPoolClient"
-        },
-        "CustomAttributes": [
-          {
-            "AttributeDataType": "String",
-            "DeveloperOnlyAttribute": false,
-            "Mutable": true,
-            "Name": "tenant",
-            "Required": false
-          }
-        ]
-      },
       "appSync": {
         "name": "ai-forms-backend-dev",
         "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+        "serviceRoleArn": {
+          "Fn::GetAtt": [
+            "AppSyncDynamoDBRole",
+            "Arn"
+          ]
+        },
         "userPoolConfig": {
           "awsRegion": "ap-southeast-2",
           "defaultAction": "ALLOW",
           "userPoolId": {
             "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GraphQlApi\"][\"Properties\"][\"UserPoolConfig\"][\"UserPoolId\"]"
           }
+        },
+        "logConfig": {
+          "loggingRoleArn": {
+            "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GraphQlApi\"][\"Properties\"][\"LogConfig\"][\"CloudWatchLogsRoleArn\"]"
+          },
+          "level": "ALL"
         },
         "mappingTemplatesLocation": "src/mapping-templates",
         "mappingTemplates": [
@@ -689,16 +838,14 @@
             "name": "table_formsgraphql_dev_masterdata",
             "description": "Master Table",
             "config": {
-              "tableName": "table_formsgraphql_dev_masterdata",
-              "iamRoleStatements": {
-                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GraphQlDstableformsgraphqldevmasterdataRole\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"]"
-              }
+              "tableName": "table_formsgraphql_dev_masterdata"
             }
           }
         ]
       }
     },
     "plugins": [
+      "serverless-cognito-add-custom-attributes",
       "serverless-appsync-plugin",
       "serverless-dynamodb-local",
       "serverless-appsync-offline",
@@ -707,47 +854,122 @@
     "functions": {},
     "resources": {
       "Resources": {
-        "AppSyncRole": {
+        "AppSyncDynamoDBRole": {
           "Type": "AWS::IAM::Role",
           "Properties": {
+            "RoleName": "formsgraphql-ap-southeast-2-dev-appsync-iam-role",
+            "ManagedPolicyArns": [
+              {
+                "Ref": "AppSyncDynamoDBPolicy"
+              }
+            ],
             "AssumeRolePolicyDocument": {
               "Version": "2012-10-17",
               "Statement": [
                 {
                   "Effect": "Allow",
+                  "Action": [
+                    "sts:AssumeRole"
+                  ],
                   "Principal": {
                     "Service": [
                       "appsync.amazonaws.com"
                     ]
-                  },
-                  "Action": [
-                    "sts:AssumeRole"
-                  ]
+                  }
                 }
               ]
-            },
-            "Policies": [
-              {
-                "PolicyName": "formsgraphql-ap-southeast-2-dev-appsync-policy",
-                "PolicyDocument": {
-                  "Version": "2012-10-17",
-                  "Statement": [
+            }
+          },
+          "DependsOn": [
+            "AppSyncDynamoDBPolicy"
+          ]
+        },
+        "AppSyncDynamoDBPolicy": {
+          "Type": "AWS::IAM::ManagedPolicy",
+          "Properties": {
+            "Description": "Allow AWS AppSync to access dynamodb.",
+            "Path": "/deepdish/",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem",
+                    "dynamodb:PutItem",
+                    "dynamodb:DeleteItem",
+                    "dynamodb:UpdateItem",
+                    "dynamodb:Query",
+                    "dynamodb:Scan",
+                    "dynamodb:BatchGetItem",
+                    "dynamodb:BatchWriteItem"
+                  ],
+                  "Resource": [
                     {
-                      "Effect": "Allow",
-                      "Action": [
-                        "dynamodb:PutItem",
-                        "dynamodb:UpdateItem",
-                        "dynamodb:DeleteItem",
-                        "dynamodb:GetItem",
-                        "dynamodb:Query",
-                        "dynamodb:Scan"
-                      ],
-                      "Resource": "arn:aws:dynamodb:ap-southeast-2:*:table/table_formsgraphql_dev_masterdata"
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": "MasterDataTable.Arn"
+                          },
+                          "*"
+                        ]
+                      ]
                     }
                   ]
                 }
+              ]
+            }
+          }
+        },
+        "AppSyncCloudWatchRole": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "RoleName": "formsgraphql-ap-southeast-2-dev-appsync--logging-iam-role",
+            "ManagedPolicyArns": [
+              {
+                "Ref": "AppSyncCloudWatchPolicy"
               }
-            ]
+            ],
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "sts:AssumeRole"
+                  ],
+                  "Principal": {
+                    "Service": [
+                      "appsync.amazonaws.com"
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "DependsOn": [
+            "AppSyncCloudWatchPolicy"
+          ]
+        },
+        "AppSyncCloudWatchPolicy": {
+          "Type": "AWS::IAM::ManagedPolicy",
+          "Properties": {
+            "Description": "Allow AWS AppSync to write logs",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
           }
         },
         "MasterDataTable": {
@@ -974,7 +1196,7 @@
     }
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsgraphql/dev/1552050767936-2019-03-08T13:12:47.936Z",
+    "artifactDirectoryName": "serverless/formsgraphql/dev/1552101451961-2019-03-09T03:17:31.961Z",
     "artifact": ""
   }
 }
