@@ -1,14 +1,8 @@
-#set($accountId = $context.identity.claims["custom:account"])
-#foreach($group in $context.identity.claims.get("cognito:groups"))
-    #if($group == "Admin")
-        #set($isAdmin = true)
-    #end
-#end
-// If is Admin or record owner or belongs to same account
-#if($isAdmin || $context.result.owner == $context.identity.sub || $context.result.partitionKey == $accountId)
-{
-    $utils.toJson($context.result)
-}
-#else
-    $utils.unauthorized()
-#end
+$util.toJson({
+    "accountId": "${ctx.result.partitionKey}",
+    "name": "${ctx.result.data.name}",
+    "owner": "${ctx.result.owner}",
+    "planId": "${ctx.result.data.planId}",
+    "createdAt": "${ctx.result.createdAt}",
+    "updatedAt": "${ctx.result.data.updatedAt}"
+})

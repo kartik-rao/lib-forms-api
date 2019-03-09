@@ -1,24 +1,35 @@
-#set($attribs = $util.dynamodb.toMapValues($context.arguments.input))
-#set($attribs.id = $util.dynamodb.toMapValues($util.autoId()))
-#set($attribs.owner = $util.dynamodb.toDynamoDB($context.identity.sub))
-#set($attribs.createdAt = $util.dynamodb.toDynamoDB($util.time.nowISO8601()))
-{
-    "version": "2017-02-28",
-    "operation": "PutItem",
-    "key": {
-        "partitionKey": {"S": "${attribs.id}"},
-        "sortKey"     : {"S": "ACCOUNT"},
-        "indexKey"    : {"S": ${attribs.planId}}
-    },
-    "attributeValues": {
-        "type"      : {"S" :"ACCOUNT"},
-        "data"      : {"S": "$util.toJson($attribs)"},
-        "isDeleted" : {"BOOL": false }
-    },
-    "condition": {
-        "expression": "attribute_not_exists(#partitionKey)",
-        "expressionNames": {
-        "#partitionKey": "id",
+#foreach($group in $context.identity.claims.get("cognito:groups"))
+    #if($group == "Admin")
+        #set($inCognitoGroup = true)
+    #end
+#end
+#if($inCognitoGroup || $context.identity.claims["custom:tenant"] == $attribs.accountId)
+    #set($attribs = $context.arguments.input)
+    #set($attribs.id = $util.autoId())
+    #set($attribs.owner = $context.identity.sub)
+    #set($attribs.createdAt = $util.time.nowISO8601())
+    {
+        "version": "2017-02-28",
+        "operation": "PutItem",
+        "key": {
+            "partitionKey": {"S": "${attribs.id}"},
+            "sortKey"     : {"S": "PLAN"}
+
+        },
+        "attributeValues": {
+            "indexKey"  : {"S": "${attribs.accountId}#true"},
+            "type"      : {"S": "PLAN"},
+            "owner"     : {"S": "$context.identity.sub"},
+            "isDeleted" : {"BOOL" : false },
+            "data"      : $util.dynamodb.toDynamoDBJson($attribs)
+        },
+        "condition": {
+            "expression": "attribute_not_exists(#partitionKey)",
+            "expressionNames": {
+                "#partitionKey": "partitionKey",
+            }
         }
     }
-}
+#else
+    $utils.unauthorized()
+#end

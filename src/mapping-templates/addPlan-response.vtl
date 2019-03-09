@@ -1,1 +1,11 @@
-$util.toJson($ctx.result)
+$util.toJson({
+    "planId": "${ctx.result.partitionKey}",
+    "accountId": "${ctx.result.data.accountId}",
+    "owner": "${ctx.result.owner}",
+    "createdAt": "${ctx.result.createdAt}",
+    "planTypeId": "${ctx.result.data.planTypeId}",
+    "startDate": "${ctx.result.data.startDate}",
+    "endDate": "${ctx.result.endDate}",
+    "active": ${ctx.result.data.active},
+    "lastBillDate"  : "${ctx.result.data.lastBillDate}"
+})

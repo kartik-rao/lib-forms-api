@@ -111,24 +111,22 @@ type PaginatedUser {
 }
 
 type Account {
-  id: ID!
+  accountId: ID!
   name: String!
   owner: ID!
-  planId: ID!
+  planId: ID
   createdAt: AWSDate!
-  updatedDate: AWSDate!
-  lastBillDate: AWSDate
+  updatedAt: AWSDate
 }
 
 input UpdateAccountInput {
   id: ID!
-  name: String!
-  planId: ID!
+  name: String
+  planId: ID
 }
 
 input AddAccountInput {
   name: String!
-  planId: ID!
 }
 
 type PaginatedAccount {
@@ -171,6 +169,7 @@ type Plan {
   planId: ID!
   accountId: ID!
   owner: ID!
+  createdAt: AWSDate
   planTypeId: ID!
   startDate: AWSDate!
   endDate: AWSDate
@@ -271,7 +270,7 @@ type PaginatedIntegration {
 }
 
 type Query {
-  getAccount(accountId: ID!): Account!
+  getAccount(accountId: ID!): Account
   @aws_auth(cognito_groups: ["Admin", "AccountAdmin"])
 
   listAllAccounts(limit: Int, nextToken: String): PaginatedAccount!

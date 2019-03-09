@@ -1,0 +1,47 @@
+mutation {
+  addPlanType(
+    input: {
+      name: "TestPlanType"
+    	cost: 250.50
+      billingTerm: "Monthly"
+      active: true
+    }
+  ) {
+    planTypeId
+    name
+    cost
+    billingTerm
+    owner
+  }
+}
+
+mutation {
+  addPlan(
+    input: {
+      name: "TestPlanType"
+      cost: 250.50
+      billingTerm: "Monthly"
+      active: true
+    }
+  ) {
+    planTypeId
+    name
+    cost
+    billingTerm
+    owner
+  }
+}
+
+mutation {
+  addAccount (
+    input: {
+      name: "TestAccount"
+    }
+  ) {
+    planId
+    name
+    accountId
+    createdAt
+    owner
+  }
+}
