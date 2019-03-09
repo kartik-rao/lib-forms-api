@@ -1,1 +1,10 @@
-$util.toJson($ctx.result)
+$util.toJson({
+    "planTypeId": "${ctx.result.partitionKey}",
+    "owner": "${ctx.result.owner}",
+    "name": "${ctx.result.data.name}",
+    "cost": ${ctx.result.data.cost},
+    "active": ${ctx.result.data.active},
+    "billingTerm": "${ctx.result.data.billingTerm}",
+    "createdAt": "${ctx.result.createdAt}",
+    "updatedAt"  : "${ctx.result.data.updatedAt}"
+})
