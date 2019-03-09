@@ -393,6 +393,7 @@ type Mutation {
   deleteForm(id: ID!): Form!
 
   addFormEntry(input: AddFormEntryInput!): FormEntry!
+  testPipeline: AWSJSON
 }
 
 type Schema {

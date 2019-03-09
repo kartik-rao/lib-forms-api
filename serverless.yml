@@ -78,45 +78,58 @@ custom:
       level: ALL
     mappingTemplatesLocation: src/mapping-templates
     mappingTemplates:
-      - dataSource: ${self:custom.TBL_MASTER_DATA}
+      - dataSource: MasterData
         type: Query
         field: getAccount
         request: getAccount-request.vtl
         response: getAccount-response.vtl
-      - dataSource: ${self:custom.TBL_MASTER_DATA}
+      - dataSource: MasterData
         type: Query
         field: listAllAccounts
         request: listAllAccounts-request.vtl
         response: listAllAccounts-response.vtl
-      - dataSource: ${self:custom.TBL_MASTER_DATA}
+      - dataSource: MasterData
         type: Query
         field: getPlan
         request: getPlan-request.vtl
         response: getPlan-response.vtl
-      - dataSource: ${self:custom.TBL_MASTER_DATA}
+      - dataSource: MasterData
         type: Query
         field: getPlanType
         request: getPlanType-request.vtl
         response: getPlanType-response.vtl
-      - dataSource: ${self:custom.TBL_MASTER_DATA}
+      - dataSource: MasterData
         type: Mutation
         field: addAccount
         request: addAccount-request.vtl
         response: addAccount-response.vtl
-      - dataSource: ${self:custom.TBL_MASTER_DATA}
+      - dataSource: MasterData
         type: Mutation
         field: addPlanType
         request: addPlanType-request.vtl
         response: addPlanType-response.vtl
-      - dataSource: ${self:custom.TBL_MASTER_DATA}
+      - dataSource: MasterData
         type: Mutation
         field: addPlan
         request: addPlan-request.vtl
         response: addPlan-response.vtl
+      - dataSource:  MasterData
+        type: Mutation
+        field: testPipeline
+        request: authorize-request.vtl
+        response: authorize-response.vtl
+        kind: PIPELINE
+        functions:
+          - authorizeFunction
+    functionConfigurations:
+      - dataSource: MasterData
+        name: authorizeFunction
+        request: fetchUserAccount-request.vtl
+        response: fetchUserAccount-response.vtl
     schema: schema.graphql
     dataSources:
       - type: AMAZON_DYNAMODB
-        name: ${self:custom.TBL_MASTER_DATA}
+        name: MasterData
         description: Master Table
         config:
           tableName: ${self:custom.TBL_MASTER_DATA} # Where MasterDataTable is a dynamodb table defined in Resources

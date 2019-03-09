@@ -404,7 +404,7 @@
           "GraphQlSchema": {
             "Type": "AWS::AppSync::GraphQLSchema",
             "Properties": {
-              "Definition": "type MasterData @model {\n    partitionKey: ID!\n    sortKey: ID!\n    indexKey: String!\n    type: String!\n    owner: ID!\n    createdAt: AWSDate\n    updatedAt: AWSDate\n    isDeleted: Boolean\n    data: AWSJSON!\n}\n\ntype FormEntry @model {\n    partitionKey: ID!\n    sortKey: ID!\n    indexKey: String!\n    data: AWSJSON!\n}\n\ninput AddFormEntryInput {\n  data: AWSJSON!\n}\n\ntype PaginatedFormEntries {\n  items: [FormEntry!]!\n  nextToken: String\n}\n\ntype Form {\n    id: ID!\n    owner: ID!\n    exid: String\n    desc: String\n    name: String!\n    tenant: AWSJSON\n    status: AWSJSON\n    content: AWSJSON!\n    layout: AWSJSON\n    formLayoutOptions: AWSJSON\n    stopSubmit: Boolean\n    submitTarget: String\n    successRedirect: String\n    errorRedirect: String\n}\n\ninput AddFormInput {\n  name: String!\n  desc: String\n  content: AWSJSON!\n  layout: AWSJSON\n  formLayoutOptions: AWSJSON\n  stopSubmit: Boolean\n  submitTarget: String\n  successRedirect: String\n  errorRedirect: String\n}\n\ninput UpdateFormInput  {\n  id: ID\n  name: String\n  desc: String\n  content: AWSJSON!\n  layout: AWSJSON\n  formLayoutOptions: AWSJSON\n  stopSubmit: Boolean\n  submitTarget: String\n  successRedirect: String\n  errorRedirect: String\n}\n\ntype PaginatedForm {\n  items: [Form!]!\n  nextToken: String\n}\n\ntype User {\n  id: ID!\n  owner: ID!\n  accountId: String!\n  email: String!\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n  createdAt: AWSDate\n}\n\ninput UpdateUserInputData {\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ninput UpdateUserInput {\n  id: ID!\n  data: UpdateUserInputData!\n}\n\ninput AddUserInput {\n  email: String!\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ntype PaginatedUser {\n  items: [User!]!\n  nextToken: String\n}\n\ntype Account {\n  accountId: ID!\n  name: String!\n  owner: ID!\n  planId: ID\n  createdAt: AWSDate!\n  updatedAt: AWSDate\n}\n\ninput UpdateAccountInput {\n  id: ID!\n  name: String\n  planId: ID\n}\n\ninput AddAccountInput {\n  name: String!\n}\n\ntype PaginatedAccount {\n  items: [Account!]!\n  nextToken: String!\n}\n\ntype PlanType {\n  planTypeId: ID!\n  owner: ID!\n  name: String!\n  cost: Float!\n  active: Boolean!\n  createdAt: AWSDate\n  updatedAt: AWSDate\n  billingTerm: String!\n}\n\ninput AddPlanTypeInput {\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Boolean!\n}\n\ninput UpdatePlanTypeInput {\n  id: ID!\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Boolean!\n}\n\ntype PaginatedPlanType {\n  items: [PlanType!]!\n  nextToken: String!\n}\n\ntype Plan {\n  planId: ID!\n  accountId: ID!\n  owner: ID!\n  createdAt: AWSDate\n  planTypeId: ID!\n  startDate: AWSDate!\n  endDate: AWSDate\n  active: Boolean\n  lastBillDate: AWSDate\n}\n\ninput AddPlanInput {\n  accountId: ID!\n  owner: ID!\n  planTypeId: ID!\n  endDate: AWSDate\n  active: Boolean\n}\n\ninput UpdatePlanInput {\n  id: ID!\n  endDate: AWSDate\n  active: Boolean!\n}\n\ntype PaginatedPlan {\n  items: [Plan!]!\n  nextToken: String\n}\n\ntype IntegrationType {\n  integrationTypeId: ID!\n  owner: ID!\n  PlanTypeId: ID!\n  name: String!\n  active: Boolean!\n}\n\ninput AddIntegrationTypeInput {\n  name: String!\n  active: Boolean\n}\n\ninput UpdateIntegrationTypeInput {\n  id: ID!\n  name: String!\n  active: Boolean\n}\n\ntype PaginatedIntegrationType {\n  items: [IntegrationType!]!\n  nextToken: String\n}\n\ntype Integration {\n  integrationId: ID!\n  integrationTypeId: ID!\n  owner: ID!\n  accountId: ID!\n  formId: ID!\n  active: Boolean!\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  lastExecuted: AWSDate\n  lastExecutionResult: Boolean\n  lastExecutionResultMessage: String\n}\n\ninput AddIntegrationInput {\n  integrationTypeId: ID!\n  accountId: ID!\n  formId: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationTypeInputData {\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationInput {\n  id: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ntype PaginatedIntegration {\n  items: [Integration!]!\n  nextToken: String\n}\n\ntype Query {\n  getAccount(accountId: ID!): Account\n  @aws_auth(cognito_groups: [\"Admin\", \"AccountAdmin\"])\n\n  listAllAccounts(limit: Int, nextToken: String): PaginatedAccount!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  getUser(userId: String!): User!\n  @aws_auth(cognito_groups: [\"Admin\", \"AccountAdmin\"])\n\n  listAllUsers(limit: Int, nextToken: String) : PaginatedUser!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAccountUsersInGroup(accountId: String!, group: String!, limit: Int, nextToken: String): PaginatedUser!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getPlan(planId: String!): Plan!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllPlans(limit: Int, nextToken: String): PaginatedPlan!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountPlans(accountId: String!, limit: Int, nextToken: String): PaginatedPlan!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getActiveAccountPlan(accountId: String!): PaginatedPlan!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Editor\",  \"Viewer\", \"Admin\"])\n\n  getPlanType(planTypeId: String!): PlanType!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllPlanTypes(limit: Int, nextToken: String): PaginatedPlanType!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllActivePlanTypes(limit: Int, nextToken: String): PaginatedPlanType!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getForm(formId: String!) : Form!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllForms(limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllAccountFormsByUser(accountId: String!, userId: String!, limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  getIntegrationType(integrationTypeId: String!): IntegrationType!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllIntegrationTypes(limit: Int, nextToken: String): PaginatedIntegrationType!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllIntegrationTypesByPlanType(planTypeId: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getIntegration(integrationId: String!): Integration!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllIntegrations(limit: Int, nextToken: String): PaginatedIntegration!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountIntegrations(accountId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllAccountFormIntegrations(accountId: String!, formId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  @aws_auth(cognito_groups: [\"AccountAdmin\"])\n\n  getFormEntry(formEntryId: String!): FormEntry!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllFormEntries(formId: String!) : PaginatedFormEntries!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllFormEntriesByTime(formId: String!, timestampPrefix: String!): PaginatedFormEntries!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n}\n\ntype Mutation {\n  addPlanType(input: AddPlanTypeInput): PlanType!\n  addPlan(input: AddPlanInput): Plan!\n  addAccount(input: AddAccountInput): Account!\n  addUser(input: AddUserInput): User!\n  addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!\n  addIntegration(input: AddIntegrationInput): Integration!\n  addForm(input: AddFormInput): Form!\n\n  updatePlanType(input: UpdatePlanTypeInput): PlanType!\n  updatePlan(input: UpdatePlanInput): Plan!\n  updateAccount(input: UpdateAccountInput): Account!\n  updateUser(input: UpdateUserInput): User!\n  updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!\n  updateIntegration(input: UpdateIntegrationInput): Integration!\n  updateForm(input: UpdateFormInput): Form!\n\n  deletePlanType(id: ID!): PlanType!\n  deletePlan(id: ID!): Plan!\n  deleteAccount(id: ID!): Account!\n  deleteUser(id: ID!): User!\n  deleteIntegrationType(id: ID!): IntegrationType!\n  deleteIntegration(id: ID!): Integration!\n  deleteForm(id: ID!): Form!\n\n  addFormEntry(input: AddFormEntryInput!): FormEntry!\n}\n\ntype Schema {\n  query: Query\n  mutation: Mutation\n}",
+              "Definition": "type MasterData @model {\n    partitionKey: ID!\n    sortKey: ID!\n    indexKey: String!\n    type: String!\n    owner: ID!\n    createdAt: AWSDate\n    updatedAt: AWSDate\n    isDeleted: Boolean\n    data: AWSJSON!\n}\n\ntype FormEntry @model {\n    partitionKey: ID!\n    sortKey: ID!\n    indexKey: String!\n    data: AWSJSON!\n}\n\ninput AddFormEntryInput {\n  data: AWSJSON!\n}\n\ntype PaginatedFormEntries {\n  items: [FormEntry!]!\n  nextToken: String\n}\n\ntype Form {\n    id: ID!\n    owner: ID!\n    exid: String\n    desc: String\n    name: String!\n    tenant: AWSJSON\n    status: AWSJSON\n    content: AWSJSON!\n    layout: AWSJSON\n    formLayoutOptions: AWSJSON\n    stopSubmit: Boolean\n    submitTarget: String\n    successRedirect: String\n    errorRedirect: String\n}\n\ninput AddFormInput {\n  name: String!\n  desc: String\n  content: AWSJSON!\n  layout: AWSJSON\n  formLayoutOptions: AWSJSON\n  stopSubmit: Boolean\n  submitTarget: String\n  successRedirect: String\n  errorRedirect: String\n}\n\ninput UpdateFormInput  {\n  id: ID\n  name: String\n  desc: String\n  content: AWSJSON!\n  layout: AWSJSON\n  formLayoutOptions: AWSJSON\n  stopSubmit: Boolean\n  submitTarget: String\n  successRedirect: String\n  errorRedirect: String\n}\n\ntype PaginatedForm {\n  items: [Form!]!\n  nextToken: String\n}\n\ntype User {\n  id: ID!\n  owner: ID!\n  accountId: String!\n  email: String!\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n  createdAt: AWSDate\n}\n\ninput UpdateUserInputData {\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ninput UpdateUserInput {\n  id: ID!\n  data: UpdateUserInputData!\n}\n\ninput AddUserInput {\n  email: String!\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ntype PaginatedUser {\n  items: [User!]!\n  nextToken: String\n}\n\ntype Account {\n  accountId: ID!\n  name: String!\n  owner: ID!\n  planId: ID\n  createdAt: AWSDate!\n  updatedAt: AWSDate\n}\n\ninput UpdateAccountInput {\n  id: ID!\n  name: String\n  planId: ID\n}\n\ninput AddAccountInput {\n  name: String!\n}\n\ntype PaginatedAccount {\n  items: [Account!]!\n  nextToken: String!\n}\n\ntype PlanType {\n  planTypeId: ID!\n  owner: ID!\n  name: String!\n  cost: Float!\n  active: Boolean!\n  createdAt: AWSDate\n  updatedAt: AWSDate\n  billingTerm: String!\n}\n\ninput AddPlanTypeInput {\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Boolean!\n}\n\ninput UpdatePlanTypeInput {\n  id: ID!\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Boolean!\n}\n\ntype PaginatedPlanType {\n  items: [PlanType!]!\n  nextToken: String!\n}\n\ntype Plan {\n  planId: ID!\n  accountId: ID!\n  owner: ID!\n  createdAt: AWSDate\n  planTypeId: ID!\n  startDate: AWSDate!\n  endDate: AWSDate\n  active: Boolean\n  lastBillDate: AWSDate\n}\n\ninput AddPlanInput {\n  accountId: ID!\n  owner: ID!\n  planTypeId: ID!\n  endDate: AWSDate\n  active: Boolean\n}\n\ninput UpdatePlanInput {\n  id: ID!\n  endDate: AWSDate\n  active: Boolean!\n}\n\ntype PaginatedPlan {\n  items: [Plan!]!\n  nextToken: String\n}\n\ntype IntegrationType {\n  integrationTypeId: ID!\n  owner: ID!\n  PlanTypeId: ID!\n  name: String!\n  active: Boolean!\n}\n\ninput AddIntegrationTypeInput {\n  name: String!\n  active: Boolean\n}\n\ninput UpdateIntegrationTypeInput {\n  id: ID!\n  name: String!\n  active: Boolean\n}\n\ntype PaginatedIntegrationType {\n  items: [IntegrationType!]!\n  nextToken: String\n}\n\ntype Integration {\n  integrationId: ID!\n  integrationTypeId: ID!\n  owner: ID!\n  accountId: ID!\n  formId: ID!\n  active: Boolean!\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  lastExecuted: AWSDate\n  lastExecutionResult: Boolean\n  lastExecutionResultMessage: String\n}\n\ninput AddIntegrationInput {\n  integrationTypeId: ID!\n  accountId: ID!\n  formId: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationTypeInputData {\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationInput {\n  id: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ntype PaginatedIntegration {\n  items: [Integration!]!\n  nextToken: String\n}\n\ntype Query {\n  getAccount(accountId: ID!): Account\n  @aws_auth(cognito_groups: [\"Admin\", \"AccountAdmin\"])\n\n  listAllAccounts(limit: Int, nextToken: String): PaginatedAccount!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  getUser(userId: String!): User!\n  @aws_auth(cognito_groups: [\"Admin\", \"AccountAdmin\"])\n\n  listAllUsers(limit: Int, nextToken: String) : PaginatedUser!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAccountUsersInGroup(accountId: String!, group: String!, limit: Int, nextToken: String): PaginatedUser!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getPlan(planId: String!): Plan!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllPlans(limit: Int, nextToken: String): PaginatedPlan!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountPlans(accountId: String!, limit: Int, nextToken: String): PaginatedPlan!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getActiveAccountPlan(accountId: String!): PaginatedPlan!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Editor\",  \"Viewer\", \"Admin\"])\n\n  getPlanType(planTypeId: String!): PlanType!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllPlanTypes(limit: Int, nextToken: String): PaginatedPlanType!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllActivePlanTypes(limit: Int, nextToken: String): PaginatedPlanType!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getForm(formId: String!) : Form!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllForms(limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllAccountFormsByUser(accountId: String!, userId: String!, limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  getIntegrationType(integrationTypeId: String!): IntegrationType!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllIntegrationTypes(limit: Int, nextToken: String): PaginatedIntegrationType!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllIntegrationTypesByPlanType(planTypeId: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getIntegration(integrationId: String!): Integration!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllIntegrations(limit: Int, nextToken: String): PaginatedIntegration!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountIntegrations(accountId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllAccountFormIntegrations(accountId: String!, formId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  @aws_auth(cognito_groups: [\"AccountAdmin\"])\n\n  getFormEntry(formEntryId: String!): FormEntry!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllFormEntries(formId: String!) : PaginatedFormEntries!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllFormEntriesByTime(formId: String!, timestampPrefix: String!): PaginatedFormEntries!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n}\n\ntype Mutation {\n  addPlanType(input: AddPlanTypeInput): PlanType!\n  addPlan(input: AddPlanInput): Plan!\n  addAccount(input: AddAccountInput): Account!\n  addUser(input: AddUserInput): User!\n  addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!\n  addIntegration(input: AddIntegrationInput): Integration!\n  addForm(input: AddFormInput): Form!\n\n  updatePlanType(input: UpdatePlanTypeInput): PlanType!\n  updatePlan(input: UpdatePlanInput): Plan!\n  updateAccount(input: UpdateAccountInput): Account!\n  updateUser(input: UpdateUserInput): User!\n  updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!\n  updateIntegration(input: UpdateIntegrationInput): Integration!\n  updateForm(input: UpdateFormInput): Form!\n\n  deletePlanType(id: ID!): PlanType!\n  deletePlan(id: ID!): Plan!\n  deleteAccount(id: ID!): Account!\n  deleteUser(id: ID!): User!\n  deleteIntegrationType(id: ID!): IntegrationType!\n  deleteIntegration(id: ID!): Integration!\n  deleteForm(id: ID!): Form!\n\n  addFormEntry(input: AddFormEntryInput!): FormEntry!\n  testPipeline: AWSJSON\n}\n\ntype Schema {\n  query: Query\n  mutation: Mutation\n}",
               "ApiId": {
                 "Fn::GetAtt": [
                   "GraphQlApi",
@@ -413,7 +413,7 @@
               }
             }
           },
-          "GraphQlDstableformsgraphqldevmasterdataRole": {
+          "GraphQlDsMasterDataRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
               "AssumeRolePolicyDocument": {
@@ -434,7 +434,7 @@
               },
               "Policies": [
                 {
-                  "PolicyName": "GraphQlDstableformsgraphqldevmasterdataPolicy",
+                  "PolicyName": "GraphQlDsMasterDataPolicy",
                   "PolicyDocument": {
                     "Version": "2012-10-17",
                     "Statement": [
@@ -479,7 +479,7 @@
                               "/",
                               [
                                 {
-                                  "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GraphQlDstableformsgraphqldevmasterdataRole\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][0][\"Resource\"][0]"
+                                  "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GraphQlDsMasterDataRole\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][0][\"Resource\"][0]"
                                 },
                                 "*"
                               ]
@@ -493,7 +493,7 @@
               ]
             }
           },
-          "GraphQlDstableformsgraphqldevmasterdata": {
+          "GraphQlDsMasterData": {
             "Type": "AWS::AppSync::DataSource",
             "Properties": {
               "ApiId": {
@@ -502,12 +502,12 @@
                   "ApiId"
                 ]
               },
-              "Name": "table_formsgraphql_dev_masterdata",
+              "Name": "MasterData",
               "Description": "Master Table",
               "Type": "AMAZON_DYNAMODB",
               "ServiceRoleArn": {
                 "Fn::GetAtt": [
-                  "GraphQlDstableformsgraphqldevmasterdataRole",
+                  "GraphQlDsMasterDataRole",
                   "Arn"
                 ]
               },
@@ -516,6 +516,27 @@
                 "TableName": "table_formsgraphql_dev_masterdata",
                 "UseCallerCredentials": false
               }
+            }
+          },
+          "GraphQlFunctionConfigurationauthorizeFunction": {
+            "Type": "AWS::AppSync::FunctionConfiguration",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "Name": "GraphQlFunctionConfigurationauthorizeFunction",
+              "DataSourceName": {
+                "Fn::GetAtt": [
+                  "GraphQlDsMasterData",
+                  "Name"
+                ]
+              },
+              "RequestMappingTemplate": "#if (!$context.stash.isAdmin && !$context.stash.tenant)\n    $util.error(\"User is pending tenant assignment\")\n#end\n#if (!$context.stash.group)\n    $util.error(\"User is pending group assignment\")\n#end\n#if ($context.stash.isAdmin)\n{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"GetItem\",\n    \"key\": {\n        \"partitionKey\": {\"S\": \"$context.identity.sub\"},\n        \"sortKey\"     : {\"S\": \"USER\"}\n    }\n}\n#else\n{\n    \"version\" : \"2018-05-29\",\n    \"operation\" : \"BatchGetItem\",\n    \"tables\" : {\n        \"MasterData\": {\n            \"keys\": [\n                {\n                    \"partitionKey\": {\"S\": \"$context.stash.tenant\"},\n                    \"sortKey\"     : {\"S\": \"ACCOUNT\"}\n                },\n                {\n                    \"partitionKey\": {\"S\": \"$context.identity.sub\"},\n                    \"sortKey\"     : {\"S\": \"USER\"}\n                }\n            ],\n            \"consistentRead\": true\n        }\n    }\n}\n#end\n",
+              "ResponseMappingTemplate": "$util.toJson($ctx.result.data)\n",
+              "FunctionVersion": "2018-05-29"
             }
           },
           "GraphQlResolverQuerygetAccount": {
@@ -534,7 +555,7 @@
               "ResponseMappingTemplate": "$util.toJson({\n    \"accountId\": \"${ctx.result.partitionKey}\",\n    \"name\": \"${ctx.result.data.name}\",\n    \"owner\": \"${ctx.result.owner}\",\n    \"planId\": \"${ctx.result.data.planId}\",\n    \"createdAt\": \"${ctx.result.createdAt}\",\n    \"updatedAt\": \"${ctx.result.data.updatedAt}\"\n})",
               "DataSourceName": {
                 "Fn::GetAtt": [
-                  "GraphQlDstableformsgraphqldevmasterdata",
+                  "GraphQlDsMasterData",
                   "Name"
                 ]
               }
@@ -556,7 +577,7 @@
               "ResponseMappingTemplate": "{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
               "DataSourceName": {
                 "Fn::GetAtt": [
-                  "GraphQlDstableformsgraphqldevmasterdata",
+                  "GraphQlDsMasterData",
                   "Name"
                 ]
               }
@@ -578,7 +599,7 @@
               "ResponseMappingTemplate": "#set($accountId = $context.identity.claims[\"custom:account\"])\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n    #end\n#end\n#if($isAdmin || $context.result.owner == $context.identity.sub || $util.parseJson($context.result.data).accountId == $accountId)\n\n    $utils.toJson($context.result)\n\n#else\n    $utils.unauthorized()\n#end",
               "DataSourceName": {
                 "Fn::GetAtt": [
-                  "GraphQlDstableformsgraphqldevmasterdata",
+                  "GraphQlDsMasterData",
                   "Name"
                 ]
               }
@@ -600,7 +621,7 @@
               "ResponseMappingTemplate": "$util.toJson($ctx.result)",
               "DataSourceName": {
                 "Fn::GetAtt": [
-                  "GraphQlDstableformsgraphqldevmasterdata",
+                  "GraphQlDsMasterData",
                   "Name"
                 ]
               }
@@ -622,7 +643,7 @@
               "ResponseMappingTemplate": "$util.toJson({\n    \"accountId\": \"${ctx.result.partitionKey}\",\n    \"name\": \"${ctx.result.data.name}\",\n    \"owner\": \"${ctx.result.owner}\",\n    \"planId\": \"${ctx.result.data.planId}\",\n    \"createdAt\": \"${ctx.result.createdAt}\",\n    \"updatedAt\": \"${ctx.result.data.updatedAt}\"\n})",
               "DataSourceName": {
                 "Fn::GetAtt": [
-                  "GraphQlDstableformsgraphqldevmasterdata",
+                  "GraphQlDsMasterData",
                   "Name"
                 ]
               }
@@ -644,7 +665,7 @@
               "ResponseMappingTemplate": "$util.toJson({\n    \"planTypeId\": \"${ctx.result.partitionKey}\",\n    \"owner\": \"${ctx.result.owner}\",\n    \"name\": \"${ctx.result.data.name}\",\n    \"cost\": ${ctx.result.data.cost},\n    \"active\": ${ctx.result.data.active},\n    \"billingTerm\": \"${ctx.result.data.billingTerm}\",\n    \"createdAt\": \"${ctx.result.createdAt}\",\n    \"updatedAt\"  : \"${ctx.result.data.updatedAt}\"\n})",
               "DataSourceName": {
                 "Fn::GetAtt": [
-                  "GraphQlDstableformsgraphqldevmasterdata",
+                  "GraphQlDsMasterData",
                   "Name"
                 ]
               }
@@ -666,8 +687,35 @@
               "ResponseMappingTemplate": "$util.toJson({\n    \"planId\": \"${ctx.result.partitionKey}\",\n    \"accountId\": \"${ctx.result.data.accountId}\",\n    \"owner\": \"${ctx.result.owner}\",\n    \"createdAt\": \"${ctx.result.createdAt}\",\n    \"planTypeId\": \"${ctx.result.data.planTypeId}\",\n    \"startDate\": \"${ctx.result.data.startDate}\",\n    \"endDate\": \"${ctx.result.endDate}\",\n    \"active\": ${ctx.result.data.active},\n    \"lastBillDate\"  : \"${ctx.result.data.lastBillDate}\"\n})",
               "DataSourceName": {
                 "Fn::GetAtt": [
-                  "GraphQlDstableformsgraphqldevmasterdata",
+                  "GraphQlDsMasterData",
                   "Name"
+                ]
+              }
+            }
+          },
+          "GraphQlResolverMutationtestPipeline": {
+            "Type": "AWS::AppSync::Resolver",
+            "DependsOn": "GraphQlSchema",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "TypeName": "Mutation",
+              "FieldName": "testPipeline",
+              "RequestMappingTemplate": "$util.qr($ctx.stash.put(\"tenant\", $context.identity.claims[\"custom:tenant\"]))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($ctx.stash.put(\"isAccountAdmin\", true))\n    #end\n#end\n{}",
+              "ResponseMappingTemplate": "## If there was an error with the invocation\n## there might have been partial results\n#if($ctx.error)\n    ## Append a GraphQL error for that field in the GraphQL response\n    $utils.appendError($ctx.error.message, $ctx.error.message)\n#end\n## Also returns data for the field in the GraphQL response\n$utils.toJson($ctx.result)\n",
+              "Kind": "PIPELINE",
+              "PipelineConfig": {
+                "Functions": [
+                  {
+                    "Fn::GetAtt": [
+                      "GraphQlFunctionConfigurationauthorizeFunction",
+                      "FunctionId"
+                    ]
+                  }
                 ]
               }
             }
@@ -782,60 +830,79 @@
         "mappingTemplatesLocation": "src/mapping-templates",
         "mappingTemplates": [
           {
-            "dataSource": "table_formsgraphql_dev_masterdata",
+            "dataSource": "MasterData",
             "type": "Query",
             "field": "getAccount",
             "request": "getAccount-request.vtl",
             "response": "getAccount-response.vtl"
           },
           {
-            "dataSource": "table_formsgraphql_dev_masterdata",
+            "dataSource": "MasterData",
             "type": "Query",
             "field": "listAllAccounts",
             "request": "listAllAccounts-request.vtl",
             "response": "listAllAccounts-response.vtl"
           },
           {
-            "dataSource": "table_formsgraphql_dev_masterdata",
+            "dataSource": "MasterData",
             "type": "Query",
             "field": "getPlan",
             "request": "getPlan-request.vtl",
             "response": "getPlan-response.vtl"
           },
           {
-            "dataSource": "table_formsgraphql_dev_masterdata",
+            "dataSource": "MasterData",
             "type": "Query",
             "field": "getPlanType",
             "request": "getPlanType-request.vtl",
             "response": "getPlanType-response.vtl"
           },
           {
-            "dataSource": "table_formsgraphql_dev_masterdata",
+            "dataSource": "MasterData",
             "type": "Mutation",
             "field": "addAccount",
             "request": "addAccount-request.vtl",
             "response": "addAccount-response.vtl"
           },
           {
-            "dataSource": "table_formsgraphql_dev_masterdata",
+            "dataSource": "MasterData",
             "type": "Mutation",
             "field": "addPlanType",
             "request": "addPlanType-request.vtl",
             "response": "addPlanType-response.vtl"
           },
           {
-            "dataSource": "table_formsgraphql_dev_masterdata",
+            "dataSource": "MasterData",
             "type": "Mutation",
             "field": "addPlan",
             "request": "addPlan-request.vtl",
             "response": "addPlan-response.vtl"
+          },
+          {
+            "dataSource": "MasterData",
+            "type": "Mutation",
+            "field": "testPipeline",
+            "request": "authorize-request.vtl",
+            "response": "authorize-response.vtl",
+            "kind": "PIPELINE",
+            "functions": [
+              "authorizeFunction"
+            ]
+          }
+        ],
+        "functionConfigurations": [
+          {
+            "dataSource": "MasterData",
+            "name": "authorizeFunction",
+            "request": "fetchUserAccount-request.vtl",
+            "response": "fetchUserAccount-response.vtl"
           }
         ],
         "schema": "schema.graphql",
         "dataSources": [
           {
             "type": "AMAZON_DYNAMODB",
-            "name": "table_formsgraphql_dev_masterdata",
+            "name": "MasterData",
             "description": "Master Table",
             "config": {
               "tableName": "table_formsgraphql_dev_masterdata"
@@ -1196,7 +1263,7 @@
     }
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsgraphql/dev/1552110584613-2019-03-09T05:49:44.613Z",
+    "artifactDirectoryName": "serverless/formsgraphql/dev/1552128879228-2019-03-09T10:54:39.228Z",
     "artifact": ""
   }
 }

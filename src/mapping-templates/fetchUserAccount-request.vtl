@@ -1,0 +1,36 @@
+#if (!$context.stash.isAdmin && !$context.stash.tenant)
+    $util.error("User is pending tenant assignment")
+#end
+#if (!$context.stash.group)
+    $util.error("User is pending group assignment")
+#end
+#if ($context.stash.isAdmin)
+{
+    "version" : "2017-02-28",
+    "operation" : "GetItem",
+    "key": {
+        "partitionKey": {"S": "$context.identity.sub"},
+        "sortKey"     : {"S": "USER"}
+    }
+}
+#else
+{
+    "version" : "2018-05-29",
+    "operation" : "BatchGetItem",
+    "tables" : {
+        "MasterData": {
+            "keys": [
+                {
+                    "partitionKey": {"S": "$context.stash.tenant"},
+                    "sortKey"     : {"S": "ACCOUNT"}
+                },
+                {
+                    "partitionKey": {"S": "$context.identity.sub"},
+                    "sortKey"     : {"S": "USER"}
+                }
+            ],
+            "consistentRead": true
+        }
+    }
+}
+#end
