@@ -121,11 +121,28 @@ custom:
         kind: PIPELINE
         functions:
           - authorizeFunction
+      - dataSource: MasterData
+        type: Mutation
+        field: attachPlan
+        request: createAccountPlan-before.vtl
+        response: createAccountPlan-after.vtl
+        kind: PIPELINE
+        functions:
+          - addPlan
+          - updateAccount
     functionConfigurations:
       - dataSource: MasterData
         name: authorizeFunction
         request: fetchUserAccount-request.vtl
         response: fetchUserAccount-response.vtl
+      - dataSource: MasterData
+        name: addPlan
+        request: addPlan-request.vtl
+        response: addPlan-response.vtl
+      - dataSource: MasterData
+        name: updateAccount
+        request: updateAccountPlan-request.vtl
+        response: updateAccountPlan-response.vtl
     schema: schema.graphql
     dataSources:
       - type: AMAZON_DYNAMODB

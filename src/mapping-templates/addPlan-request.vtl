@@ -1,35 +1,29 @@
-#foreach($group in $context.identity.claims.get("cognito:groups"))
-    #if($group == "Admin")
-        #set($inCognitoGroup = true)
-    #end
-#end
-#if($inCognitoGroup || $context.identity.claims["custom:tenant"] == $attribs.accountId)
-    #set($attribs = $context.arguments.input)
-    #set($attribs.id = $util.autoId())
-    #set($attribs.owner = $context.identity.sub)
-    #set($attribs.createdAt = $util.time.nowISO8601())
-    {
-        "version": "2017-02-28",
-        "operation": "PutItem",
-        "key": {
-            "partitionKey": {"S": "${attribs.id}"},
-            "sortKey"     : {"S": "PLAN"}
+#set($attribs = $context.arguments.input)
+#set($attribs.id = $util.autoId())
+#set($attribs.owner = $context.identity.sub)
+#set($createdAt = $util.time.nowISO8601())
+#set($attribs.startDate = $createdAt)
+#set($attribs.active = true)
+{
+    "version": "2017-02-28",
+    "operation": "PutItem",
+    "key": {
+        "partitionKey": {"S": "${attribs.id}"},
+        "sortKey"     : {"S": "PLAN"}
 
-        },
-        "attributeValues": {
-            "indexKey"  : {"S": "${attribs.accountId}#true"},
-            "type"      : {"S": "PLAN"},
-            "owner"     : {"S": "$context.identity.sub"},
-            "isDeleted" : {"BOOL" : false },
-            "data"      : $util.dynamodb.toDynamoDBJson($attribs)
-        },
-        "condition": {
-            "expression": "attribute_not_exists(#partitionKey)",
-            "expressionNames": {
-                "#partitionKey": "partitionKey",
-            }
+    },
+    "attributeValues": {
+        "indexKey"  : {"S": "${attribs.accountId}#true"},
+        "type"      : {"S": "PLAN"},
+        "owner"     : {"S": "$context.identity.sub"},
+        "isDeleted" : {"BOOL" : false },
+        "createdAt" : {"S" : "${createdAt}"},
+        "itemData"  : $util.dynamodb.toDynamoDBJson($attribs)
+    },
+    "condition": {
+        "expression": "attribute_not_exists(#partitionKey)",
+        "expressionNames": {
+            "#partitionKey": "partitionKey",
         }
     }
-#else
-    $utils.unauthorized()
-#end
+}

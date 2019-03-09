@@ -1,8 +1,8 @@
 mutation {
   addPlanType(
     input: {
-      name: "TestPlanType"
-    	cost: 250.50
+      name: "Pro"
+    	cost: 249.99
       billingTerm: "Monthly"
       active: true
     }
@@ -14,6 +14,24 @@ mutation {
     owner
   }
 }
+
+mutation {
+  addPlanType(
+    input: {
+      name: "Basic"
+    	cost: 49.99
+      billingTerm: "Monthly"
+      active: true
+    }
+  ) {
+    planTypeId
+    name
+    cost
+    billingTerm
+    owner
+  }
+}
+
 
 mutation {
   addPlan(
@@ -44,4 +62,17 @@ mutation {
     createdAt
     owner
   }
+}
+
+query {
+  getAccount(accountId: "replace_me") {
+    name
+  }
+}
+
+mutation {
+  attachPlan(input: {
+    accountId: "8d6e0dc4-9737-4fcd-8817-452470d6851d"
+    planTypeId: "5a4d6895-e726-4305-bc7f-3c3080897e9e"
+  })
 }

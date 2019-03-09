@@ -1,11 +1,11 @@
 $util.toJson({
     "planId": "${ctx.result.partitionKey}",
-    "accountId": "${ctx.result.data.accountId}",
+    "accountId": "${ctx.result.itemData.accountId}",
     "owner": "${ctx.result.owner}",
     "createdAt": "${ctx.result.createdAt}",
-    "planTypeId": "${ctx.result.data.planTypeId}",
-    "startDate": "${ctx.result.data.startDate}",
-    "endDate": "${ctx.result.endDate}",
-    "active": ${ctx.result.data.active},
-    "lastBillDate"  : "${ctx.result.data.lastBillDate}"
+    "planTypeId": "${ctx.result.itemData.planTypeId}",
+    "startDate": "${ctx.result.itemData.startDate}",
+    "endDate": $util.defaultIfNull($ctx.result.itemData.endDate, null),
+    "active": ${ctx.result.itemData.active},
+    "lastBillDate"  :  $util.defaultIfNull($ctx.result.itemData.endDate, null)
 })

@@ -20,7 +20,7 @@
             "type"      : {"S" : "PLANTYPE"},
             "owner"     : {"S" : "$context.identity.sub"},
             "isDeleted" : {"BOOL" : false },
-            "data"      : $util.dynamodb.toDynamoDBJson($attribs)
+            "itemData"      : $util.dynamodb.toDynamoDBJson($attribs)
         },
         "condition": {
             "expression": "attribute_not_exists(#partitionKey)",

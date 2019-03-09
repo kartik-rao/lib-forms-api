@@ -1,0 +1,28 @@
+#if($context.prev.result.planId)
+    #set($planId = $util.dynamodb.toDynamoDBJson($context.prev.result.planId))
+    #set($indexKey = $planId)
+#end
+#if($context.arguments.input.planId)
+    #set($planId = $util.dynamodb.toDynamoDBJson($context.arguments.input.planId))
+    #set($indexKey = $planId)
+#end
+#if(!$planId)
+    #set($planId=$util.dynamodb.toNull())
+    #set($indexKey="FREE")
+#end
+{
+    "version" : "2017-02-28",
+    "operation" : "UpdateItem",
+    "key": {
+        "partitionKey": {"S": "$context.arguments.input.accountId"},
+        "sortKey"     : {"S": "ACCOUNT"}
+    },
+    "update" : {
+        "expression" : "SET indexKey = :planId, updatedAt = :updatedAt, itemData.planId = :planId",
+        "expressionValues": {
+            ":indexKey": $indexKey,
+            ":planId" : $planId,
+            ":updatedAt" : {"S" : "$util.time.nowISO8601()"}
+        }
+    }
+}

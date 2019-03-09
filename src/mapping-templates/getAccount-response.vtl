@@ -1,8 +1,8 @@
 $util.toJson({
     "accountId": "${ctx.result.partitionKey}",
-    "name": "${ctx.result.data.name}",
+    "name": "${ctx.result.itemData.name}",
     "owner": "${ctx.result.owner}",
-    "planId": "${ctx.result.data.planId}",
+    "planId": "${ctx.result.itemData.planId}",
     "createdAt": "${ctx.result.createdAt}",
-    "updatedAt": "${ctx.result.data.updatedAt}"
+    "updatedAt": "${ctx.result.updatedAt}"
 })
