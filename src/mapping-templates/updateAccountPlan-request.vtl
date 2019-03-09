@@ -18,7 +18,7 @@
         "sortKey"     : {"S": "ACCOUNT"}
     },
     "update" : {
-        "expression" : "SET indexKey = :planId, updatedAt = :updatedAt, itemData.planId = :planId",
+        "expression" : "SET indexKey = :indexKey, updatedAt = :updatedAt, itemData.planId = :planId",
         "expressionValues": {
             ":indexKey": $indexKey,
             ":planId" : $planId,

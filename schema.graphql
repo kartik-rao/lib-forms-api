@@ -402,7 +402,7 @@ type Mutation {
 
   addFormEntry(input: AddFormEntryInput!): FormEntry!
   testPipeline: AWSJSON
-  attachPlan(input: AddPlanInput): AWSJSON
+  attachPlan(input: AddPlanInput): Account
 }
 
 type Schema {
