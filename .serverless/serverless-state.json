@@ -574,7 +574,7 @@
               },
               "TypeName": "Query",
               "FieldName": "getPlan",
-              "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n  #if($group == \"Admin\" || $context.arguments.input.accountId == $context.identity.claims[\"custom:account\"])\n      #set($inCognitoGroup = true)\n#end\n#if($inCognitoGroup)\n{\n  \"version\" : \"2017-02-28\",\n  \"operation\" : \"GetItem\",\n  \"key\": {\n        \"partitionKey\": $util.dynamodb.toDynamoDBJson($context.arguments.input.planId)\n  }\n}\n#else\n    $utils.unauthorized()\n#end",
+              "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n  #if($group == \"Admin\" || $context.arguments.input.accountId == $context.identity.claims[\"custom:account\"])\n      #set($inCognitoGroup = true)\n#end\n#if($inCognitoGroup)\n{\n  \"version\" : \"2017-02-28\",\n  \"operation\" : \"GetItem\",\n  \"key\": {\n        \"partitionKey\": $util.dynamodb.toDynamoDBJson($context.arguments.planId)\n  }\n}\n#else\n    $utils.unauthorized()\n#end",
               "ResponseMappingTemplate": "#set($accountId = $context.identity.claims[\"custom:account\"])\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n    #end\n#end\n#if($isAdmin || $context.result.owner == $context.identity.sub || $util.parseJson($context.result.data).accountId == $accountId)\n\n    $utils.toJson($context.result)\n\n#else\n    $utils.unauthorized()\n#end",
               "DataSourceName": {
                 "Fn::GetAtt": [
@@ -596,7 +596,7 @@
               },
               "TypeName": "Query",
               "FieldName": "getPlanType",
-              "RequestMappingTemplate": "{\n  \"version\" : \"2017-02-28\",\n  \"operation\" : \"GetItem\",\n  \"key\": {\n        \"partitionKey\": $util.dynamodb.toDynamoDBJson($context.arguments.input.planTypeId)\n  }\n}",
+              "RequestMappingTemplate": "{\n  \"version\" : \"2017-02-28\",\n  \"operation\" : \"GetItem\",\n  \"key\": {\n        \"partitionKey\": $util.dynamodb.toDynamoDBJson($context.arguments.planTypeId),\n        \"sortKey\" : {\"S\" : \"PLANTYPE\"}\n  }\n}",
               "ResponseMappingTemplate": "$util.toJson($ctx.result)",
               "DataSourceName": {
                 "Fn::GetAtt": [
@@ -1196,7 +1196,7 @@
     }
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsgraphql/dev/1552110472871-2019-03-09T05:47:52.871Z",
+    "artifactDirectoryName": "serverless/formsgraphql/dev/1552110584613-2019-03-09T05:49:44.613Z",
     "artifact": ""
   }
 }
