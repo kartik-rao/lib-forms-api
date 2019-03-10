@@ -7,6 +7,8 @@ import {Logger, SEVERITY} from "@adinfinity/ai-lambda-logging";
 import {APIGatewayEventRequestContext, APIGatewayEvent} from 'aws-lambda';
 import * as _ from "lodash";
 
+global["fetch"] = require('node-fetch');
+
 const HEADERS = {
     'Cache-Control': 'private, must-revalidate, proxy-revalidate',
     'Content-Type': 'application/json',
@@ -74,6 +76,7 @@ export const handle = (event : APIGatewayEvent, context : APIGatewayEventRequest
             })
         })
         .catch((err) => {
+            logger.error("Amplify.signUp", err);
             callback(null, {
                 statusCode: 500,
                 headers: HEADERS,

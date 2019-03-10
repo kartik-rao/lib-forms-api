@@ -180,15 +180,20 @@ custom:
 functions:
   signup:
     name: ${self:provider.functions.signup}
-    handler: src/signup
+    handler: src/signup.handle
     events:
       - http:
           path: /signup
           method: post
           cors: true
+    environment:
+      cognitoUserPoolId:
+        Ref: CognitoUserPoolMyUserPool
+      cognitoUserPoolWebClientId:
+        Ref: CognitoUserPoolClient
   postConfirmation:
     name: ${self:provider.functions.postconfirmation}
-    handler: src/postconfirmation
+    handler: src/postconfirmation.handle
     events:
       - http:
           path: /postconfirm

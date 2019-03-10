@@ -7,7 +7,7 @@
     #set($attribs = $context.arguments.input)
     #set($attribs.id = $util.autoId())
     #set($attribs.owner = $context.identity.sub)
-    #set($attribs.createdAt = $util.time.nowISO8601())
+    #set($createdAt = $util.time.nowISO8601())
     {
         "version": "2017-02-28",
         "operation": "PutItem",
@@ -17,10 +17,11 @@
         },
         "attributeValues": {
             "indexKey"   : {"S" : "$context.arguments.input.active"},
-            "type"      : {"S" : "PLANTYPE"},
-            "owner"     : {"S" : "$context.identity.sub"},
-            "isDeleted" : {"BOOL" : false },
-            "itemData"      : $util.dynamodb.toDynamoDBJson($attribs)
+            "type"       : {"S" : "PLANTYPE"},
+            "owner"      : {"S" : "$context.identity.sub"},
+            "isDeleted"  : {"BOOL" : false },
+            "createdAt"  : $util.dynamodb.toDynamoDBJson($createdAt),
+            "itemData"   : $util.dynamodb.toDynamoDBJson($attribs)
         },
         "condition": {
             "expression": "attribute_not_exists(#partitionKey)",

@@ -2,7 +2,7 @@ $util.toJson({
     "accountId": "${ctx.result.partitionKey}",
     "name": "${ctx.result.itemData.name}",
     "owner": "${ctx.result.owner}",
-    "planId": "${ctx.result.itemData.planId}",
+    "planId": $util.defaultIfNull($ctx.result.itemData.planId, null),
     "createdAt": "${ctx.result.createdAt}",
-    "updatedAt": "${ctx.result.updatedAt}"
+    "updatedAt": $util.defaultIfNull($ctx.result.updatedAt, null)
 })

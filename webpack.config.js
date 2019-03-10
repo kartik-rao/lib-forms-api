@@ -2,13 +2,8 @@ var path = require('path');
 const slsw = require('serverless-webpack');
 const nodeExternals = require('webpack-node-externals');
 
-console.log("ENTRIES", slsw.lib.entries)
-
 module.exports = {
-    entry: {
-        signup: './src/signup.ts',
-        postconfirmation: './src/postconfirmation.ts'
-    },
+    entry: slsw.lib.entries,
     target: 'node',
     externals: [nodeExternals()],
     mode: process.env.NODE_ENV,

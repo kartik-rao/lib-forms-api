@@ -49,7 +49,7 @@ export const handle = (event : APIGatewayEvent, context : APIGatewayEventRequest
                             indexKey: `${accountId}:${userAttributes.sub}:Admin`,
                             itemData: {
                                 accountId : accountId,
-                                group: 'Admin',
+                                group: 'AccountAdmin',
                                 ...userAttributes
                             }
                         }

@@ -1,6 +1,7 @@
 #set($attribs = $context.arguments.input)
 #set($attribs.id = $util.autoId())
 #set($attribs.owner = $context.identity.sub)
+#set($attribs.planId = "FREE")
 #set($createdAt = $util.time.nowISO8601())
 {
     "version": "2017-02-28",

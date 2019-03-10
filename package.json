@@ -16,7 +16,8 @@
     "aws-sdk": "^2.415.0",
     "graphql": "^14.1.1",
     "source-map-support": "^0.5.10",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "node-fetch": "^2.3.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.20",
@@ -40,7 +41,6 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^3.0.5",
     "lodash": "^4.17.11",
-    "node-fetch": "^2.3.0",
     "serverless": "^1.38.0",
     "serverless-appsync-offline": "^1.1.2",
     "serverless-appsync-plugin": "^1.1.0",

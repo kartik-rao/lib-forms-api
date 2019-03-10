@@ -143,10 +143,10 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsgraphql/dev/1552209325111-2019-03-10T09:15:25.111Z/formsgraphql.zip"
+          "S3Key": "serverless/formsgraphql/dev/1552216912979-2019-03-10T11:21:52.979Z/formsgraphql.zip"
         },
         "FunctionName": "dev-formsgraphql-signup",
-        "Handler": "src/signup",
+        "Handler": "src/signup.handle",
         "MemorySize": 1024,
         "Role": {
           "Fn::GetAtt": [
@@ -160,7 +160,13 @@
           "Variables": {
             "serviceName": "dev-formsgraphql",
             "TBL_FORM_ENTRY": "table_formsgraphql_dev_entries",
-            "TBL_MASTER_DATA": "table_formsgraphql_dev_masterdata"
+            "TBL_MASTER_DATA": "table_formsgraphql_dev_masterdata",
+            "cognitoUserPoolId": {
+              "Ref": "CognitoUserPoolMyUserPool"
+            },
+            "cognitoUserPoolWebClientId": {
+              "Ref": "CognitoUserPoolClient"
+            }
           }
         }
       },
@@ -169,14 +175,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "SignupLambdaVersionNpMfXcitzUkmviVVlb3u1tjlqXBKdfFggmJ5QPSNU": {
+    "SignupLambdaVersion7Hj2UyIekGAPaf13YQwGmrj3jc6sB0R4f7JQqLNgTw": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "SignupLambdaFunction"
         },
-        "CodeSha256": "PVlbb+7HNYMBv5a5QiO38GDRGvDu5WyfnBSX9AhMDOs="
+        "CodeSha256": "wRQHdgoaNCuVk3XHu8XSoJ7+8yYrxFDcbL1jsFkCwEg="
       }
     },
     "PostConfirmationLambdaFunction": {
@@ -186,10 +192,10 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsgraphql/dev/1552209325111-2019-03-10T09:15:25.111Z/formsgraphql.zip"
+          "S3Key": "serverless/formsgraphql/dev/1552216912979-2019-03-10T11:21:52.979Z/formsgraphql.zip"
         },
         "FunctionName": "dev-formsgraphql-postconfirmation",
-        "Handler": "src/postconfirmation",
+        "Handler": "src/postconfirmation.handle",
         "MemorySize": 1024,
         "Role": {
           "Fn::GetAtt": [
@@ -212,14 +218,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "PostConfirmationLambdaVersionSM3rydwMYxTTpnRkd3tfWG5GwwgqFHS6q44Ioq7Dac": {
+    "PostConfirmationLambdaVersionXlXGh7IA7u2afzt1NYKoK70QE78LVB2J3RxQGxLU": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "PostConfirmationLambdaFunction"
         },
-        "CodeSha256": "PVlbb+7HNYMBv5a5QiO38GDRGvDu5WyfnBSX9AhMDOs="
+        "CodeSha256": "wRQHdgoaNCuVk3XHu8XSoJ7+8yYrxFDcbL1jsFkCwEg="
       }
     },
     "ApiGatewayRestApi": {
@@ -441,7 +447,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1552209325488": {
+    "ApiGatewayDeployment1552216913370": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -1144,7 +1150,7 @@
         "TypeName": "Query",
         "FieldName": "getAccount",
         "RequestMappingTemplate": "#set($tenant = $context.identity.claims[\"custom:tenant\"])\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($inCognitoGroup = true)\n    #end\n#end\n#if($inCognitoGroup)\n    #set($attribs = $context.arguments)\n    {\n        \"version\" : \"2017-02-28\",\n        \"operation\" : \"GetItem\",\n        \"key\": {\n            \"partitionKey\": {\"S\": \"${attribs.accountId}\"},\n            \"sortKey\"     : {\"S\": \"ACCOUNT\"}\n        }\n    }\n#else\n    $utils.unauthorized()\n#end",
-        "ResponseMappingTemplate": "$util.toJson({\n    \"accountId\": \"${ctx.result.partitionKey}\",\n    \"name\": \"${ctx.result.itemData.name}\",\n    \"owner\": \"${ctx.result.owner}\",\n    \"planId\": \"${ctx.result.itemData.planId}\",\n    \"createdAt\": \"${ctx.result.createdAt}\",\n    \"updatedAt\": \"${ctx.result.updatedAt}\"\n})",
+        "ResponseMappingTemplate": "$util.toJson({\n    \"accountId\": $context.result.partitionKey,\n    \"name\": $contex.result.itemData.name,\n    \"owner\": $context.result.owner,\n    \"planId\": $context.result.itemData.planId,\n    \"createdAt\": $context.result.createdAt,\n    \"updatedAt\": $context.result.updatedAt\n})",
         "DataSourceName": {
           "Fn::GetAtt": [
             "GraphQlDsMasterData",
@@ -1231,7 +1237,7 @@
         },
         "TypeName": "Mutation",
         "FieldName": "addAccount",
-        "RequestMappingTemplate": "#set($attribs = $context.arguments.input)\n#set($attribs.id = $util.autoId())\n#set($attribs.owner = $context.identity.sub)\n#set($createdAt = $util.time.nowISO8601())\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"partitionKey\": {\"S\" : \"${attribs.id}\"},\n        \"sortKey\"     : {\"S\" : \"ACCOUNT\"}\n    },\n    \"attributeValues\": {\n        \"indexKey\"  : {\"S\" : \"FREE\"},\n        \"type\"      : {\"S\" : \"ACCOUNT\"},\n        \"owner\"     : {\"S\" : \"$context.identity.sub\"},\n        \"isDeleted\" : {\"BOOL\": false },\n        \"createdAt\" : $util.dynamodb.toDynamoDBJson($createdAt),\n        \"itemData\"  : $util.dynamodb.toDynamoDBJson($attribs)\n    },\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#partitionKey)\",\n            \"expressionNames\": {\n            \"#partitionKey\": \"partitionKey\",\n        }\n    }\n}",
+        "RequestMappingTemplate": "#set($attribs = $context.arguments.input)\n#set($attribs.id = $util.autoId())\n#set($attribs.owner = $context.identity.sub)\n#set($attribs.planId = \"FREE\")\n#set($createdAt = $util.time.nowISO8601())\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"partitionKey\": {\"S\" : \"${attribs.id}\"},\n        \"sortKey\"     : {\"S\" : \"ACCOUNT\"}\n    },\n    \"attributeValues\": {\n        \"indexKey\"  : {\"S\" : \"FREE\"},\n        \"type\"      : {\"S\" : \"ACCOUNT\"},\n        \"owner\"     : {\"S\" : \"$context.identity.sub\"},\n        \"isDeleted\" : {\"BOOL\": false },\n        \"createdAt\" : $util.dynamodb.toDynamoDBJson($createdAt),\n        \"itemData\"  : $util.dynamodb.toDynamoDBJson($attribs)\n    },\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#partitionKey)\",\n            \"expressionNames\": {\n            \"#partitionKey\": \"partitionKey\",\n        }\n    }\n}",
         "ResponseMappingTemplate": "$util.toJson({\n    \"accountId\": \"${ctx.result.partitionKey}\",\n    \"name\": \"${ctx.result.itemData.name}\",\n    \"owner\": \"${ctx.result.owner}\",\n    \"planId\": \"${ctx.result.itemData.planId}\",\n    \"createdAt\": \"${ctx.result.createdAt}\",\n    \"updatedAt\": \"${ctx.result.itemData.updatedAt}\"\n})",
         "DataSourceName": {
           "Fn::GetAtt": [
@@ -1253,7 +1259,7 @@
         },
         "TypeName": "Mutation",
         "FieldName": "addPlanType",
-        "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($inCognitoGroup = true)\n    #end\n#end\n#if($inCognitoGroup)\n    #set($attribs = $context.arguments.input)\n    #set($attribs.id = $util.autoId())\n    #set($attribs.owner = $context.identity.sub)\n    #set($attribs.createdAt = $util.time.nowISO8601())\n    {\n        \"version\": \"2017-02-28\",\n        \"operation\": \"PutItem\",\n        \"key\": {\n            \"partitionKey\": {\"S\" : \"${attribs.id}\"},\n            \"sortKey\"     : {\"S\" : \"PLANTYPE\"}\n        },\n        \"attributeValues\": {\n            \"indexKey\"   : {\"S\" : \"$context.arguments.input.active\"},\n            \"type\"      : {\"S\" : \"PLANTYPE\"},\n            \"owner\"     : {\"S\" : \"$context.identity.sub\"},\n            \"isDeleted\" : {\"BOOL\" : false },\n            \"itemData\"      : $util.dynamodb.toDynamoDBJson($attribs)\n        },\n        \"condition\": {\n            \"expression\": \"attribute_not_exists(#partitionKey)\",\n                \"expressionNames\": {\n                \"#partitionKey\": \"partitionKey\",\n            }\n        }\n    }\n#else\n    $utils.unauthorized()\n#end",
+        "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($inCognitoGroup = true)\n    #end\n#end\n#if($inCognitoGroup)\n    #set($attribs = $context.arguments.input)\n    #set($attribs.id = $util.autoId())\n    #set($attribs.owner = $context.identity.sub)\n    #set($createdAt = $util.time.nowISO8601())\n    {\n        \"version\": \"2017-02-28\",\n        \"operation\": \"PutItem\",\n        \"key\": {\n            \"partitionKey\": {\"S\" : \"${attribs.id}\"},\n            \"sortKey\"     : {\"S\" : \"PLANTYPE\"}\n        },\n        \"attributeValues\": {\n            \"indexKey\"   : {\"S\" : \"$context.arguments.input.active\"},\n            \"type\"       : {\"S\" : \"PLANTYPE\"},\n            \"owner\"      : {\"S\" : \"$context.identity.sub\"},\n            \"isDeleted\"  : {\"BOOL\" : false },\n            \"createdAt\"  : $util.dynamodb.toDynamoDBJson($createdAt),\n            \"itemData\"   : $util.dynamodb.toDynamoDBJson($attribs)\n        },\n        \"condition\": {\n            \"expression\": \"attribute_not_exists(#partitionKey)\",\n                \"expressionNames\": {\n                \"#partitionKey\": \"partitionKey\",\n            }\n        }\n    }\n#else\n    $utils.unauthorized()\n#end",
         "ResponseMappingTemplate": "$util.toJson({\n    \"planTypeId\": \"${ctx.result.partitionKey}\",\n    \"owner\": \"${ctx.result.owner}\",\n    \"name\": \"${ctx.result.itemData.name}\",\n    \"cost\": ${ctx.result.itemData.cost},\n    \"active\": ${ctx.result.itemData.active},\n    \"billingTerm\": \"${ctx.result.itemData.billingTerm}\",\n    \"createdAt\": \"${ctx.result.createdAt}\",\n    \"updatedAt\"  : \"${ctx.result.itemData.updatedAt}\"\n})",
         "DataSourceName": {
           "Fn::GetAtt": [
@@ -1355,13 +1361,13 @@
     "SignupLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "SignupLambdaVersionNpMfXcitzUkmviVVlb3u1tjlqXBKdfFggmJ5QPSNU"
+        "Ref": "SignupLambdaVersion7Hj2UyIekGAPaf13YQwGmrj3jc6sB0R4f7JQqLNgTw"
       }
     },
     "PostConfirmationLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "PostConfirmationLambdaVersionSM3rydwMYxTTpnRkd3tfWG5GwwgqFHS6q44Ioq7Dac"
+        "Ref": "PostConfirmationLambdaVersionXlXGh7IA7u2afzt1NYKoK70QE78LVB2J3RxQGxLU"
       }
     },
     "ServiceEndpoint": {
