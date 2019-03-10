@@ -1,29 +1,51 @@
 #serverless.yml
-
 service: formsgraphql
 
 provider:
   name: aws
   runtime: nodejs8.10
+  accountId: 523242459359
   stage: ${opt:stage, 'dev'}
   region: ${opt:stage, 'ap-southeast-2'}
+  serviceName: ${self:provider.stage}-${self:service}
+  functions:
+    postconfirmation: ${self:provider.serviceName}-postconfirmation
+    signup: ${self:provider.serviceName}-signup
   profile: default
   environment:
+    serviceName: ${self:provider.stage}-${self:service}
     TBL_FORM_ENTRY: table_${self:service}_${self:provider.stage}_entries
     TBL_MASTER_DATA: table_${self:service}_${self:provider.stage}_masterdata
   iamRoleStatements:
     - Effect: Allow
       Action:
-        - dynamodb:Query
-        - dynamodb:Scan
         - dynamodb:GetItem
         - dynamodb:PutItem
         - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
+        - dynamodb:BatchWriteItem
       Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TBL_MASTER_DATA}"
+    - Effect: Allow
+      Action:
+        - cognito-idp:SignUp
+        - cognito-idp:AddCustomAttributes
+        - cognito-idp:AdminAddUserToGroup
+        - cognito-idp:AdminUpdateUserAttributes
+        - cognito-idp:AdminRemoveUserFromGroup
+        - cognito-idp:AdminGetUser
+        - cognito-idp:GetUser
+      Resource:
+        - Fn::Join:
+          - ':'
+          -
+            - arn:aws:cognito-idp
+            - Ref: AWS::Region
+            - Ref: AWS::AccountId
+            - userpool/*
 
 plugins:
+  - serverless-webpack
   - serverless-cognito-add-custom-attributes
+  - serverless-iam-roles-per-function
   - serverless-appsync-plugin
   - serverless-dynamodb-local
   - serverless-appsync-offline
@@ -36,6 +58,14 @@ resources:
   - ${file(resources/s3.yml)}
 
 custom:
+  # enable auto including modules
+  packagePath: './package.json'
+  webpack:
+    webpackConfig: 'webpack.config.js'   # Name of webpack configuration file
+    packager: 'npm'   # Packager that will be used to package your external modules
+    includeModules:
+      forceInclude:
+        - source-map-support
   CognitoAddCustomAttributes:
     CognitoUserPoolIdOutputKey: "UserPoolId"              # The key of the outputted UserPool Ref
     CognitoUserPoolClientIdOutputKey: "UserPoolClientId"  # The key of the outputted UserPoolClient Ref
@@ -59,9 +89,6 @@ custom:
     start:
       port: 8000
       inMemory: true
-  webpack:
-    webpackConfig: ./webpack.config.js
-    includeModules: true
   appSync:
     name:  ai-forms-backend-${self:provider.stage}
     # apiKey # only required for update-appsync/delete-appsync
@@ -72,7 +99,7 @@ custom:
       awsRegion: ${self:provider.region}
       defaultAction: ALLOW
       userPoolId:
-        Ref: CognitoUserPool
+        Ref: CognitoUserPoolMyUserPool
     logConfig:
       loggingRoleArn: { Fn::GetAtt: [AppSyncCloudWatchRole, Arn] } # Where AppSyncLoggingServiceRole is a role with CloudWatch Logs write access
       level: ALL
@@ -150,3 +177,23 @@ custom:
         description: Master Table
         config:
           tableName: ${self:custom.TBL_MASTER_DATA} # Where MasterDataTable is a dynamodb table defined in Resources
+functions:
+  signup:
+    name: ${self:provider.functions.signup}
+    handler: src/signup
+    events:
+      - http:
+          path: /signup
+          method: post
+          cors: true
+  postConfirmation:
+    name: ${self:provider.functions.postconfirmation}
+    handler: src/postconfirmation
+    events:
+      - http:
+          path: /postconfirm
+          method: post
+          cors: true
+      - cognitoUserPool:
+          pool: MyUserPool
+          trigger: PostConfirmation

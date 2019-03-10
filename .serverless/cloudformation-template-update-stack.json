@@ -5,6 +5,601 @@
     "ServerlessDeploymentBucket": {
       "Type": "AWS::S3::Bucket"
     },
+    "SignupLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/dev-formsgraphql-signup"
+      }
+    },
+    "PostConfirmationLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/dev-formsgraphql-postconfirmation"
+      }
+    },
+    "IamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "dev",
+                  "formsgraphql",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/dev-formsgraphql-signup:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/dev-formsgraphql-postconfirmation:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/dev-formsgraphql-signup:*:*"
+                    },
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/dev-formsgraphql-postconfirmation:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "dynamodb:GetItem",
+                    "dynamodb:PutItem",
+                    "dynamodb:UpdateItem",
+                    "dynamodb:BatchWriteItem"
+                  ],
+                  "Resource": "arn:aws:dynamodb:ap-southeast-2:*:table/table_formsgraphql_dev_masterdata"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "cognito-idp:SignUp",
+                    "cognito-idp:AddCustomAttributes",
+                    "cognito-idp:AdminAddUserToGroup",
+                    "cognito-idp:AdminUpdateUserAttributes",
+                    "cognito-idp:AdminRemoveUserFromGroup",
+                    "cognito-idp:AdminGetUser",
+                    "cognito-idp:GetUser"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        ":",
+                        [
+                          "arn:aws:cognito-idp",
+                          {
+                            "Ref": "AWS::Region"
+                          },
+                          {
+                            "Ref": "AWS::AccountId"
+                          },
+                          "userpool/*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "formsgraphql",
+              "dev",
+              "ap-southeast-2",
+              "lambdaRole"
+            ]
+          ]
+        }
+      }
+    },
+    "SignupLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/formsgraphql/dev/1552209325111-2019-03-10T09:15:25.111Z/formsgraphql.zip"
+        },
+        "FunctionName": "dev-formsgraphql-signup",
+        "Handler": "src/signup",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs8.10",
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "serviceName": "dev-formsgraphql",
+            "TBL_FORM_ENTRY": "table_formsgraphql_dev_entries",
+            "TBL_MASTER_DATA": "table_formsgraphql_dev_masterdata"
+          }
+        }
+      },
+      "DependsOn": [
+        "SignupLogGroup",
+        "IamRoleLambdaExecution"
+      ]
+    },
+    "SignupLambdaVersionNpMfXcitzUkmviVVlb3u1tjlqXBKdfFggmJ5QPSNU": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "SignupLambdaFunction"
+        },
+        "CodeSha256": "PVlbb+7HNYMBv5a5QiO38GDRGvDu5WyfnBSX9AhMDOs="
+      }
+    },
+    "PostConfirmationLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/formsgraphql/dev/1552209325111-2019-03-10T09:15:25.111Z/formsgraphql.zip"
+        },
+        "FunctionName": "dev-formsgraphql-postconfirmation",
+        "Handler": "src/postconfirmation",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs8.10",
+        "Timeout": 6,
+        "Environment": {
+          "Variables": {
+            "serviceName": "dev-formsgraphql",
+            "TBL_FORM_ENTRY": "table_formsgraphql_dev_entries",
+            "TBL_MASTER_DATA": "table_formsgraphql_dev_masterdata"
+          }
+        }
+      },
+      "DependsOn": [
+        "PostConfirmationLogGroup",
+        "IamRoleLambdaExecution"
+      ]
+    },
+    "PostConfirmationLambdaVersionSM3rydwMYxTTpnRkd3tfWG5GwwgqFHS6q44Ioq7Dac": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "PostConfirmationLambdaFunction"
+        },
+        "CodeSha256": "PVlbb+7HNYMBv5a5QiO38GDRGvDu5WyfnBSX9AhMDOs="
+      }
+    },
+    "ApiGatewayRestApi": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Name": "dev-formsgraphql",
+        "EndpointConfiguration": {
+          "Types": [
+            "EDGE"
+          ]
+        }
+      }
+    },
+    "ApiGatewayResourceSignup": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "ApiGatewayRestApi",
+            "RootResourceId"
+          ]
+        },
+        "PathPart": "signup",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourcePostconfirm": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "ApiGatewayRestApi",
+            "RootResourceId"
+          ]
+        },
+        "PathPart": "postconfirm",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodSignupOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Credentials": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'",
+                "method.response.header.Access-Control-Allow-Credentials": "'false'"
+              },
+              "ResponseTemplates": {
+                "application/json": ""
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceSignup"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodPostconfirmOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Credentials": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'",
+                "method.response.header.Access-Control-Allow-Credentials": "'false'"
+              },
+              "ResponseTemplates": {
+                "application/json": ""
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResourcePostconfirm"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodSignupPost": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "POST",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceSignup"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "SignupLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      }
+    },
+    "ApiGatewayMethodPostconfirmPost": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "POST",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourcePostconfirm"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "PostConfirmationLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      }
+    },
+    "ApiGatewayDeployment1552209325488": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "StageName": "dev"
+      },
+      "DependsOn": [
+        "ApiGatewayMethodSignupPost",
+        "ApiGatewayMethodPostconfirmPost"
+      ]
+    },
+    "SignupLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "SignupLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": {
+          "Fn::Join": [
+            "",
+            [
+              "apigateway.",
+              {
+                "Ref": "AWS::URLSuffix"
+              }
+            ]
+          ]
+        },
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "PostConfirmationLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "PostConfirmationLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": {
+          "Fn::Join": [
+            "",
+            [
+              "apigateway.",
+              {
+                "Ref": "AWS::URLSuffix"
+              }
+            ]
+          ]
+        },
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "CognitoUserPoolMyUserPool": {
+      "Type": "AWS::Cognito::UserPool",
+      "Properties": {
+        "UserPoolName": "dev-formsgraphql-userpool",
+        "LambdaConfig": {
+          "PostConfirmation": {
+            "Fn::GetAtt": [
+              "PostConfirmationLambdaFunction",
+              "Arn"
+            ]
+          }
+        },
+        "UsernameAttributes": [
+          "email"
+        ],
+        "AutoVerifiedAttributes": [
+          "email"
+        ]
+      },
+      "DependsOn": [
+        "PostConfirmationLambdaFunction"
+      ]
+    },
+    "PostConfirmationLambdaPermissionCognitoUserPoolMyUserPoolTriggerSourcePostConfirmation": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "PostConfirmationLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": {
+          "Fn::Join": [
+            "",
+            [
+              "cognito-idp.",
+              {
+                "Ref": "AWS::URLSuffix"
+              }
+            ]
+          ]
+        },
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "CognitoUserPoolMyUserPool",
+            "Arn"
+          ]
+        }
+      }
+    },
     "AppSyncDynamoDBRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -235,24 +830,12 @@
         ]
       }
     },
-    "CognitoUserPool": {
-      "Type": "AWS::Cognito::UserPool",
-      "Properties": {
-        "UserPoolName": "dev-user-pool",
-        "UsernameAttributes": [
-          "email"
-        ],
-        "AutoVerifiedAttributes": [
-          "email"
-        ]
-      }
-    },
     "CognitoUserPoolClient": {
       "Type": "AWS::Cognito::UserPoolClient",
       "Properties": {
-        "ClientName": "dev-userpoolclient",
+        "ClientName": "dev-formsgraphql-userpoolclient",
         "UserPoolId": {
-          "Ref": "CognitoUserPool"
+          "Ref": "CognitoUserPoolMyUserPool"
         },
         "ExplicitAuthFlows": [
           "ADMIN_NO_SRP_AUTH"
@@ -266,7 +849,7 @@
         "Description": "Application Admin",
         "GroupName": "Admin",
         "UserPoolId": {
-          "Ref": "CognitoUserPool"
+          "Ref": "CognitoUserPoolMyUserPool"
         }
       }
     },
@@ -276,7 +859,7 @@
         "Description": "Account admin",
         "GroupName": "AccountAdmin",
         "UserPoolId": {
-          "Ref": "CognitoUserPool"
+          "Ref": "CognitoUserPoolMyUserPool"
         }
       }
     },
@@ -286,7 +869,7 @@
         "Description": "Account editor user",
         "GroupName": "Editor",
         "UserPoolId": {
-          "Ref": "CognitoUserPool"
+          "Ref": "CognitoUserPoolMyUserPool"
         }
       }
     },
@@ -296,7 +879,7 @@
         "Description": "Account read only user",
         "GroupName": "Viewer",
         "UserPoolId": {
-          "Ref": "CognitoUserPool"
+          "Ref": "CognitoUserPoolMyUserPool"
         }
       }
     },
@@ -335,7 +918,7 @@
           "AwsRegion": "ap-southeast-2",
           "DefaultAction": "ALLOW",
           "UserPoolId": {
-            "Ref": "CognitoUserPool"
+            "Ref": "CognitoUserPoolMyUserPool"
           }
         },
         "LogConfig": {
@@ -769,9 +1352,40 @@
         "Ref": "ServerlessDeploymentBucket"
       }
     },
+    "SignupLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "SignupLambdaVersionNpMfXcitzUkmviVVlb3u1tjlqXBKdfFggmJ5QPSNU"
+      }
+    },
+    "PostConfirmationLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "PostConfirmationLambdaVersionSM3rydwMYxTTpnRkd3tfWG5GwwgqFHS6q44Ioq7Dac"
+      }
+    },
+    "ServiceEndpoint": {
+      "Description": "URL of the service endpoint",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "ApiGatewayRestApi"
+            },
+            ".execute-api.ap-southeast-2.",
+            {
+              "Ref": "AWS::URLSuffix"
+            },
+            "/dev"
+          ]
+        ]
+      }
+    },
     "UserPoolId": {
       "Value": {
-        "Ref": "CognitoUserPool"
+        "Ref": "CognitoUserPoolMyUserPool"
       }
     },
     "UserPoolClientId": {

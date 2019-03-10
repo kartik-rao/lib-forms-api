@@ -8,7 +8,9 @@
         "moduleResolution": "node"
     },
     "include": [
-        "src/**/*.ts"
+        "src/dbClient.ts",
+        "src/signup.ts",
+        "src/postconfirmation.ts"
     ],
     "exclude": [
         "node_modules"

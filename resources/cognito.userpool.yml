@@ -1,9 +1,9 @@
 Resources:
-  CognitoUserPool:
+  CognitoUserPoolMyUserPool:
     Type: AWS::Cognito::UserPool
     Properties:
       # Generate a name based on the stage
-      UserPoolName: ${self:provider.stage}-user-pool
+      UserPoolName: ${self:provider.environment.serviceName}-userpool
       # Set email as an alias
       UsernameAttributes:
         - email
@@ -13,9 +13,9 @@ Resources:
     Type: AWS::Cognito::UserPoolClient
     Properties:
       # Generate an app client name based on the stage
-      ClientName: ${self:provider.stage}-userpoolclient
+      ClientName: ${self:provider.environment.serviceName}-userpoolclient
       UserPoolId:
-        Ref: CognitoUserPool
+        Ref: CognitoUserPoolMyUserPool
       ExplicitAuthFlows:
         - ADMIN_NO_SRP_AUTH
       GenerateSecret: false
@@ -25,33 +25,40 @@ Resources:
       Description: Application Admin
       GroupName: Admin
       UserPoolId:
-        Ref: CognitoUserPool
+        Ref: CognitoUserPoolMyUserPool
   CognitoAccountAdminGroup:
     Type: AWS::Cognito::UserPoolGroup
     Properties:
       Description: Account admin
       GroupName: AccountAdmin
       UserPoolId:
-        Ref: CognitoUserPool
+        Ref: CognitoUserPoolMyUserPool
   CognitoAccountEditorGroup:
     Type: AWS::Cognito::UserPoolGroup
     Properties:
       Description: Account editor user
       GroupName: Editor
       UserPoolId:
-        Ref: CognitoUserPool
+        Ref: CognitoUserPoolMyUserPool
   CognitoAccountViewerGroup:
     Type: AWS::Cognito::UserPoolGroup
     Properties:
       Description: Account read only user
       GroupName: Viewer
       UserPoolId:
-        Ref: CognitoUserPool
+        Ref: CognitoUserPoolMyUserPool
+  # UserPoolPostConfirmationLambdaInvokePermission:
+  #   Type: AWS::Lambda::Permission
+  #   Properties:
+  #     Action: lambda:invokeFunction
+  #     Principal: cognito-idp.amazonaws.com
+  #     FunctionName: arn:aws:lambda:${self:provider.region}:${self:provider.accountId}:function:${self:provider.functions.postconfirmation}
+  #     SourceArn: {"Fn::GetAtt": [ CognitoUserPool, Arn ]}
 # Print out the Id of the User Pool that is created
 Outputs:
   UserPoolId:
     Value:
-      Ref: CognitoUserPool
+      Ref: CognitoUserPoolMyUserPool
   UserPoolClientId:
     Value:
       Ref: CognitoUserPoolClient
