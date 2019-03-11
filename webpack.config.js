@@ -3,10 +3,10 @@ const slsw = require('serverless-webpack');
 const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
-    entry: slsw.lib.entries,
     target: 'node',
+    mode: process.env.NODE_ENV || 'development',
+    entry: slsw.lib.entries,
     externals: [nodeExternals()],
-    mode: process.env.NODE_ENV,
     module: {
         rules: [{
             test: /\.json$/,
