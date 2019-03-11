@@ -283,100 +283,42 @@ type PaginatedIntegration {
 
 type Query {
   getAccount(accountId: ID!): Account
-  @aws_auth(cognito_groups: ["Admin", "AccountAdmin"])
-
   listAllAccounts(limit: Int, nextToken: String): PaginatedAccount!
-  @aws_auth(cognito_groups: ["Admin"])
-
-  getUser(userId: String!): User!
-  @aws_auth(cognito_groups: ["Admin", "AccountAdmin"])
-
+  getUser(userId: ID!): User!
   listAllUsers(limit: Int, nextToken: String) : PaginatedUser!
-  @aws_auth(cognito_groups: ["Admin"])
-
   listAllAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedUser!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
-
   listAllAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedUser!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
-
   listAccountUsersInGroup(accountId: String!, group: String!, limit: Int, nextToken: String): PaginatedUser!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
 
   getPlan(planId: String!): Plan!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
-
   listAllPlans(limit: Int, nextToken: String): PaginatedPlan!
-  @aws_auth(cognito_groups: ["Admin"])
-
   listAllAccountPlans(accountId: String!, limit: Int, nextToken: String): PaginatedPlan!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
-
   getActiveAccountPlan(accountId: String!): PaginatedPlan!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Editor",  "Viewer", "Admin"])
-
   getPlanType(planTypeId: String!): PlanType!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
-
   listAllPlanTypes(limit: Int, nextToken: String): PaginatedPlanType!
-  @aws_auth(cognito_groups: ["Admin"])
-
   listAllActivePlanTypes(limit: Int, nextToken: String): PaginatedPlanType!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
 
   getForm(formId: String!) : Form!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
-
   listAllForms(limit: Int, nextToken: String) : PaginatedForm!
-  @aws_auth(cognito_groups: ["Admin"])
-
   listAllAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedForm!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin", "Editor",  "Viewer"])
-
   listAllAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin", "Editor",  "Viewer"])
-
   listAllAccountFormsByUser(accountId: String!, userId: String!, limit: Int, nextToken: String) : PaginatedForm!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin", "Editor",  "Viewer"])
-
   listAllAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin", "Editor",  "Viewer"])
 
   getIntegrationType(integrationTypeId: String!): IntegrationType!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
-
   listAllIntegrationTypes(limit: Int, nextToken: String): PaginatedIntegrationType!
-  @aws_auth(cognito_groups: ["Admin"])
-
   listAllIntegrationTypesByPlanType(planTypeId: String!, limit: Int, nextToken: String): PaginatedIntegrationType!
-  @aws_auth(cognito_groups: ["Admin"])
-
   listAllIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegrationType!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
 
   getIntegration(integrationId: String!): Integration!
-  @aws_auth(cognito_groups: ["Admin"])
-
   listAllIntegrations(limit: Int, nextToken: String): PaginatedIntegration!
-  @aws_auth(cognito_groups: ["Admin"])
-
   listAllAccountIntegrations(accountId: String!, limit: Int, nextToken: String): PaginatedIntegration!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin"])
-
   listAllAccountFormIntegrations(accountId: String!, formId: String!, limit: Int, nextToken: String): PaginatedIntegration!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin", "Editor",  "Viewer"])
-
   listAllAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegration!
-  @aws_auth(cognito_groups: ["AccountAdmin"])
 
   getFormEntry(formEntryId: String!): FormEntry!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin", "Editor",  "Viewer"])
-
   listAllFormEntries(formId: String!) : PaginatedFormEntries!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin", "Editor",  "Viewer"])
-
   listAllFormEntriesByTime(formId: String!, timestampPrefix: String!): PaginatedFormEntries!
-  @aws_auth(cognito_groups: ["AccountAdmin", "Admin", "Editor",  "Viewer"])
 }
 
 type Mutation {
