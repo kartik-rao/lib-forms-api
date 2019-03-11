@@ -4,9 +4,8 @@ service: formsgraphql
 provider:
   name: aws
   runtime: nodejs8.10
-  accountId: 523242459359
   stage: ${opt:stage, 'dev'}
-  region: ${opt:stage, 'ap-southeast-2'}
+  region: ${opt:region, 'ap-southeast-2'}
   serviceName: ${self:provider.stage}-${self:service}
   functions:
     postconfirmation: ${self:provider.serviceName}-postconfirmation
@@ -14,8 +13,8 @@ provider:
   profile: default
   environment:
     serviceName: ${self:provider.stage}-${self:service}
-    TBL_FORM_ENTRY: table_${self:service}_${self:provider.stage}_entries
-    TBL_MASTER_DATA: table_${self:service}_${self:provider.stage}_masterdata
+    table_form_entries: ${self:provider.serviceName}_table_form_entries
+    table_app_data: ${self:provider.serviceName}_table_appdata
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -23,7 +22,19 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:BatchWriteItem
-      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TBL_MASTER_DATA}"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.table_app_data}"
+    - Effect: Allow
+      Action:
+        - ses:SendEmail
+        - ses:SendRawEmail
+      Resource: "arn:aws:ses:us-east-1:*:*"
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:BatchWriteItem
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.table_form_entries}"
     - Effect: Allow
       Action:
         - cognito-idp:SignUp
@@ -33,21 +44,16 @@ provider:
         - cognito-idp:AdminRemoveUserFromGroup
         - cognito-idp:AdminGetUser
         - cognito-idp:GetUser
-      Resource:
-        - Fn::Join:
-          - ':'
-          -
-            - arn:aws:cognito-idp
-            - Ref: AWS::Region
-            - Ref: AWS::AccountId
-            - userpool/*
+      Resource: "arn:aws:cognito-idp:#{AWS::Region}:#{AWS::AccountId}:userpool/*"
 
 plugins:
-  - serverless-webpack
+  # - serverless-webpack
+  - serverless-pseudo-parameters
   - serverless-cognito-add-custom-attributes
   - serverless-iam-roles-per-function
   - serverless-appsync-plugin
   - serverless-dynamodb-local
+  - serverless-stack-output
   - serverless-appsync-offline
   - serverless-offline
 
@@ -76,19 +82,17 @@ custom:
         Mutable: True
         Name: "tenant" # this will end up being custom:another
         Required: False
-  TBL_MASTER_DATA: ${self:provider.environment.TBL_MASTER_DATA}
-  TBL_FORM_ENTRY: ${self:provider.environment.TBL_FORM_ENTRY}
   bucket: ${self:service}-${self:provider.stage}-data
+  dynamodb:
+    start:
+      port: 8000
+      inMemory: true
   appsync-offline:
     port: 62222
     dynamodb:
       client:
         endpoint: "http://localhost:8000"
         region: localhost
-  dynamodb:
-    start:
-      port: 8000
-      inMemory: true
   appSync:
     name:  ai-forms-backend-${self:provider.stage}
     # apiKey # only required for update-appsync/delete-appsync
@@ -103,102 +107,55 @@ custom:
     logConfig:
       loggingRoleArn: { Fn::GetAtt: [AppSyncCloudWatchRole, Arn] } # Where AppSyncLoggingServiceRole is a role with CloudWatch Logs write access
       level: ALL
-    mappingTemplatesLocation: src/mapping-templates
-    mappingTemplates:
-      - dataSource: MasterData
-        type: Query
-        field: getAccount
-        request: getAccount-request.vtl
-        response: getAccount-response.vtl
-      - dataSource: MasterData
-        type: Query
-        field: listAllAccounts
-        request: listAllAccounts-request.vtl
-        response: listAllAccounts-response.vtl
-      - dataSource: MasterData
-        type: Query
-        field: getPlan
-        request: getPlan-request.vtl
-        response: getPlan-response.vtl
-      - dataSource: MasterData
-        type: Query
-        field: getPlanType
-        request: getPlanType-request.vtl
-        response: getPlanType-response.vtl
-      - dataSource: MasterData
-        type: Mutation
-        field: addAccount
-        request: addAccount-request.vtl
-        response: addAccount-response.vtl
-      - dataSource: MasterData
-        type: Mutation
-        field: addPlanType
-        request: addPlanType-request.vtl
-        response: addPlanType-response.vtl
-      - dataSource: MasterData
-        type: Mutation
-        field: addPlan
-        request: addPlan-request.vtl
-        response: addPlan-response.vtl
-      - dataSource:  MasterData
-        type: Mutation
-        field: testPipeline
-        request: authorize-request.vtl
-        response: authorize-response.vtl
-        kind: PIPELINE
-        functions:
-          - authorizeFunction
-      - dataSource: MasterData
-        type: Mutation
-        field: attachPlan
-        request: createAccountPlan-before.vtl
-        response: createAccountPlan-after.vtl
-        kind: PIPELINE
-        functions:
-          - addPlan
-          - updateAccount
-    functionConfigurations:
-      - dataSource: MasterData
-        name: authorizeFunction
-        request: fetchUserAccount-request.vtl
-        response: fetchUserAccount-response.vtl
-      - dataSource: MasterData
-        name: addPlan
-        request: addPlan-request.vtl
-        response: addPlan-response.vtl
-      - dataSource: MasterData
-        name: updateAccount
-        request: updateAccountPlan-request.vtl
-        response: updateAccountPlan-response.vtl
     schema: schema.graphql
     dataSources:
       - type: AMAZON_DYNAMODB
-        name: MasterData
-        description: Master Table
+        name: AppData
+        description: App Data Table
         config:
-          tableName: ${self:custom.TBL_MASTER_DATA} # Where MasterDataTable is a dynamodb table defined in Resources
-functions:
-  signup:
-    name: ${self:provider.functions.signup}
-    handler: src/signup.handle
-    events:
-      - http:
-          path: /signup
-          method: post
-          cors: true
-    environment:
-      cognitoUserPoolId:
-        Ref: CognitoUserPoolMyUserPool
-      cognitoUserPoolWebClientId:
-        Ref: CognitoUserPoolClient
-  postConfirmation:
-    name: ${self:provider.functions.postconfirmation}
-    handler: src/postconfirmation.handle
-    events:
-      - http:
-          path: /postconfirm
-          method: post
-          cors: true
-      - cognitoUserPool:
-          pool: MyUserPool
-          trigger: PostConfirmation
+          tableName: ${self:provider.environment.table_app_data} # Where AppDataTable is a dynamodb table defined in Resources
+      - type: AMAZON_DYNAMODB
+        name: FormEntries
+        description: FormEntries Table
+        config:
+          tableName: ${self:provider.environment.table_form_entries} # Where AppDataTable is a dynamodb table defined in Resources
+    mappingTemplatesLocation: src/mapping-templates
+    mappingTemplates: ${file(serverless.appsync-mappings.yml)}
+    functionConfigurations:
+      - dataSource: AppData
+        name: authorizeFunction
+        request: fetchUserAccount-request.vtl
+        response: fetchUserAccount-response.vtl
+      - dataSource: AppData
+        name: addPlan
+        request: addPlan-request.vtl
+        response: passthrough-response.vtl
+      - dataSource: AppData
+        name: updateAccount
+        request: updateAccountPlan-request.vtl
+        response: updateAccountPlan-response.vtl
+# functions:
+#   signup:
+#     name: ${self:provider.functions.signup}
+#     handler: src/signup.handle
+#     events:
+#       - http:
+#           path: /signup
+#           method: post
+#           cors: true
+#     environment:
+#       cognitoUserPoolId:
+#         Ref: CognitoUserPoolMyUserPool
+#       cognitoUserPoolWebClientId:
+#         Ref: CognitoUserPoolClient
+#   postConfirmation:
+#     name: ${self:provider.functions.postconfirmation}
+#     handler: src/postconfirmation.handle
+#     events:
+#       - http:
+#           path: /postconfirm
+#           method: post
+#           cors: true
+#       - cognitoUserPool:
+#           pool: MyUserPool
+#           trigger: PostConfirmation
