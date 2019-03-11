@@ -1,6 +1,6 @@
 #set($id = $util.autoId())
 #set($attribs = $context.arguments.input)
-#set($attribs.meta = "${id}#true")
+#set($attribs.meta = "${$context.arguments.input.accountId}#true")
 #set($attribs.owner = $context.identity.sub)
 #set($attribs.itemType = "PLAN")
 #set($attribs.isDeleted = false)

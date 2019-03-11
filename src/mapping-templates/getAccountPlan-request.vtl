@@ -1,20 +1,24 @@
-#set($env = $context.identity.claims.get(["custom:environment"]))
-#if($env)
-    #set($prefix = "${env}-")
+$util.qr($ctx.stash.put("environment", $context.identity.claims["custom:environment"]))
+#set($uenv = $context.identity.claims["custom:environment"])
+#if($uenv)
+    #set($prefix = "${uenv}-")
 #else
     #set($prefix = "")
 #end
-$util.qr($ctx.stash.put("environment", $env))
 #set($attribs = $context.arguments)
 {
     "version"  : "2017-02-28",
     "operation": "Query",
     "index"    : "${prefix}formsgraphql_table_appdata_gsi",
     "query"    : {
-        "expression" : "type = :type AND meta BEGINS_WITH :meta",
+        "expression" : "#type = :type AND begins_with(#meta, :meta)",
+        "expressionNames" : {
+            "#type" : "type",
+            "#meta" : "meta"
+        },
         "expressionValues": {
-            ":type" : "PLAN",
-            ":meta" : "${context.source.id}#true"
+            ":type" : {"S" : "PLAN"},
+            ":meta" : {"S" : "${context.source.id}#true"}
         }
     },
     "select" : "ALL_ATTRIBUTES"
