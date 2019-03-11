@@ -10,8 +10,8 @@
         "version" : "2017-02-28",
         "operation" : "GetItem",
         "key": {
-            "partitionKey": {"S": "${attribs.accountId}"},
-            "sortKey"     : {"S": "ACCOUNT"}
+            "id": {"S": "${attribs.accountId}"},
+            "type"     : {"S": "ACCOUNT"}
         }
     }
 #else

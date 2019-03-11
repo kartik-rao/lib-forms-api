@@ -6,7 +6,7 @@
 #end
 ## Also returns data for the field in the GraphQL response
 $util.toJson({
-    "accountId": "${ctx.result.partitionKey}",
+    "accountId": "${ctx.result.id}",
     "name": "${ctx.result.itemData.name}",
     "owner": "${ctx.result.owner}",
     "planId": "${ctx.result.itemData.planId}",

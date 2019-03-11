@@ -1,27 +1,21 @@
 #set($attribs = $context.arguments.input)
-#set($attribs.id = $util.autoId())
+#set($attribs.meta = "FREE")
 #set($attribs.owner = $context.identity.sub)
-#set($attribs.planId = "FREE")
-#set($createdAt = $util.time.nowISO8601())
+#set($attribs.itemType = "ACCOUNT")
+#set($attribs.isDeleted = false)
+#set($attribs.createdAt = $util.time.nowISO8601())
 {
     "version": "2017-02-28",
     "operation": "PutItem",
     "key": {
-        "partitionKey": {"S" : "${attribs.id}"},
-        "sortKey"     : {"S" : "ACCOUNT"}
+        "id"   : $util.dynamodb.toDynamoDBJson($util.autoId()),
+        "type" : {"S" : "ACCOUNT"}
     },
-    "attributeValues": {
-        "indexKey"  : {"S" : "FREE"},
-        "type"      : {"S" : "ACCOUNT"},
-        "owner"     : {"S" : "$context.identity.sub"},
-        "isDeleted" : {"BOOL": false },
-        "createdAt" : $util.dynamodb.toDynamoDBJson($createdAt),
-        "itemData"  : $util.dynamodb.toDynamoDBJson($attribs)
-    },
+    "attributeValues": $util.dynamodb.toDynamoDBJson($attribs),
     "condition": {
-        "expression": "attribute_not_exists(#partitionKey)",
-            "expressionNames": {
-            "#partitionKey": "partitionKey",
+        "expression": "attribute_not_exists(#id)",
+        "expressionNames": {
+            "#id": "id"
         }
     }
 }

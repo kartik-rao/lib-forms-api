@@ -3,7 +3,7 @@
     "operation" : "Query",
     "index": "masterDataGSI"
     "query" : {
-      "expression": "sortKey = :objectType",
+      "expression": "type = :objectType",
       "expressionValues" : {
         ":objectType" : { "S": "ACCOUNT" }
       }

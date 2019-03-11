@@ -9,8 +9,8 @@
     "version" : "2017-02-28",
     "operation" : "GetItem",
     "key": {
-        "partitionKey": {"S": "$context.identity.sub"},
-        "sortKey"     : {"S": "USER"}
+        "id": {"S": "$context.identity.sub"},
+        "type"     : {"S": "USER"}
     }
 }
 #else
@@ -21,12 +21,12 @@
         "MasterData": {
             "keys": [
                 {
-                    "partitionKey": {"S": "$context.stash.tenant"},
-                    "sortKey"     : {"S": "ACCOUNT"}
+                    "id": {"S": "$context.stash.tenant"},
+                    "type"     : {"S": "ACCOUNT"}
                 },
                 {
-                    "partitionKey": {"S": "$context.identity.sub"},
-                    "sortKey"     : {"S": "USER"}
+                    "id": {"S": "$context.identity.sub"},
+                    "type"     : {"S": "USER"}
                 }
             ],
             "consistentRead": true
