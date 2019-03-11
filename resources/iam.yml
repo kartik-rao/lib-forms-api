@@ -37,7 +37,7 @@ Resources:
             Resource:
               - Fn::Join:
                 - ""
-                - - Fn::GetAtt: MasterDataTable.Arn
+                - - Fn::GetAtt: AppDataTable.Arn
                   - "*"
   AppSyncCloudWatchRole:
     Type: "AWS::IAM::Role"
