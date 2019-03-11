@@ -1,4 +1,5 @@
-#set($attribs = $context.arguments.input)
+#set($id = $util.autoId())
+#set($attribs = $util.dynamodb.toMapValues($context.arguments.input))
 #set($attribs.meta = "FREE")
 #set($attribs.owner = $context.identity.sub)
 #set($attribs.itemType = "ACCOUNT")
@@ -8,10 +9,10 @@
     "version": "2017-02-28",
     "operation": "PutItem",
     "key": {
-        "id"   : $util.dynamodb.toDynamoDBJson($util.autoId()),
-        "type" : {"S" : "ACCOUNT"}
+        "id"  : $util.dynamodb.toDynamoDBJson($id),
+        "type": {"S" : "ACCOUNT"}
     },
-    "attributeValues": $util.dynamodb.toDynamoDBJson($attribs),
+    "attributeValues": $util.toJson($util.dynamodb.toMapValues($attribs)),
     "condition": {
         "expression": "attribute_not_exists(#id)",
         "expressionNames": {

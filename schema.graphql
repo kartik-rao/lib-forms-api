@@ -4,8 +4,8 @@ type AppData @model {
     meta: String!
     itemType: String!
     owner: ID!
-    createdAt: AWSDate!
-    updatedAt: AWSDate
+    createdAt: AWSDateTime!
+    updatedAt: AWSDateTime
     isDeleted: Boolean
 }
 
@@ -13,7 +13,7 @@ type FormEntry @model {
     id: ID!
     type: ID!
     meta: String!
-    createdAt: AWSDate!
+    createdAt: AWSDateTime!
 }
 
 input AddFormEntryInput {
@@ -40,8 +40,8 @@ type Form {
     submitTarget: String
     successRedirect: String
     errorRedirect: String
-    createdAt: AWSDate
-    updatedAt: AWSDate
+    createdAt: AWSDateTime
+    updatedAt: AWSDateTime
     entries: PaginatedFormEntries
 }
 
@@ -84,8 +84,8 @@ type User {
   given_name: String!
   family_name: String!
   phone_number: AWSPhone
-  createdAt: AWSDate
-  updatedAt: AWSDate
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 input UpdateUserInputData {
@@ -114,12 +114,12 @@ type PaginatedUser {
 }
 
 type Account {
-  accountId: ID!
+  id: ID!
   name: String!
   owner: ID!
   planId: ID
-  createdAt: AWSDate
-  updatedAt: AWSDate
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
   users: [User!]
   forms: [Form!]
   plan : Plan
@@ -141,14 +141,14 @@ type PaginatedAccount {
 }
 
 type PlanType {
-  planTypeId: ID!
+  id: ID!
   owner: ID!
   name: String!
   cost: Float!
   active: Boolean!
   billingTerm: String!
-  createdAt: AWSDate
-  updatedAt: AWSDate
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 input AddPlanTypeInput {
@@ -172,7 +172,7 @@ type PaginatedPlanType {
 }
 
 type Plan {
-  planId: ID!
+  id: ID!
   accountId: ID!
   owner: ID!
   planTypeId: ID!
@@ -180,8 +180,8 @@ type Plan {
   endDate: AWSDate
   active: Boolean
   lastBillDate: AWSDate
-  createdAt: AWSDate
-  updatedAt: AWSDate
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
   planType: PlanType
 }
 
@@ -204,13 +204,13 @@ type PaginatedPlan {
 }
 
 type IntegrationType {
-  integrationTypeId: ID!
+  id: ID!
   owner: ID!
-  PlanTypeId: ID!
+  planTypeId: ID!
   name: String!
   active: Boolean!
-  createdAt: AWSDate
-  updatedAt: AWSDate
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 input AddIntegrationTypeInput {
@@ -230,7 +230,7 @@ type PaginatedIntegrationType {
 }
 
 type Integration {
-  integrationId: ID!
+  id: ID!
   integrationTypeId: ID!
   integrationType: IntegrationType
   owner: ID!
@@ -244,8 +244,8 @@ type Integration {
   lastExecuted: AWSDate
   lastExecutionResult: Boolean
   lastExecutionResultMessage: String
-  createdAt: AWSDate
-  updatedAt: AWSDate
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
 }
 
 input AddIntegrationInput {
