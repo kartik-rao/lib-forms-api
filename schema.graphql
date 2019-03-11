@@ -1,20 +1,18 @@
 type MasterData @model {
-    partitionKey: ID!
-    sortKey: ID!
-    indexKey: String!
-    type: String!
+    id: ID!
+    type: ID!
+    meta: String!
+    itemType: String!
     owner: ID!
     createdAt: AWSDate!
     updatedAt: AWSDate
     isDeleted: Boolean
-    itemData: AWSJSON!
 }
 
 type FormEntry @model {
-    partitionKey: ID!
-    sortKey: ID!
-    indexKey: String!
-    itemData: AWSJSON!
+    id: ID!
+    type: ID!
+    meta: String!
     createdAt: AWSDate!
 }
 
@@ -44,6 +42,7 @@ type Form {
     errorRedirect: String
     createdAt: AWSDate
     updatedAt: AWSDate
+    entries: PaginatedFormEntries
 }
 
 input AddFormInput {
@@ -121,6 +120,9 @@ type Account {
   planId: ID
   createdAt: AWSDate
   updatedAt: AWSDate
+  users: [User!]
+  forms: [Form!]
+  plan : Plan
 }
 
 input UpdateAccountInput {
@@ -180,6 +182,7 @@ type Plan {
   lastBillDate: AWSDate
   createdAt: AWSDate
   updatedAt: AWSDate
+  planType: PlanType
 }
 
 input AddPlanInput {
@@ -229,6 +232,7 @@ type PaginatedIntegrationType {
 type Integration {
   integrationId: ID!
   integrationTypeId: ID!
+  integrationType: IntegrationType
   owner: ID!
   accountId: ID!
   formId: ID!
