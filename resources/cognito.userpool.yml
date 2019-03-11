@@ -9,6 +9,10 @@ Resources:
         - email
       AutoVerifiedAttributes:
         - email
+      EmailVerificationSubject: "Your Forms.li verification code"
+      EmailVerificationMessage: "{####}"
+      EmailConfiguration:
+        SourceArn: "arn:aws:ses:us-east-1:#{AWS::AccountId}:identity/no-reply@forms.li"
   CognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
@@ -47,14 +51,6 @@ Resources:
       GroupName: Viewer
       UserPoolId:
         Ref: CognitoUserPoolMyUserPool
-  # UserPoolPostConfirmationLambdaInvokePermission:
-  #   Type: AWS::Lambda::Permission
-  #   Properties:
-  #     Action: lambda:invokeFunction
-  #     Principal: cognito-idp.amazonaws.com
-  #     FunctionName: arn:aws:lambda:${self:provider.region}:${self:provider.accountId}:function:${self:provider.functions.postconfirmation}
-  #     SourceArn: {"Fn::GetAtt": [ CognitoUserPool, Arn ]}
-# Print out the Id of the User Pool that is created
 Outputs:
   UserPoolId:
     Value:
