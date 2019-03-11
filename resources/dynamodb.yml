@@ -1,63 +1,63 @@
 Resources:
-    MasterDataTable:
-        Type: 'AWS::DynamoDB::Table'
-        Properties:
-            TableName: ${self:custom.TBL_MASTER_DATA}
-            AttributeDefinitions:
-                - AttributeName: id
-                  AttributeType: S
-                - AttributeName: type
-                  AttributeType: S
-                - AttributeName: meta
-                  AttributeType: S
-            KeySchema:
-                - AttributeName: id
-                  KeyType: HASH
-                - AttributeName: type
-                  KeyType: RANGE
-            ProvisionedThroughput:
-                ReadCapacityUnits: 1
-                WriteCapacityUnits: 1
-            GlobalSecondaryIndexes:
-                - IndexName: masterDataGSI
-                  KeySchema:
-                    - AttributeName: type
-                      KeyType: HASH
-                    - AttributeName: meta
-                      KeyType: RANGE
-                  Projection:
-                    ProjectionType: ALL
-                  ProvisionedThroughput:
-                    ReadCapacityUnits: 5
-                    WriteCapacityUnits: 5
-    EntriesTable:
-        Type: 'AWS::DynamoDB::Table'
-        Properties:
-            TableName: ${self:custom.TBL_FORM_ENTRY}
-            AttributeDefinitions:
-                - AttributeName: id
-                  AttributeType: S
-                - AttributeName: type
-                  AttributeType: S
-                - AttributeName: meta
-                  AttributeType: S
-            KeySchema:
-                - AttributeName: id
-                  KeyType: HASH
-                - AttributeName: type
-                  KeyType: RANGE
-            ProvisionedThroughput:
-                ReadCapacityUnits: 5
-                WriteCapacityUnits: 5
-            GlobalSecondaryIndexes:
-                - IndexName: formEntriesGSI
-                  KeySchema:
-                    - AttributeName: type
-                      KeyType: HASH
-                    - AttributeName: meta
-                      KeyType: RANGE
-                  Projection:
-                    ProjectionType: ALL
-                  ProvisionedThroughput:
-                    ReadCapacityUnits: 5
-                    WriteCapacityUnits: 5
+  AppDataTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+          TableName: ${self:provider.environment.table_app_data}
+          AttributeDefinitions:
+              - AttributeName: id
+                AttributeType: S
+              - AttributeName: type
+                AttributeType: S
+              - AttributeName: meta
+                AttributeType: S
+          KeySchema:
+              - AttributeName: id
+                KeyType: HASH
+              - AttributeName: type
+                KeyType: RANGE
+          ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+          GlobalSecondaryIndexes:
+              - IndexName: ${self:provider.environment.table_app_data}_gsi
+                KeySchema:
+                  - AttributeName: type
+                    KeyType: HASH
+                  - AttributeName: meta
+                    KeyType: RANGE
+                Projection:
+                  ProjectionType: ALL
+                ProvisionedThroughput:
+                  ReadCapacityUnits: 5
+                  WriteCapacityUnits: 5
+  FormEntriesTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+          TableName: ${self:provider.environment.table_form_entries}
+          AttributeDefinitions:
+              - AttributeName: id
+                AttributeType: S
+              - AttributeName: type
+                AttributeType: S
+              - AttributeName: meta
+                AttributeType: S
+          KeySchema:
+              - AttributeName: id
+                KeyType: HASH
+              - AttributeName: type
+                KeyType: RANGE
+          ProvisionedThroughput:
+              ReadCapacityUnits: 5
+              WriteCapacityUnits: 5
+          GlobalSecondaryIndexes:
+              - IndexName: ${self:provider.environment.table_form_entries}_gsi
+                KeySchema:
+                  - AttributeName: type
+                    KeyType: HASH
+                  - AttributeName: meta
+                    KeyType: RANGE
+                Projection:
+                  ProjectionType: ALL
+                ProvisionedThroughput:
+                  ReadCapacityUnits: 5
+                  WriteCapacityUnits: 5
