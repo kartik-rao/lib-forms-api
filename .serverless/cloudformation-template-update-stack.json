@@ -775,7 +775,7 @@
         },
         "TypeName": "Account",
         "FieldName": "plan",
-        "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2017-02-28\",\n    \"operation\": \"GetItem\",\n    \"index\"    : \"\",\n    \"key\": {\n        \"type\" : {\"S\": \"PLAN\"},\n        \"meta\" : {\"S\": \"${context.source.id}#true\"}\n    }\n}",
+        "RequestMappingTemplate": "#set($env = $context.identity.claims.get([\"custom:environment\"]))\n#if($env)\n    #set($prefix = \"${env}-\")\n#else\n    #set($prefix = \"\")\n#end\n$util.qr($ctx.stash.put(\"environment\", $env))\n#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2017-02-28\",\n    \"operation\": \"Query\",\n    \"index\"    : \"${prefix}formsgraphql_table_appdata_gsi\",\n    \"query\"    : {\n        \"expression\" : \"type = :type AND meta BEGINS_WITH :meta\",\n        \"expressionValues\": {\n            \":type\" : \"PLAN\",\n            \":meta\" : \"${context.source.id}#true\"\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\"\n}",
         "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n$util.toJson($ctx.result)\n",
         "DataSourceName": {
           "Fn::GetAtt": [
