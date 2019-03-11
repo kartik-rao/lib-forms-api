@@ -1,2 +1,3 @@
 .dynamodb
 node_modules
+outputs/stack.json

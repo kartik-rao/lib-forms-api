@@ -13,6 +13,27 @@ Resources:
       EmailVerificationMessage: "{####}"
       EmailConfiguration:
         SourceArn: "arn:aws:ses:us-east-1:#{AWS::AccountId}:identity/no-reply@forms.li"
+      Schema:
+        - AttributeDataType: String
+          DeveloperOnlyAttribute: False
+          Mutable: True
+          Name: "tenant"
+          Required: False
+        - AttributeDataType: String
+          DeveloperOnlyAttribute: False
+          Mutable: True
+          Name: "environment"
+          Required: False
+        - AttributeDataType: String
+          DeveloperOnlyAttribute: False
+          Mutable: True
+          Name: "stack"
+          Required: False
+        - AttributeDataType: String
+          DeveloperOnlyAttribute: False
+          Mutable: True
+          Name: "region"
+          Required: False
   CognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:

@@ -49,11 +49,10 @@ provider:
 plugins:
   # - serverless-webpack
   - serverless-pseudo-parameters
-  - serverless-cognito-add-custom-attributes
   - serverless-iam-roles-per-function
   - serverless-appsync-plugin
   - serverless-dynamodb-local
-  - serverless-stack-output
+  - '@anttiviljami/serverless-stack-output'
   - serverless-appsync-offline
   - serverless-offline
 
@@ -64,7 +63,10 @@ resources:
   - ${file(resources/s3.yml)}
 
 custom:
-  # enable auto including modules
+  # Stack Output Plugin
+  output:
+    file: outputs/stack.json # toml, yaml, yml, and json format is available
+  # Servlerless Webpack (for functions)
   packagePath: './package.json'
   webpack:
     webpackConfig: 'webpack.config.js'   # Name of webpack configuration file
@@ -72,16 +74,6 @@ custom:
     includeModules:
       forceInclude:
         - source-map-support
-  CognitoAddCustomAttributes:
-    CognitoUserPoolIdOutputKey: "UserPoolId"              # The key of the outputted UserPool Ref
-    CognitoUserPoolClientIdOutputKey: "UserPoolClientId"  # The key of the outputted UserPoolClient Ref
-    CustomAttributes:
-      -
-        AttributeDataType: String
-        DeveloperOnlyAttribute: False
-        Mutable: True
-        Name: "tenant" # this will end up being custom:another
-        Required: False
   bucket: ${self:service}-${self:provider.stage}-data
   dynamodb:
     start:

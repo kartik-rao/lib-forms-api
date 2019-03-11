@@ -262,7 +262,37 @@
           "SourceArn": {
             "Fn::Sub": "arn:aws:ses:us-east-1:${AWS::AccountId}:identity/no-reply@forms.li"
           }
-        }
+        },
+        "Schema": [
+          {
+            "AttributeDataType": "String",
+            "DeveloperOnlyAttribute": false,
+            "Mutable": true,
+            "Name": "tenant",
+            "Required": false
+          },
+          {
+            "AttributeDataType": "String",
+            "DeveloperOnlyAttribute": false,
+            "Mutable": true,
+            "Name": "environment",
+            "Required": false
+          },
+          {
+            "AttributeDataType": "String",
+            "DeveloperOnlyAttribute": false,
+            "Mutable": true,
+            "Name": "stack",
+            "Required": false
+          },
+          {
+            "AttributeDataType": "String",
+            "DeveloperOnlyAttribute": false,
+            "Mutable": true,
+            "Name": "region",
+            "Required": false
+          }
+        ]
       }
     },
     "CognitoUserPoolClient": {
@@ -723,8 +753,30 @@
         },
         "TypeName": "Query",
         "FieldName": "getAccount",
-        "RequestMappingTemplate": "#set($tenant = $context.identity.claims[\"custom:tenant\"])\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($inCognitoGroup = true)\n    #end\n#end\n#if($inCognitoGroup)\n    #set($attribs = $context.arguments)\n    {\n        \"version\" : \"2017-02-28\",\n        \"operation\" : \"GetItem\",\n        \"key\": {\n            \"id\": {\"S\": \"${attribs.accountId}\"},\n            \"type\"     : {\"S\": \"ACCOUNT\"}\n        }\n    }\n#else\n    $utils.unauthorized()\n#end",
+        "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"GetItem\",\n    \"key\": {\n        \"id\"  : {\"S\": \"${attribs.accountId}\"},\n        \"type\": {\"S\": \"ACCOUNT\"}\n    }\n}",
         "ResponseMappingTemplate": "$util.qr($ctx.stash.put(\"tenant\", $context.identity.claims[\"custom:tenant\"]))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($ctx.stash.put(\"isAccountAdmin\", true))\n    #end\n    #if($ctx.result.owner == $context.identity.sub)\n        #set($isRecordOwner = true)\n    #end\n    #if($isAdmin == true ||  $ctx.result.type == \"PLANTYPE\" || $ctx.result.type == \"INTEGRATIONTYPE\")\n        #set($isAllowed = true)\n    #elseif (($ctx.result.accountId == $ctx.stash.tenant) && $isAccountAdmin == true)\n        #set($isAllowed = true)\n    #else\n        #set($isAllowed = $isRecordOwner == true)\n    #end\n    $util.qr($ctx.stash.put(\"recordType\", $ctx.result.type))\n    $util.qr($ctx.stash.put(\"isRecordOwner\", $isRecordOwner))\n    $util.qr($ctx.stash.put(\"authResult\", $isAllowed))\n#end\n## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n#if ($isAllowed == true)\n    $util.toJson($ctx.result)\n#else\n    $utils.unauthorized()\n#end",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverAccountplan": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Account",
+        "FieldName": "plan",
+        "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2017-02-28\",\n    \"operation\": \"GetItem\",\n    \"index\"    : \"\",\n    \"key\": {\n        \"type\" : {\"S\": \"PLAN\"},\n        \"meta\" : {\"S\": \"${context.source.id}#true\"}\n    }\n}",
+        "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n$util.toJson($ctx.result)\n",
         "DataSourceName": {
           "Fn::GetAtt": [
             "GraphQlDsAppData",

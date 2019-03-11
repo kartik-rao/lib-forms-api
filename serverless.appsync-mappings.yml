@@ -4,6 +4,11 @@
   request: getAccount-request.vtl
   response: passthrough-response.vtl
 - dataSource: AppData
+  type: Account
+  field: plan
+  request: getAccountPlan-request.vtl
+  response: getAccountPlan-response.vtl
+- dataSource: AppData
   type: Query
   field: listAllAccounts
   request: listAllAccounts-request.vtl
