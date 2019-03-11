@@ -1,5 +1,5 @@
-#set($attribs = $context.arguments.input)
 #set($id = $util.autoId())
+#set($attribs = $context.arguments.input)
 #set($attribs.meta = "${id}#true")
 #set($attribs.owner = $context.identity.sub)
 #set($attribs.itemType = "PLAN")
@@ -14,7 +14,7 @@
         "id"  : $util.dynamodb.toDynamoDBJson($id),
         "type": {"S": "PLAN"}
     },
-    "attributeValues": $util.dynamodb.toDynamoDBJson($attribs),
+    "attributeValues": $util.toJson($util.dynamodb.toMapValues($attribs)),
     "condition": {
         "expression": "attribute_not_exists(#id)",
         "expressionNames": {

@@ -1,10 +1,10 @@
 #set($id = $util.autoId())
-#set($attribs = $util.dynamodb.toMapValues($context.arguments.input))
-#set($attribs.meta = $util.dynamodb.toString("$context.arguments.input.active"))
-#set($attribs.owner = $util.dynamodb.toString($context.identity.sub))
-#set($attribs.itemType = $util.dynamodb.toString("PLANTYPE"))
-#set($attribs.isDeleted = $util.dynamodb.toBoolean(false))
-#set($attribs.createdAt = $util.dynamodb.toDynamoDB($util.time.nowISO8601()))
+#set($attribs = $context.arguments.input)
+#set($attribs.meta = "$context.arguments.input.active")
+#set($attribs.owner = $context.identity.sub)
+#set($attribs.itemType = "PLANTYPE")
+#set($attribs.isDeleted = false)
+#set($attribs.createdAt = $util.time.nowISO8601())
 {
     "version": "2017-02-28",
     "operation": "PutItem",
@@ -12,7 +12,7 @@
         "id"  : $util.dynamodb.toDynamoDBJson($id),
         "type": {"S" : "PLANTYPE"}
     },
-    "attributeValues": $util.toJson($attribs),
+    "attributeValues": $util.toJson($util.dynamodb.toMapValues($attribs)),
     "condition": {
         "expression": "attribute_not_exists(#id)",
         "expressionNames": {

@@ -713,7 +713,7 @@
                   "Name"
                 ]
               },
-              "RequestMappingTemplate": "#set($attribs = $context.arguments.input)\n#set($id = $util.autoId())\n#set($attribs.meta = \"${id}#true\")\n#set($attribs.owner = $context.identity.sub)\n#set($attribs.itemType = \"PLAN\")\n#set($attribs.isDeleted = false)\n#set($attribs.createdAt = $util.time.nowISO8601())\n#set($attribs.startDate = $attribs.createdAt)\n#set($attribs.active = true)\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"id\"  : $util.dynamodb.toDynamoDBJson($id),\n        \"type\": {\"S\": \"PLAN\"}\n    },\n    \"attributeValues\": $util.dynamodb.toDynamoDBJson($attribs),\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#id)\",\n        \"expressionNames\": {\n            \"#id\": \"id\",\n        }\n    }\n}",
+              "RequestMappingTemplate": "#set($id = $util.autoId())\n#set($attribs = $context.arguments.input)\n#set($attribs.meta = \"${id}#true\")\n#set($attribs.owner = $context.identity.sub)\n#set($attribs.itemType = \"PLAN\")\n#set($attribs.isDeleted = false)\n#set($attribs.createdAt = $util.time.nowISO8601())\n#set($attribs.startDate = $attribs.createdAt)\n#set($attribs.active = true)\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"id\"  : $util.dynamodb.toDynamoDBJson($id),\n        \"type\": {\"S\": \"PLAN\"}\n    },\n    \"attributeValues\": $util.toJson($util.dynamodb.toMapValues($attribs)),\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#id)\",\n        \"expressionNames\": {\n            \"#id\": \"id\",\n        }\n    }\n}",
               "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB. **\n$util.toJson($ctx.result)",
               "FunctionVersion": "2018-05-29"
             }
@@ -839,7 +839,7 @@
               },
               "TypeName": "Mutation",
               "FieldName": "addAccount",
-              "RequestMappingTemplate": "#set($id = $util.autoId())\n#set($attribs = $util.dynamodb.toMapValues($context.arguments.input))\n#set($attribs.meta = \"FREE\")\n#set($attribs.owner = $context.identity.sub)\n#set($attribs.itemType = \"ACCOUNT\")\n#set($attribs.isDeleted = false)\n#set($attribs.createdAt = $util.time.nowISO8601())\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"id\"  : $util.dynamodb.toDynamoDBJson($id),\n        \"type\": {\"S\" : \"ACCOUNT\"}\n    },\n    \"attributeValues\": $util.toJson($util.dynamodb.toMapValues($attribs)),\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#id)\",\n        \"expressionNames\": {\n            \"#id\": \"id\"\n        }\n    }\n}",
+              "RequestMappingTemplate": "#set($id = $util.autoId())\n#set($attribs = $context.arguments.input)\n#set($attribs.meta = \"FREE\")\n#set($attribs.owner = $context.identity.sub)\n#set($attribs.itemType = \"ACCOUNT\")\n#set($attribs.isDeleted = false)\n#set($attribs.createdAt = $util.time.nowISO8601())\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"id\"  : $util.dynamodb.toDynamoDBJson($id),\n        \"type\": {\"S\" : \"ACCOUNT\"}\n    },\n    \"attributeValues\": $util.toJson($util.dynamodb.toMapValues($attribs)),\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#id)\",\n        \"expressionNames\": {\n            \"#id\": \"id\"\n        }\n    }\n}",
               "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB. **\n$util.toJson($ctx.result)",
               "DataSourceName": {
                 "Fn::GetAtt": [
@@ -861,7 +861,7 @@
               },
               "TypeName": "Mutation",
               "FieldName": "addPlanType",
-              "RequestMappingTemplate": "#set($id = $util.autoId())\n#set($attribs = $util.dynamodb.toMapValues($context.arguments.input))\n#set($attribs.meta = $util.dynamodb.toString(\"$context.arguments.input.active\"))\n#set($attribs.owner = $util.dynamodb.toString($context.identity.sub))\n#set($attribs.itemType = $util.dynamodb.toString(\"PLANTYPE\"))\n#set($attribs.isDeleted = $util.dynamodb.toBoolean(false))\n#set($attribs.createdAt = $util.dynamodb.toDynamoDB($util.time.nowISO8601()))\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"id\"  : $util.dynamodb.toDynamoDBJson($id),\n        \"type\": {\"S\" : \"PLANTYPE\"}\n    },\n    \"attributeValues\": $util.toJson($attribs),\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#id)\",\n        \"expressionNames\": {\n            \"#id\": \"id\"\n        }\n    }\n}",
+              "RequestMappingTemplate": "#set($id = $util.autoId())\n#set($attribs = $context.arguments.input)\n#set($attribs.meta = \"$context.arguments.input.active\")\n#set($attribs.owner = $context.identity.sub)\n#set($attribs.itemType = \"PLANTYPE\")\n#set($attribs.isDeleted = false)\n#set($attribs.createdAt = $util.time.nowISO8601())\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"id\"  : $util.dynamodb.toDynamoDBJson($id),\n        \"type\": {\"S\" : \"PLANTYPE\"}\n    },\n    \"attributeValues\": $util.toJson($util.dynamodb.toMapValues($attribs)),\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#id)\",\n        \"expressionNames\": {\n            \"#id\": \"id\"\n        }\n    }\n}",
               "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB. **\n$util.toJson($ctx.result)",
               "DataSourceName": {
                 "Fn::GetAtt": [
@@ -883,7 +883,7 @@
               },
               "TypeName": "Mutation",
               "FieldName": "addPlan",
-              "RequestMappingTemplate": "#set($attribs = $context.arguments.input)\n#set($id = $util.autoId())\n#set($attribs.meta = \"${id}#true\")\n#set($attribs.owner = $context.identity.sub)\n#set($attribs.itemType = \"PLAN\")\n#set($attribs.isDeleted = false)\n#set($attribs.createdAt = $util.time.nowISO8601())\n#set($attribs.startDate = $attribs.createdAt)\n#set($attribs.active = true)\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"id\"  : $util.dynamodb.toDynamoDBJson($id),\n        \"type\": {\"S\": \"PLAN\"}\n    },\n    \"attributeValues\": $util.dynamodb.toDynamoDBJson($attribs),\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#id)\",\n        \"expressionNames\": {\n            \"#id\": \"id\",\n        }\n    }\n}",
+              "RequestMappingTemplate": "#set($id = $util.autoId())\n#set($attribs = $context.arguments.input)\n#set($attribs.meta = \"${id}#true\")\n#set($attribs.owner = $context.identity.sub)\n#set($attribs.itemType = \"PLAN\")\n#set($attribs.isDeleted = false)\n#set($attribs.createdAt = $util.time.nowISO8601())\n#set($attribs.startDate = $attribs.createdAt)\n#set($attribs.active = true)\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"id\"  : $util.dynamodb.toDynamoDBJson($id),\n        \"type\": {\"S\": \"PLAN\"}\n    },\n    \"attributeValues\": $util.toJson($util.dynamodb.toMapValues($attribs)),\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#id)\",\n        \"expressionNames\": {\n            \"#id\": \"id\",\n        }\n    }\n}",
               "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB. **\n$util.toJson($ctx.result)",
               "DataSourceName": {
                 "Fn::GetAtt": [
@@ -1553,7 +1553,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsgraphql/dev/1552285048840-2019-03-11T06:17:28.840Z",
+    "artifactDirectoryName": "serverless/formsgraphql/dev/1552285389057-2019-03-11T06:23:09.057Z",
     "artifact": ""
   }
 }
