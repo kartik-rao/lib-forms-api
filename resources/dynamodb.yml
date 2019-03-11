@@ -4,16 +4,16 @@ Resources:
         Properties:
             TableName: ${self:custom.TBL_MASTER_DATA}
             AttributeDefinitions:
-                - AttributeName: partitionKey
+                - AttributeName: id
                   AttributeType: S
-                - AttributeName: sortKey
+                - AttributeName: type
                   AttributeType: S
-                - AttributeName: indexKey
+                - AttributeName: meta
                   AttributeType: S
             KeySchema:
-                - AttributeName: partitionKey
+                - AttributeName: id
                   KeyType: HASH
-                - AttributeName: sortKey
+                - AttributeName: type
                   KeyType: RANGE
             ProvisionedThroughput:
                 ReadCapacityUnits: 1
@@ -21,9 +21,9 @@ Resources:
             GlobalSecondaryIndexes:
                 - IndexName: masterDataGSI
                   KeySchema:
-                    - AttributeName: sortKey
+                    - AttributeName: type
                       KeyType: HASH
-                    - AttributeName: indexKey
+                    - AttributeName: meta
                       KeyType: RANGE
                   Projection:
                     ProjectionType: ALL
@@ -35,16 +35,16 @@ Resources:
         Properties:
             TableName: ${self:custom.TBL_FORM_ENTRY}
             AttributeDefinitions:
-                - AttributeName: partitionKey
+                - AttributeName: id
                   AttributeType: S
-                - AttributeName: sortKey
+                - AttributeName: type
                   AttributeType: S
-                - AttributeName: indexKey
+                - AttributeName: meta
                   AttributeType: S
             KeySchema:
-                - AttributeName: partitionKey
+                - AttributeName: id
                   KeyType: HASH
-                - AttributeName: sortKey
+                - AttributeName: type
                   KeyType: RANGE
             ProvisionedThroughput:
                 ReadCapacityUnits: 5
@@ -52,9 +52,9 @@ Resources:
             GlobalSecondaryIndexes:
                 - IndexName: formEntriesGSI
                   KeySchema:
-                    - AttributeName: sortKey
+                    - AttributeName: type
                       KeyType: HASH
-                    - AttributeName: indexKey
+                    - AttributeName: meta
                       KeyType: RANGE
                   Projection:
                     ProjectionType: ALL
