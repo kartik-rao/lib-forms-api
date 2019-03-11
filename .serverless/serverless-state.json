@@ -7,10 +7,9 @@
     "provider": {
       "stage": "dev",
       "region": "ap-southeast-2",
-      "variableSyntax": "\\${([ ~:a-zA-Z0-9._'\",\\-\\/\\(\\)]+?)}",
+      "variableSyntax": "\\${([ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)]+?)}",
       "name": "aws",
       "runtime": "nodejs8.10",
-      "accountId": 523242459359,
       "serviceName": "dev-formsgraphql",
       "functions": {
         "postconfirmation": "dev-formsgraphql-postconfirmation",
@@ -19,8 +18,8 @@
       "profile": "default",
       "environment": {
         "serviceName": "dev-formsgraphql",
-        "TBL_FORM_ENTRY": "table_formsgraphql_dev_entries",
-        "TBL_MASTER_DATA": "table_formsgraphql_dev_masterdata"
+        "table_form_entries": "dev-formsgraphql_table_form_entries",
+        "table_app_data": "dev-formsgraphql_table_appdata"
       },
       "iamRoleStatements": [
         {
@@ -31,7 +30,25 @@
             "dynamodb:UpdateItem",
             "dynamodb:BatchWriteItem"
           ],
-          "Resource": "arn:aws:dynamodb:ap-southeast-2:*:table/table_formsgraphql_dev_masterdata"
+          "Resource": "arn:aws:dynamodb:ap-southeast-2:*:table/dev-formsgraphql_table_appdata"
+        },
+        {
+          "Effect": "Allow",
+          "Action": [
+            "ses:SendEmail",
+            "ses:SendRawEmail"
+          ],
+          "Resource": "arn:aws:ses:us-east-1:*:*"
+        },
+        {
+          "Effect": "Allow",
+          "Action": [
+            "dynamodb:GetItem",
+            "dynamodb:PutItem",
+            "dynamodb:UpdateItem",
+            "dynamodb:BatchWriteItem"
+          ],
+          "Resource": "arn:aws:dynamodb:ap-southeast-2:*:table/dev-formsgraphql_table_form_entries"
         },
         {
           "Effect": "Allow",
@@ -44,23 +61,7 @@
             "cognito-idp:AdminGetUser",
             "cognito-idp:GetUser"
           ],
-          "Resource": [
-            {
-              "Fn::Join": [
-                ":",
-                [
-                  "arn:aws:cognito-idp",
-                  {
-                    "Ref": "AWS::Region"
-                  },
-                  {
-                    "Ref": "AWS::AccountId"
-                  },
-                  "userpool/*"
-                ]
-              ]
-            }
-          ]
+          "Resource": "arn:aws:cognito-idp:#{AWS::Region}:#{AWS::AccountId}:userpool/*"
         }
       ],
       "versionFunctions": true,
@@ -70,574 +71,15 @@
         "Description": "The AWS CloudFormation template for this Serverless application",
         "Resources": {
           "ServerlessDeploymentBucket": {
-            "Type": "AWS::S3::Bucket"
-          },
-          "SignupLogGroup": {
-            "Type": "AWS::Logs::LogGroup",
+            "Type": "AWS::S3::Bucket",
             "Properties": {
-              "LogGroupName": "/aws/lambda/dev-formsgraphql-signup"
-            }
-          },
-          "PostConfirmationLogGroup": {
-            "Type": "AWS::Logs::LogGroup",
-            "Properties": {
-              "LogGroupName": "/aws/lambda/dev-formsgraphql-postconfirmation"
-            }
-          },
-          "IamRoleLambdaExecution": {
-            "Type": "AWS::IAM::Role",
-            "Properties": {
-              "AssumeRolePolicyDocument": {
-                "Version": "2012-10-17",
-                "Statement": [
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
                   {
-                    "Effect": "Allow",
-                    "Principal": {
-                      "Service": [
-                        "lambda.amazonaws.com"
-                      ]
-                    },
-                    "Action": [
-                      "sts:AssumeRole"
-                    ]
-                  }
-                ]
-              },
-              "Policies": [
-                {
-                  "PolicyName": {
-                    "Fn::Join": [
-                      "-",
-                      [
-                        "dev",
-                        "formsgraphql",
-                        "lambda"
-                      ]
-                    ]
-                  },
-                  "PolicyDocument": {
-                    "Version": "2012-10-17",
-                    "Statement": [
-                      {
-                        "Effect": "Allow",
-                        "Action": [
-                          "logs:CreateLogStream"
-                        ],
-                        "Resource": [
-                          {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/dev-formsgraphql-signup:*"
-                          },
-                          {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/dev-formsgraphql-postconfirmation:*"
-                          }
-                        ]
-                      },
-                      {
-                        "Effect": "Allow",
-                        "Action": [
-                          "logs:PutLogEvents"
-                        ],
-                        "Resource": [
-                          {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/dev-formsgraphql-signup:*:*"
-                          },
-                          {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/dev-formsgraphql-postconfirmation:*:*"
-                          }
-                        ]
-                      },
-                      {
-                        "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][0]"
-                      },
-                      {
-                        "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][1]"
-                      }
-                    ]
-                  }
-                }
-              ],
-              "Path": "/",
-              "RoleName": {
-                "Fn::Join": [
-                  "-",
-                  [
-                    "formsgraphql",
-                    "dev",
-                    "ap-southeast-2",
-                    "lambdaRole"
-                  ]
-                ]
-              }
-            }
-          },
-          "SignupLambdaFunction": {
-            "Type": "AWS::Lambda::Function",
-            "Properties": {
-              "Code": {
-                "S3Bucket": {
-                  "Ref": "ServerlessDeploymentBucket"
-                },
-                "S3Key": "serverless/formsgraphql/dev/1552266774542-2019-03-11T01:12:54.542Z/formsgraphql.zip"
-              },
-              "FunctionName": "dev-formsgraphql-signup",
-              "Handler": "src/signup.handle",
-              "MemorySize": 1024,
-              "Role": {
-                "Fn::GetAtt": [
-                  "IamRoleLambdaExecution",
-                  "Arn"
-                ]
-              },
-              "Runtime": "nodejs8.10",
-              "Timeout": 6,
-              "Environment": {
-                "Variables": {
-                  "serviceName": "dev-formsgraphql",
-                  "TBL_FORM_ENTRY": "table_formsgraphql_dev_entries",
-                  "TBL_MASTER_DATA": "table_formsgraphql_dev_masterdata",
-                  "cognitoUserPoolId": {
-                    "Ref": "CognitoUserPoolMyUserPool"
-                  },
-                  "cognitoUserPoolWebClientId": {
-                    "Ref": "CognitoUserPoolClient"
-                  }
-                }
-              }
-            },
-            "DependsOn": [
-              "SignupLogGroup",
-              "IamRoleLambdaExecution"
-            ]
-          },
-          "SignupLambdaVersionpBoZnHGiFSJ79ckGeRZcfFcID8jwW27k2VFLbPN6dE": {
-            "Type": "AWS::Lambda::Version",
-            "DeletionPolicy": "Retain",
-            "Properties": {
-              "FunctionName": {
-                "Ref": "SignupLambdaFunction"
-              },
-              "CodeSha256": "EyMY3nNOD95RJ2iJQNJQZKod5LkvZcTOVUT24viw7gc="
-            }
-          },
-          "PostConfirmationLambdaFunction": {
-            "Type": "AWS::Lambda::Function",
-            "Properties": {
-              "Code": {
-                "S3Bucket": {
-                  "Ref": "ServerlessDeploymentBucket"
-                },
-                "S3Key": "serverless/formsgraphql/dev/1552266774542-2019-03-11T01:12:54.542Z/formsgraphql.zip"
-              },
-              "FunctionName": "dev-formsgraphql-postconfirmation",
-              "Handler": "src/postconfirmation.handle",
-              "MemorySize": 1024,
-              "Role": {
-                "Fn::GetAtt": [
-                  "IamRoleLambdaExecution",
-                  "Arn"
-                ]
-              },
-              "Runtime": "nodejs8.10",
-              "Timeout": 6,
-              "Environment": {
-                "Variables": {
-                  "serviceName": "dev-formsgraphql",
-                  "TBL_FORM_ENTRY": "table_formsgraphql_dev_entries",
-                  "TBL_MASTER_DATA": "table_formsgraphql_dev_masterdata"
-                }
-              }
-            },
-            "DependsOn": [
-              "PostConfirmationLogGroup",
-              "IamRoleLambdaExecution"
-            ]
-          },
-          "PostConfirmationLambdaVersion27ytPAeVEURBipfqQytoE0IQuvGJFeyuqN5S1QlOMVk": {
-            "Type": "AWS::Lambda::Version",
-            "DeletionPolicy": "Retain",
-            "Properties": {
-              "FunctionName": {
-                "Ref": "PostConfirmationLambdaFunction"
-              },
-              "CodeSha256": "EyMY3nNOD95RJ2iJQNJQZKod5LkvZcTOVUT24viw7gc="
-            }
-          },
-          "ApiGatewayRestApi": {
-            "Type": "AWS::ApiGateway::RestApi",
-            "Properties": {
-              "Name": "dev-formsgraphql",
-              "EndpointConfiguration": {
-                "Types": [
-                  "EDGE"
-                ]
-              }
-            }
-          },
-          "ApiGatewayResourceSignup": {
-            "Type": "AWS::ApiGateway::Resource",
-            "Properties": {
-              "ParentId": {
-                "Fn::GetAtt": [
-                  "ApiGatewayRestApi",
-                  "RootResourceId"
-                ]
-              },
-              "PathPart": "signup",
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              }
-            }
-          },
-          "ApiGatewayResourcePostconfirm": {
-            "Type": "AWS::ApiGateway::Resource",
-            "Properties": {
-              "ParentId": {
-                "Fn::GetAtt": [
-                  "ApiGatewayRestApi",
-                  "RootResourceId"
-                ]
-              },
-              "PathPart": "postconfirm",
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              }
-            }
-          },
-          "ApiGatewayMethodSignupOptions": {
-            "Type": "AWS::ApiGateway::Method",
-            "Properties": {
-              "AuthorizationType": "NONE",
-              "HttpMethod": "OPTIONS",
-              "MethodResponses": [
-                {
-                  "StatusCode": "200",
-                  "ResponseParameters": {
-                    "method.response.header.Access-Control-Allow-Origin": true,
-                    "method.response.header.Access-Control-Allow-Headers": true,
-                    "method.response.header.Access-Control-Allow-Methods": true,
-                    "method.response.header.Access-Control-Allow-Credentials": true
-                  },
-                  "ResponseModels": {}
-                }
-              ],
-              "RequestParameters": {},
-              "Integration": {
-                "Type": "MOCK",
-                "RequestTemplates": {
-                  "application/json": "{statusCode:200}"
-                },
-                "ContentHandling": "CONVERT_TO_TEXT",
-                "IntegrationResponses": [
-                  {
-                    "StatusCode": "200",
-                    "ResponseParameters": {
-                      "method.response.header.Access-Control-Allow-Origin": "'*'",
-                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
-                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'",
-                      "method.response.header.Access-Control-Allow-Credentials": "'false'"
-                    },
-                    "ResponseTemplates": {
-                      "application/json": ""
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
                     }
                   }
-                ]
-              },
-              "ResourceId": {
-                "Ref": "ApiGatewayResourceSignup"
-              },
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              }
-            }
-          },
-          "ApiGatewayMethodPostconfirmOptions": {
-            "Type": "AWS::ApiGateway::Method",
-            "Properties": {
-              "AuthorizationType": "NONE",
-              "HttpMethod": "OPTIONS",
-              "MethodResponses": [
-                {
-                  "StatusCode": "200",
-                  "ResponseParameters": {
-                    "method.response.header.Access-Control-Allow-Origin": true,
-                    "method.response.header.Access-Control-Allow-Headers": true,
-                    "method.response.header.Access-Control-Allow-Methods": true,
-                    "method.response.header.Access-Control-Allow-Credentials": true
-                  },
-                  "ResponseModels": {}
-                }
-              ],
-              "RequestParameters": {},
-              "Integration": {
-                "Type": "MOCK",
-                "RequestTemplates": {
-                  "application/json": "{statusCode:200}"
-                },
-                "ContentHandling": "CONVERT_TO_TEXT",
-                "IntegrationResponses": [
-                  {
-                    "StatusCode": "200",
-                    "ResponseParameters": {
-                      "method.response.header.Access-Control-Allow-Origin": "'*'",
-                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
-                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'",
-                      "method.response.header.Access-Control-Allow-Credentials": "'false'"
-                    },
-                    "ResponseTemplates": {
-                      "application/json": ""
-                    }
-                  }
-                ]
-              },
-              "ResourceId": {
-                "Ref": "ApiGatewayResourcePostconfirm"
-              },
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              }
-            }
-          },
-          "ApiGatewayMethodSignupPost": {
-            "Type": "AWS::ApiGateway::Method",
-            "Properties": {
-              "HttpMethod": "POST",
-              "RequestParameters": {},
-              "ResourceId": {
-                "Ref": "ApiGatewayResourceSignup"
-              },
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              },
-              "ApiKeyRequired": false,
-              "AuthorizationType": "NONE",
-              "Integration": {
-                "IntegrationHttpMethod": "POST",
-                "Type": "AWS_PROXY",
-                "Uri": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":apigateway:",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      ":lambda:path/2015-03-31/functions/",
-                      {
-                        "Fn::GetAtt": [
-                          "SignupLambdaFunction",
-                          "Arn"
-                        ]
-                      },
-                      "/invocations"
-                    ]
-                  ]
-                }
-              },
-              "MethodResponses": []
-            }
-          },
-          "ApiGatewayMethodPostconfirmPost": {
-            "Type": "AWS::ApiGateway::Method",
-            "Properties": {
-              "HttpMethod": "POST",
-              "RequestParameters": {},
-              "ResourceId": {
-                "Ref": "ApiGatewayResourcePostconfirm"
-              },
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              },
-              "ApiKeyRequired": false,
-              "AuthorizationType": "NONE",
-              "Integration": {
-                "IntegrationHttpMethod": "POST",
-                "Type": "AWS_PROXY",
-                "Uri": {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:",
-                      {
-                        "Ref": "AWS::Partition"
-                      },
-                      ":apigateway:",
-                      {
-                        "Ref": "AWS::Region"
-                      },
-                      ":lambda:path/2015-03-31/functions/",
-                      {
-                        "Fn::GetAtt": [
-                          "PostConfirmationLambdaFunction",
-                          "Arn"
-                        ]
-                      },
-                      "/invocations"
-                    ]
-                  ]
-                }
-              },
-              "MethodResponses": []
-            }
-          },
-          "ApiGatewayDeployment1552266774997": {
-            "Type": "AWS::ApiGateway::Deployment",
-            "Properties": {
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              },
-              "StageName": "dev"
-            },
-            "DependsOn": [
-              "ApiGatewayMethodSignupPost",
-              "ApiGatewayMethodPostconfirmPost"
-            ]
-          },
-          "SignupLambdaPermissionApiGateway": {
-            "Type": "AWS::Lambda::Permission",
-            "Properties": {
-              "FunctionName": {
-                "Fn::GetAtt": [
-                  "SignupLambdaFunction",
-                  "Arn"
-                ]
-              },
-              "Action": "lambda:InvokeFunction",
-              "Principal": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "apigateway.",
-                    {
-                      "Ref": "AWS::URLSuffix"
-                    }
-                  ]
-                ]
-              },
-              "SourceArn": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:",
-                    {
-                      "Ref": "AWS::Partition"
-                    },
-                    ":execute-api:",
-                    {
-                      "Ref": "AWS::Region"
-                    },
-                    ":",
-                    {
-                      "Ref": "AWS::AccountId"
-                    },
-                    ":",
-                    {
-                      "Ref": "ApiGatewayRestApi"
-                    },
-                    "/*/*"
-                  ]
-                ]
-              }
-            }
-          },
-          "PostConfirmationLambdaPermissionApiGateway": {
-            "Type": "AWS::Lambda::Permission",
-            "Properties": {
-              "FunctionName": {
-                "Fn::GetAtt": [
-                  "PostConfirmationLambdaFunction",
-                  "Arn"
-                ]
-              },
-              "Action": "lambda:InvokeFunction",
-              "Principal": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "apigateway.",
-                    {
-                      "Ref": "AWS::URLSuffix"
-                    }
-                  ]
-                ]
-              },
-              "SourceArn": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:",
-                    {
-                      "Ref": "AWS::Partition"
-                    },
-                    ":execute-api:",
-                    {
-                      "Ref": "AWS::Region"
-                    },
-                    ":",
-                    {
-                      "Ref": "AWS::AccountId"
-                    },
-                    ":",
-                    {
-                      "Ref": "ApiGatewayRestApi"
-                    },
-                    "/*/*"
-                  ]
-                ]
-              }
-            }
-          },
-          "CognitoUserPoolMyUserPool": {
-            "Type": "AWS::Cognito::UserPool",
-            "Properties": {
-              "UserPoolName": "dev-formsgraphql-userpool",
-              "LambdaConfig": {
-                "PostConfirmation": {
-                  "Fn::GetAtt": [
-                    "PostConfirmationLambdaFunction",
-                    "Arn"
-                  ]
-                }
-              },
-              "UsernameAttributes": [
-                "email"
-              ],
-              "AutoVerifiedAttributes": [
-                "email"
-              ]
-            },
-            "DependsOn": [
-              "PostConfirmationLambdaFunction"
-            ]
-          },
-          "PostConfirmationLambdaPermissionCognitoUserPoolMyUserPoolTriggerSourcePostConfirmation": {
-            "Type": "AWS::Lambda::Permission",
-            "Properties": {
-              "FunctionName": {
-                "Fn::GetAtt": [
-                  "PostConfirmationLambdaFunction",
-                  "Arn"
-                ]
-              },
-              "Action": "lambda:InvokeFunction",
-              "Principal": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "cognito-idp.",
-                    {
-                      "Ref": "AWS::URLSuffix"
-                    }
-                  ]
-                ]
-              },
-              "SourceArn": {
-                "Fn::GetAtt": [
-                  "CognitoUserPoolMyUserPool",
-                  "Arn"
                 ]
               }
             }
@@ -698,7 +140,7 @@
                           "",
                           [
                             {
-                              "Fn::GetAtt": "MasterDataTable.Arn"
+                              "Fn::GetAtt": "AppDataTable.Arn"
                             },
                             "*"
                           ]
@@ -760,10 +202,10 @@
               }
             }
           },
-          "MasterDataTable": {
+          "AppDataTable": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
-              "TableName": "table_formsgraphql_dev_masterdata",
+              "TableName": "dev-formsgraphql_table_appdata",
               "AttributeDefinitions": [
                 {
                   "AttributeName": "id",
@@ -794,7 +236,7 @@
               },
               "GlobalSecondaryIndexes": [
                 {
-                  "IndexName": "masterDataGSI",
+                  "IndexName": "dev-formsgraphql_table_appdata_gsi",
                   "KeySchema": [
                     {
                       "AttributeName": "type",
@@ -816,10 +258,10 @@
               ]
             }
           },
-          "EntriesTable": {
+          "FormEntriesTable": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
-              "TableName": "table_formsgraphql_dev_entries",
+              "TableName": "dev-formsgraphql_table_form_entries",
               "AttributeDefinitions": [
                 {
                   "AttributeName": "id",
@@ -850,7 +292,7 @@
               },
               "GlobalSecondaryIndexes": [
                 {
-                  "IndexName": "formEntriesGSI",
+                  "IndexName": "dev-formsgraphql_table_form_entries_gsi",
                   "KeySchema": [
                     {
                       "AttributeName": "type",
@@ -870,6 +312,25 @@
                   }
                 }
               ]
+            }
+          },
+          "CognitoUserPoolMyUserPool": {
+            "Type": "AWS::Cognito::UserPool",
+            "Properties": {
+              "UserPoolName": "dev-formsgraphql-userpool",
+              "UsernameAttributes": [
+                "email"
+              ],
+              "AutoVerifiedAttributes": [
+                "email"
+              ],
+              "EmailVerificationSubject": "Your Forms.li verification code",
+              "EmailVerificationMessage": "{####}",
+              "EmailConfiguration": {
+                "SourceArn": {
+                  "Fn::Sub": "arn:aws:ses:us-east-1:${AWS::AccountId}:identity/no-reply@forms.li"
+                }
+              }
             }
           },
           "CognitoUserPoolClient": {
@@ -996,7 +457,7 @@
           "GraphQlSchema": {
             "Type": "AWS::AppSync::GraphQLSchema",
             "Properties": {
-              "Definition": "type MasterData @model {\n    id: ID!\n    type: ID!\n    meta: String!\n    itemType: String!\n    owner: ID!\n    createdAt: AWSDate!\n    updatedAt: AWSDate\n    isDeleted: Boolean\n}\n\ntype FormEntry @model {\n    id: ID!\n    type: ID!\n    meta: String!\n    createdAt: AWSDate!\n}\n\ninput AddFormEntryInput {\n  data: AWSJSON!\n}\n\ntype PaginatedFormEntries {\n  items: [FormEntry!]!\n  nextToken: String\n}\n\ntype Form {\n    id: ID!\n    owner: ID!\n    exid: String\n    desc: String\n    name: String!\n    tenant: AWSJSON\n    status: AWSJSON\n    content: AWSJSON!\n    layout: AWSJSON\n    formLayoutOptions: AWSJSON\n    stopSubmit: Boolean\n    submitTarget: String\n    successRedirect: String\n    errorRedirect: String\n    createdAt: AWSDate\n    updatedAt: AWSDate\n    entries: PaginatedFormEntries\n}\n\ninput AddFormInput {\n  name: String!\n  desc: String\n  content: AWSJSON!\n  layout: AWSJSON\n  formLayoutOptions: AWSJSON\n  stopSubmit: Boolean\n  submitTarget: String\n  successRedirect: String\n  errorRedirect: String\n}\n\ninput UpdateFormInput  {\n  id: ID\n  name: String\n  desc: String\n  content: AWSJSON!\n  layout: AWSJSON\n  formLayoutOptions: AWSJSON\n  stopSubmit: Boolean\n  submitTarget: String\n  successRedirect: String\n  errorRedirect: String\n}\n\ntype PaginatedForm {\n  items: [Form!]!\n  nextToken: String\n}\n\ntype User {\n  id: ID!\n  owner: ID!\n  accountId: String!\n  email: String!\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n  createdAt: AWSDate\n  updatedAt: AWSDate\n}\n\ninput UpdateUserInputData {\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ninput UpdateUserInput {\n  id: ID!\n  data: UpdateUserInputData!\n}\n\ninput AddUserInput {\n  email: String!\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ntype PaginatedUser {\n  items: [User!]!\n  nextToken: String\n}\n\ntype Account {\n  accountId: ID!\n  name: String!\n  owner: ID!\n  planId: ID\n  createdAt: AWSDate\n  updatedAt: AWSDate\n  users: [User!]\n  forms: [Form!]\n  plan : Plan\n}\n\ninput UpdateAccountInput {\n  id: ID!\n  name: String\n  planId: ID\n}\n\ninput AddAccountInput {\n  name: String!\n}\n\ntype PaginatedAccount {\n  items: [Account!]!\n  nextToken: String!\n}\n\ntype PlanType {\n  planTypeId: ID!\n  owner: ID!\n  name: String!\n  cost: Float!\n  active: Boolean!\n  billingTerm: String!\n  createdAt: AWSDate\n  updatedAt: AWSDate\n}\n\ninput AddPlanTypeInput {\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Boolean!\n}\n\ninput UpdatePlanTypeInput {\n  id: ID!\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Boolean!\n}\n\ntype PaginatedPlanType {\n  items: [PlanType!]!\n  nextToken: String!\n}\n\ntype Plan {\n  planId: ID!\n  accountId: ID!\n  owner: ID!\n  planTypeId: ID!\n  startDate: AWSDate!\n  endDate: AWSDate\n  active: Boolean\n  lastBillDate: AWSDate\n  createdAt: AWSDate\n  updatedAt: AWSDate\n  planType: PlanType\n}\n\ninput AddPlanInput {\n  accountId: ID!\n  planTypeId: ID!\n  endDate: AWSDate\n  active: Boolean\n}\n\ninput UpdatePlanInput {\n  id: ID!\n  endDate: AWSDate\n  active: Boolean!\n}\n\ntype PaginatedPlan {\n  items: [Plan!]!\n  nextToken: String\n}\n\ntype IntegrationType {\n  integrationTypeId: ID!\n  owner: ID!\n  PlanTypeId: ID!\n  name: String!\n  active: Boolean!\n  createdAt: AWSDate\n  updatedAt: AWSDate\n}\n\ninput AddIntegrationTypeInput {\n  name: String!\n  active: Boolean\n}\n\ninput UpdateIntegrationTypeInput {\n  id: ID!\n  name: String!\n  active: Boolean\n}\n\ntype PaginatedIntegrationType {\n  items: [IntegrationType!]!\n  nextToken: String\n}\n\ntype Integration {\n  integrationId: ID!\n  integrationTypeId: ID!\n  integrationType: IntegrationType\n  owner: ID!\n  accountId: ID!\n  formId: ID!\n  active: Boolean!\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  lastExecuted: AWSDate\n  lastExecutionResult: Boolean\n  lastExecutionResultMessage: String\n  createdAt: AWSDate\n  updatedAt: AWSDate\n}\n\ninput AddIntegrationInput {\n  integrationTypeId: ID!\n  accountId: ID!\n  formId: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationTypeInputData {\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationInput {\n  id: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ntype PaginatedIntegration {\n  items: [Integration!]!\n  nextToken: String\n}\n\ntype Query {\n  getAccount(accountId: ID!): Account\n  @aws_auth(cognito_groups: [\"Admin\", \"AccountAdmin\"])\n\n  listAllAccounts(limit: Int, nextToken: String): PaginatedAccount!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  getUser(userId: String!): User!\n  @aws_auth(cognito_groups: [\"Admin\", \"AccountAdmin\"])\n\n  listAllUsers(limit: Int, nextToken: String) : PaginatedUser!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAccountUsersInGroup(accountId: String!, group: String!, limit: Int, nextToken: String): PaginatedUser!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getPlan(planId: String!): Plan!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllPlans(limit: Int, nextToken: String): PaginatedPlan!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountPlans(accountId: String!, limit: Int, nextToken: String): PaginatedPlan!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getActiveAccountPlan(accountId: String!): PaginatedPlan!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Editor\",  \"Viewer\", \"Admin\"])\n\n  getPlanType(planTypeId: String!): PlanType!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllPlanTypes(limit: Int, nextToken: String): PaginatedPlanType!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllActivePlanTypes(limit: Int, nextToken: String): PaginatedPlanType!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getForm(formId: String!) : Form!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllForms(limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllAccountFormsByUser(accountId: String!, userId: String!, limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  getIntegrationType(integrationTypeId: String!): IntegrationType!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllIntegrationTypes(limit: Int, nextToken: String): PaginatedIntegrationType!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllIntegrationTypesByPlanType(planTypeId: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getIntegration(integrationId: String!): Integration!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllIntegrations(limit: Int, nextToken: String): PaginatedIntegration!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountIntegrations(accountId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllAccountFormIntegrations(accountId: String!, formId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  @aws_auth(cognito_groups: [\"AccountAdmin\"])\n\n  getFormEntry(formEntryId: String!): FormEntry!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllFormEntries(formId: String!) : PaginatedFormEntries!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllFormEntriesByTime(formId: String!, timestampPrefix: String!): PaginatedFormEntries!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n}\n\ntype Mutation {\n  addPlanType(input: AddPlanTypeInput): PlanType!\n  addPlan(input: AddPlanInput): Plan!\n  addAccount(input: AddAccountInput): Account!\n  addUser(input: AddUserInput): User!\n  addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!\n  addIntegration(input: AddIntegrationInput): Integration!\n  addForm(input: AddFormInput): Form!\n\n  updatePlanType(input: UpdatePlanTypeInput): PlanType!\n  updatePlan(input: UpdatePlanInput): Plan!\n  updateAccount(input: UpdateAccountInput): Account!\n  updateUser(input: UpdateUserInput): User!\n  updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!\n  updateIntegration(input: UpdateIntegrationInput): Integration!\n  updateForm(input: UpdateFormInput): Form!\n\n  deletePlanType(id: ID!): PlanType!\n  deletePlan(id: ID!): Plan!\n  deleteAccount(id: ID!): Account!\n  deleteUser(id: ID!): User!\n  deleteIntegrationType(id: ID!): IntegrationType!\n  deleteIntegration(id: ID!): Integration!\n  deleteForm(id: ID!): Form!\n\n  addFormEntry(input: AddFormEntryInput!): FormEntry!\n  testPipeline: AWSJSON\n  attachPlan(input: AddPlanInput): Account\n}\n\ntype Schema {\n  query: Query\n  mutation: Mutation\n}",
+              "Definition": "type AppData @model {\n    id: ID!\n    type: ID!\n    meta: String!\n    itemType: String!\n    owner: ID!\n    createdAt: AWSDate!\n    updatedAt: AWSDate\n    isDeleted: Boolean\n}\n\ntype FormEntry @model {\n    id: ID!\n    type: ID!\n    meta: String!\n    createdAt: AWSDate!\n}\n\ninput AddFormEntryInput {\n  data: AWSJSON!\n}\n\ntype PaginatedFormEntries {\n  items: [FormEntry!]!\n  nextToken: String\n}\n\ntype Form {\n    id: ID!\n    owner: ID!\n    exid: String\n    desc: String\n    name: String!\n    tenant: AWSJSON\n    status: AWSJSON\n    content: AWSJSON!\n    layout: AWSJSON\n    formLayoutOptions: AWSJSON\n    stopSubmit: Boolean\n    submitTarget: String\n    successRedirect: String\n    errorRedirect: String\n    createdAt: AWSDate\n    updatedAt: AWSDate\n    entries: PaginatedFormEntries\n}\n\ninput AddFormInput {\n  name: String!\n  desc: String\n  content: AWSJSON!\n  layout: AWSJSON\n  formLayoutOptions: AWSJSON\n  stopSubmit: Boolean\n  submitTarget: String\n  successRedirect: String\n  errorRedirect: String\n}\n\ninput UpdateFormInput  {\n  id: ID\n  name: String\n  desc: String\n  content: AWSJSON!\n  layout: AWSJSON\n  formLayoutOptions: AWSJSON\n  stopSubmit: Boolean\n  submitTarget: String\n  successRedirect: String\n  errorRedirect: String\n}\n\ntype PaginatedForm {\n  items: [Form!]!\n  nextToken: String\n}\n\ntype User {\n  id: ID!\n  owner: ID!\n  accountId: String!\n  email: String!\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n  createdAt: AWSDate\n  updatedAt: AWSDate\n}\n\ninput UpdateUserInputData {\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ninput UpdateUserInput {\n  id: ID!\n  data: UpdateUserInputData!\n}\n\ninput AddUserInput {\n  email: String!\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ntype PaginatedUser {\n  items: [User!]!\n  nextToken: String\n}\n\ntype Account {\n  accountId: ID!\n  name: String!\n  owner: ID!\n  planId: ID\n  createdAt: AWSDate\n  updatedAt: AWSDate\n  users: [User!]\n  forms: [Form!]\n  plan : Plan\n}\n\ninput UpdateAccountInput {\n  id: ID!\n  name: String\n  planId: ID\n}\n\ninput AddAccountInput {\n  name: String!\n}\n\ntype PaginatedAccount {\n  items: [Account!]!\n  nextToken: String!\n}\n\ntype PlanType {\n  planTypeId: ID!\n  owner: ID!\n  name: String!\n  cost: Float!\n  active: Boolean!\n  billingTerm: String!\n  createdAt: AWSDate\n  updatedAt: AWSDate\n}\n\ninput AddPlanTypeInput {\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Boolean!\n}\n\ninput UpdatePlanTypeInput {\n  id: ID!\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Boolean!\n}\n\ntype PaginatedPlanType {\n  items: [PlanType!]!\n  nextToken: String!\n}\n\ntype Plan {\n  planId: ID!\n  accountId: ID!\n  owner: ID!\n  planTypeId: ID!\n  startDate: AWSDate!\n  endDate: AWSDate\n  active: Boolean\n  lastBillDate: AWSDate\n  createdAt: AWSDate\n  updatedAt: AWSDate\n  planType: PlanType\n}\n\ninput AddPlanInput {\n  accountId: ID!\n  planTypeId: ID!\n  endDate: AWSDate\n  active: Boolean\n}\n\ninput UpdatePlanInput {\n  id: ID!\n  endDate: AWSDate\n  active: Boolean!\n}\n\ntype PaginatedPlan {\n  items: [Plan!]!\n  nextToken: String\n}\n\ntype IntegrationType {\n  integrationTypeId: ID!\n  owner: ID!\n  PlanTypeId: ID!\n  name: String!\n  active: Boolean!\n  createdAt: AWSDate\n  updatedAt: AWSDate\n}\n\ninput AddIntegrationTypeInput {\n  name: String!\n  active: Boolean\n}\n\ninput UpdateIntegrationTypeInput {\n  id: ID!\n  name: String!\n  active: Boolean\n}\n\ntype PaginatedIntegrationType {\n  items: [IntegrationType!]!\n  nextToken: String\n}\n\ntype Integration {\n  integrationId: ID!\n  integrationTypeId: ID!\n  integrationType: IntegrationType\n  owner: ID!\n  accountId: ID!\n  formId: ID!\n  active: Boolean!\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  lastExecuted: AWSDate\n  lastExecutionResult: Boolean\n  lastExecutionResultMessage: String\n  createdAt: AWSDate\n  updatedAt: AWSDate\n}\n\ninput AddIntegrationInput {\n  integrationTypeId: ID!\n  accountId: ID!\n  formId: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationTypeInputData {\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationInput {\n  id: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ntype PaginatedIntegration {\n  items: [Integration!]!\n  nextToken: String\n}\n\ntype Query {\n  getAccount(accountId: ID!): Account\n  @aws_auth(cognito_groups: [\"Admin\", \"AccountAdmin\"])\n\n  listAllAccounts(limit: Int, nextToken: String): PaginatedAccount!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  getUser(userId: String!): User!\n  @aws_auth(cognito_groups: [\"Admin\", \"AccountAdmin\"])\n\n  listAllUsers(limit: Int, nextToken: String) : PaginatedUser!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAccountUsersInGroup(accountId: String!, group: String!, limit: Int, nextToken: String): PaginatedUser!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getPlan(planId: String!): Plan!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllPlans(limit: Int, nextToken: String): PaginatedPlan!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountPlans(accountId: String!, limit: Int, nextToken: String): PaginatedPlan!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getActiveAccountPlan(accountId: String!): PaginatedPlan!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Editor\",  \"Viewer\", \"Admin\"])\n\n  getPlanType(planTypeId: String!): PlanType!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllPlanTypes(limit: Int, nextToken: String): PaginatedPlanType!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllActivePlanTypes(limit: Int, nextToken: String): PaginatedPlanType!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getForm(formId: String!) : Form!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllForms(limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllAccountFormsByUser(accountId: String!, userId: String!, limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  getIntegrationType(integrationTypeId: String!): IntegrationType!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllIntegrationTypes(limit: Int, nextToken: String): PaginatedIntegrationType!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllIntegrationTypesByPlanType(planTypeId: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  getIntegration(integrationId: String!): Integration!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllIntegrations(limit: Int, nextToken: String): PaginatedIntegration!\n  @aws_auth(cognito_groups: [\"Admin\"])\n\n  listAllAccountIntegrations(accountId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\"])\n\n  listAllAccountFormIntegrations(accountId: String!, formId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  @aws_auth(cognito_groups: [\"AccountAdmin\"])\n\n  getFormEntry(formEntryId: String!): FormEntry!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllFormEntries(formId: String!) : PaginatedFormEntries!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n\n  listAllFormEntriesByTime(formId: String!, timestampPrefix: String!): PaginatedFormEntries!\n  @aws_auth(cognito_groups: [\"AccountAdmin\", \"Admin\", \"Editor\",  \"Viewer\"])\n}\n\ntype Mutation {\n  addPlanType(input: AddPlanTypeInput): PlanType!\n  addPlan(input: AddPlanInput): Plan!\n  addAccount(input: AddAccountInput): Account!\n  addUser(input: AddUserInput): User!\n  addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!\n  addIntegration(input: AddIntegrationInput): Integration!\n  addForm(input: AddFormInput): Form!\n\n  updatePlanType(input: UpdatePlanTypeInput): PlanType!\n  updatePlan(input: UpdatePlanInput): Plan!\n  updateAccount(input: UpdateAccountInput): Account!\n  updateUser(input: UpdateUserInput): User!\n  updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!\n  updateIntegration(input: UpdateIntegrationInput): Integration!\n  updateForm(input: UpdateFormInput): Form!\n\n  deletePlanType(id: ID!): PlanType!\n  deletePlan(id: ID!): Plan!\n  deleteAccount(id: ID!): Account!\n  deleteUser(id: ID!): User!\n  deleteIntegrationType(id: ID!): IntegrationType!\n  deleteIntegration(id: ID!): Integration!\n  deleteForm(id: ID!): Form!\n\n  addFormEntry(input: AddFormEntryInput!): FormEntry!\n  testPipeline: AWSJSON\n  attachPlan(input: AddPlanInput): Account\n}\n\ntype Schema {\n  query: Query\n  mutation: Mutation\n}",
               "ApiId": {
                 "Fn::GetAtt": [
                   "GraphQlApi",
@@ -1005,7 +466,7 @@
               }
             }
           },
-          "GraphQlDsMasterDataRole": {
+          "GraphQlDsAppDataRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
               "AssumeRolePolicyDocument": {
@@ -1026,7 +487,7 @@
               },
               "Policies": [
                 {
-                  "PolicyName": "GraphQlDsMasterDataPolicy",
+                  "PolicyName": "GraphQlDsAppDataPolicy",
                   "PolicyDocument": {
                     "Version": "2012-10-17",
                     "Statement": [
@@ -1059,7 +520,7 @@
                                     "/",
                                     [
                                       "table",
-                                      "table_formsgraphql_dev_masterdata"
+                                      "dev-formsgraphql_table_appdata"
                                     ]
                                   ]
                                 }
@@ -1071,7 +532,7 @@
                               "/",
                               [
                                 {
-                                  "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GraphQlDsMasterDataRole\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][0][\"Resource\"][0]"
+                                  "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GraphQlDsAppDataRole\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][0][\"Resource\"][0]"
                                 },
                                 "*"
                               ]
@@ -1085,7 +546,87 @@
               ]
             }
           },
-          "GraphQlDsMasterData": {
+          "GraphQlDsFormEntriesRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "appsync.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": "GraphQlDsFormEntriesPolicy",
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "dynamodb:DeleteItem",
+                          "dynamodb:GetItem",
+                          "dynamodb:PutItem",
+                          "dynamodb:Query",
+                          "dynamodb:Scan",
+                          "dynamodb:UpdateItem",
+                          "dynamodb:BatchGetItem",
+                          "dynamodb:BatchWriteItem"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Join": [
+                              ":",
+                              [
+                                "arn",
+                                "aws",
+                                "dynamodb",
+                                "ap-southeast-2",
+                                {
+                                  "Ref": "AWS::AccountId"
+                                },
+                                {
+                                  "Fn::Join": [
+                                    "/",
+                                    [
+                                      "table",
+                                      "dev-formsgraphql_table_form_entries"
+                                    ]
+                                  ]
+                                }
+                              ]
+                            ]
+                          },
+                          {
+                            "Fn::Join": [
+                              "/",
+                              [
+                                {
+                                  "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GraphQlDsFormEntriesRole\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][0][\"Resource\"][0]"
+                                },
+                                "*"
+                              ]
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "GraphQlDsAppData": {
             "Type": "AWS::AppSync::DataSource",
             "Properties": {
               "ApiId": {
@@ -1094,18 +635,43 @@
                   "ApiId"
                 ]
               },
-              "Name": "MasterData",
-              "Description": "Master Table",
+              "Name": "AppData",
+              "Description": "App Data Table",
               "Type": "AMAZON_DYNAMODB",
               "ServiceRoleArn": {
                 "Fn::GetAtt": [
-                  "GraphQlDsMasterDataRole",
+                  "GraphQlDsAppDataRole",
                   "Arn"
                 ]
               },
               "DynamoDBConfig": {
                 "AwsRegion": "ap-southeast-2",
-                "TableName": "table_formsgraphql_dev_masterdata",
+                "TableName": "dev-formsgraphql_table_appdata",
+                "UseCallerCredentials": false
+              }
+            }
+          },
+          "GraphQlDsFormEntries": {
+            "Type": "AWS::AppSync::DataSource",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "Name": "FormEntries",
+              "Description": "FormEntries Table",
+              "Type": "AMAZON_DYNAMODB",
+              "ServiceRoleArn": {
+                "Fn::GetAtt": [
+                  "GraphQlDsFormEntriesRole",
+                  "Arn"
+                ]
+              },
+              "DynamoDBConfig": {
+                "AwsRegion": "ap-southeast-2",
+                "TableName": "dev-formsgraphql_table_form_entries",
                 "UseCallerCredentials": false
               }
             }
@@ -1122,11 +688,11 @@
               "Name": "GraphQlFunctionConfigurationauthorizeFunction",
               "DataSourceName": {
                 "Fn::GetAtt": [
-                  "GraphQlDsMasterData",
+                  "GraphQlDsAppData",
                   "Name"
                 ]
               },
-              "RequestMappingTemplate": "#if (!$context.stash.isAdmin && !$context.stash.tenant)\n    $util.error(\"User is pending tenant assignment\")\n#end\n#if (!$context.stash.group)\n    $util.error(\"User is pending group assignment\")\n#end\n#if ($context.stash.isAdmin)\n{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"GetItem\",\n    \"key\": {\n        \"partitionKey\": {\"S\": \"$context.identity.sub\"},\n        \"sortKey\"     : {\"S\": \"USER\"}\n    }\n}\n#else\n{\n    \"version\" : \"2018-05-29\",\n    \"operation\" : \"BatchGetItem\",\n    \"tables\" : {\n        \"MasterData\": {\n            \"keys\": [\n                {\n                    \"partitionKey\": {\"S\": \"$context.stash.tenant\"},\n                    \"sortKey\"     : {\"S\": \"ACCOUNT\"}\n                },\n                {\n                    \"partitionKey\": {\"S\": \"$context.identity.sub\"},\n                    \"sortKey\"     : {\"S\": \"USER\"}\n                }\n            ],\n            \"consistentRead\": true\n        }\n    }\n}\n#end\n",
+              "RequestMappingTemplate": "#if (!$context.stash.isAdmin && !$context.stash.tenant)\n    $util.error(\"User is pending tenant assignment\")\n#end\n#if (!$context.stash.group)\n    $util.error(\"User is pending group assignment\")\n#end\n#if ($context.stash.isAdmin)\n{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"GetItem\",\n    \"key\": {\n        \"id\": {\"S\": \"$context.identity.sub\"},\n        \"type\"     : {\"S\": \"USER\"}\n    }\n}\n#else\n{\n    \"version\" : \"2018-05-29\",\n    \"operation\" : \"BatchGetItem\",\n    \"tables\" : {\n        \"MasterData\": {\n            \"keys\": [\n                {\n                    \"id\": {\"S\": \"$context.stash.tenant\"},\n                    \"type\"     : {\"S\": \"ACCOUNT\"}\n                },\n                {\n                    \"id\": {\"S\": \"$context.identity.sub\"},\n                    \"type\"     : {\"S\": \"USER\"}\n                }\n            ],\n            \"consistentRead\": true\n        }\n    }\n}\n#end\n",
               "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB. **\n$util.toJson($ctx.result.data)\n",
               "FunctionVersion": "2018-05-29"
             }
@@ -1143,12 +709,12 @@
               "Name": "GraphQlFunctionConfigurationaddPlan",
               "DataSourceName": {
                 "Fn::GetAtt": [
-                  "GraphQlDsMasterData",
+                  "GraphQlDsAppData",
                   "Name"
                 ]
               },
-              "RequestMappingTemplate": "#set($attribs = $context.arguments.input)\n#set($attribs.id = $util.autoId())\n#set($attribs.owner = $context.identity.sub)\n#set($createdAt = $util.time.nowISO8601())\n#set($attribs.startDate = $createdAt)\n#set($attribs.active = true)\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"partitionKey\": {\"S\": \"${attribs.id}\"},\n        \"sortKey\"     : {\"S\": \"PLAN\"}\n\n    },\n    \"attributeValues\": {\n        \"indexKey\"  : {\"S\": \"${attribs.accountId}#true\"},\n        \"type\"      : {\"S\": \"PLAN\"},\n        \"owner\"     : {\"S\": \"$context.identity.sub\"},\n        \"isDeleted\" : {\"BOOL\" : false },\n        \"createdAt\" : {\"S\" : \"${createdAt}\"},\n        \"itemData\"  : $util.dynamodb.toDynamoDBJson($attribs)\n    },\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#partitionKey)\",\n        \"expressionNames\": {\n            \"#partitionKey\": \"partitionKey\",\n        }\n    }\n}",
-              "ResponseMappingTemplate": "$util.toJson({\n    \"planId\": \"${ctx.result.partitionKey}\",\n    \"accountId\": \"${ctx.result.itemData.accountId}\",\n    \"owner\": \"${ctx.result.owner}\",\n    \"createdAt\": \"${ctx.result.createdAt}\",\n    \"planTypeId\": \"${ctx.result.itemData.planTypeId}\",\n    \"startDate\": \"${ctx.result.itemData.startDate}\",\n    \"endDate\": $util.defaultIfNull($ctx.result.itemData.endDate, null),\n    \"active\": ${ctx.result.itemData.active},\n    \"lastBillDate\"  :  $util.defaultIfNull($ctx.result.itemData.endDate, null)\n})",
+              "RequestMappingTemplate": "#set($attribs = $context.arguments.input)\n#set($id = $util.autoId())\n#set($attribs.meta = \"${id}#true\")\n#set($attribs.owner = $context.identity.sub)\n#set($attribs.itemType = \"PLAN\")\n#set($attribs.isDeleted = false)\n#set($attribs.createdAt = $util.time.nowISO8601())\n#set($attribs.startDate = $attribs.createdAt)\n#set($attribs.active = true)\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"id\"  : $util.dynamodb.toDynamoDBJson($id),\n        \"type\": {\"S\": \"PLAN\"}\n    },\n    \"attributeValues\": $util.dynamodb.toDynamoDBJson($attribs),\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#id)\",\n        \"expressionNames\": {\n            \"#id\": \"id\",\n        }\n    }\n}",
+              "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB. **\n$util.toJson($ctx.result)",
               "FunctionVersion": "2018-05-29"
             }
           },
@@ -1164,12 +730,12 @@
               "Name": "GraphQlFunctionConfigurationupdateAccount",
               "DataSourceName": {
                 "Fn::GetAtt": [
-                  "GraphQlDsMasterData",
+                  "GraphQlDsAppData",
                   "Name"
                 ]
               },
-              "RequestMappingTemplate": "#if($context.prev.result.planId)\n    #set($planId = $util.dynamodb.toDynamoDBJson($context.prev.result.planId))\n    #set($indexKey = $planId)\n#end\n#if($context.arguments.input.planId)\n    #set($planId = $util.dynamodb.toDynamoDBJson($context.arguments.input.planId))\n    #set($indexKey = $planId)\n#end\n#if(!$planId)\n    #set($planId=$util.dynamodb.toNull())\n    #set($indexKey=\"FREE\")\n#end\n{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"UpdateItem\",\n    \"key\": {\n        \"partitionKey\": {\"S\": \"$context.arguments.input.accountId\"},\n        \"sortKey\"     : {\"S\": \"ACCOUNT\"}\n    },\n    \"update\" : {\n        \"expression\" : \"SET indexKey = :indexKey, updatedAt = :updatedAt, itemData.planId = :planId\",\n        \"expressionValues\": {\n            \":indexKey\": $indexKey,\n            \":planId\" : $planId,\n            \":updatedAt\" : {\"S\" : \"$util.time.nowISO8601()\"}\n        }\n    }\n}",
-              "ResponseMappingTemplate": "## If there was an error with the invocation\n## there might have been partial results\n#if($ctx.error)\n    ## Append a GraphQL error for that field in the GraphQL response\n    $utils.appendError($ctx.error.message, $ctx.error.message)\n#end\n## Also returns data for the field in the GraphQL response\n$util.toJson({\n    \"accountId\": \"${ctx.result.partitionKey}\",\n    \"name\": \"${ctx.result.itemData.name}\",\n    \"owner\": \"${ctx.result.owner}\",\n    \"planId\": \"${ctx.result.itemData.planId}\",\n    \"createdAt\": \"${ctx.result.createdAt}\",\n    \"updatedAt\": \"${ctx.result.updatedAt}\"\n})",
+              "RequestMappingTemplate": "#if($context.prev.result.planId)\n    #set($planId = $util.dynamodb.toDynamoDBJson($context.prev.result.planId))\n    #set($meta = $planId)\n#end\n#if($context.arguments.input.planId)\n    #set($planId = $util.dynamodb.toDynamoDBJson($context.arguments.input.planId))\n    #set($meta = $planId)\n#end\n#if(!$planId)\n    #set($planId=$util.dynamodb.toNull())\n    #set($meta=\"FREE\")\n#end\n{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"UpdateItem\",\n    \"key\": {\n        \"id\": {\"S\": \"$context.arguments.input.accountId\"},\n        \"type\"     : {\"S\": \"ACCOUNT\"}\n    },\n    \"update\" : {\n        \"expression\" : \"SET meta = :meta, updatedAt = :updatedAt, itemData.planId = :planId\",\n        \"expressionValues\": {\n            \":meta\": $meta,\n            \":planId\" : $planId,\n            \":updatedAt\" : {\"S\" : \"$util.time.nowISO8601()\"}\n        }\n    }\n}",
+              "ResponseMappingTemplate": "## If there was an error with the invocation\n## there might have been partial results\n#if($ctx.error)\n    ## Append a GraphQL error for that field in the GraphQL response\n    $utils.appendError($ctx.error.message, $ctx.error.message)\n#end\n## Also returns data for the field in the GraphQL response\n$util.toJson({\n    \"accountId\": \"${ctx.result.id}\",\n    \"name\": \"${ctx.result.itemData.name}\",\n    \"owner\": \"${ctx.result.owner}\",\n    \"planId\": \"${ctx.result.itemData.planId}\",\n    \"createdAt\": \"${ctx.result.createdAt}\",\n    \"updatedAt\": \"${ctx.result.updatedAt}\"\n})",
               "FunctionVersion": "2018-05-29"
             }
           },
@@ -1185,11 +751,11 @@
               },
               "TypeName": "Query",
               "FieldName": "getAccount",
-              "RequestMappingTemplate": "#set($tenant = $context.identity.claims[\"custom:tenant\"])\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($inCognitoGroup = true)\n    #end\n#end\n#if($inCognitoGroup)\n    #set($attribs = $context.arguments)\n    {\n        \"version\" : \"2017-02-28\",\n        \"operation\" : \"GetItem\",\n        \"key\": {\n            \"partitionKey\": {\"S\": \"${attribs.accountId}\"},\n            \"sortKey\"     : {\"S\": \"ACCOUNT\"}\n        }\n    }\n#else\n    $utils.unauthorized()\n#end",
-              "ResponseMappingTemplate": "$util.toJson({\n    \"accountId\": \"${ctx.result.partitionKey}\",\n    \"name\": \"${ctx.result.itemData.name}\",\n    \"owner\": \"${ctx.result.owner}\",\n    \"planId\": $util.defaultIfNull($ctx.result.itemData.planId, null),\n    \"createdAt\": \"${ctx.result.createdAt}\",\n    \"updatedAt\": $util.defaultIfNull($ctx.result.updatedAt, null)\n})",
+              "RequestMappingTemplate": "#set($tenant = $context.identity.claims[\"custom:tenant\"])\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($inCognitoGroup = true)\n    #end\n#end\n#if($inCognitoGroup)\n    #set($attribs = $context.arguments)\n    {\n        \"version\" : \"2017-02-28\",\n        \"operation\" : \"GetItem\",\n        \"key\": {\n            \"id\": {\"S\": \"${attribs.accountId}\"},\n            \"type\"     : {\"S\": \"ACCOUNT\"}\n        }\n    }\n#else\n    $utils.unauthorized()\n#end",
+              "ResponseMappingTemplate": "$util.toJson({\n    \"accountId\": \"${ctx.result.id}\",\n    \"name\": \"${ctx.result.itemData.name}\",\n    \"owner\": \"${ctx.result.owner}\",\n    \"planId\": $util.defaultIfNull($ctx.result.itemData.planId, null),\n    \"createdAt\": \"${ctx.result.createdAt}\",\n    \"updatedAt\": $util.defaultIfNull($ctx.result.updatedAt, null)\n})",
               "DataSourceName": {
                 "Fn::GetAtt": [
-                  "GraphQlDsMasterData",
+                  "GraphQlDsAppData",
                   "Name"
                 ]
               }
@@ -1207,11 +773,11 @@
               },
               "TypeName": "Query",
               "FieldName": "listAllAccounts",
-              "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"Query\",\n    \"index\": \"masterDataGSI\"\n    \"query\" : {\n      \"expression\": \"sortKey = :objectType\",\n      \"expressionValues\" : {\n        \":objectType\" : { \"S\": \"ACCOUNT\" }\n      }\n  }\n  #if( ${context.arguments.limit} )\n      ,\"limit\": ${context.arguments.limit}\n  #end\n  #if( ${context.arguments.nextToken} )\n      ,\"nextToken\": \"${context.arguments.nextToken}\"\n  #end\n}",
+              "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"Query\",\n    \"index\": \"masterDataGSI\"\n    \"query\" : {\n      \"expression\": \"type = :objectType\",\n      \"expressionValues\" : {\n        \":objectType\" : { \"S\": \"ACCOUNT\" }\n      }\n  }\n  #if( ${context.arguments.limit} )\n      ,\"limit\": ${context.arguments.limit}\n  #end\n  #if( ${context.arguments.nextToken} )\n      ,\"nextToken\": \"${context.arguments.nextToken}\"\n  #end\n}",
               "ResponseMappingTemplate": "{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
               "DataSourceName": {
                 "Fn::GetAtt": [
-                  "GraphQlDsMasterData",
+                  "GraphQlDsAppData",
                   "Name"
                 ]
               }
@@ -1229,11 +795,11 @@
               },
               "TypeName": "Query",
               "FieldName": "getPlan",
-              "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n  #if($group == \"Admin\" || $context.arguments.input.accountId == $context.identity.claims[\"custom:account\"])\n      #set($inCognitoGroup = true)\n#end\n#if($inCognitoGroup)\n{\n  \"version\" : \"2017-02-28\",\n  \"operation\" : \"GetItem\",\n  \"key\": {\n        \"partitionKey\": $util.dynamodb.toDynamoDBJson($context.arguments.planId)\n  }\n}\n#else\n    $utils.unauthorized()\n#end",
+              "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n  #if($group == \"Admin\" || $context.arguments.input.accountId == $context.identity.claims[\"custom:account\"])\n      #set($inCognitoGroup = true)\n#end\n#if($inCognitoGroup)\n{\n  \"version\" : \"2017-02-28\",\n  \"operation\" : \"GetItem\",\n  \"key\": {\n        \"id\": $util.dynamodb.toDynamoDBJson($context.arguments.planId)\n  }\n}\n#else\n    $utils.unauthorized()\n#end",
               "ResponseMappingTemplate": "#set($accountId = $context.identity.claims[\"custom:account\"])\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n    #end\n#end\n#if($isAdmin || $context.result.owner == $context.identity.sub || $util.parseJson($context.result.data).accountId == $accountId)\n\n    $utils.toJson($context.result)\n\n#else\n    $utils.unauthorized()\n#end",
               "DataSourceName": {
                 "Fn::GetAtt": [
-                  "GraphQlDsMasterData",
+                  "GraphQlDsAppData",
                   "Name"
                 ]
               }
@@ -1251,11 +817,11 @@
               },
               "TypeName": "Query",
               "FieldName": "getPlanType",
-              "RequestMappingTemplate": "{\n  \"version\" : \"2017-02-28\",\n  \"operation\" : \"GetItem\",\n  \"key\": {\n        \"partitionKey\": $util.dynamodb.toDynamoDBJson($context.arguments.planTypeId),\n        \"sortKey\" : {\"S\" : \"PLANTYPE\"}\n  }\n}",
+              "RequestMappingTemplate": "{\n  \"version\" : \"2017-02-28\",\n  \"operation\" : \"GetItem\",\n  \"key\": {\n        \"id\": $util.dynamodb.toDynamoDBJson($context.arguments.planTypeId),\n        \"type\" : {\"S\" : \"PLANTYPE\"}\n  }\n}",
               "ResponseMappingTemplate": "$util.toJson($ctx.result)",
               "DataSourceName": {
                 "Fn::GetAtt": [
-                  "GraphQlDsMasterData",
+                  "GraphQlDsAppData",
                   "Name"
                 ]
               }
@@ -1273,11 +839,11 @@
               },
               "TypeName": "Mutation",
               "FieldName": "addAccount",
-              "RequestMappingTemplate": "#set($attribs = $context.arguments.input)\n#set($attribs.id = $util.autoId())\n#set($attribs.owner = $context.identity.sub)\n#set($attribs.planId = \"FREE\")\n#set($createdAt = $util.time.nowISO8601())\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"partitionKey\": {\"S\" : \"${attribs.id}\"},\n        \"sortKey\"     : {\"S\" : \"ACCOUNT\"}\n    },\n    \"attributeValues\": {\n        \"indexKey\"  : {\"S\" : \"FREE\"},\n        \"type\"      : {\"S\" : \"ACCOUNT\"},\n        \"owner\"     : {\"S\" : \"$context.identity.sub\"},\n        \"isDeleted\" : {\"BOOL\": false },\n        \"createdAt\" : $util.dynamodb.toDynamoDBJson($createdAt),\n        \"itemData\"  : $util.dynamodb.toDynamoDBJson($attribs)\n    },\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#partitionKey)\",\n            \"expressionNames\": {\n            \"#partitionKey\": \"partitionKey\",\n        }\n    }\n}",
-              "ResponseMappingTemplate": "$util.toJson({\n    \"accountId\": \"${ctx.result.partitionKey}\",\n    \"name\": \"${ctx.result.itemData.name}\",\n    \"owner\": \"${ctx.result.owner}\",\n    \"planId\": \"${ctx.result.itemData.planId}\",\n    \"createdAt\": \"${ctx.result.createdAt}\",\n    \"updatedAt\": \"${ctx.result.itemData.updatedAt}\"\n})",
+              "RequestMappingTemplate": "#set($attribs = $context.arguments.input)\n#set($attribs.meta = \"FREE\")\n#set($attribs.owner = $context.identity.sub)\n#set($attribs.itemType = \"ACCOUNT\")\n#set($attribs.isDeleted = false)\n#set($attribs.createdAt = $util.time.nowISO8601())\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"id\"   : $util.dynamodb.toDynamoDBJson($util.autoId()),\n        \"type\" : {\"S\" : \"ACCOUNT\"}\n    },\n    \"attributeValues\": $util.dynamodb.toDynamoDBJson($attribs),\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#id)\",\n        \"expressionNames\": {\n            \"#id\": \"id\"\n        }\n    }\n}",
+              "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB. **\n$util.toJson($ctx.result)",
               "DataSourceName": {
                 "Fn::GetAtt": [
-                  "GraphQlDsMasterData",
+                  "GraphQlDsAppData",
                   "Name"
                 ]
               }
@@ -1295,11 +861,11 @@
               },
               "TypeName": "Mutation",
               "FieldName": "addPlanType",
-              "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($inCognitoGroup = true)\n    #end\n#end\n#if($inCognitoGroup)\n    #set($attribs = $context.arguments.input)\n    #set($attribs.id = $util.autoId())\n    #set($attribs.owner = $context.identity.sub)\n    #set($createdAt = $util.time.nowISO8601())\n    {\n        \"version\": \"2017-02-28\",\n        \"operation\": \"PutItem\",\n        \"key\": {\n            \"partitionKey\": {\"S\" : \"${attribs.id}\"},\n            \"sortKey\"     : {\"S\" : \"PLANTYPE\"}\n        },\n        \"attributeValues\": {\n            \"indexKey\"   : {\"S\" : \"$context.arguments.input.active\"},\n            \"type\"       : {\"S\" : \"PLANTYPE\"},\n            \"owner\"      : {\"S\" : \"$context.identity.sub\"},\n            \"isDeleted\"  : {\"BOOL\" : false },\n            \"createdAt\"  : $util.dynamodb.toDynamoDBJson($createdAt),\n            \"itemData\"   : $util.dynamodb.toDynamoDBJson($attribs)\n        },\n        \"condition\": {\n            \"expression\": \"attribute_not_exists(#partitionKey)\",\n                \"expressionNames\": {\n                \"#partitionKey\": \"partitionKey\",\n            }\n        }\n    }\n#else\n    $utils.unauthorized()\n#end",
-              "ResponseMappingTemplate": "$util.toJson({\n    \"planTypeId\": \"${ctx.result.partitionKey}\",\n    \"owner\": \"${ctx.result.owner}\",\n    \"name\": \"${ctx.result.itemData.name}\",\n    \"cost\": ${ctx.result.itemData.cost},\n    \"active\": ${ctx.result.itemData.active},\n    \"billingTerm\": \"${ctx.result.itemData.billingTerm}\",\n    \"createdAt\": \"${ctx.result.createdAt}\",\n    \"updatedAt\"  : \"${ctx.result.itemData.updatedAt}\"\n})",
+              "RequestMappingTemplate": "#set($attribs = $context.arguments.input)\n#set($id = $util.autoId())\n#set($attribs.meta = $context.arguments.input.active)\n#set($attribs.owner = $context.identity.sub)\n#set($attribs.itemType = \"PLANTYPE\")\n#set($attribs.isDeleted = false)\n#set($attribs.createdAt = $util.time.nowISO8601())\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"id\"  : $util.dynamodb.toDynamoDBJson($id),\n        \"type\": {\"S\" : \"PLANTYPE\"}\n    },\n    \"attributeValues\": $util.dynamodb.toDynamoDBJson($util.autoId()),\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#id)\",\n            \"expressionNames\": {\n            \"#id\": \"id\",\n        }\n    }\n}",
+              "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB. **\n$util.toJson($ctx.result)",
               "DataSourceName": {
                 "Fn::GetAtt": [
-                  "GraphQlDsMasterData",
+                  "GraphQlDsAppData",
                   "Name"
                 ]
               }
@@ -1317,11 +883,11 @@
               },
               "TypeName": "Mutation",
               "FieldName": "addPlan",
-              "RequestMappingTemplate": "#set($attribs = $context.arguments.input)\n#set($attribs.id = $util.autoId())\n#set($attribs.owner = $context.identity.sub)\n#set($createdAt = $util.time.nowISO8601())\n#set($attribs.startDate = $createdAt)\n#set($attribs.active = true)\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"partitionKey\": {\"S\": \"${attribs.id}\"},\n        \"sortKey\"     : {\"S\": \"PLAN\"}\n\n    },\n    \"attributeValues\": {\n        \"indexKey\"  : {\"S\": \"${attribs.accountId}#true\"},\n        \"type\"      : {\"S\": \"PLAN\"},\n        \"owner\"     : {\"S\": \"$context.identity.sub\"},\n        \"isDeleted\" : {\"BOOL\" : false },\n        \"createdAt\" : {\"S\" : \"${createdAt}\"},\n        \"itemData\"  : $util.dynamodb.toDynamoDBJson($attribs)\n    },\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#partitionKey)\",\n        \"expressionNames\": {\n            \"#partitionKey\": \"partitionKey\",\n        }\n    }\n}",
-              "ResponseMappingTemplate": "$util.toJson({\n    \"planId\": \"${ctx.result.partitionKey}\",\n    \"accountId\": \"${ctx.result.itemData.accountId}\",\n    \"owner\": \"${ctx.result.owner}\",\n    \"createdAt\": \"${ctx.result.createdAt}\",\n    \"planTypeId\": \"${ctx.result.itemData.planTypeId}\",\n    \"startDate\": \"${ctx.result.itemData.startDate}\",\n    \"endDate\": $util.defaultIfNull($ctx.result.itemData.endDate, null),\n    \"active\": ${ctx.result.itemData.active},\n    \"lastBillDate\"  :  $util.defaultIfNull($ctx.result.itemData.endDate, null)\n})",
+              "RequestMappingTemplate": "#set($attribs = $context.arguments.input)\n#set($id = $util.autoId())\n#set($attribs.meta = \"${id}#true\")\n#set($attribs.owner = $context.identity.sub)\n#set($attribs.itemType = \"PLAN\")\n#set($attribs.isDeleted = false)\n#set($attribs.createdAt = $util.time.nowISO8601())\n#set($attribs.startDate = $attribs.createdAt)\n#set($attribs.active = true)\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"id\"  : $util.dynamodb.toDynamoDBJson($id),\n        \"type\": {\"S\": \"PLAN\"}\n    },\n    \"attributeValues\": $util.dynamodb.toDynamoDBJson($attribs),\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#id)\",\n        \"expressionNames\": {\n            \"#id\": \"id\",\n        }\n    }\n}",
+              "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB. **\n$util.toJson($ctx.result)",
               "DataSourceName": {
                 "Fn::GetAtt": [
-                  "GraphQlDsMasterData",
+                  "GraphQlDsAppData",
                   "Name"
                 ]
               }
@@ -1394,37 +960,6 @@
               "Ref": "ServerlessDeploymentBucket"
             }
           },
-          "SignupLambdaFunctionQualifiedArn": {
-            "Description": "Current Lambda function version",
-            "Value": {
-              "Ref": "SignupLambdaVersionpBoZnHGiFSJ79ckGeRZcfFcID8jwW27k2VFLbPN6dE"
-            }
-          },
-          "PostConfirmationLambdaFunctionQualifiedArn": {
-            "Description": "Current Lambda function version",
-            "Value": {
-              "Ref": "PostConfirmationLambdaVersion27ytPAeVEURBipfqQytoE0IQuvGJFeyuqN5S1QlOMVk"
-            }
-          },
-          "ServiceEndpoint": {
-            "Description": "URL of the service endpoint",
-            "Value": {
-              "Fn::Join": [
-                "",
-                [
-                  "https://",
-                  {
-                    "Ref": "ApiGatewayRestApi"
-                  },
-                  ".execute-api.ap-southeast-2.",
-                  {
-                    "Ref": "AWS::URLSuffix"
-                  },
-                  "/dev"
-                ]
-              ]
-            }
-          },
           "UserPoolId": {
             "Value": {
               "Ref": "CognitoUserPoolMyUserPool"
@@ -1455,7 +990,18 @@
         "Description": "The AWS CloudFormation template for this Serverless application",
         "Resources": {
           "ServerlessDeploymentBucket": {
-            "Type": "AWS::S3::Bucket"
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              }
+            }
           }
         },
         "Outputs": {
@@ -1465,8 +1011,7 @@
             }
           }
         }
-      },
-      "vpc": {}
+      }
     },
     "custom": {
       "packagePath": "./package.json",
@@ -1492,9 +1037,13 @@
           }
         ]
       },
-      "TBL_MASTER_DATA": "table_formsgraphql_dev_masterdata",
-      "TBL_FORM_ENTRY": "table_formsgraphql_dev_entries",
       "bucket": "formsgraphql-dev-data",
+      "dynamodb": {
+        "start": {
+          "port": 8000,
+          "inMemory": true
+        }
+      },
       "appsync-offline": {
         "port": 62222,
         "dynamodb": {
@@ -1502,12 +1051,6 @@
             "endpoint": "http://localhost:8000",
             "region": "localhost"
           }
-        }
-      },
-      "dynamodb": {
-        "start": {
-          "port": 8000,
-          "inMemory": true
         }
       },
       "appSync": {
@@ -1532,59 +1075,78 @@
           },
           "level": "ALL"
         },
+        "schema": "schema.graphql",
+        "dataSources": [
+          {
+            "type": "AMAZON_DYNAMODB",
+            "name": "AppData",
+            "description": "App Data Table",
+            "config": {
+              "tableName": "dev-formsgraphql_table_appdata"
+            }
+          },
+          {
+            "type": "AMAZON_DYNAMODB",
+            "name": "FormEntries",
+            "description": "FormEntries Table",
+            "config": {
+              "tableName": "dev-formsgraphql_table_form_entries"
+            }
+          }
+        ],
         "mappingTemplatesLocation": "src/mapping-templates",
         "mappingTemplates": [
           {
-            "dataSource": "MasterData",
+            "dataSource": "AppData",
             "type": "Query",
             "field": "getAccount",
             "request": "getAccount-request.vtl",
             "response": "getAccount-response.vtl"
           },
           {
-            "dataSource": "MasterData",
+            "dataSource": "AppData",
             "type": "Query",
             "field": "listAllAccounts",
             "request": "listAllAccounts-request.vtl",
             "response": "listAllAccounts-response.vtl"
           },
           {
-            "dataSource": "MasterData",
+            "dataSource": "AppData",
             "type": "Query",
             "field": "getPlan",
             "request": "getPlan-request.vtl",
             "response": "getPlan-response.vtl"
           },
           {
-            "dataSource": "MasterData",
+            "dataSource": "AppData",
             "type": "Query",
             "field": "getPlanType",
             "request": "getPlanType-request.vtl",
             "response": "getPlanType-response.vtl"
           },
           {
-            "dataSource": "MasterData",
+            "dataSource": "AppData",
             "type": "Mutation",
             "field": "addAccount",
             "request": "addAccount-request.vtl",
-            "response": "addAccount-response.vtl"
+            "response": "passthrough-response.vtl"
           },
           {
-            "dataSource": "MasterData",
+            "dataSource": "AppData",
             "type": "Mutation",
             "field": "addPlanType",
             "request": "addPlanType-request.vtl",
-            "response": "addPlanType-response.vtl"
+            "response": "passthrough-response.vtl"
           },
           {
-            "dataSource": "MasterData",
+            "dataSource": "AppData",
             "type": "Mutation",
             "field": "addPlan",
             "request": "addPlan-request.vtl",
-            "response": "addPlan-response.vtl"
+            "response": "passthrough-response.vtl"
           },
           {
-            "dataSource": "MasterData",
+            "dataSource": "AppData",
             "type": "Mutation",
             "field": "testPipeline",
             "request": "authorize-request.vtl",
@@ -1595,7 +1157,7 @@
             ]
           },
           {
-            "dataSource": "MasterData",
+            "dataSource": "AppData",
             "type": "Mutation",
             "field": "attachPlan",
             "request": "createAccountPlan-before.vtl",
@@ -1609,141 +1171,38 @@
         ],
         "functionConfigurations": [
           {
-            "dataSource": "MasterData",
+            "dataSource": "AppData",
             "name": "authorizeFunction",
             "request": "fetchUserAccount-request.vtl",
             "response": "fetchUserAccount-response.vtl"
           },
           {
-            "dataSource": "MasterData",
+            "dataSource": "AppData",
             "name": "addPlan",
             "request": "addPlan-request.vtl",
-            "response": "addPlan-response.vtl"
+            "response": "passthrough-response.vtl"
           },
           {
-            "dataSource": "MasterData",
+            "dataSource": "AppData",
             "name": "updateAccount",
             "request": "updateAccountPlan-request.vtl",
             "response": "updateAccountPlan-response.vtl"
-          }
-        ],
-        "schema": "schema.graphql",
-        "dataSources": [
-          {
-            "type": "AMAZON_DYNAMODB",
-            "name": "MasterData",
-            "description": "Master Table",
-            "config": {
-              "tableName": "table_formsgraphql_dev_masterdata"
-            }
           }
         ]
       }
     },
     "plugins": [
-      "serverless-webpack",
+      "serverless-pseudo-parameters",
       "serverless-cognito-add-custom-attributes",
       "serverless-iam-roles-per-function",
       "serverless-appsync-plugin",
       "serverless-dynamodb-local",
+      "serverless-stack-output",
       "serverless-appsync-offline",
       "serverless-offline"
     ],
     "pluginsData": {},
-    "functions": {
-      "signup": {
-        "name": "dev-formsgraphql-signup",
-        "handler": "src/signup.handle",
-        "events": [
-          {
-            "http": {
-              "path": "signup",
-              "method": "post",
-              "cors": {
-                "origins": [
-                  "*"
-                ],
-                "origin": "*",
-                "methods": [
-                  "OPTIONS",
-                  "POST"
-                ],
-                "headers": [
-                  "Content-Type",
-                  "X-Amz-Date",
-                  "Authorization",
-                  "X-Api-Key",
-                  "X-Amz-Security-Token",
-                  "X-Amz-User-Agent"
-                ],
-                "allowCredentials": false
-              },
-              "integration": "AWS_PROXY"
-            }
-          }
-        ],
-        "environment": {
-          "cognitoUserPoolId": {
-            "Ref": "CognitoUserPoolMyUserPool"
-          },
-          "cognitoUserPoolWebClientId": {
-            "Ref": "CognitoUserPoolClient"
-          }
-        },
-        "package": {
-          "artifact": ".serverless/formsgraphql.zip"
-        },
-        "memory": 1024,
-        "timeout": 6,
-        "runtime": "nodejs8.10",
-        "vpc": {}
-      },
-      "postConfirmation": {
-        "name": "dev-formsgraphql-postconfirmation",
-        "handler": "src/postconfirmation.handle",
-        "events": [
-          {
-            "http": {
-              "path": "postconfirm",
-              "method": "post",
-              "cors": {
-                "origins": [
-                  "*"
-                ],
-                "origin": "*",
-                "methods": [
-                  "OPTIONS",
-                  "POST"
-                ],
-                "headers": [
-                  "Content-Type",
-                  "X-Amz-Date",
-                  "Authorization",
-                  "X-Api-Key",
-                  "X-Amz-Security-Token",
-                  "X-Amz-User-Agent"
-                ],
-                "allowCredentials": false
-              },
-              "integration": "AWS_PROXY"
-            }
-          },
-          {
-            "cognitoUserPool": {
-              "pool": "MyUserPool",
-              "trigger": "PostConfirmation"
-            }
-          }
-        ],
-        "package": {
-          "artifact": ".serverless/formsgraphql.zip"
-        },
-        "memory": 1024,
-        "timeout": 6,
-        "runtime": "nodejs8.10",
-        "vpc": {}
-      }
-    },
+    "functions": {},
     "resources": {
       "Resources": {
         "AppSyncDynamoDBRole": {
@@ -1802,7 +1261,7 @@
                         "",
                         [
                           {
-                            "Fn::GetAtt": "MasterDataTable.Arn"
+                            "Fn::GetAtt": "AppDataTable.Arn"
                           },
                           "*"
                         ]
@@ -1864,10 +1323,10 @@
             }
           }
         },
-        "MasterDataTable": {
+        "AppDataTable": {
           "Type": "AWS::DynamoDB::Table",
           "Properties": {
-            "TableName": "table_formsgraphql_dev_masterdata",
+            "TableName": "dev-formsgraphql_table_appdata",
             "AttributeDefinitions": [
               {
                 "AttributeName": "id",
@@ -1898,7 +1357,7 @@
             },
             "GlobalSecondaryIndexes": [
               {
-                "IndexName": "masterDataGSI",
+                "IndexName": "dev-formsgraphql_table_appdata_gsi",
                 "KeySchema": [
                   {
                     "AttributeName": "type",
@@ -1920,10 +1379,10 @@
             ]
           }
         },
-        "EntriesTable": {
+        "FormEntriesTable": {
           "Type": "AWS::DynamoDB::Table",
           "Properties": {
-            "TableName": "table_formsgraphql_dev_entries",
+            "TableName": "dev-formsgraphql_table_form_entries",
             "AttributeDefinitions": [
               {
                 "AttributeName": "id",
@@ -1954,7 +1413,7 @@
             },
             "GlobalSecondaryIndexes": [
               {
-                "IndexName": "formEntriesGSI",
+                "IndexName": "dev-formsgraphql_table_form_entries_gsi",
                 "KeySchema": [
                   {
                     "AttributeName": "type",
@@ -1985,7 +1444,12 @@
             ],
             "AutoVerifiedAttributes": [
               "email"
-            ]
+            ],
+            "EmailVerificationSubject": "Your Forms.li verification code",
+            "EmailVerificationMessage": "{####}",
+            "EmailConfiguration": {
+              "SourceArn": "arn:aws:ses:us-east-1:#{AWS::AccountId}:identity/no-reply@forms.li"
+            }
           }
         },
         "CognitoUserPoolClient": {
@@ -2085,10 +1549,11 @@
           }
         }
       }
-    }
+    },
+    "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsgraphql/dev/1552266774542-2019-03-11T01:12:54.542Z",
+    "artifactDirectoryName": "serverless/formsgraphql/dev/1552281168093-2019-03-11T05:12:48.093Z",
     "artifact": ""
   }
 }
