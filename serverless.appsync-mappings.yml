@@ -2,7 +2,7 @@
   type: Query
   field: getAccount
   request: getAccount-request.vtl
-  response: getAccount-response.vtl
+  response: passthrough-response.vtl
 - dataSource: AppData
   type: Query
   field: listAllAccounts
@@ -12,12 +12,12 @@
   type: Query
   field: getPlan
   request: getPlan-request.vtl
-  response: getPlan-response.vtl
+  response: passthrough-response.vtl
 - dataSource: AppData
   type: Query
   field: getPlanType
   request: getPlanType-request.vtl
-  response: getPlanType-response.vtl
+  response: passthrough-response.vtl
 - dataSource: AppData
   type: Mutation
   field: addAccount
