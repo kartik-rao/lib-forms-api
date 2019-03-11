@@ -825,7 +825,7 @@
               },
               "TypeName": "Query",
               "FieldName": "listAllAccounts",
-              "RequestMappingTemplate": "{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"Query\",\n    \"index\": \"masterDataGSI\"\n    \"query\" : {\n      \"expression\": \"type = :objectType\",\n      \"expressionValues\" : {\n        \":objectType\" : { \"S\": \"ACCOUNT\" }\n      }\n  }\n  #if( ${context.arguments.limit} )\n      ,\"limit\": ${context.arguments.limit}\n  #end\n  #if( ${context.arguments.nextToken} )\n      ,\"nextToken\": \"${context.arguments.nextToken}\"\n  #end\n}",
+              "RequestMappingTemplate": "$util.qr($ctx.stash.put(\"environment\", $context.identity.claims[\"custom:environment\"]))\n#set($uenv = $context.identity.claims[\"custom:environment\"])\n#if($uenv)\n    #set($prefix = \"${uenv}-\")\n#else\n    #set($prefix = \"\")\n#end\n#set($attribs = $context.arguments)\n{\n    \"version\"   : \"2017-02-28\",\n    \"operation\" : \"Query\",\n    \"index\"     : \"${prefix}formsgraphql_table_appdata_gsi\",\n    \"query\"     : {\n      \"expression\": \"#type = :objectType\",\n      \"expressionNames\" : {\n            \"#type\" : \"type\"\n        },\n      \"expressionValues\" : {\n        \":objectType\" : { \"S\": \"ACCOUNT\" }\n      }\n  }\n  #if( ${context.arguments.limit} )\n      ,\"limit\": ${context.arguments.limit}\n  #end\n  #if( ${context.arguments.nextToken} )\n      ,\"nextToken\": \"${context.arguments.nextToken}\"\n  #end\n}",
               "ResponseMappingTemplate": "{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
               "DataSourceName": {
                 "Fn::GetAtt": [
@@ -1631,7 +1631,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsgraphql/dev/1552306487841-2019-03-11T12:14:47.841Z",
+    "artifactDirectoryName": "serverless/formsgraphql/dev/1552306816908-2019-03-11T12:20:16.908Z",
     "artifact": ""
   }
 }
