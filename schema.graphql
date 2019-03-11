@@ -1,4 +1,4 @@
-type MasterData @model {
+type AppData @model {
     id: ID!
     type: ID!
     meta: String!
