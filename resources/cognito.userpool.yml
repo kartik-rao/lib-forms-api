@@ -17,7 +17,22 @@ Resources:
         - AttributeDataType: String
           DeveloperOnlyAttribute: False
           Mutable: True
-          Name: "tenant"
+          Name: "tenantId"
+          Required: False
+        - AttributeDataType: String
+          DeveloperOnlyAttribute: False
+          Mutable: True
+          Name: "tenantName"
+          Required: False
+        - AttributeDataType: String
+          DeveloperOnlyAttribute: False
+          Mutable: True
+          Name: "source"
+          Required: False
+        - AttributeDataType: String
+          DeveloperOnlyAttribute: False
+          Mutable: True
+          Name: "group"
           Required: False
         - AttributeDataType: String
           DeveloperOnlyAttribute: False
@@ -34,6 +49,7 @@ Resources:
           Mutable: True
           Name: "region"
           Required: False
+
   CognitoUserPoolClient:
     Type: AWS::Cognito::UserPoolClient
     Properties:
@@ -44,6 +60,17 @@ Resources:
       ExplicitAuthFlows:
         - ADMIN_NO_SRP_AUTH
       GenerateSecret: false
+      ReadAttributes:
+        - custom:tenantId
+        - custom:tenantName
+        - custom:source
+        - custom:environment
+        - custom:stack
+        - custom:region
+      WriteAttributes:
+        - custom:group
+        - custom:tenantName
+        - custom:source
   CognitoAppAdminGroup:
     Type: AWS::Cognito::UserPoolGroup
     Properties:
@@ -72,6 +99,36 @@ Resources:
       GroupName: Viewer
       UserPoolId:
         Ref: CognitoUserPoolMyUserPool
+  # Create the admin user for the pool
+  CognitoUserPoolAdminUser:
+    Type : AWS::Cognito::UserPoolUser
+    Properties:
+      Username: infrastructure@adinfinity.com
+      UserPoolId:
+        Ref: CognitoUserPoolMyUserPool
+      DesiredDeliveryMediums:
+        - EMAIL
+      UserAttributes:
+        - Name: email
+          Value: infrastructure@adinfinity.com
+        - Name: email_verified
+          Value: True
+        - Name: "custom:group"
+          Value: Admin
+        - Name: "custom:region"
+          Value: ${self:provider.region}
+        - Name: "custom:environment"
+          Value: ${self:provider.stage}
+  # CognitoUserPoolAdminUserGroupAttachment:
+  #   DependsOn: CognitoUserPoolAdminUser
+  #   Type: AWS::Cognito::UserPoolUserToGroupAttachment
+  #   Properties:
+  #     GroupName: Admin
+  #     Username:
+  #       Ref:
+  #         CognitoUserPoolAdminUser
+  #     UserPoolId:
+  #       Ref: CognitoUserPoolMyUserPool
 Outputs:
   UserPoolId:
     Value:
@@ -79,3 +136,9 @@ Outputs:
   UserPoolClientId:
     Value:
       Ref: CognitoUserPoolClient
+  UserPoolAdminUser:
+    Value:
+      Ref: CognitoUserPoolAdminUser
+  # AdminUserPoolClientId:
+  #   Value:
+  #     Ref: CognitoUserPoolAdminClient

@@ -113,9 +113,42 @@ type PaginatedUser {
   nextToken: String
 }
 
+enum AddressType {
+  BILLING
+  CONTACT
+}
+
+type Address {
+  id: ID!
+  name: String!
+  addressee: String
+  addressType: AddressType!
+  phone_number: AWSPhone
+  email: String!
+  street: String
+  city: String
+  state: String
+  country: String
+}
+
+type AddAddressInput {
+  name: String!
+  addressee: String
+  addressType: AddressType!
+  phone_number: AWSPhone
+  email: String!
+  street: String
+  city: String
+  state: String
+  country: String
+}
+
 type Account {
   id: ID!
   name: String!
+  addresses: [Address!]
+  website: String
+  taxId: String
   owner: ID!
   planId: ID
   createdAt: AWSDateTime

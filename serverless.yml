@@ -12,6 +12,8 @@ provider:
     signup: ${self:provider.serviceName}-signup
   profile: default
   environment:
+    region: ${self:provider.region}
+    environment: ${self:provider.stage}
     serviceName: ${self:provider.stage}-${self:service}
     table_form_entries: ${self:provider.serviceName}_table_form_entries
     table_app_data: ${self:provider.serviceName}_table_appdata
@@ -37,17 +39,14 @@ provider:
       Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.table_form_entries}"
     - Effect: Allow
       Action:
-        - cognito-idp:SignUp
-        - cognito-idp:AddCustomAttributes
         - cognito-idp:AdminAddUserToGroup
         - cognito-idp:AdminUpdateUserAttributes
         - cognito-idp:AdminRemoveUserFromGroup
         - cognito-idp:AdminGetUser
-        - cognito-idp:GetUser
       Resource: "arn:aws:cognito-idp:#{AWS::Region}:#{AWS::AccountId}:userpool/*"
 
 plugins:
-  # - serverless-webpack
+  - serverless-webpack
   - serverless-pseudo-parameters
   - serverless-iam-roles-per-function
   - serverless-appsync-plugin
@@ -59,8 +58,9 @@ plugins:
 resources:
   - ${file(resources/iam.yml)}
   - ${file(resources/dynamodb.yml)}
-  - ${file(resources/cognito.userpool.yml)}
   - ${file(resources/s3.yml)}
+  - ${file(resources/cognito.userpool.yml)}
+  - ${file(resources/cognito.users.yml)}
 
 custom:
   # Stack Output Plugin
@@ -126,28 +126,15 @@ custom:
         name: updateAccount
         request: updateAccountPlan-request.vtl
         response: updateAccountPlan-response.vtl
-# functions:
-#   signup:
-#     name: ${self:provider.functions.signup}
-#     handler: src/signup.handle
-#     events:
-#       - http:
-#           path: /signup
-#           method: post
-#           cors: true
-#     environment:
-#       cognitoUserPoolId:
-#         Ref: CognitoUserPoolMyUserPool
-#       cognitoUserPoolWebClientId:
-#         Ref: CognitoUserPoolClient
-#   postConfirmation:
-#     name: ${self:provider.functions.postconfirmation}
-#     handler: src/postconfirmation.handle
-#     events:
-#       - http:
-#           path: /postconfirm
-#           method: post
-#           cors: true
-#       - cognitoUserPool:
-#           pool: MyUserPool
-#           trigger: PostConfirmation
+functions:
+  postConfirmation:
+    name: ${self:provider.functions.postconfirmation}
+    handler: src/postconfirmation.handle
+    events:
+      - http:
+          path: /postconfirm
+          method: post
+          cors: true
+      - cognitoUserPool:
+          pool: MyUserPool
+          trigger: PostConfirmation

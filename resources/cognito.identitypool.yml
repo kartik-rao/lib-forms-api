@@ -1,0 +1,36 @@
+CognitoIdentityPoolMyIdentityPool:
+    Type: AWS::Cognito::ItentityPool
+    Properties:
+      IdentityPoolName: ${self:provider.environment.serviceName}-identitypool
+      AllowUnauthenticatedIdentities: false
+      CognitoIdentityProvider:
+        - ClientId:
+            Ref: CognitoUserPoolAdminClient
+          ProviderName:
+            Fn::GetAtt: [ "CognitoUserPoolMyUserPool", "ProviderName" ]
+  CognitoUserPoolAdminClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      # Generate an app client name based on the stage
+      ClientName: ${self:provider.environment.serviceName}-userpoolclient
+      UserPoolId:
+        Ref: CognitoUserPoolMyUserPool
+      ExplicitAuthFlows:
+        - ADMIN_NO_SRP_AUTH
+      GenerateSecret: false
+      ReadAttributes:
+        - custom:tenantId
+        - custom:tenantName
+        - custom:source
+        - custom:groupName
+        - custom:environment
+        - custom:stack
+        - custom:region
+      WriteAttributes:
+        - custom:tenantId
+        - custom:tenantName
+        - custom:source
+        - custom:groupName
+        - custom:environment
+        - custom:stack
+        - custom:region
