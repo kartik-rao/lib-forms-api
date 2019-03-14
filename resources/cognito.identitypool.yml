@@ -1,36 +1,105 @@
-CognitoIdentityPoolMyIdentityPool:
-    Type: AWS::Cognito::ItentityPool
+Resources:
+  CognitoIdentityPoolMyIdentityPool:
+    # The federated identity for our user pool to auth with
+    Type: AWS::Cognito::IdentityPool
     Properties:
-      IdentityPoolName: ${self:provider.environment.serviceName}-identitypool
+      # Generate a name based on the stage
+      IdentityPoolName: formsgraphqlidentitypool
+      # Don't allow unathenticated users
       AllowUnauthenticatedIdentities: false
-      CognitoIdentityProvider:
+      # Link to our User Pool
+      CognitoIdentityProviders:
         - ClientId:
-            Ref: CognitoUserPoolAdminClient
+            Ref: CognitoUserPoolClient
           ProviderName:
             Fn::GetAtt: [ "CognitoUserPoolMyUserPool", "ProviderName" ]
-  CognitoUserPoolAdminClient:
-    Type: AWS::Cognito::UserPoolClient
+
+  # IAM roles
+  CognitoIdentityPoolRoles:
+    Type: AWS::Cognito::IdentityPoolRoleAttachment
     Properties:
-      # Generate an app client name based on the stage
-      ClientName: ${self:provider.environment.serviceName}-userpoolclient
-      UserPoolId:
-        Ref: CognitoUserPoolMyUserPool
-      ExplicitAuthFlows:
-        - ADMIN_NO_SRP_AUTH
-      GenerateSecret: false
-      ReadAttributes:
-        - custom:tenantId
-        - custom:tenantName
-        - custom:source
-        - custom:groupName
-        - custom:environment
-        - custom:stack
-        - custom:region
-      WriteAttributes:
-        - custom:tenantId
-        - custom:tenantName
-        - custom:source
-        - custom:groupName
-        - custom:environment
-        - custom:stack
-        - custom:region
+      IdentityPoolId:
+        Ref: CognitoIdentityPoolMyIdentityPool
+      Roles:
+        authenticated:
+          Fn::GetAtt: [CognitoAuthRole, Arn]
+        unauthenticated:
+          Fn::GetAtt: [CognitoUnAuthorizedRole, Arn]
+
+  # Create a role for unauthorized acces to AWS resources. Very limited access. Only allows users in the previously created Identity Pool
+  CognitoUnAuthorizedRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Federated: "cognito-identity.amazonaws.com"
+            Action:
+              - "sts:AssumeRoleWithWebIdentity"
+            Condition:
+              StringEquals:
+                "cognito-identity.amazonaws.com:aud":
+                  Ref: CognitoIdentityPoolMyIdentityPool
+              "ForAnyValue:StringLike":
+                "cognito-identity.amazonaws.com:amr": unauthenticated
+      Policies:
+        - PolicyName: "CognitoUnauthorizedPolicy"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "mobileanalytics:PutEvents"
+                  - "cognito-sync:*"
+                Resource: "*"
+  # IAM role used for authenticated users
+  CognitoAuthRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: 'Allow'
+            Principal:
+              Federated: 'cognito-identity.amazonaws.com'
+            Action:
+              - 'sts:AssumeRoleWithWebIdentity'
+            Condition:
+              StringEquals:
+                'cognito-identity.amazonaws.com:aud':
+                  Ref: CognitoIdentityPoolMyIdentityPool
+              'ForAnyValue:StringLike':
+                'cognito-identity.amazonaws.com:amr': authenticated
+
+      Policies:
+        - PolicyName: '${self:provider.environment.serviceName}-authorized'
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: 'Allow'
+                Action:
+                  - 'mobileanalytics:PutEvents'
+                  - 'cognito-sync:*'
+                  - 'cognito-identity:*'
+                Resource: '*'
+              # Allow users to upload attachments to their
+              # folder inside our S3 bucket
+              - Effect: 'Allow'
+                Action:
+                  - 's3:*'
+                Resource:
+                  - Fn::Join:
+                    - ''
+                    -
+                      - Fn::GetAtt: [AttachmentsBucket, Arn]
+                      - '/private/'
+                      - '$'
+                      - '{cognito-identity.amazonaws.com:sub}/*'
+
+# Print out the Id of the Identity Pool that is created
+Outputs:
+  IdentityPoolId:
+    Value:
+      Ref: CognitoIdentityPoolMyIdentityPool

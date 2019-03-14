@@ -12,6 +12,9 @@ provider:
     signup: ${self:provider.serviceName}-signup
   profile: default
   environment:
+    protocol: ${opt:protocol, 'http://'}
+    domain: ${opt:domain, 'dev-app.forms.li'}
+    urlPrefix: ${opt:urlPrefix, '${self:provider.environment.protocol}${self:provider.environment.domain}'}
     region: ${self:provider.region}
     environment: ${self:provider.stage}
     serviceName: ${self:provider.stage}-${self:service}
@@ -60,7 +63,7 @@ resources:
   - ${file(resources/dynamodb.yml)}
   - ${file(resources/s3.yml)}
   - ${file(resources/cognito.userpool.yml)}
-  - ${file(resources/cognito.users.yml)}
+  - ${file(resources/cognito.identitypool.yml)}
 
 custom:
   # Stack Output Plugin

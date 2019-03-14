@@ -143,7 +143,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsgraphql/dev/1552369517347-2019-03-12T05:45:17.347Z/formsgraphql.zip"
+          "S3Key": "serverless/formsgraphql/dev/1552532776328-2019-03-14T03:06:16.328Z/formsgraphql.zip"
         },
         "FunctionName": "dev-formsgraphql-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -158,6 +158,9 @@
         "Timeout": 6,
         "Environment": {
           "Variables": {
+            "protocol": "http://",
+            "domain": "dev-app.forms.li",
+            "urlPrefix": "http://dev-app.forms.li",
             "region": "ap-southeast-2",
             "environment": "dev",
             "serviceName": "dev-formsgraphql",
@@ -171,14 +174,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "PostConfirmationLambdaVersiony9j7B11yLHNkjLgCREBwqV9ywEPCulT1atmmKpFs0": {
+    "PostConfirmationLambdaVersionX99LSiQTNVP0AzmTOf9s2IsIWoS2Qy5ONhLstk24uVU": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "PostConfirmationLambdaFunction"
         },
-        "CodeSha256": "jQiZOWk3Fm+lbU4dlefQ2Xo6qMoOCscIE/U7Jrp8BNY="
+        "CodeSha256": "DzAb9LOsRJYjK1WXkqEFIhaQNleTMqQ0UgXkOjPDgac="
       }
     },
     "ApiGatewayRestApi": {
@@ -297,7 +300,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1552369517410": {
+    "ApiGatewayDeployment1552532776385": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -819,6 +822,167 @@
           {
             "Name": "custom:environment",
             "Value": "dev"
+          }
+        ]
+      }
+    },
+    "CognitoIdentityPoolMyIdentityPool": {
+      "Type": "AWS::Cognito::IdentityPool",
+      "Properties": {
+        "IdentityPoolName": "formsgraphqlidentitypool",
+        "AllowUnauthenticatedIdentities": false,
+        "CognitoIdentityProviders": [
+          {
+            "ClientId": {
+              "Ref": "CognitoUserPoolClient"
+            },
+            "ProviderName": {
+              "Fn::GetAtt": [
+                "CognitoUserPoolMyUserPool",
+                "ProviderName"
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "CognitoIdentityPoolRoles": {
+      "Type": "AWS::Cognito::IdentityPoolRoleAttachment",
+      "Properties": {
+        "IdentityPoolId": {
+          "Ref": "CognitoIdentityPoolMyIdentityPool"
+        },
+        "Roles": {
+          "authenticated": {
+            "Fn::GetAtt": [
+              "CognitoAuthRole",
+              "Arn"
+            ]
+          },
+          "unauthenticated": {
+            "Fn::GetAtt": [
+              "CognitoUnAuthorizedRole",
+              "Arn"
+            ]
+          }
+        }
+      }
+    },
+    "CognitoUnAuthorizedRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "cognito-identity.amazonaws.com"
+              },
+              "Action": [
+                "sts:AssumeRoleWithWebIdentity"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "cognito-identity.amazonaws.com:aud": {
+                    "Ref": "CognitoIdentityPoolMyIdentityPool"
+                  }
+                },
+                "ForAnyValue:StringLike": {
+                  "cognito-identity.amazonaws.com:amr": "unauthenticated"
+                }
+              }
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "CognitoUnauthorizedPolicy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "mobileanalytics:PutEvents",
+                    "cognito-sync:*"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "CognitoAuthRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Federated": "cognito-identity.amazonaws.com"
+              },
+              "Action": [
+                "sts:AssumeRoleWithWebIdentity"
+              ],
+              "Condition": {
+                "StringEquals": {
+                  "cognito-identity.amazonaws.com:aud": {
+                    "Ref": "CognitoIdentityPoolMyIdentityPool"
+                  }
+                },
+                "ForAnyValue:StringLike": {
+                  "cognito-identity.amazonaws.com:amr": "authenticated"
+                }
+              }
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "dev-formsgraphql-authorized",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "mobileanalytics:PutEvents",
+                    "cognito-sync:*",
+                    "cognito-identity:*"
+                  ],
+                  "Resource": "*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:*"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Join": [
+                        "",
+                        [
+                          {
+                            "Fn::GetAtt": [
+                              "AttachmentsBucket",
+                              "Arn"
+                            ]
+                          },
+                          "/private/",
+                          "$",
+                          "{cognito-identity.amazonaws.com:sub}/*"
+                        ]
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
           }
         ]
       }
@@ -1436,7 +1600,7 @@
     "PostConfirmationLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "PostConfirmationLambdaVersiony9j7B11yLHNkjLgCREBwqV9ywEPCulT1atmmKpFs0"
+        "Ref": "PostConfirmationLambdaVersionX99LSiQTNVP0AzmTOf9s2IsIWoS2Qy5ONhLstk24uVU"
       }
     },
     "ServiceEndpoint": {
@@ -1476,6 +1640,11 @@
     "UserPoolAdminUser": {
       "Value": {
         "Ref": "CognitoUserPoolAdminUser"
+      }
+    },
+    "IdentityPoolId": {
+      "Value": {
+        "Ref": "CognitoIdentityPoolMyIdentityPool"
       }
     },
     "GraphQlApiUrl": {
