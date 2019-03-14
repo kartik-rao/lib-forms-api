@@ -59,8 +59,18 @@ Resources:
         Ref: CognitoUserPoolMyUserPool
       ExplicitAuthFlows:
         - ADMIN_NO_SRP_AUTH
+        - USER_PASSWORD_AUTH
       GenerateSecret: false
       ReadAttributes:
+        - email
+        - given_name
+        - family_name
+        - website
+        - email_verified
+        - email
+        - profile
+        - phone_number
+        - phone_number_verified
         - custom:tenantId
         - custom:tenantName
         - custom:source
