@@ -17,7 +17,7 @@ provider:
     urlPrefix: ${opt:urlPrefix, '${self:provider.environment.protocol}${self:provider.environment.domain}'}
     region: ${self:provider.region}
     environment: ${self:provider.stage}
-    serviceName: ${self:provider.stage}-${self:service}
+    serviceName: ${self:service}
     table_form_entries: ${self:provider.serviceName}_table_form_entries
     table_app_data: ${self:provider.serviceName}_table_appdata
   iamRoleStatements:
@@ -89,7 +89,7 @@ custom:
         endpoint: "http://localhost:8000"
         region: localhost
   appSync:
-    name:  ai-forms-backend-${self:provider.stage}
+    name:  ai-forms-backend
     # apiKey # only required for update-appsync/delete-appsync
     authenticationType: AMAZON_COGNITO_USER_POOLS
     # if AMAZON_COGNITO_USER_POOLS

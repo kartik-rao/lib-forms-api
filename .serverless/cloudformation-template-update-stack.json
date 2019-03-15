@@ -143,7 +143,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsgraphql/dev/1552532776328-2019-03-14T03:06:16.328Z/formsgraphql.zip"
+          "S3Key": "serverless/formsgraphql/dev/1552655344562-2019-03-15T13:09:04.562Z/formsgraphql.zip"
         },
         "FunctionName": "dev-formsgraphql-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -163,7 +163,7 @@
             "urlPrefix": "http://dev-app.forms.li",
             "region": "ap-southeast-2",
             "environment": "dev",
-            "serviceName": "dev-formsgraphql",
+            "serviceName": "formsgraphql",
             "table_form_entries": "dev-formsgraphql_table_form_entries",
             "table_app_data": "dev-formsgraphql_table_appdata"
           }
@@ -174,7 +174,7 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "PostConfirmationLambdaVersionX99LSiQTNVP0AzmTOf9s2IsIWoS2Qy5ONhLstk24uVU": {
+    "PostConfirmationLambdaVersionoeWE4jhvdQkjystZLH0RQTn6U7WgKiPev84z9G6m2Ds": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
@@ -300,7 +300,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1552532776385": {
+    "ApiGatewayDeployment1552655344615": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -363,7 +363,7 @@
     "CognitoUserPoolMyUserPool": {
       "Type": "AWS::Cognito::UserPool",
       "Properties": {
-        "UserPoolName": "dev-formsgraphql-userpool",
+        "UserPoolName": "formsgraphql-userpool",
         "LambdaConfig": {
           "PostConfirmation": {
             "Fn::GetAtt": [
@@ -473,7 +473,7 @@
     "AppSyncDynamoDBRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
-        "RoleName": "formsgraphql-ap-southeast-2-dev-appsync-iam-role",
+        "RoleName": "formsgraphql-ap-southeast-2-appsync-iam-role",
         "ManagedPolicyArns": [
           {
             "Ref": "AppSyncDynamoDBPolicy"
@@ -541,7 +541,7 @@
     "AppSyncCloudWatchRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
-        "RoleName": "formsgraphql-ap-southeast-2-dev-appsync--logging-iam-role",
+        "RoleName": "formsgraphql-ap-southeast-2-appsync-logging-iam-role",
         "ManagedPolicyArns": [
           {
             "Ref": "AppSyncCloudWatchPolicy"
@@ -729,15 +729,24 @@
     "CognitoUserPoolClient": {
       "Type": "AWS::Cognito::UserPoolClient",
       "Properties": {
-        "ClientName": "dev-formsgraphql-userpoolclient",
+        "ClientName": "formsgraphql-userpoolclient",
         "UserPoolId": {
           "Ref": "CognitoUserPoolMyUserPool"
         },
         "ExplicitAuthFlows": [
-          "ADMIN_NO_SRP_AUTH"
+          "USER_PASSWORD_AUTH"
         ],
         "GenerateSecret": false,
         "ReadAttributes": [
+          "email",
+          "given_name",
+          "family_name",
+          "website",
+          "email_verified",
+          "email",
+          "profile",
+          "phone_number",
+          "phone_number_verified",
           "custom:tenantId",
           "custom:tenantName",
           "custom:source",
@@ -749,6 +758,45 @@
           "custom:group",
           "custom:tenantName",
           "custom:source"
+        ]
+      }
+    },
+    "CognitoUserPoolAdminClient": {
+      "Type": "AWS::Cognito::UserPoolClient",
+      "Properties": {
+        "ClientName": "formsgraphql-userpooladminclient",
+        "UserPoolId": {
+          "Ref": "CognitoUserPoolMyUserPool"
+        },
+        "ExplicitAuthFlows": [
+          "ADMIN_NO_SRP_AUTH"
+        ],
+        "GenerateSecret": false,
+        "ReadAttributes": [
+          "email",
+          "given_name",
+          "family_name",
+          "website",
+          "email_verified",
+          "email",
+          "profile",
+          "phone_number",
+          "phone_number_verified",
+          "custom:tenantId",
+          "custom:tenantName",
+          "custom:source",
+          "custom:environment",
+          "custom:stack",
+          "custom:region"
+        ],
+        "WriteAttributes": [
+          "custom:tenantId",
+          "custom:tenantName",
+          "custom:source",
+          "custom:environment",
+          "custom:stack",
+          "custom:region",
+          "custom:group"
         ]
       }
     },
@@ -795,7 +843,7 @@
     "CognitoUserPoolAdminUser": {
       "Type": "AWS::Cognito::UserPoolUser",
       "Properties": {
-        "Username": "infrastructure@adinfinity.com",
+        "Username": "infrastructure.dev@forms.li",
         "UserPoolId": {
           "Ref": "CognitoUserPoolMyUserPool"
         },
@@ -805,7 +853,15 @@
         "UserAttributes": [
           {
             "Name": "email",
-            "Value": "infrastructure@adinfinity.com"
+            "Value": "infrastructure.dev@forms.li"
+          },
+          {
+            "Name": "given_name",
+            "Value": "dev Infrastructure"
+          },
+          {
+            "Name": "family_name",
+            "Value": "Admin"
           },
           {
             "Name": "email_verified",
@@ -944,7 +1000,7 @@
         },
         "Policies": [
           {
-            "PolicyName": "dev-formsgraphql-authorized",
+            "PolicyName": "formsgraphql-authorized",
             "PolicyDocument": {
               "Version": "2012-10-17",
               "Statement": [
@@ -990,7 +1046,7 @@
     "GraphQlApi": {
       "Type": "AWS::AppSync::GraphQLApi",
       "Properties": {
-        "Name": "ai-forms-backend-dev",
+        "Name": "ai-forms-backend",
         "AuthenticationType": "AMAZON_COGNITO_USER_POOLS",
         "UserPoolConfig": {
           "AwsRegion": "ap-southeast-2",
@@ -1388,7 +1444,7 @@
         },
         "TypeName": "Account",
         "FieldName": "plan",
-        "RequestMappingTemplate": "$util.qr($ctx.stash.put(\"environment\", $context.identity.claims[\"custom:environment\"]))\n#set($uenv = $context.identity.claims[\"custom:environment\"])\n#if($uenv)\n    #set($prefix = \"${uenv}-\")\n#else\n    #set($prefix = \"\")\n#end\n#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2017-02-28\",\n    \"operation\": \"Query\",\n    \"index\"    : \"${prefix}formsgraphql_table_appdata_gsi\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"PLAN\"},\n            \":meta\" : {\"S\" : \"${context.source.id}#true\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\"\n}",
+        "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2017-02-28\",\n    \"operation\": \"Query\",\n    \"index\"    : \"formsgraphql_table_appdata_gsi\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"PLAN\"},\n            \":meta\" : {\"S\" : \"${context.source.id}#true\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\"\n}",
         "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n#if($ctx.result.items && $ctx.result.items.size() > 0)\n    $util.toJson($ctx.result.items[0])\n#else\n    #return\n#end\n",
         "DataSourceName": {
           "Fn::GetAtt": [
@@ -1410,7 +1466,7 @@
         },
         "TypeName": "Query",
         "FieldName": "listAllAccounts",
-        "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n#end\n## Only Admins allowed\n#if (!$isAdmin == true)\n    $utils.unauthorized()\n#end\n$util.qr($ctx.stash.put(\"environment\", $context.identity.claims[\"custom:environment\"]))\n#set($uenv = $context.identity.claims[\"custom:environment\"])\n#if($uenv)\n    #set($prefix = \"${uenv}-\")\n#else\n    #set($prefix = \"\")\n#end\n#set($attribs = $context.arguments)\n{\n    \"version\"   : \"2017-02-28\",\n    \"operation\" : \"Query\",\n    \"index\"     : \"${prefix}formsgraphql_table_appdata_gsi\",\n    \"query\"     : {\n      \"expression\": \"#type = :objectType\",\n      \"expressionNames\" : {\n            \"#type\" : \"type\"\n        },\n      \"expressionValues\" : {\n        \":objectType\" : { \"S\": \"ACCOUNT\" }\n      }\n  }\n  #if( ${context.arguments.limit} )\n      ,\"limit\": ${context.arguments.limit}\n  #end\n  #if( ${context.arguments.nextToken} )\n      ,\"nextToken\": \"${context.arguments.nextToken}\"\n  #end\n}",
+        "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n#end\n## Only Admins allowed\n#if (!$isAdmin == true)\n    $utils.unauthorized()\n#end\n#set($attribs = $context.arguments)\n{\n    \"version\"   : \"2017-02-28\",\n    \"operation\" : \"Query\",\n    \"index\"     : \"formsgraphql_table_appdata_gsi\",\n    \"query\"     : {\n      \"expression\": \"#type = :objectType\",\n      \"expressionNames\" : {\n            \"#type\" : \"type\"\n        },\n      \"expressionValues\" : {\n        \":objectType\" : { \"S\": \"ACCOUNT\" }\n      }\n  }\n  #if( ${context.arguments.limit} )\n      ,\"limit\": ${context.arguments.limit}\n  #end\n  #if( ${context.arguments.nextToken} )\n      ,\"nextToken\": \"${context.arguments.nextToken}\"\n  #end\n}",
         "ResponseMappingTemplate": "{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
         "DataSourceName": {
           "Fn::GetAtt": [
@@ -1600,7 +1656,7 @@
     "PostConfirmationLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "PostConfirmationLambdaVersionX99LSiQTNVP0AzmTOf9s2IsIWoS2Qy5ONhLstk24uVU"
+        "Ref": "PostConfirmationLambdaVersionoeWE4jhvdQkjystZLH0RQTn6U7WgKiPev84z9G6m2Ds"
       }
     },
     "ServiceEndpoint": {
@@ -1635,6 +1691,11 @@
     "UserPoolClientId": {
       "Value": {
         "Ref": "CognitoUserPoolClient"
+      }
+    },
+    "AdminUserPoolClientId": {
+      "Value": {
+        "Ref": "CognitoUserPoolAdminClient"
       }
     },
     "UserPoolAdminUser": {

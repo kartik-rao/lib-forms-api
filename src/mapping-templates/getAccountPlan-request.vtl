@@ -1,15 +1,8 @@
-$util.qr($ctx.stash.put("environment", $context.identity.claims["custom:environment"]))
-#set($uenv = $context.identity.claims["custom:environment"])
-#if($uenv)
-    #set($prefix = "${uenv}-")
-#else
-    #set($prefix = "")
-#end
 #set($attribs = $context.arguments)
 {
     "version"  : "2017-02-28",
     "operation": "Query",
-    "index"    : "${prefix}formsgraphql_table_appdata_gsi",
+    "index"    : "formsgraphql_table_appdata_gsi",
     "query"    : {
         "expression" : "#type = :type AND begins_with(#meta, :meta)",
         "expressionNames" : {

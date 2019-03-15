@@ -4,9 +4,10 @@
   "description": "GraphQL API for forms app data",
   "main": "index.js",
   "scripts": {
-    "deploy": "cross-env \"SLS_DEBUG=*\" NODE_ENV=development sls deploy -v --stage dev --region ap-southeast-2",
-    "remove": "cross-env NODE_ENV=development sls remove -v --stage dev --region ap-southeast-2",
-    "deploy-prod": "cross-env NODE_ENV=production sls deploy -v --stage prod --region ap-southeast-2",
+    "info"  : "cross-env \"SLS_DEBUG=*\" NODE_ENV=development sls info --stage dev --region ap-southeast-2 --aws-profile fl-infrastructure-dev",
+    "deploy": "cross-env \"SLS_DEBUG=*\" NODE_ENV=development sls deploy -v --stage dev --region ap-southeast-2 --aws-profile fl-infrastructure-dev",
+    "remove": "cross-env NODE_ENV=development sls remove -v --stage dev --region ap-southeast-2 --aws-profile fl-infrastructure-dev",
+    "deploy-prod": "cross-env NODE_ENV=production sls deploy -v --stage prod --region ap-southeast-2 --aws-profile fl-infrastructure-prod",
     "test": "ts-node --project ./tsconfig.test.json node_modules/jasmine/bin/jasmine --config=./jasmine.json",
     "karma": "karma start"
   },

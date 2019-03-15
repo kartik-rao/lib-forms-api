@@ -58,7 +58,6 @@ Resources:
       UserPoolId:
         Ref: CognitoUserPoolMyUserPool
       ExplicitAuthFlows:
-        - ADMIN_NO_SRP_AUTH
         - USER_PASSWORD_AUTH
       GenerateSecret: false
       ReadAttributes:
@@ -71,16 +70,50 @@ Resources:
         - profile
         - phone_number
         - phone_number_verified
-        - custom:tenantId
-        - custom:tenantName
-        - custom:source
-        - custom:environment
-        - custom:stack
-        - custom:region
+        - "custom:tenantId"
+        - "custom:tenantName"
+        - "custom:source"
+        - "custom:environment"
+        - "custom:stack"
+        - "custom:region"
       WriteAttributes:
-        - custom:group
-        - custom:tenantName
-        - custom:source
+        - "custom:group"
+        - "custom:tenantName"
+        - "custom:source"
+  CognitoUserPoolAdminClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      # Generate an app client name based on the stage
+      ClientName: ${self:provider.environment.serviceName}-userpooladminclient
+      UserPoolId:
+        Ref: CognitoUserPoolMyUserPool
+      ExplicitAuthFlows:
+        - ADMIN_NO_SRP_AUTH
+      GenerateSecret: false
+      ReadAttributes:
+        - email
+        - given_name
+        - family_name
+        - website
+        - email_verified
+        - email
+        - profile
+        - phone_number
+        - phone_number_verified
+        - "custom:tenantId"
+        - "custom:tenantName"
+        - "custom:source"
+        - "custom:environment"
+        - "custom:stack"
+        - "custom:region"
+      WriteAttributes:
+        - "custom:tenantId"
+        - "custom:tenantName"
+        - "custom:source"
+        - "custom:environment"
+        - "custom:stack"
+        - "custom:region"
+        - "custom:group"
   CognitoAppAdminGroup:
     Type: AWS::Cognito::UserPoolGroup
     Properties:
@@ -113,14 +146,18 @@ Resources:
   CognitoUserPoolAdminUser:
     Type : AWS::Cognito::UserPoolUser
     Properties:
-      Username: infrastructure@adinfinity.com
+      Username: infrastructure.${self:provider.stage}@forms.li
       UserPoolId:
         Ref: CognitoUserPoolMyUserPool
       DesiredDeliveryMediums:
         - EMAIL
       UserAttributes:
         - Name: email
-          Value: infrastructure@adinfinity.com
+          Value: infrastructure.${self:provider.stage}@forms.li
+        - Name: given_name
+          Value: ${self:provider.stage} Infrastructure
+        - Name: family_name
+          Value: Admin
         - Name: email_verified
           Value: True
         - Name: "custom:group"
@@ -136,6 +173,9 @@ Outputs:
   UserPoolClientId:
     Value:
       Ref: CognitoUserPoolClient
+  AdminUserPoolClientId:
+    Value:
+      Ref: CognitoUserPoolAdminClient
   UserPoolAdminUser:
     Value:
       Ref: CognitoUserPoolAdminUser

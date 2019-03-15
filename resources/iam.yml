@@ -2,7 +2,7 @@ Resources:
   AppSyncDynamoDBRole:
     Type: "AWS::IAM::Role"
     Properties:
-      RoleName: "${self:service}-${self:provider.region}-${self:provider.stage}-appsync-iam-role"
+      RoleName: "${self:service}-${self:provider.region}-appsync-iam-role"
       ManagedPolicyArns:
         - Ref: AppSyncDynamoDBPolicy
       AssumeRolePolicyDocument:
@@ -42,7 +42,7 @@ Resources:
   AppSyncCloudWatchRole:
     Type: "AWS::IAM::Role"
     Properties:
-      RoleName: "${self:service}-${self:provider.region}-${self:provider.stage}-appsync--logging-iam-role"
+      RoleName: "${self:service}-${self:provider.region}-appsync-logging-iam-role"
       ManagedPolicyArns:
         - Ref: AppSyncCloudWatchPolicy
       AssumeRolePolicyDocument:
