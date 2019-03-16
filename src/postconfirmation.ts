@@ -5,7 +5,7 @@ process.env.TZ = 'UTC';
 import {CognitoUserPoolTriggerEvent} from 'aws-lambda';
 import * as _ from "lodash";
 import {DBClient} from "./dbclient";
-const uuid = require('uuid/v5');
+const uuid = require('uuid/v4');
 import * as AWS from 'aws-sdk';
 import { AdminGetUserRequest } from "aws-sdk/clients/cognitoidentityserviceprovider";
 
