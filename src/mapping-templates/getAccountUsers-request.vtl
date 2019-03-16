@@ -15,6 +15,6 @@
         }
     },
     "select" : "ALL_ATTRIBUTES",
-    "limit": $util.defaultIfNull(${ctx.args._userLimit}, 20),
-    "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args._userNextToken, null))
+    "limit": $util.defaultIfNull(${ctx.args.limit}, 20),
+    "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))
 }

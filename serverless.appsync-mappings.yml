@@ -53,7 +53,17 @@
   type: Query
   field: listAllAccounts
   request: listAllAccounts-request.vtl
-  response: listAllAccounts-response.vtl
+  response: passthrough-paginated-response.vtl
+- dataSource: AppData
+  type: Query
+  field: listAllForms
+  request: listAllForms-request.vtl
+  response: passthrough-paginated-response.vtl
+- dataSource: AppData
+  type: Query
+  field: listAllUsers
+  request: listAllUsers-request.vtl
+  response: passthrough-paginated-response.vtl
 - dataSource: AppData
   type: Query
   field: getPlan
