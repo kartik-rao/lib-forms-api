@@ -1,24 +1,22 @@
 #set($id = $util.autoId())
 #set($attribs = $context.arguments.input)
-#set($attribs.meta = "${context.arguments.input.accountId}#true")
 #set($attribs.owner = $context.identity.sub)
-#set($attribs.itemType = "PLAN")
+#set($attribs.itemType = "USER")
+#set($attribs.meta = "${context.arguments.input.accountId}#${context.arguments.input.group}")
 #set($attribs.isDeleted = false)
 #set($attribs.createdAt = $util.time.nowISO8601())
-#set($attribs.startDate = $attribs.createdAt)
-#set($attribs.active = true)
 {
     "version": "2017-02-28",
     "operation": "PutItem",
     "key": {
         "id"  : $util.dynamodb.toDynamoDBJson($id),
-        "type": {"S": "PLAN"}
+        "type": {"S" : "USER"}
     },
     "attributeValues": $util.toJson($util.dynamodb.toMapValues($attribs)),
     "condition": {
         "expression": "attribute_not_exists(#id)",
         "expressionNames": {
-            "#id": "id",
+            "#id": "id"
         }
     }
 }

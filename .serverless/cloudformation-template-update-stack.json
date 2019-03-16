@@ -143,7 +143,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsgraphql/dev/1552707544543-2019-03-16T03:39:04.543Z/formsgraphql.zip"
+          "S3Key": "serverless/formsgraphql/dev/1552724020897-2019-03-16T08:13:40.897Z/formsgraphql.zip"
         },
         "FunctionName": "formsgraphql-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -300,7 +300,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1552707544597": {
+    "ApiGatewayDeployment1552724020954": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -1090,7 +1090,7 @@
     "GraphQlSchema": {
       "Type": "AWS::AppSync::GraphQLSchema",
       "Properties": {
-        "Definition": "type AppData @model {\n    id: ID!\n    type: ID!\n    meta: String!\n    itemType: String!\n    owner: ID!\n    createdAt: AWSDateTime!\n    updatedAt: AWSDateTime\n    isDeleted: Boolean\n}\n\ntype FormEntry @model {\n    id: ID!\n    type: ID!\n    meta: String!\n    createdAt: AWSDateTime!\n}\n\ninput AddFormEntryInput {\n  data: AWSJSON!\n}\n\ntype PaginatedFormEntries {\n  items: [FormEntry!]!\n  nextToken: String\n}\n\ntype Form {\n    id: ID!\n    owner: ID!\n    exid: String\n    desc: String\n    name: String!\n    tenant: AWSJSON\n    status: AWSJSON\n    content: AWSJSON!\n    layout: AWSJSON\n    formLayoutOptions: AWSJSON\n    stopSubmit: Boolean\n    submitTarget: String\n    successRedirect: String\n    errorRedirect: String\n    createdAt: AWSDateTime\n    updatedAt: AWSDateTime\n    entries: PaginatedFormEntries\n}\n\ninput AddFormInput {\n  name: String!\n  desc: String\n  content: AWSJSON!\n  layout: AWSJSON\n  formLayoutOptions: AWSJSON\n  stopSubmit: Boolean\n  submitTarget: String\n  successRedirect: String\n  errorRedirect: String\n}\n\ninput UpdateFormInput  {\n  id: ID\n  name: String\n  desc: String\n  content: AWSJSON!\n  layout: AWSJSON\n  formLayoutOptions: AWSJSON\n  stopSubmit: Boolean\n  submitTarget: String\n  successRedirect: String\n  errorRedirect: String\n}\n\ntype PaginatedForm {\n  items: [Form!]!\n  nextToken: String\n}\n\ntype User {\n  id: ID!\n  owner: ID!\n  accountId: String!\n  email: String!\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\ninput UpdateUserInputData {\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ninput UpdateUserInput {\n  id: ID!\n  data: UpdateUserInputData!\n}\n\ninput AddUserInput {\n  email: String!\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ntype PaginatedUser {\n  items: [User!]!\n  nextToken: String\n}\n\nenum AddressType {\n  BILLING\n  CONTACT\n}\n\ntype Address {\n  id: ID!\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype AddAddressInput {\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype Account {\n  id: ID!\n  name: String!\n  addresses: [Address!]\n  website: String\n  taxId: String\n  owner: ID!\n  planId: ID\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  users: [User!]\n  forms: [Form!]\n  plan : Plan\n}\n\ninput UpdateAccountInput {\n  id: ID!\n  name: String\n  planId: ID\n}\n\ninput AddAccountInput {\n  name: String!\n}\n\ntype PaginatedAccount {\n  items: [Account!]!\n  nextToken: String!\n}\n\ntype PlanType {\n  id: ID!\n  owner: ID!\n  name: String!\n  cost: Float!\n  active: Boolean!\n  billingTerm: String!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\ninput AddPlanTypeInput {\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Boolean!\n}\n\ninput UpdatePlanTypeInput {\n  id: ID!\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Boolean!\n}\n\ntype PaginatedPlanType {\n  items: [PlanType!]!\n  nextToken: String!\n}\n\ntype Plan {\n  id: ID!\n  accountId: ID!\n  owner: ID!\n  planTypeId: ID!\n  startDate: AWSDate!\n  endDate: AWSDate\n  active: Boolean\n  lastBillDate: AWSDate\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  planType: PlanType\n}\n\ninput AddPlanInput {\n  accountId: ID!\n  planTypeId: ID!\n  endDate: AWSDate\n  active: Boolean\n}\n\ninput UpdatePlanInput {\n  id: ID!\n  endDate: AWSDate\n  active: Boolean!\n}\n\ntype PaginatedPlan {\n  items: [Plan!]!\n  nextToken: String\n}\n\ntype IntegrationType {\n  id: ID!\n  owner: ID!\n  planTypeId: ID!\n  name: String!\n  active: Boolean!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\ninput AddIntegrationTypeInput {\n  name: String!\n  active: Boolean\n}\n\ninput UpdateIntegrationTypeInput {\n  id: ID!\n  name: String!\n  active: Boolean\n}\n\ntype PaginatedIntegrationType {\n  items: [IntegrationType!]!\n  nextToken: String\n}\n\ntype Integration {\n  id: ID!\n  integrationTypeId: ID!\n  integrationType: IntegrationType\n  owner: ID!\n  accountId: ID!\n  formId: ID!\n  active: Boolean!\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  lastExecuted: AWSDate\n  lastExecutionResult: Boolean\n  lastExecutionResultMessage: String\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\ninput AddIntegrationInput {\n  integrationTypeId: ID!\n  accountId: ID!\n  formId: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationTypeInputData {\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationInput {\n  id: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ntype PaginatedIntegration {\n  items: [Integration!]!\n  nextToken: String\n}\n\ntype Query {\n  getAccount(accountId: ID!): Account\n  listAllAccounts(limit: Int, nextToken: String): PaginatedAccount!\n  getUser(userId: ID!): User!\n  listAllUsers(limit: Int, nextToken: String) : PaginatedUser!\n  listAllAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n  listAllAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n  listAccountUsersInGroup(accountId: String!, group: String!, limit: Int, nextToken: String): PaginatedUser!\n\n  getPlan(planId: String!): Plan!\n  listAllPlans(limit: Int, nextToken: String): PaginatedPlan!\n  listAllAccountPlans(accountId: String!, limit: Int, nextToken: String): PaginatedPlan!\n  getActiveAccountPlan(accountId: String!): PaginatedPlan!\n  getPlanType(planTypeId: String!): PlanType!\n  listAllPlanTypes(limit: Int, nextToken: String): PaginatedPlanType!\n  listAllActivePlanTypes(limit: Int, nextToken: String): PaginatedPlanType!\n\n  getForm(formId: String!) : Form!\n  listAllForms(limit: Int, nextToken: String) : PaginatedForm!\n  listAllAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedForm!\n  listAllAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n  listAllAccountFormsByUser(accountId: String!, userId: String!, limit: Int, nextToken: String) : PaginatedForm!\n  listAllAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n\n  getIntegrationType(integrationTypeId: String!): IntegrationType!\n  listAllIntegrationTypes(limit: Int, nextToken: String): PaginatedIntegrationType!\n  listAllIntegrationTypesByPlanType(planTypeId: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n  listAllIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n\n  getIntegration(integrationId: String!): Integration!\n  listAllIntegrations(limit: Int, nextToken: String): PaginatedIntegration!\n  listAllAccountIntegrations(accountId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  listAllAccountFormIntegrations(accountId: String!, formId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  listAllAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegration!\n\n  getFormEntry(formEntryId: String!): FormEntry!\n  listAllFormEntries(formId: String!) : PaginatedFormEntries!\n  listAllFormEntriesByTime(formId: String!, timestampPrefix: String!): PaginatedFormEntries!\n}\n\ntype Mutation {\n  addPlanType(input: AddPlanTypeInput): PlanType!\n  addPlan(input: AddPlanInput): Plan!\n  addAccount(input: AddAccountInput): Account!\n  addUser(input: AddUserInput): User!\n  addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!\n  addIntegration(input: AddIntegrationInput): Integration!\n  addForm(input: AddFormInput): Form!\n\n  updatePlanType(input: UpdatePlanTypeInput): PlanType!\n  updatePlan(input: UpdatePlanInput): Plan!\n  updateAccount(input: UpdateAccountInput): Account!\n  updateUser(input: UpdateUserInput): User!\n  updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!\n  updateIntegration(input: UpdateIntegrationInput): Integration!\n  updateForm(input: UpdateFormInput): Form!\n\n  deletePlanType(id: ID!): PlanType!\n  deletePlan(id: ID!): Plan!\n  deleteAccount(id: ID!): Account!\n  deleteUser(id: ID!): User!\n  deleteIntegrationType(id: ID!): IntegrationType!\n  deleteIntegration(id: ID!): Integration!\n  deleteForm(id: ID!): Form!\n\n  addFormEntry(input: AddFormEntryInput!): FormEntry!\n  testPipeline: AWSJSON\n  attachPlan(input: AddPlanInput): Account\n}\n\ntype Schema {\n  query: Query\n  mutation: Mutation\n}",
+        "Definition": "type AppData @model {\n    id: ID!\n    type: ID!\n    meta: String!\n    itemType: String!\n    owner: ID!\n    createdAt: AWSDateTime!\n    updatedAt: AWSDateTime\n    isDeleted: Boolean\n    version: Int\n}\n\ntype FormEntry @model {\n    id: ID!\n    type: ID!\n    meta: String!\n    createdAt: AWSDateTime!\n}\n\ninput AddFormEntryInput {\n  data: AWSJSON!\n}\n\ntype PaginatedFormEntries {\n  items: [FormEntry!]\n  nextToken: String\n}\n\ntype Form @versioned {\n    id: ID!\n    owner: ID!\n    ownedBy: User!\n    accountId: ID!\n    account: Account!\n    exid: String\n    desc: String\n    name: String!\n    tenant: AWSJSON\n    status: AWSJSON\n    content: AWSJSON!\n    layout: AWSJSON\n    formLayoutOptions: AWSJSON\n    stopSubmit: Boolean\n    submitTarget: String\n    successRedirect: String\n    errorRedirect: String\n    createdAt: AWSDateTime\n    updatedAt: AWSDateTime\n    entries(limit: Int, nextToken: String): PaginatedFormEntries\n}\n\ninput AddFormInput {\n  name: String!\n  desc: String\n  content: AWSJSON!\n  layout: AWSJSON\n  formLayoutOptions: AWSJSON\n  stopSubmit: Boolean\n  submitTarget: String\n  successRedirect: String\n  errorRedirect: String\n}\n\ninput UpdateFormInput  {\n  id: ID\n  name: String\n  desc: String\n  content: AWSJSON!\n  layout: AWSJSON\n  formLayoutOptions: AWSJSON\n  stopSubmit: Boolean\n  submitTarget: String\n  successRedirect: String\n  errorRedirect: String\n}\n\ntype PaginatedForm {\n  items: [Form!]\n  nextToken: String\n}\n\ntype User @versioned {\n  id: ID!\n  owner: ID!\n  accountId: ID!\n  account: Account\n  email: String!\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Boolean\n}\n\ninput UpdateUserInputData {\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ninput UpdateUserInput {\n  id: ID!\n  data: UpdateUserInputData!\n}\n\ninput AddUserInput {\n  email: String!\n  group: String!\n  accountId: ID!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ntype PaginatedUser {\n  items: [User!]\n  nextToken: String\n}\n\nenum AddressType {\n  BILLING\n  CONTACT\n}\n\ntype Address @versioned {\n  id: ID!\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype AddAddressInput {\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype PaginatedAddress {\n  items: [Address!]\n  nextToken: String\n}\n\ntype Account @versioned {\n  id: ID!\n  name: String!\n  addresses(limit: Int, nextToken: String): PaginatedAddress\n  website: String\n  taxId: String\n  owner: ID!\n  planId: ID\n  ownedBy: User!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  users(limit: Int, nextToken: String): PaginatedUser\n  forms(limit: Int, nextToken: String): PaginatedForm\n  plan : Plan\n}\n\ninput UpdateAccountInput {\n  id: ID!\n  name: String\n  planId: ID\n}\n\ninput AddAccountInput {\n  name: String!\n}\n\ntype PaginatedAccount {\n  items: [Account!]\n  nextToken: String\n}\n\ntype PlanType @versioned {\n  id: ID!\n  owner: ID!\n  ownedBy: User!\n  name: String!\n  cost: Float!\n  active: Boolean!\n  billingTerm: String!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\ninput AddPlanTypeInput {\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Boolean!\n}\n\ninput UpdatePlanTypeInput {\n  id: ID!\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Boolean!\n}\n\ntype PaginatedPlanType {\n  items: [PlanType!]\n  nextToken: String\n}\n\ntype Plan @versioned {\n  id: ID!\n  accountId: ID!\n  account: Account!\n  owner: ID!\n  ownedBy: User!\n  planTypeId: ID!\n  startDate: AWSDate!\n  endDate: AWSDate\n  active: Boolean\n  lastBillDate: AWSDate\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  planType: PlanType\n}\n\ninput AddPlanInput {\n  accountId: ID!\n  planTypeId: ID!\n  endDate: AWSDate\n  active: Boolean\n}\n\ninput UpdatePlanInput {\n  id: ID!\n  endDate: AWSDate\n  active: Boolean!\n}\n\ntype PaginatedPlan {\n  items: [Plan!]\n  nextToken: String\n}\n\ntype IntegrationType {\n  id: ID!\n  owner: ID!\n  ownedBy: User!\n  planTypeId: ID!\n  planType: PlanType\n  name: String!\n  active: Boolean!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\ninput AddIntegrationTypeInput {\n  name: String!\n  active: Boolean\n}\n\ninput UpdateIntegrationTypeInput {\n  id: ID!\n  name: String!\n  active: Boolean\n}\n\ntype PaginatedIntegrationType {\n  items: [IntegrationType!]\n  nextToken: String\n}\n\ntype Integration @versioned {\n  id: ID!\n  integrationTypeId: ID!\n  integrationType: IntegrationType\n  owner: ID!\n  accountId: ID!\n  formId: ID!\n  form: Form!\n  active: Boolean!\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  lastExecuted: AWSDate\n  lastExecutionResult: Boolean\n  lastExecutionResultMessage: String\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\ninput AddIntegrationInput {\n  integrationTypeId: ID!\n  accountId: ID!\n  formId: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationTypeInputData {\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationInput {\n  id: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ntype PaginatedIntegration {\n  items: [Integration!]\n  nextToken: String\n}\n\ntype Query {\n  getAccount(accountId: ID!): Account\n  listAllAccounts(limit: Int, nextToken: String): PaginatedAccount!\n  getUser(userId: ID!): User\n  listAllUsers(limit: Int, nextToken: String) : PaginatedUser!\n  listAllAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n  listAllAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n  listAccountUsersInGroup(accountId: String!, group: String!, limit: Int, nextToken: String): PaginatedUser!\n\n  getPlan(planId: String!): Plan\n  listAllPlans(limit: Int, nextToken: String): PaginatedPlan!\n  listAllAccountPlans(accountId: String!, limit: Int, nextToken: String): PaginatedPlan!\n  getActiveAccountPlan(accountId: String!): PaginatedPlan!\n  getPlanType(planTypeId: String!): PlanType\n  listAllPlanTypes(limit: Int, nextToken: String): PaginatedPlanType!\n  listAllActivePlanTypes(limit: Int, nextToken: String): PaginatedPlanType!\n\n  getForm(formId: String!) : Form!\n  listAllForms(limit: Int, nextToken: String) : PaginatedForm!\n  listAllAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedForm!\n  listAllAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n  listAllAccountFormsByUser(accountId: String!, userId: String!, limit: Int, nextToken: String) : PaginatedForm!\n  listAllAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n\n  getIntegrationType(integrationTypeId: String!): IntegrationType\n  listAllIntegrationTypes(limit: Int, nextToken: String): PaginatedIntegrationType!\n  listAllIntegrationTypesByPlanType(planTypeId: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n  listAllIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n\n  getIntegration(integrationId: String!): Integration\n  listAllIntegrations(limit: Int, nextToken: String): PaginatedIntegration!\n  listAllAccountIntegrations(accountId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  listAllAccountFormIntegrations(accountId: String!, formId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  listAllAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegration!\n\n  getFormEntry(formEntryId: String!): FormEntry\n  listAllFormEntries(formId: String!) : PaginatedFormEntries!\n  listAllFormEntriesByTime(formId: String!, timestampPrefix: String!): PaginatedFormEntries!\n}\n\ntype Mutation {\n  addPlanType(input: AddPlanTypeInput): PlanType!\n  addPlan(input: AddPlanInput): Plan!\n  addAccount(input: AddAccountInput): Account!\n  addUser(input: AddUserInput): User!\n  addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!\n  addIntegration(input: AddIntegrationInput): Integration!\n  addForm(input: AddFormInput): Form!\n\n  updatePlanType(input: UpdatePlanTypeInput): PlanType!\n  updatePlan(input: UpdatePlanInput): Plan!\n  updateAccount(input: UpdateAccountInput): Account!\n  updateUser(input: UpdateUserInput): User!\n  updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!\n  updateIntegration(input: UpdateIntegrationInput): Integration!\n  updateForm(input: UpdateFormInput): Form!\n\n  deletePlanType(id: ID!): PlanType!\n  deletePlan(id: ID!): Plan!\n  deleteAccount(id: ID!): Account!\n  deleteUser(id: ID!): User!\n  deleteIntegrationType(id: ID!): IntegrationType!\n  deleteIntegration(id: ID!): Integration!\n  deleteForm(id: ID!): Form!\n\n  addFormEntry(input: AddFormEntryInput!): FormEntry!\n  testPipeline: AWSJSON\n  attachPlan(input: AddPlanInput): Account\n}\n\ntype Schema {\n  query: Query\n  mutation: Mutation\n}",
         "ApiId": {
           "Fn::GetAtt": [
             "GraphQlApi",
@@ -1349,8 +1349,9 @@
         }
       }
     },
-    "GraphQlFunctionConfigurationauthorizeFunction": {
-      "Type": "AWS::AppSync::FunctionConfiguration",
+    "GraphQlResolverQuerygetUser": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
       "Properties": {
         "ApiId": {
           "Fn::GetAtt": [
@@ -1358,58 +1359,16 @@
             "ApiId"
           ]
         },
-        "Name": "GraphQlFunctionConfigurationauthorizeFunction",
-        "DataSourceName": {
-          "Fn::GetAtt": [
-            "GraphQlDsAppData",
-            "Name"
-          ]
-        },
-        "RequestMappingTemplate": "#if (!$context.stash.isAdmin && !$context.stash.tenant)\n    $util.error(\"User is pending tenant assignment\")\n#end\n#if (!$context.stash.group)\n    $util.error(\"User is pending group assignment\")\n#end\n#if ($context.stash.isAdmin)\n{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"GetItem\",\n    \"key\": {\n        \"id\": {\"S\": \"$context.identity.sub\"},\n        \"type\"     : {\"S\": \"USER\"}\n    }\n}\n#else\n{\n    \"version\" : \"2018-05-29\",\n    \"operation\" : \"BatchGetItem\",\n    \"tables\" : {\n        \"MasterData\": {\n            \"keys\": [\n                {\n                    \"id\": {\"S\": \"$context.stash.tenant\"},\n                    \"type\"     : {\"S\": \"ACCOUNT\"}\n                },\n                {\n                    \"id\": {\"S\": \"$context.identity.sub\"},\n                    \"type\"     : {\"S\": \"USER\"}\n                }\n            ],\n            \"consistentRead\": true\n        }\n    }\n}\n#end\n",
-        "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB. **\n$util.toJson($ctx.result.data)\n",
-        "FunctionVersion": "2018-05-29"
-      }
-    },
-    "GraphQlFunctionConfigurationaddPlan": {
-      "Type": "AWS::AppSync::FunctionConfiguration",
-      "Properties": {
-        "ApiId": {
-          "Fn::GetAtt": [
-            "GraphQlApi",
-            "ApiId"
-          ]
-        },
-        "Name": "GraphQlFunctionConfigurationaddPlan",
-        "DataSourceName": {
-          "Fn::GetAtt": [
-            "GraphQlDsAppData",
-            "Name"
-          ]
-        },
-        "RequestMappingTemplate": "#set($id = $util.autoId())\n#set($attribs = $context.arguments.input)\n#set($attribs.meta = \"${$context.arguments.input.accountId}#true\")\n#set($attribs.owner = $context.identity.sub)\n#set($attribs.itemType = \"PLAN\")\n#set($attribs.isDeleted = false)\n#set($attribs.createdAt = $util.time.nowISO8601())\n#set($attribs.startDate = $attribs.createdAt)\n#set($attribs.active = true)\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"id\"  : $util.dynamodb.toDynamoDBJson($id),\n        \"type\": {\"S\": \"PLAN\"}\n    },\n    \"attributeValues\": $util.toJson($util.dynamodb.toMapValues($attribs)),\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#id)\",\n        \"expressionNames\": {\n            \"#id\": \"id\",\n        }\n    }\n}",
+        "TypeName": "Query",
+        "FieldName": "getUser",
+        "RequestMappingTemplate": "{\n  \"version\" : \"2017-02-28\",\n  \"operation\" : \"GetItem\",\n  \"key\": {\n    \"id\": $util.dynamodb.toDynamoDBJson($context.arguments.userId),\n    \"type\" : $util.dynamodb.toDynamoDBJson(\"FORM\")\n  }\n}",
         "ResponseMappingTemplate": "$util.qr($ctx.stash.put(\"tenant\", $context.identity.claims[\"custom:tenant\"]))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($ctx.stash.put(\"isAccountAdmin\", true))\n    #end\n    #if($ctx.result.owner == $context.identity.sub)\n        #set($isRecordOwner = true)\n    #end\n    #if($isAdmin == true ||  $ctx.result.type == \"PLANTYPE\" || $ctx.result.type == \"INTEGRATIONTYPE\")\n        #set($isAllowed = true)\n    #elseif (($ctx.result.accountId == $ctx.stash.tenant) && $isAccountAdmin == true)\n        #set($isAllowed = true)\n    #else\n        #set($isAllowed = $isRecordOwner == true)\n    #end\n    $util.qr($ctx.stash.put(\"recordType\", $ctx.result.type))\n    $util.qr($ctx.stash.put(\"isRecordOwner\", $isRecordOwner))\n    $util.qr($ctx.stash.put(\"authResult\", $isAllowed))\n#end\n## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n#if ($isAllowed == true)\n    $util.toJson($ctx.result)\n#else\n    $utils.unauthorized()\n#end",
-        "FunctionVersion": "2018-05-29"
-      }
-    },
-    "GraphQlFunctionConfigurationupdateAccount": {
-      "Type": "AWS::AppSync::FunctionConfiguration",
-      "Properties": {
-        "ApiId": {
-          "Fn::GetAtt": [
-            "GraphQlApi",
-            "ApiId"
-          ]
-        },
-        "Name": "GraphQlFunctionConfigurationupdateAccount",
         "DataSourceName": {
           "Fn::GetAtt": [
             "GraphQlDsAppData",
             "Name"
           ]
-        },
-        "RequestMappingTemplate": "#if($context.prev.result.planId)\n    #set($planId = $util.dynamodb.toDynamoDBJson($context.prev.result.planId))\n    #set($meta = $planId)\n#end\n#if($context.arguments.input.planId)\n    #set($planId = $util.dynamodb.toDynamoDBJson($context.arguments.input.planId))\n    #set($meta = $planId)\n#end\n#if(!$planId)\n    #set($planId=$util.dynamodb.toNull())\n    #set($meta=\"FREE\")\n#end\n{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"UpdateItem\",\n    \"key\": {\n        \"id\": {\"S\": \"$context.arguments.input.accountId\"},\n        \"type\"     : {\"S\": \"ACCOUNT\"}\n    },\n    \"update\" : {\n        \"expression\" : \"SET meta = :meta, updatedAt = :updatedAt, itemData.planId = :planId\",\n        \"expressionValues\": {\n            \":meta\": $meta,\n            \":planId\" : $planId,\n            \":updatedAt\" : {\"S\" : \"$util.time.nowISO8601()\"}\n        }\n    }\n}",
-        "ResponseMappingTemplate": "## If there was an error with the invocation\n## there might have been partial results\n#if($ctx.error)\n    ## Append a GraphQL error for that field in the GraphQL response\n    $utils.appendError($ctx.error.message, $ctx.error.message)\n#end\n## Also returns data for the field in the GraphQL response\n$util.toJson({\n    \"accountId\": \"${ctx.result.id}\",\n    \"name\": \"${ctx.result.itemData.name}\",\n    \"owner\": \"${ctx.result.owner}\",\n    \"planId\": \"${ctx.result.itemData.planId}\",\n    \"createdAt\": \"${ctx.result.createdAt}\",\n    \"updatedAt\": \"${ctx.result.updatedAt}\"\n})",
-        "FunctionVersion": "2018-05-29"
+        }
       }
     },
     "GraphQlResolverQuerygetAccount": {
@@ -1456,6 +1415,138 @@
         }
       }
     },
+    "GraphQlResolverAccountownedBy": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Account",
+        "FieldName": "ownedBy",
+        "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2017-02-28\",\n    \"operation\": \"Query\",\n    \"index\"    : \"formsgraphql_table_appdata_gsi\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"USER\"},\n            \":meta\" : {\"S\" : \"${context.source.owner}\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\"\n}",
+        "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n#if($ctx.result.items && $ctx.result.items.size() > 0)\n    $util.toJson($ctx.result.items[0])\n#else\n    #return\n#end\n",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverAccountforms": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Account",
+        "FieldName": "forms",
+        "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2017-02-28\",\n    \"operation\": \"Query\",\n    \"index\"    : \"formsgraphql_table_appdata_gsi\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"FORM\"},\n            \":meta\" : {\"S\" : \"${context.source.id}\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\",\n    \"limit\": $util.defaultIfNull(${ctx.args._userLimit}, 20),\n    \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args._userNextToken, null))\n}",
+        "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverAccountusers": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Account",
+        "FieldName": "users",
+        "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2017-02-28\",\n    \"operation\": \"Query\",\n    \"index\"    : \"formsgraphql_table_appdata_gsi\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"USER\"},\n            \":meta\" : {\"S\" : \"${context.source.id}\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\",\n    \"limit\": $util.defaultIfNull(${ctx.args._userLimit}, 20),\n    \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args._userNextToken, null))\n}",
+        "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverQuerygetForm": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Query",
+        "FieldName": "getForm",
+        "RequestMappingTemplate": "{\n  \"version\" : \"2017-02-28\",\n  \"operation\" : \"GetItem\",\n  \"key\": {\n    \"id\": $util.dynamodb.toDynamoDBJson($context.arguments.formId),\n    \"type\" : $util.dynamodb.toDynamoDBJson(\"USER\")\n  }\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.put(\"tenant\", $context.identity.claims[\"custom:tenant\"]))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($ctx.stash.put(\"isAccountAdmin\", true))\n    #end\n    #if($ctx.result.owner == $context.identity.sub)\n        #set($isRecordOwner = true)\n    #end\n    #if($isAdmin == true ||  $ctx.result.type == \"PLANTYPE\" || $ctx.result.type == \"INTEGRATIONTYPE\")\n        #set($isAllowed = true)\n    #elseif (($ctx.result.accountId == $ctx.stash.tenant) && $isAccountAdmin == true)\n        #set($isAllowed = true)\n    #else\n        #set($isAllowed = $isRecordOwner == true)\n    #end\n    $util.qr($ctx.stash.put(\"recordType\", $ctx.result.type))\n    $util.qr($ctx.stash.put(\"isRecordOwner\", $isRecordOwner))\n    $util.qr($ctx.stash.put(\"authResult\", $isAllowed))\n#end\n## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n#if ($isAllowed == true)\n    $util.toJson($ctx.result)\n#else\n    $utils.unauthorized()\n#end",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverFormownedBy": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Form",
+        "FieldName": "ownedBy",
+        "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2017-02-28\",\n    \"operation\": \"Query\",\n    \"index\"    : \"formsgraphql_table_appdata_gsi\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"USER\"},\n            \":meta\" : {\"S\" : \"${context.source.owner}\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\"\n}",
+        "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n#if($ctx.result.items && $ctx.result.items.size() > 0)\n    $util.toJson($ctx.result.items[0])\n#else\n    #return\n#end\n",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverFormaccount": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Form",
+        "FieldName": "account",
+        "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"GetItem\",\n    \"key\": {\n        \"id\"  : {\"S\": \"${context.source.id}\"},\n        \"type\": {\"S\": \"ACCOUNT\"}\n    }\n}",
+        "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n#if($ctx.result)\n    $util.toJson($ctx.result)\n#else\n    #return\n#end\n",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
     "GraphQlResolverQuerylistAllAccounts": {
       "Type": "AWS::AppSync::Resolver",
       "DependsOn": "GraphQlSchema",
@@ -1468,7 +1559,7 @@
         },
         "TypeName": "Query",
         "FieldName": "listAllAccounts",
-        "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n#end\n## Only Admins allowed\n#if (!$isAdmin == true)\n    $utils.unauthorized()\n#end\n#set($attribs = $context.arguments)\n{\n    \"version\"   : \"2017-02-28\",\n    \"operation\" : \"Query\",\n    \"index\"     : \"formsgraphql_table_appdata_gsi\",\n    \"query\"     : {\n      \"expression\": \"#type = :objectType\",\n      \"expressionNames\" : {\n            \"#type\" : \"type\"\n        },\n      \"expressionValues\" : {\n        \":objectType\" : { \"S\": \"ACCOUNT\" }\n      }\n  }\n  #if( ${context.arguments.limit} )\n      ,\"limit\": ${context.arguments.limit}\n  #end\n  #if( ${context.arguments.nextToken} )\n      ,\"nextToken\": \"${context.arguments.nextToken}\"\n  #end\n}",
+        "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n#end\n## Only Admins allowed\n#if (!$isAdmin == true)\n    $utils.unauthorized()\n#end\n#set($attribs = $context.arguments)\n{\n    \"version\"   : \"2017-02-28\",\n    \"operation\" : \"Query\",\n    \"index\"     : \"formsgraphql_table_appdata_gsi\",\n    \"query\"     : {\n      \"expression\": \"#type = :objectType\",\n      \"expressionNames\" : {\n            \"#type\" : \"type\"\n        },\n      \"expressionValues\" : {\n        \":objectType\" : { \"S\": \"ACCOUNT\" }\n      }\n    }\n  #if( ${context.arguments.limit} )\n      ,\"limit\": ${context.arguments.limit}\n  #end\n  #if( ${context.arguments.nextToken} )\n      ,\"nextToken\": \"${context.arguments.nextToken}\"\n  #end\n}",
         "ResponseMappingTemplate": "{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
         "DataSourceName": {
           "Fn::GetAtt": [
@@ -1578,7 +1669,7 @@
         },
         "TypeName": "Mutation",
         "FieldName": "addPlan",
-        "RequestMappingTemplate": "#set($id = $util.autoId())\n#set($attribs = $context.arguments.input)\n#set($attribs.meta = \"${$context.arguments.input.accountId}#true\")\n#set($attribs.owner = $context.identity.sub)\n#set($attribs.itemType = \"PLAN\")\n#set($attribs.isDeleted = false)\n#set($attribs.createdAt = $util.time.nowISO8601())\n#set($attribs.startDate = $attribs.createdAt)\n#set($attribs.active = true)\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"id\"  : $util.dynamodb.toDynamoDBJson($id),\n        \"type\": {\"S\": \"PLAN\"}\n    },\n    \"attributeValues\": $util.toJson($util.dynamodb.toMapValues($attribs)),\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#id)\",\n        \"expressionNames\": {\n            \"#id\": \"id\",\n        }\n    }\n}",
+        "RequestMappingTemplate": "#set($id = $util.autoId())\n#set($attribs = $context.arguments.input)\n#set($attribs.meta = \"${context.arguments.input.accountId}#true\")\n#set($attribs.owner = $context.identity.sub)\n#set($attribs.itemType = \"PLAN\")\n#set($attribs.isDeleted = false)\n#set($attribs.createdAt = $util.time.nowISO8601())\n#set($attribs.startDate = $attribs.createdAt)\n#set($attribs.active = true)\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"id\"  : $util.dynamodb.toDynamoDBJson($id),\n        \"type\": {\"S\": \"PLAN\"}\n    },\n    \"attributeValues\": $util.toJson($util.dynamodb.toMapValues($attribs)),\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#id)\",\n        \"expressionNames\": {\n            \"#id\": \"id\",\n        }\n    }\n}",
         "ResponseMappingTemplate": "$util.qr($ctx.stash.put(\"tenant\", $context.identity.claims[\"custom:tenant\"]))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($ctx.stash.put(\"isAccountAdmin\", true))\n    #end\n    #if($ctx.result.owner == $context.identity.sub)\n        #set($isRecordOwner = true)\n    #end\n    #if($isAdmin == true ||  $ctx.result.type == \"PLANTYPE\" || $ctx.result.type == \"INTEGRATIONTYPE\")\n        #set($isAllowed = true)\n    #elseif (($ctx.result.accountId == $ctx.stash.tenant) && $isAccountAdmin == true)\n        #set($isAllowed = true)\n    #else\n        #set($isAllowed = $isRecordOwner == true)\n    #end\n    $util.qr($ctx.stash.put(\"recordType\", $ctx.result.type))\n    $util.qr($ctx.stash.put(\"isRecordOwner\", $isRecordOwner))\n    $util.qr($ctx.stash.put(\"authResult\", $isAllowed))\n#end\n## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n#if ($isAllowed == true)\n    $util.toJson($ctx.result)\n#else\n    $utils.unauthorized()\n#end",
         "DataSourceName": {
           "Fn::GetAtt": [
@@ -1588,7 +1679,7 @@
         }
       }
     },
-    "GraphQlResolverMutationtestPipeline": {
+    "GraphQlResolverMutationaddUser": {
       "Type": "AWS::AppSync::Resolver",
       "DependsOn": "GraphQlSchema",
       "Properties": {
@@ -1599,51 +1690,13 @@
           ]
         },
         "TypeName": "Mutation",
-        "FieldName": "testPipeline",
-        "RequestMappingTemplate": "$util.qr($ctx.stash.put(\"tenant\", $context.identity.claims[\"custom:tenant\"]))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($ctx.stash.put(\"isAccountAdmin\", true))\n    #end\n#end\n{}",
-        "ResponseMappingTemplate": "## If there was an error with the invocation\n## there might have been partial results\n#if($ctx.error)\n    ## Append a GraphQL error for that field in the GraphQL response\n    $utils.appendError($ctx.error.message, $ctx.error.message)\n#end\n## Also returns data for the field in the GraphQL response\n$utils.toJson($ctx.result)\n",
-        "Kind": "PIPELINE",
-        "PipelineConfig": {
-          "Functions": [
-            {
-              "Fn::GetAtt": [
-                "GraphQlFunctionConfigurationauthorizeFunction",
-                "FunctionId"
-              ]
-            }
-          ]
-        }
-      }
-    },
-    "GraphQlResolverMutationattachPlan": {
-      "Type": "AWS::AppSync::Resolver",
-      "DependsOn": "GraphQlSchema",
-      "Properties": {
-        "ApiId": {
+        "FieldName": "addUser",
+        "RequestMappingTemplate": "#set($id = $util.autoId())\n#set($attribs = $context.arguments.input)\n#set($attribs.owner = $context.identity.sub)\n#set($attribs.itemType = \"USER\")\n#set($attribs.meta = \"${context.arguments.input.accountId}#${context.arguments.input.group}\")\n#set($attribs.isDeleted = false)\n#set($attribs.createdAt = $util.time.nowISO8601())\n{\n    \"version\": \"2017-02-28\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"id\"  : $util.dynamodb.toDynamoDBJson($id),\n        \"type\": {\"S\" : \"USER\"}\n    },\n    \"attributeValues\": $util.toJson($util.dynamodb.toMapValues($attribs)),\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#id)\",\n        \"expressionNames\": {\n            \"#id\": \"id\"\n        }\n    }\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.put(\"tenant\", $context.identity.claims[\"custom:tenant\"]))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($ctx.stash.put(\"isAccountAdmin\", true))\n    #end\n    #if($ctx.result.owner == $context.identity.sub)\n        #set($isRecordOwner = true)\n    #end\n    #if($isAdmin == true ||  $ctx.result.type == \"PLANTYPE\" || $ctx.result.type == \"INTEGRATIONTYPE\")\n        #set($isAllowed = true)\n    #elseif (($ctx.result.accountId == $ctx.stash.tenant) && $isAccountAdmin == true)\n        #set($isAllowed = true)\n    #else\n        #set($isAllowed = $isRecordOwner == true)\n    #end\n    $util.qr($ctx.stash.put(\"recordType\", $ctx.result.type))\n    $util.qr($ctx.stash.put(\"isRecordOwner\", $isRecordOwner))\n    $util.qr($ctx.stash.put(\"authResult\", $isAllowed))\n#end\n## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n#if ($isAllowed == true)\n    $util.toJson($ctx.result)\n#else\n    $utils.unauthorized()\n#end",
+        "DataSourceName": {
           "Fn::GetAtt": [
-            "GraphQlApi",
-            "ApiId"
-          ]
-        },
-        "TypeName": "Mutation",
-        "FieldName": "attachPlan",
-        "RequestMappingTemplate": "{}",
-        "ResponseMappingTemplate": "## If there was an error with the invocation\n## there might have been partial results\n#if($ctx.error)\n    ## Append a GraphQL error for that field in the GraphQL response\n    $utils.appendError($ctx.error.message, $ctx.error.message)\n#end\n## Also returns data for the field in the GraphQL response\n$util.toJson($ctx.prev.result)",
-        "Kind": "PIPELINE",
-        "PipelineConfig": {
-          "Functions": [
-            {
-              "Fn::GetAtt": [
-                "GraphQlFunctionConfigurationaddPlan",
-                "FunctionId"
-              ]
-            },
-            {
-              "Fn::GetAtt": [
-                "GraphQlFunctionConfigurationupdateAccount",
-                "FunctionId"
-              ]
-            }
+            "GraphQlDsAppData",
+            "Name"
           ]
         }
       }

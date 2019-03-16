@@ -1,13 +1,54 @@
 - dataSource: AppData
   type: Query
+  field: getUser
+  request: getUser-request.vtl
+  response: passthrough-response.vtl
+- dataSource: AppData
+  type: Query
   field: getAccount
   request: getAccount-request.vtl
   response: passthrough-response.vtl
+# Account.plan
 - dataSource: AppData
   type: Account
   field: plan
   request: getAccountPlan-request.vtl
   response: getAccountPlan-response.vtl
+# Account.ownedBy
+- dataSource: AppData
+  type: Account
+  field: ownedBy
+  request: getOwnedBy-request.vtl
+  response: getOwnedBy-response.vtl
+# Account.forms
+- dataSource: AppData
+  type: Account
+  field: forms
+  request: getAccountForms-request.vtl
+  response: getAccountForms-response.vtl
+# Account.users
+- dataSource: AppData
+  type: Account
+  field: users
+  request: getAccountUsers-request.vtl
+  response: getAccountUsers-response.vtl
+- dataSource: AppData
+  type: Query
+  field: getForm
+  request: getForm-request.vtl
+  response: passthrough-response.vtl
+# Form.ownedBy
+- dataSource: AppData
+  type: Form
+  field: ownedBy
+  request: getOwnedBy-request.vtl
+  response: getOwnedBy-response.vtl
+# Form.account
+- dataSource: AppData
+  type: Form
+  field: account
+  request: getParentAccount-request.vtl
+  response: getParentAccount-response.vtl
 - dataSource: AppData
   type: Query
   field: listAllAccounts
@@ -38,20 +79,25 @@
   field: addPlan
   request: addPlan-request.vtl
   response: passthrough-response.vtl
-- dataSource:  AppData
-  type: Mutation
-  field: testPipeline
-  request: authorize-request.vtl
-  response: authorize-response.vtl
-  kind: PIPELINE
-  functions:
-    - authorizeFunction
 - dataSource: AppData
   type: Mutation
-  field: attachPlan
-  request: createAccountPlan-before.vtl
-  response: createAccountPlan-after.vtl
-  kind: PIPELINE
-  functions:
-    - addPlan
-    - updateAccount
+  field: addUser
+  request: addUser-request.vtl
+  response: passthrough-response.vtl
+# - dataSource:  AppData
+#   type: Mutation
+#   field: testPipeline
+#   request: authorize-request.vtl
+#   response: authorize-response.vtl
+#   kind: PIPELINE
+#   functions:
+#     - authorizeFunction
+# - dataSource: AppData
+#   type: Mutation
+#   field: attachPlan
+#   request: createAccountPlan-before.vtl
+#   response: createAccountPlan-after.vtl
+#   kind: PIPELINE
+#   functions:
+#     - addPlan
+#     - updateAccount

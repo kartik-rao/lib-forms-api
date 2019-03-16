@@ -115,19 +115,6 @@ custom:
           tableName: ${self:provider.environment.table_form_entries} # Where AppDataTable is a dynamodb table defined in Resources
     mappingTemplatesLocation: src/mapping-templates
     mappingTemplates: ${file(serverless.appsync-mappings.yml)}
-    functionConfigurations:
-      - dataSource: AppData
-        name: authorizeFunction
-        request: fetchUserAccount-request.vtl
-        response: fetchUserAccount-response.vtl
-      - dataSource: AppData
-        name: addPlan
-        request: addPlan-request.vtl
-        response: passthrough-response.vtl
-      - dataSource: AppData
-        name: updateAccount
-        request: updateAccountPlan-request.vtl
-        response: updateAccountPlan-response.vtl
 functions:
   postConfirmation:
     name: ${self:provider.functions.postconfirmation}

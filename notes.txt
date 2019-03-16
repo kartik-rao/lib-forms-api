@@ -13,3 +13,26 @@ INVITE USER
     Lambda
         cognito createUser with group and tenant
         cognito sendInvite
+
+TODOS - Field resolvers
+Account
+    ownedBy
+    plan
+    users
+    forms
+Form
+    ownedBy
+Plan
+    ownedBy
+IntegrationType
+    plan
+    ownedBy
+Integration
+    ownedBy
+    account
+    form
+User
+    ownedBy
+    account
+
+Add default limit to all queries
