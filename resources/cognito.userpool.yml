@@ -78,6 +78,14 @@ Resources:
         - "custom:region"
         - "custom:group"
       WriteAttributes:
+        - email
+        - given_name
+        - family_name
+        - phone_number
+        - address
+        - website
+        - profile
+        - locale
         - "custom:group"
         - "custom:tenantName"
         - "custom:source"
