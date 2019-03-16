@@ -170,7 +170,7 @@ input AddAccountInput {
 
 type PaginatedAccount {
   items: [Account!]!
-  nextToken: String!
+  nextToken: String
 }
 
 type PlanType {
@@ -201,7 +201,7 @@ input UpdatePlanTypeInput {
 
 type PaginatedPlanType {
   items: [PlanType!]!
-  nextToken: String!
+  nextToken: String
 }
 
 type Plan {
