@@ -6,10 +6,9 @@ provider:
   runtime: nodejs8.10
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'ap-southeast-2'}
-  serviceName: ${self:provider.stage}-${self:service}
   functions:
-    postconfirmation: ${self:provider.serviceName}-postconfirmation
-    signup: ${self:provider.serviceName}-signup
+    postconfirmation: ${self:service}-postconfirmation
+    signup: ${self:service}-signup
   profile: default
   environment:
     protocol: ${opt:protocol, 'http://'}
@@ -18,8 +17,8 @@ provider:
     region: ${self:provider.region}
     environment: ${self:provider.stage}
     serviceName: ${self:service}
-    table_form_entries: ${self:provider.serviceName}_table_form_entries
-    table_app_data: ${self:provider.serviceName}_table_appdata
+    table_form_entries: ${self:service}_table_form_entries
+    table_app_data: ${self:service}_table_appdata
   iamRoleStatements:
     - Effect: Allow
       Action:
