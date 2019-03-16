@@ -10,10 +10,9 @@
       "variableSyntax": "\\${([ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)]+?)}",
       "name": "aws",
       "runtime": "nodejs8.10",
-      "serviceName": "dev-formsgraphql",
       "functions": {
-        "postconfirmation": "dev-formsgraphql-postconfirmation",
-        "signup": "dev-formsgraphql-signup"
+        "postconfirmation": "formsgraphql-postconfirmation",
+        "signup": "formsgraphql-signup"
       },
       "profile": "default",
       "environment": {
@@ -23,8 +22,8 @@
         "region": "ap-southeast-2",
         "environment": "dev",
         "serviceName": "formsgraphql",
-        "table_form_entries": "dev-formsgraphql_table_form_entries",
-        "table_app_data": "dev-formsgraphql_table_appdata"
+        "table_form_entries": "formsgraphql_table_form_entries",
+        "table_app_data": "formsgraphql_table_appdata"
       },
       "iamRoleStatements": [
         {
@@ -35,7 +34,7 @@
             "dynamodb:UpdateItem",
             "dynamodb:BatchWriteItem"
           ],
-          "Resource": "arn:aws:dynamodb:ap-southeast-2:*:table/dev-formsgraphql_table_appdata"
+          "Resource": "arn:aws:dynamodb:ap-southeast-2:*:table/formsgraphql_table_appdata"
         },
         {
           "Effect": "Allow",
@@ -53,7 +52,7 @@
             "dynamodb:UpdateItem",
             "dynamodb:BatchWriteItem"
           ],
-          "Resource": "arn:aws:dynamodb:ap-southeast-2:*:table/dev-formsgraphql_table_form_entries"
+          "Resource": "arn:aws:dynamodb:ap-southeast-2:*:table/formsgraphql_table_form_entries"
         },
         {
           "Effect": "Allow",
@@ -91,7 +90,7 @@
           "PostConfirmationLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/dev-formsgraphql-postconfirmation"
+              "LogGroupName": "/aws/lambda/formsgraphql-postconfirmation"
             }
           },
           "IamRoleLambdaExecution": {
@@ -135,7 +134,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/dev-formsgraphql-postconfirmation:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsgraphql-postconfirmation:*"
                           }
                         ]
                       },
@@ -146,7 +145,7 @@
                         ],
                         "Resource": [
                           {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/dev-formsgraphql-postconfirmation:*:*"
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsgraphql-postconfirmation:*:*"
                           }
                         ]
                       },
@@ -187,9 +186,9 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsgraphql/dev/1552655344562-2019-03-15T13:09:04.562Z/formsgraphql.zip"
+                "S3Key": "serverless/formsgraphql/dev/1552707544543-2019-03-16T03:39:04.543Z/formsgraphql.zip"
               },
-              "FunctionName": "dev-formsgraphql-postconfirmation",
+              "FunctionName": "formsgraphql-postconfirmation",
               "Handler": "src/postconfirmation.handle",
               "MemorySize": 1024,
               "Role": {
@@ -208,8 +207,8 @@
                   "region": "ap-southeast-2",
                   "environment": "dev",
                   "serviceName": "formsgraphql",
-                  "table_form_entries": "dev-formsgraphql_table_form_entries",
-                  "table_app_data": "dev-formsgraphql_table_appdata"
+                  "table_form_entries": "formsgraphql_table_form_entries",
+                  "table_app_data": "formsgraphql_table_appdata"
                 }
               }
             },
@@ -218,7 +217,7 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "PostConfirmationLambdaVersionoeWE4jhvdQkjystZLH0RQTn6U7WgKiPev84z9G6m2Ds": {
+          "PostConfirmationLambdaVersionosrOsgmGXqGdSI4yMqGaNKKnOogTknCuQUCPdTTQo": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
@@ -344,7 +343,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1552655344615": {
+          "ApiGatewayDeployment1552707544597": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -635,7 +634,7 @@
           "AppDataTable": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
-              "TableName": "dev-formsgraphql_table_appdata",
+              "TableName": "formsgraphql_table_appdata",
               "AttributeDefinitions": [
                 {
                   "AttributeName": "id",
@@ -666,7 +665,7 @@
               },
               "GlobalSecondaryIndexes": [
                 {
-                  "IndexName": "dev-formsgraphql_table_appdata_gsi",
+                  "IndexName": "formsgraphql_table_appdata_gsi",
                   "KeySchema": [
                     {
                       "AttributeName": "type",
@@ -691,7 +690,7 @@
           "FormEntriesTable": {
             "Type": "AWS::DynamoDB::Table",
             "Properties": {
-              "TableName": "dev-formsgraphql_table_form_entries",
+              "TableName": "formsgraphql_table_form_entries",
               "AttributeDefinitions": [
                 {
                   "AttributeName": "id",
@@ -722,7 +721,7 @@
               },
               "GlobalSecondaryIndexes": [
                 {
-                  "IndexName": "dev-formsgraphql_table_form_entries_gsi",
+                  "IndexName": "formsgraphql_table_form_entries_gsi",
                   "KeySchema": [
                     {
                       "AttributeName": "type",
@@ -796,7 +795,8 @@
                 "custom:source",
                 "custom:environment",
                 "custom:stack",
-                "custom:region"
+                "custom:region",
+                "custom:group"
               ],
               "WriteAttributes": [
                 "custom:group",
@@ -829,6 +829,7 @@
                 "custom:tenantId",
                 "custom:tenantName",
                 "custom:source",
+                "custom:group",
                 "custom:environment",
                 "custom:stack",
                 "custom:region"
@@ -1195,7 +1196,7 @@
                                     "/",
                                     [
                                       "table",
-                                      "dev-formsgraphql_table_appdata"
+                                      "formsgraphql_table_appdata"
                                     ]
                                   ]
                                 }
@@ -1275,7 +1276,7 @@
                                     "/",
                                     [
                                       "table",
-                                      "dev-formsgraphql_table_form_entries"
+                                      "formsgraphql_table_form_entries"
                                     ]
                                   ]
                                 }
@@ -1321,7 +1322,7 @@
               },
               "DynamoDBConfig": {
                 "AwsRegion": "ap-southeast-2",
-                "TableName": "dev-formsgraphql_table_appdata",
+                "TableName": "formsgraphql_table_appdata",
                 "UseCallerCredentials": false
               }
             }
@@ -1346,7 +1347,7 @@
               },
               "DynamoDBConfig": {
                 "AwsRegion": "ap-southeast-2",
-                "TableName": "dev-formsgraphql_table_form_entries",
+                "TableName": "formsgraphql_table_form_entries",
                 "UseCallerCredentials": false
               }
             }
@@ -1660,7 +1661,7 @@
           "PostConfirmationLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "PostConfirmationLambdaVersionoeWE4jhvdQkjystZLH0RQTn6U7WgKiPev84z9G6m2Ds"
+              "Ref": "PostConfirmationLambdaVersionosrOsgmGXqGdSI4yMqGaNKKnOogTknCuQUCPdTTQo"
             }
           },
           "ServiceEndpoint": {
@@ -1810,7 +1811,7 @@
             "name": "AppData",
             "description": "App Data Table",
             "config": {
-              "tableName": "dev-formsgraphql_table_appdata"
+              "tableName": "formsgraphql_table_appdata"
             }
           },
           {
@@ -1818,7 +1819,7 @@
             "name": "FormEntries",
             "description": "FormEntries Table",
             "config": {
-              "tableName": "dev-formsgraphql_table_form_entries"
+              "tableName": "formsgraphql_table_form_entries"
             }
           }
         ],
@@ -1939,7 +1940,7 @@
     "pluginsData": {},
     "functions": {
       "postConfirmation": {
-        "name": "dev-formsgraphql-postconfirmation",
+        "name": "formsgraphql-postconfirmation",
         "handler": "src/postconfirmation.handle",
         "events": [
           {
@@ -2107,7 +2108,7 @@
         "AppDataTable": {
           "Type": "AWS::DynamoDB::Table",
           "Properties": {
-            "TableName": "dev-formsgraphql_table_appdata",
+            "TableName": "formsgraphql_table_appdata",
             "AttributeDefinitions": [
               {
                 "AttributeName": "id",
@@ -2138,7 +2139,7 @@
             },
             "GlobalSecondaryIndexes": [
               {
-                "IndexName": "dev-formsgraphql_table_appdata_gsi",
+                "IndexName": "formsgraphql_table_appdata_gsi",
                 "KeySchema": [
                   {
                     "AttributeName": "type",
@@ -2163,7 +2164,7 @@
         "FormEntriesTable": {
           "Type": "AWS::DynamoDB::Table",
           "Properties": {
-            "TableName": "dev-formsgraphql_table_form_entries",
+            "TableName": "formsgraphql_table_form_entries",
             "AttributeDefinitions": [
               {
                 "AttributeName": "id",
@@ -2194,7 +2195,7 @@
             },
             "GlobalSecondaryIndexes": [
               {
-                "IndexName": "dev-formsgraphql_table_form_entries_gsi",
+                "IndexName": "formsgraphql_table_form_entries_gsi",
                 "KeySchema": [
                   {
                     "AttributeName": "type",
@@ -2336,7 +2337,8 @@
               "custom:source",
               "custom:environment",
               "custom:stack",
-              "custom:region"
+              "custom:region",
+              "custom:group"
             ],
             "WriteAttributes": [
               "custom:group",
@@ -2369,6 +2371,7 @@
               "custom:tenantId",
               "custom:tenantName",
               "custom:source",
+              "custom:group",
               "custom:environment",
               "custom:stack",
               "custom:region"
@@ -2664,7 +2667,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsgraphql/dev/1552655344562-2019-03-15T13:09:04.562Z",
+    "artifactDirectoryName": "serverless/formsgraphql/dev/1552707544543-2019-03-16T03:39:04.543Z",
     "artifact": ""
   }
 }
