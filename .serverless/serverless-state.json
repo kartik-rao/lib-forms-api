@@ -186,7 +186,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsgraphql/dev/1552726290078-2019-03-16T08:51:30.078Z/formsgraphql.zip"
+                "S3Key": "serverless/formsgraphql/dev/1552734394504-2019-03-16T11:06:34.504Z/formsgraphql.zip"
               },
               "FunctionName": "formsgraphql-postconfirmation",
               "Handler": "src/postconfirmation.handle",
@@ -217,14 +217,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "PostConfirmationLambdaVersionosrOsgmGXqGdSI4yMqGaNKKnOogTknCuQUCPdTTQo": {
+          "PostConfirmationLambdaVersionnEHSU4kSHvTOS7Sd7Gboj0PELwsX6wtj51iqUsbwDI": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "PostConfirmationLambdaFunction"
               },
-              "CodeSha256": "DzAb9LOsRJYjK1WXkqEFIhaQNleTMqQ0UgXkOjPDgac="
+              "CodeSha256": "klEes4ceJyCDVbuIUSaJPwB2Dg8+4dJ933AD+qQXWbA="
             }
           },
           "ApiGatewayRestApi": {
@@ -343,7 +343,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1552726290133": {
+          "ApiGatewayDeployment1552734394558": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -799,6 +799,11 @@
                 "custom:group"
               ],
               "WriteAttributes": [
+                "email",
+                "given_name",
+                "family_name",
+                "phone_number",
+                "address",
                 "custom:group",
                 "custom:tenantName",
                 "custom:source"
@@ -1758,7 +1763,7 @@
           "PostConfirmationLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "PostConfirmationLambdaVersionosrOsgmGXqGdSI4yMqGaNKKnOogTknCuQUCPdTTQo"
+              "Ref": "PostConfirmationLambdaVersionnEHSU4kSHvTOS7Sd7Gboj0PELwsX6wtj51iqUsbwDI"
             }
           },
           "ServiceEndpoint": {
@@ -2465,6 +2470,11 @@
               "custom:group"
             ],
             "WriteAttributes": [
+              "email",
+              "given_name",
+              "family_name",
+              "phone_number",
+              "address",
               "custom:group",
               "custom:tenantName",
               "custom:source"
@@ -2791,7 +2801,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsgraphql/dev/1552726290078-2019-03-16T08:51:30.078Z",
+    "artifactDirectoryName": "serverless/formsgraphql/dev/1552734394504-2019-03-16T11:06:34.504Z",
     "artifact": ""
   }
 }
