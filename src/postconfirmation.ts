@@ -76,6 +76,7 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
         console.log(`${ServiceName} - New Account Flow - adminUpdateUserAttributes`);
         let updateUserAttributesParams = {
             UserAttributes: [
+                {Name: "custom:group", Value: addUserToGroupParams.GroupName},
                 {Name: "custom:region", Value: process.env.region},
                 {Name: "custom:environment", Value: process.env.environment},
                 {Name: "custom:tenantName",  Value: tenantName },
