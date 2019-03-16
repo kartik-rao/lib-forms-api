@@ -143,7 +143,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsgraphql/dev/1552724020897-2019-03-16T08:13:40.897Z/formsgraphql.zip"
+          "S3Key": "serverless/formsgraphql/dev/1552726290078-2019-03-16T08:51:30.078Z/formsgraphql.zip"
         },
         "FunctionName": "formsgraphql-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -300,7 +300,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1552724020954": {
+    "ApiGatewayDeployment1552726290133": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -1449,7 +1449,7 @@
         },
         "TypeName": "Account",
         "FieldName": "forms",
-        "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2017-02-28\",\n    \"operation\": \"Query\",\n    \"index\"    : \"formsgraphql_table_appdata_gsi\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"FORM\"},\n            \":meta\" : {\"S\" : \"${context.source.id}\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\",\n    \"limit\": $util.defaultIfNull(${ctx.args._userLimit}, 20),\n    \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args._userNextToken, null))\n}",
+        "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2017-02-28\",\n    \"operation\": \"Query\",\n    \"index\"    : \"formsgraphql_table_appdata_gsi\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"FORM\"},\n            \":meta\" : {\"S\" : \"${context.source.id}\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\",\n    \"limit\": $util.defaultIfNull(${ctx.args.limit}, 20),\n    \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))\n}",
         "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
         "DataSourceName": {
           "Fn::GetAtt": [
@@ -1471,7 +1471,7 @@
         },
         "TypeName": "Account",
         "FieldName": "users",
-        "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2017-02-28\",\n    \"operation\": \"Query\",\n    \"index\"    : \"formsgraphql_table_appdata_gsi\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"USER\"},\n            \":meta\" : {\"S\" : \"${context.source.id}\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\",\n    \"limit\": $util.defaultIfNull(${ctx.args._userLimit}, 20),\n    \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args._userNextToken, null))\n}",
+        "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2017-02-28\",\n    \"operation\": \"Query\",\n    \"index\"    : \"formsgraphql_table_appdata_gsi\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"USER\"},\n            \":meta\" : {\"S\" : \"${context.source.id}\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\",\n    \"limit\": $util.defaultIfNull(${ctx.args.limit}, 20),\n    \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))\n}",
         "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
         "DataSourceName": {
           "Fn::GetAtt": [
@@ -1559,8 +1559,52 @@
         },
         "TypeName": "Query",
         "FieldName": "listAllAccounts",
-        "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n#end\n## Only Admins allowed\n#if (!$isAdmin == true)\n    $utils.unauthorized()\n#end\n#set($attribs = $context.arguments)\n{\n    \"version\"   : \"2017-02-28\",\n    \"operation\" : \"Query\",\n    \"index\"     : \"formsgraphql_table_appdata_gsi\",\n    \"query\"     : {\n      \"expression\": \"#type = :objectType\",\n      \"expressionNames\" : {\n            \"#type\" : \"type\"\n        },\n      \"expressionValues\" : {\n        \":objectType\" : { \"S\": \"ACCOUNT\" }\n      }\n    }\n  #if( ${context.arguments.limit} )\n      ,\"limit\": ${context.arguments.limit}\n  #end\n  #if( ${context.arguments.nextToken} )\n      ,\"nextToken\": \"${context.arguments.nextToken}\"\n  #end\n}",
-        "ResponseMappingTemplate": "{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
+        "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n#end\n## Only Admins allowed\n#if (!$isAdmin == true)\n    $utils.unauthorized()\n#end\n#set($attribs = $context.arguments)\n{\n    \"version\"   : \"2017-02-28\",\n    \"operation\" : \"Query\",\n    \"index\"     : \"formsgraphql_table_appdata_gsi\",\n    \"query\"     : {\n      \"expression\": \"#type = :objectType\",\n      \"expressionNames\" : {\n            \"#type\" : \"type\"\n        },\n      \"expressionValues\" : {\n        \":objectType\" : { \"S\": \"ACCOUNT\" }\n      }\n  },\n  \"limit\": $util.defaultIfNull(${ctx.args.limit}, 20),\n  \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))\n}",
+        "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverQuerylistAllForms": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Query",
+        "FieldName": "listAllForms",
+        "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n#end\n## Only Admins allowed\n#if (!$isAdmin == true)\n    $utils.unauthorized()\n#end\n#set($attribs = $context.arguments)\n{\n    \"version\"   : \"2017-02-28\",\n    \"operation\" : \"Query\",\n    \"index\"     : \"formsgraphql_table_appdata_gsi\",\n    \"query\"     : {\n      \"expression\": \"#type = :objectType\",\n      \"expressionNames\" : {\n            \"#type\" : \"type\"\n        },\n      \"expressionValues\" : {\n        \":objectType\" : { \"S\": \"FORM\" }\n      }\n  },\n  \"limit\": $util.defaultIfNull(${ctx.args.limit}, 20),\n  \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))\n}",
+        "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverQuerylistAllUsers": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Query",
+        "FieldName": "listAllUsers",
+        "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n#end\n## Only Admins allowed\n#if (!$isAdmin == true)\n    $utils.unauthorized()\n#end\n#set($attribs = $context.arguments)\n{\n    \"version\"   : \"2017-02-28\",\n    \"operation\" : \"Query\",\n    \"index\"     : \"formsgraphql_table_appdata_gsi\",\n    \"query\"     : {\n      \"expression\": \"#type = :objectType\",\n      \"expressionNames\" : {\n            \"#type\" : \"type\"\n        },\n      \"expressionValues\" : {\n        \":objectType\" : { \"S\": \"USER\" }\n      }\n  },\n  \"limit\": $util.defaultIfNull(${ctx.args.limit}, 20),\n  \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))\n}",
+        "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
         "DataSourceName": {
           "Fn::GetAtt": [
             "GraphQlDsAppData",
