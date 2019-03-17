@@ -143,9 +143,11 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
                 UserPoolId: event.userPoolId,
                 Username  : event.userName,
                 UserAttributes : [
+                    {Name: "custom:group", Value: cognitoSetGroupParams.GroupName},
                     {Name: "custom:region", Value: process.env.region},
+                    {Name: "custom:tenantName",  Value: accountAdmin.UserAttributes["custom:tenantName"] },
                     {Name: "custom:environment", Value: process.env.environment},
-                    {Name: "custom:tenant", Value: accountId},
+                    {Name: "custom:tenantId", Value: accountId},
                 ]
             };
             await userPool.adminUpdateUserAttributes(cognitoUpdateAttributesParams).promise();
