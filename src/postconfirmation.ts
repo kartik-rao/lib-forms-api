@@ -41,7 +41,9 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
                 itemType : "ACCOUNT",
                 owner: userId,
                 name : tenantName,
-                createdAt : new Date().toISOString()
+                createdAt : new Date().toISOString(),
+                isDeleted: false,
+                meta: "planType#"
             }
         }).promise();
 
