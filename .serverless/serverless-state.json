@@ -186,7 +186,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsgraphql/dev/1552782549348-2019-03-17T00:29:09.348Z/formsgraphql.zip"
+                "S3Key": "serverless/formsgraphql/dev/1552783187460-2019-03-17T00:39:47.460Z/formsgraphql.zip"
               },
               "FunctionName": "formsgraphql-postconfirmation",
               "Handler": "src/postconfirmation.handle",
@@ -343,7 +343,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1552782549404": {
+          "ApiGatewayDeployment1552783187519": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -1438,7 +1438,7 @@
               },
               "TypeName": "Account",
               "FieldName": "ownedBy",
-              "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2017-02-28\",\n    \"operation\": \"Query\",\n    \"index\"    : \"formsgraphql_table_appdata_gsi\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"USER\"},\n            \":meta\" : {\"S\" : \"${context.source.owner}\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\"\n}",
+              "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"GetItem\",\n    \"key\": {\n        \"id\"  : {\"S\": \"${context.source.owner}\"},\n        \"type\": {\"S\": \"USER\"}\n    }\n}",
               "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n#if($ctx.result)\n    $util.toJson($ctx.result)\n#else\n    #return\n#end",
               "DataSourceName": {
                 "Fn::GetAtt": [
@@ -1526,7 +1526,7 @@
               },
               "TypeName": "Form",
               "FieldName": "ownedBy",
-              "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2017-02-28\",\n    \"operation\": \"Query\",\n    \"index\"    : \"formsgraphql_table_appdata_gsi\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"USER\"},\n            \":meta\" : {\"S\" : \"${context.source.owner}\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\"\n}",
+              "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"GetItem\",\n    \"key\": {\n        \"id\"  : {\"S\": \"${context.source.owner}\"},\n        \"type\": {\"S\": \"USER\"}\n    }\n}",
               "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n#if($ctx.result)\n    $util.toJson($ctx.result)\n#else\n    #return\n#end",
               "DataSourceName": {
                 "Fn::GetAtt": [
@@ -2807,7 +2807,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsgraphql/dev/1552782549348-2019-03-17T00:29:09.348Z",
+    "artifactDirectoryName": "serverless/formsgraphql/dev/1552783187460-2019-03-17T00:39:47.460Z",
     "artifact": ""
   }
 }
