@@ -1,0 +1,18 @@
+Resources:
+  MyApiGatewayAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      AuthorizerResultTtlInSeconds: 10
+      IdentitySource: method.request.header.Authorization
+      Name: MyCognitoAuthorizer
+      RestApiId:
+        Ref: ApiGatewayRestApi
+      Type: COGNITO_USER_POOLS
+      ProviderARNs:
+        - {"Fn::Join": ["", ["arn:aws:cognito-idp:", "#{AWS::Region}", ":", "#{AWS::AccountId}", ":userpool/", Ref: CognitoUserPoolMyUserPool]]}
+
+# Print out the Id of the Authorizer
+Outputs:
+  AuthorizerId:
+    Value:
+      Ref: MyApiGatewayAuthorizer

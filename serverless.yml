@@ -8,7 +8,7 @@ provider:
   region: ${opt:region, 'ap-southeast-2'}
   functions:
     postconfirmation: ${self:service}-postconfirmation
-    signup: ${self:service}-signup
+    signup: ${self:service}-invite
   profile: default
   environment:
     protocol: ${opt:protocol, 'http://'}
@@ -63,6 +63,7 @@ resources:
   - ${file(resources/s3.yml)}
   - ${file(resources/cognito.userpool.yml)}
   - ${file(resources/cognito.identitypool.yml)}
+  - ${file(resources/apig.auth.yml)}
 
 custom:
   # Stack Output Plugin
@@ -127,3 +128,19 @@ functions:
       - cognitoUserPool:
           pool: MyUserPool
           trigger: PostConfirmation
+  signup:
+    name: ${self:provider.functions.invite}
+    handler: src/invite.handle
+    events:
+      - http:
+          path: /invite
+          method: post
+          cors: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: MyApiGatewayAuthorizer
+            claims:
+              - email
+              - custom:tenantId
+              - custom:group
