@@ -3,7 +3,7 @@
     $util.error($ctx.error.message, $ctx.error.type)
 #end
 ## Pass back the result from DynamoDB
-#if($ctx.result.items && $ctx.result.items.size() > 0)
+#if($ctx.result && $ctx.result.items)
     $util.toJson($ctx.result.items[0])
 #else
     #return

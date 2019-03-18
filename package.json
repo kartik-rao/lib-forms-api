@@ -4,7 +4,7 @@
   "description": "GraphQL API for forms app data",
   "main": "index.js",
   "scripts": {
-    "info"  : "cross-env \"SLS_DEBUG=*\" NODE_ENV=development sls info --stage dev --region ap-southeast-2 --aws-profile fl-infrastructure-dev",
+    "info": "cross-env \"SLS_DEBUG=*\" NODE_ENV=development sls info --stage dev --region ap-southeast-2 --aws-profile fl-infrastructure-dev",
     "deploy": "cross-env \"SLS_DEBUG=*\" NODE_ENV=development sls deploy -v --stage dev --region ap-southeast-2 --aws-profile fl-infrastructure-dev",
     "remove": "cross-env NODE_ENV=development sls remove -v --stage dev --region ap-southeast-2 --aws-profile fl-infrastructure-dev",
     "deploy-prod": "cross-env NODE_ENV=production sls deploy -v --stage prod --region ap-southeast-2 --aws-profile fl-infrastructure-prod",

@@ -8,7 +8,7 @@ provider:
   region: ${opt:region, 'ap-southeast-2'}
   functions:
     postconfirmation: ${self:service}-postconfirmation
-    signup: ${self:service}-invite
+    invite: ${self:service}-invite
   profile: default
   environment:
     protocol: ${opt:protocol, 'http://'}

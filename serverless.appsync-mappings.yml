@@ -14,6 +14,12 @@
   field: plan
   request: getAccountPlan-request.vtl
   response: getAccountPlan-response.vtl
+# Plan.planType
+- dataSource: AppData
+  type: Plan
+  field: planType
+  request: getPlanPlanType-request.vtl
+  response: getPlanPlanType-response.vtl
 # Account.ownedBy
 - dataSource: AppData
   type: Account

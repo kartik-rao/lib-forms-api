@@ -162,13 +162,12 @@ type Account @versioned {
   website: String
   taxId: String
   owner: ID!
-  planId: ID
   ownedBy: User!
+  plan : Plan
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   users(limit: Int, nextToken: String): PaginatedUser
   forms(limit: Int, nextToken: String): PaginatedForm
-  plan : Plan
 }
 
 input UpdateAccountInput {
@@ -225,10 +224,10 @@ type Plan @versioned {
   owner: ID!
   ownedBy: User!
   planTypeId: ID!
-  startDate: AWSDate!
-  endDate: AWSDate
+  startDate: AWSDateTime!
+  endDate: AWSDateTime
   active: Boolean
-  lastBillDate: AWSDate
+  lastBillDate: AWSDateTime
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   planType: PlanType
@@ -237,13 +236,13 @@ type Plan @versioned {
 input AddPlanInput {
   accountId: ID!
   planTypeId: ID!
-  endDate: AWSDate
+  endDate: AWSDateTime
   active: Boolean
 }
 
 input UpdatePlanInput {
   id: ID!
-  endDate: AWSDate
+  endDate: AWSDateTime
   active: Boolean!
 }
 
@@ -293,7 +292,7 @@ type Integration @versioned {
   auth: AWSJSON
   target: String
   method: String
-  lastExecuted: AWSDate
+  lastExecuted: AWSDateTime
   lastExecutionResult: Boolean
   lastExecutionResultMessage: String
   createdAt: AWSDateTime
