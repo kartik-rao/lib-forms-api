@@ -142,5 +142,6 @@ functions:
               Ref: MyApiGatewayAuthorizer
             claims:
               - email
+              - username
               - custom:tenantId
               - custom:group
