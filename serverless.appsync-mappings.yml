@@ -55,6 +55,18 @@
   field: account
   request: getParentAccount-request.vtl
   response: getParentAccount-response.vtl
+# Form.formData
+- dataSource: AppData
+  type: Form
+  field: formData
+  request: getFormVersion-request.vtl
+  response: passthrough-response.vtl
+# Form.versions
+- dataSource: AppData
+  type: Form
+  field: versions
+  request: getFormVersions-request.vtl
+  response: passthrough-paginated-response.vtl
 - dataSource: AppData
   type: Query
   field: listAllAccounts
@@ -99,6 +111,16 @@
   type: Mutation
   field: addUser
   request: addUser-request.vtl
+  response: passthrough-response.vtl
+- dataSource: AppData
+  type: Mutation
+  field: addForm
+  request: addForm-request.vtl
+  response: passthrough-response.vtl
+- dataSource: AppData
+  type: Mutation
+  field: addFormVersion
+  request: addFormVersion-request.vtl
   response: passthrough-response.vtl
 # - dataSource:  AppData
 #   type: Mutation

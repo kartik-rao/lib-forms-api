@@ -26,52 +26,64 @@ type PaginatedFormEntries {
   nextToken: String
 }
 
+type FormVersion {
+  id: ID!
+  owner: ID!
+  ownedBy: User!
+  createdAt: AWSDateTime
+  notes: String
+  formData: AWSJSON
+}
+
+input AddFormVersionInput {
+  formId: ID!
+  owner: ID!
+  notes: String
+  formData: AWSJSON!
+}
+
+type PaginatedFormVersion {
+  items: [FormVersion!]
+  nextToken: String
+}
+
 type Form @versioned {
     id: ID!
     owner: ID!
+    name: String!
+    desc: String!
+    versionId: ID!
+    formData(versionId: ID!): FormVersion!
     ownedBy: User!
     accountId: ID!
     account: Account!
-    exid: String
-    desc: String
-    name: String!
-    tenant: AWSJSON
-    status: AWSJSON
-    content: AWSJSON!
-    layout: AWSJSON
-    formLayoutOptions: AWSJSON
-    stopSubmit: Boolean
-    submitTarget: String
-    successRedirect: String
-    errorRedirect: String
-    createdAt: AWSDateTime
+    createdAt: AWSDateTime!
     updatedAt: AWSDateTime
+    startsAt: AWSDateTime
+    endsAt: AWSDateTime
+    isPaused: Boolean
+    versions(limit: Int, nextToken: String): PaginatedFormVersion
+    integrations(limit: Int, nextToken: String): PaginatedIntegration
     entries(limit: Int, nextToken: String): PaginatedFormEntries
 }
 
 input AddFormInput {
   name: String!
   desc: String
-  content: AWSJSON!
-  layout: AWSJSON
-  formLayoutOptions: AWSJSON
-  stopSubmit: Boolean
-  submitTarget: String
-  successRedirect: String
-  errorRedirect: String
+  formData: AddFormVersionInput!
+  startsAt: AWSDateTime
+  endsAt: AWSDateTime
+  isPaused: Boolean
 }
 
 input UpdateFormInput  {
-  id: ID
+  id: ID!
+  currentVersionId: ID
   name: String
   desc: String
-  content: AWSJSON!
-  layout: AWSJSON
-  formLayoutOptions: AWSJSON
-  stopSubmit: Boolean
-  submitTarget: String
-  successRedirect: String
-  errorRedirect: String
+  startsAt: AWSDateTime
+  endsAt: AWSDateTime
+  isPaused: Boolean
 }
 
 type PaginatedForm {
@@ -349,7 +361,7 @@ type Query {
   listAllPlanTypes(limit: Int, nextToken: String): PaginatedPlanType!
   listAllActivePlanTypes(limit: Int, nextToken: String): PaginatedPlanType!
 
-  getForm(formId: String!) : Form!
+  getForm(formId: String!, versionId: ID!) : Form!
   listAllForms(limit: Int, nextToken: String) : PaginatedForm!
   listAllAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedForm!
   listAllAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!
@@ -379,7 +391,8 @@ type Mutation {
   addUser(input: AddUserInput): User!
   addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!
   addIntegration(input: AddIntegrationInput): Integration!
-  addForm(input: AddFormInput): Form!
+  addForm(form: AddFormInput!, notes: String!): Form!
+  addFormVersion(version: AddFormVersionInput): FormVersion!
 
   updatePlanType(input: UpdatePlanTypeInput): PlanType!
   updatePlan(input: UpdatePlanInput): Plan!

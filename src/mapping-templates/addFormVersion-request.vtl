@@ -1,0 +1,23 @@
+#set($timeNow = $util.time.nowISO8601())
+#set($id = $util.autoId())
+#set($attribs = {})
+#set($attribs.owner = $context.identity.sub)
+#set($attribs.meta = "${context.arguments.input.formId}#${timeNow}")
+#set($attribs.itemType = "FORMVERSION")
+#set($attribs.isDeleted = false)
+#set($attribs.createdAt = $timeNow)
+{
+    "version": "2017-02-28",
+    "operation": "PutItem",
+    "key": {
+        "id"  : $util.dynamodb.toDynamoDBJson($id),
+        "type": {"S" : "FORMVERSION"}
+    },
+    "attributeValues": $util.toJson($util.dynamodb.toMapValues($attribs)),
+    "condition": {
+        "expression": "attribute_not_exists(#id)",
+        "expressionNames": {
+            "#id": "id"
+        }
+    }
+}

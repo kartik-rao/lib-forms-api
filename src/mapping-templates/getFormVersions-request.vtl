@@ -1,0 +1,21 @@
+#set($attribs = $context.arguments)
+{
+    "version"  : "2017-02-28",
+    "operation": "Query",
+    "index"    : "formsgraphql_table_appdata_gsi",
+    "scanIndexForward" : false,
+    "query"    : {
+        "expression" : "#type = :type AND begins_with(#meta, :meta)",
+        "expressionNames" : {
+            "#type" : "type",
+            "#meta" : "meta"
+        },
+        "expressionValues": {
+            ":type" : {"S" : "FORMVERSION"},
+            ":meta" : {"S" : "${context.source.id}"}
+        }
+    },
+    "select" : "ALL_ATTRIBUTES",
+    "limit": $util.defaultIfNull(${ctx.args.limit}, 10),
+    "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))
+}
