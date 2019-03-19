@@ -42,7 +42,9 @@ const CORS_HEADERS = {
 */
 
 export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLambda.APIGatewayEventRequestContext, callback : any) => {
-    if (!event.requestContext.authorizer || !!event.requestContext.authorizer.claims) {
+    console.log(`${ServiceName} - invite.handle - initialize`, JSON.stringify(event.requestContext));
+    if (!event.requestContext.authorizer || !event.requestContext.authorizer.claims) {
+        console.error(new Error("NoAuth"));
         callback(null, {statusCode: 403, headers: CORS_HEADERS, body: JSON.stringify({message: "Forbidden"})});
         return;
     }
@@ -51,7 +53,7 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
     console.log(`${ServiceName} - invite.handle - auth claims`, JSON.stringify(claims));
 
     if(claims["custom:group"] != 'AccountAdmin') {
-        console.error(new Error("NotAccountAdmin"));
+        console.error(new Error("InvalidAuthData"));
         callback(null, {statusCode: 401, headers: CORS_HEADERS, body: JSON.stringify({message: "Unauthorized"})});
         return;
     }
@@ -64,7 +66,7 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
         poolId = matches[1];
     } else {
         console.error(new Error("MissingPoolId"));
-        callback(null, {statusCode: 400});
+        callback(null, {statusCode: 400, headers: CORS_HEADERS, body:JSON.stringify({"message": "Invalid configuration"})});
         return;
     }
 
@@ -78,15 +80,19 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
         return;
     }
 
-    if (!(payload.email && payload.given_name && payload.family_name && payload.group)) {
+    if(claims["sub"] != payload["custom:source"]) {
+        console.warn(`${ServiceName} - invite.handle - payload["custom:source"] did not match claims["sub"]`);
+    }
+
+    if (!payload.email || !payload.given_name || !payload.family_name || !payload["custom:group"]) {
         console.error(new Error("InvalidPayload"));
-        callback(null, {statusCode: 400});
+        callback(null, {statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({"message": "Invalid payload"})});
     } else {
         let userPool = new AWS.CognitoIdentityServiceProvider();
         let createUserRequest: AdminCreateUserRequest = {
             UserPoolId: poolId,
             UserAttributes : [
-                {Name: "custom:group", Value: payload.group},
+                {Name: "custom:group", Value: payload["custom:group"]},
                 {Name: "custom:source", Value: claims["sub"]},
                 {Name: "given_name", Value: payload.given_name},
                 {Name: "family_name", Value: payload.family_name}
@@ -101,10 +107,11 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
         }
 
         try {
-            let createUserResponse = await userPool.adminCreateUser(createUserRequest);
+            let createUserResponse: AdminCreateUserResponse = await userPool.adminCreateUser(createUserRequest).promise();
             callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify(createUserResponse)});
         } catch (error) {
-            callback(null, {statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({error: error})});
+            console.log(`${ServiceName} - invite.handle - cognito-idp RES`, error.message);
+            callback(null, {statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({message: error.toString()})});
         }
     }
 }

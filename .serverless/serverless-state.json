@@ -60,7 +60,8 @@
             "cognito-idp:AdminAddUserToGroup",
             "cognito-idp:AdminUpdateUserAttributes",
             "cognito-idp:AdminRemoveUserFromGroup",
-            "cognito-idp:AdminGetUser"
+            "cognito-idp:AdminGetUser",
+            "cognito-idp:AdminCreateUser"
           ],
           "Resource": {
             "Fn::Sub": "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/*"
@@ -198,7 +199,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsgraphql/dev/1552966111936-2019-03-19T03:28:31.936Z/formsgraphql.zip"
+                "S3Key": "serverless/formsgraphql/dev/1552969765313-2019-03-19T04:29:25.313Z/formsgraphql.zip"
               },
               "FunctionName": "formsgraphql-postconfirmation",
               "Handler": "src/postconfirmation.handle",
@@ -229,14 +230,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "PostConfirmationLambdaVersions1xkhBgdLFAadXwbLA8PNTBkuRVz0cdNRSy366r9u40": {
+          "PostConfirmationLambdaVersionbgQJfC8dUxKABAG4fgpCle1RFLg1DVDyOd1loKrMbM": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "PostConfirmationLambdaFunction"
               },
-              "CodeSha256": "A8iNve2ogakV3XoLw9+9HUfK/M7b0KnS5a8Y9wPws+0="
+              "CodeSha256": "7rr7GuhXTgNhlvf4ikEy6bskf8YI1A4MXiGd5CuHraY="
             }
           },
           "SignupLambdaFunction": {
@@ -246,7 +247,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsgraphql/dev/1552966111936-2019-03-19T03:28:31.936Z/formsgraphql.zip"
+                "S3Key": "serverless/formsgraphql/dev/1552969765313-2019-03-19T04:29:25.313Z/formsgraphql.zip"
               },
               "FunctionName": "formsgraphql-invite",
               "Handler": "src/invite.handle",
@@ -277,14 +278,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "SignupLambdaVersiondYs9x1UX6OdKwjUNFPox0Iuldf3gPY04ZyUMSD4inTc": {
+          "SignupLambdaVersionN9XxhAnbqCvTFEGF4S28BPmjV45ug2KfPz1urSlVrY": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SignupLambdaFunction"
               },
-              "CodeSha256": "A8iNve2ogakV3XoLw9+9HUfK/M7b0KnS5a8Y9wPws+0="
+              "CodeSha256": "7rr7GuhXTgNhlvf4ikEy6bskf8YI1A4MXiGd5CuHraY="
             }
           },
           "ApiGatewayRestApi": {
@@ -511,7 +512,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1552966112030": {
+          "ApiGatewayDeployment1552969765407": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -2126,13 +2127,13 @@
           "PostConfirmationLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "PostConfirmationLambdaVersions1xkhBgdLFAadXwbLA8PNTBkuRVz0cdNRSy366r9u40"
+              "Ref": "PostConfirmationLambdaVersionbgQJfC8dUxKABAG4fgpCle1RFLg1DVDyOd1loKrMbM"
             }
           },
           "SignupLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SignupLambdaVersiondYs9x1UX6OdKwjUNFPox0Iuldf3gPY04ZyUMSD4inTc"
+              "Ref": "SignupLambdaVersionN9XxhAnbqCvTFEGF4S28BPmjV45ug2KfPz1urSlVrY"
             }
           },
           "ServiceEndpoint": {
@@ -3300,7 +3301,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsgraphql/dev/1552966111936-2019-03-19T03:28:31.936Z",
+    "artifactDirectoryName": "serverless/formsgraphql/dev/1552969765313-2019-03-19T04:29:25.313Z",
     "artifact": ""
   }
 }
