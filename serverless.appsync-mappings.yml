@@ -116,7 +116,7 @@
   type: Mutation
   field: addForm
   request: addForm-request.vtl
-  response: passthrough-response.vtl
+  response: addForm-response.vtl
 - dataSource: AppData
   type: Mutation
   field: addFormVersion
