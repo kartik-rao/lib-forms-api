@@ -70,7 +70,6 @@ type Form @versioned {
 input AddFormInput {
   name: String!
   desc: String
-  formData: AddFormVersionInput!
   startsAt: AWSDateTime
   endsAt: AWSDateTime
   isPaused: Boolean

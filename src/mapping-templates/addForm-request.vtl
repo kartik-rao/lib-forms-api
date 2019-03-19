@@ -1,7 +1,7 @@
 #set($items = [])
 
 #set($userId = $context.identity.sub);
-#set($accountId = $context.identity.claims["custom:tenant"])
+#set($accountId = $context.identity.claims["custom:tenantId"])
 #set($formId = $util.autoId())
 #set($historyId = $util.autoId())
 #set($timeNow = $util.time.nowISO8601())
@@ -15,11 +15,15 @@ $util.qr($form.put("accountId", $accountId))
 $util.qr($form.put("versionId", $historyId))
 $util.qr($form.put("isDeleted", false))
 $util.qr($form.put("createdAt", $timeNow))
-$util.qr($form.put("name", $context.arguments.input.name))
-$util.qr($form.put("desc", $context.arguments.input.desc))
-$util.qr($form.put("startsAt", $context.arguments.input.startsAt))
-$util.qr($form.put("endsAt", $context.arguments.input.endsAt))
-$util.qr($form.put("isPaused", $context.arguments.input.isPaused))
+$util.qr($form.put("name", $context.arguments.input.form.name))
+$util.qr($form.put("desc", $context.arguments.input.form.desc))
+#if($context.arguments.input.form.startsAt)
+    $util.qr($form.put("startsAt", $context.arguments.input.form.startsAt))
+#end
+#if($context.arguments.input.form.endsAt)
+    $util.qr($form.put("endsAt", $context.arguments.input.form.endsAt))
+#end
+$util.qr($form.put("isPaused", $util.defaultIfNull($context.arguments.input.isPaused, false)))
 
 #set($history = {})
 $util.qr($history.put("id", $historyId))
@@ -27,7 +31,7 @@ $util.qr($history.put("type", "FORMVERSION"))
 $util.qr($history.put("itemType", "FORMVERSION"))
 $util.qr($history.put("owner", $context.identity.sub))
 $util.qr($history.put("createdAt", $timeNow))
-$util.qr($history.put("formData",$context.arguments.input.formData))
+$util.qr($history.put("formData", $util.defaultIfNull($context.arguments.input.formData, {}))
 $util.qr($history.put("meta", "${formId}#${timeNow}"))
 
 $util.qr($items.add($util.dynamodb.toMapValues($history)))
