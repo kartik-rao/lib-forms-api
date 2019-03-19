@@ -1,7 +1,10 @@
 #set($items = [])
 
-#set($userId = $context.identity.sub);
-#set($accountId = $context.identity.claims["custom:tenantId"])
+#set($userId = $context.identity.sub)
+#set($accountId = $context.identity.claims.get("custom:tenantId"))
+#if(!$accountId)
+    $utils.unauthorized()
+#end
 #set($formId = $util.autoId())
 #set($historyId = $util.autoId())
 #set($timeNow = $util.time.nowISO8601())
@@ -15,15 +18,15 @@ $util.qr($form.put("accountId", $accountId))
 $util.qr($form.put("versionId", $historyId))
 $util.qr($form.put("isDeleted", false))
 $util.qr($form.put("createdAt", $timeNow))
-$util.qr($form.put("name", $context.arguments.input.form.name))
-$util.qr($form.put("desc", $context.arguments.input.form.desc))
-#if($context.arguments.input.form.startsAt)
-    $util.qr($form.put("startsAt", $context.arguments.input.form.startsAt))
+$util.qr($form.put("name", $context.arguments.form.name))
+$util.qr($form.put("desc", $context.arguments.form.desc))
+#if($context.arguments.form.startsAt)
+    $util.qr($form.put("startsAt", $context.arguments.form.startsAt))
 #end
-#if($context.arguments.input.form.endsAt)
-    $util.qr($form.put("endsAt", $context.arguments.input.form.endsAt))
+#if($context.arguments.form.endsAt)
+    $util.qr($form.put("endsAt", $context.arguments.form.endsAt))
 #end
-$util.qr($form.put("isPaused", $util.defaultIfNull($context.arguments.input.isPaused, false)))
+$util.qr($form.put("isPaused", $util.defaultIfNull($context.arguments.form.isPaused, false)))
 
 #set($history = {})
 $util.qr($history.put("id", $historyId))
@@ -31,15 +34,15 @@ $util.qr($history.put("type", "FORMVERSION"))
 $util.qr($history.put("itemType", "FORMVERSION"))
 $util.qr($history.put("owner", $context.identity.sub))
 $util.qr($history.put("createdAt", $timeNow))
-$util.qr($history.put("formData", $util.defaultIfNull($context.arguments.input.formData, {}))
+$util.qr($history.put("formData", $util.defaultIfNull($context.arguments.form.formData, {})))
 $util.qr($history.put("meta", "${formId}#${timeNow}"))
-
+$util.qr($history.put("notes", $context.arguments.notes))
 $util.qr($items.add($util.dynamodb.toMapValues($history)))
 $util.qr($items.add($util.dynamodb.toMapValues($form)))
 {
     "version" : "2018-05-29",
     "operation" : "BatchPutItem",
     "tables" : {
-        "AppData": $utils.toJson($items)
+        "formsgraphql_table_appdata": $utils.toJson($items)
     }
 }

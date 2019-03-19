@@ -1,4 +1,4 @@
-$util.qr($ctx.stash.put("tenant", $context.identity.claims["custom:tenant"]))
+$util.qr($ctx.stash.put("tenant", $context.identity.claims.get("custom:tenantId")))
 #foreach($group in $context.identity.claims.get("cognito:groups"))
     $util.qr($ctx.stash.put("group", $group))
     #if($group == "Admin")
