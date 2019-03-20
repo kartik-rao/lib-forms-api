@@ -156,7 +156,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsgraphql/dev/1552990516831-2019-03-19T10:15:16.831Z/formsgraphql.zip"
+          "S3Key": "serverless/formsgraphql/dev/1553076503326-2019-03-20T10:08:23.326Z/formsgraphql.zip"
         },
         "FunctionName": "formsgraphql-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -187,14 +187,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "PostConfirmationLambdaVersionbgQJfC8dUxKABAG4fgpCle1RFLg1DVDyOd1loKrMbM": {
+    "PostConfirmationLambdaVersionQSYYmSf2bnBg5VYO4wlGh0XBBfuLaWAEp6z7FttuR4": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "PostConfirmationLambdaFunction"
         },
-        "CodeSha256": "7rr7GuhXTgNhlvf4ikEy6bskf8YI1A4MXiGd5CuHraY="
+        "CodeSha256": "KWp35yJuxq6AUdb7FUuCLquiVIzY6LRdToce470Rb3o="
       }
     },
     "SignupLambdaFunction": {
@@ -204,7 +204,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsgraphql/dev/1552990516831-2019-03-19T10:15:16.831Z/formsgraphql.zip"
+          "S3Key": "serverless/formsgraphql/dev/1553076503326-2019-03-20T10:08:23.326Z/formsgraphql.zip"
         },
         "FunctionName": "formsgraphql-invite",
         "Handler": "src/invite.handle",
@@ -235,14 +235,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "SignupLambdaVersionN9XxhAnbqCvTFEGF4S28BPmjV45ug2KfPz1urSlVrY": {
+    "SignupLambdaVersiongEHOtNtFNGwQVMEkPpUV8vma3GwA8DaBSX4IjOWOY": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "SignupLambdaFunction"
         },
-        "CodeSha256": "7rr7GuhXTgNhlvf4ikEy6bskf8YI1A4MXiGd5CuHraY="
+        "CodeSha256": "KWp35yJuxq6AUdb7FUuCLquiVIzY6LRdToce470Rb3o="
       }
     },
     "ApiGatewayRestApi": {
@@ -469,7 +469,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1552990516932": {
+    "ApiGatewayDeployment1553076503427": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -2124,13 +2124,13 @@
     "PostConfirmationLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "PostConfirmationLambdaVersionbgQJfC8dUxKABAG4fgpCle1RFLg1DVDyOd1loKrMbM"
+        "Ref": "PostConfirmationLambdaVersionQSYYmSf2bnBg5VYO4wlGh0XBBfuLaWAEp6z7FttuR4"
       }
     },
     "SignupLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "SignupLambdaVersionN9XxhAnbqCvTFEGF4S28BPmjV45ug2KfPz1urSlVrY"
+        "Ref": "SignupLambdaVersiongEHOtNtFNGwQVMEkPpUV8vma3GwA8DaBSX4IjOWOY"
       }
     },
     "ServiceEndpoint": {

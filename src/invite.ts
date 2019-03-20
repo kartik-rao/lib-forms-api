@@ -6,7 +6,7 @@ import * as _ from "lodash";
 import {DBClient} from "./dbclient";
 const uuid = require('uuid/v4');
 import * as AWS from 'aws-sdk';
-import { AdminGetUserRequest, AdminCreateUserRequest, AdminCreateUserResponse } from "aws-sdk/clients/cognitoidentityserviceprovider";
+import { AdminAddUserToGroupRequest, AdminCreateUserRequest, AdminCreateUserResponse } from "aws-sdk/clients/cognitoidentityserviceprovider";
 
 
 const ServiceName = process.env.serviceName || 'dev-formsgraphql-invite';
@@ -84,7 +84,16 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
         console.warn(`${ServiceName} - invite.handle - payload["custom:source"] did not match claims["sub"]`);
     }
 
-    if (!payload.email || !payload.given_name || !payload.family_name || !payload["custom:group"]) {
+    let accountId = claims["custom:tenantId"];
+    let group = payload["custom:group"];
+
+    if(group == 'Admin') {
+        group = 'AccountAdmin';
+    }
+
+    let ownerId = claims["sub"];
+
+    if (!payload.email || !payload.given_name || !payload.family_name || !group) {
         console.error(new Error("InvalidPayload"));
         callback(null, {statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({"message": "Invalid payload"})});
     } else {
@@ -92,10 +101,14 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
         let createUserRequest: AdminCreateUserRequest = {
             UserPoolId: poolId,
             UserAttributes : [
-                {Name: "custom:group", Value: payload["custom:group"]},
-                {Name: "custom:source", Value: claims["sub"]},
+                {Name: "custom:group", Value: group},
+                {Name: "custom:source", Value: ownerId},
                 {Name: "given_name", Value: payload.given_name},
-                {Name: "family_name", Value: payload.family_name}
+                {Name: "family_name", Value: payload.family_name},
+                {Name: "custom:region", Value: process.env.region},
+                {Name: "custom:tenantName",  Value: claims["custom:tenantName"] },
+                {Name: "custom:environment", Value: process.env.environment},
+                {Name: "custom:tenantId", Value: accountId}
             ],
             Username : payload.email
         }
@@ -108,6 +121,30 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
 
         try {
             let createUserResponse: AdminCreateUserResponse = await userPool.adminCreateUser(createUserRequest).promise();
+            let cognitoSetGroupParams : AdminAddUserToGroupRequest = {
+                GroupName : group,
+                UserPoolId: poolId,
+                Username  : createUserResponse.User.Username
+            };
+            await userPool.adminAddUserToGroup(cognitoSetGroupParams).promise();
+            const ddbClient = DBClient.getInstance({convertEmptyValues: true});
+            await ddbClient.put({
+                TableName: DDB_TABLE,
+                Item: {
+                    id   : createUserResponse.User.Username,
+                    type : "USER",
+                    meta : `${accountId}#${group}`,
+                    itemType : "USER",
+                    owner: ownerId,
+                    group: group,
+                    accountId: accountId,
+                    email: payload["email"],
+                    phone_number: payload["phone_number"],
+                    given_name: payload["given_name"],
+                    family_name: payload["family_name"],
+                    createdAt : new Date().toISOString()
+                }
+            }).promise();
             callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify(createUserResponse)});
         } catch (error) {
             console.log(`${ServiceName} - invite.handle - cognito-idp RES`, error.message);
