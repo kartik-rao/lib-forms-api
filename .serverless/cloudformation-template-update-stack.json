@@ -156,7 +156,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsgraphql/dev/1553076503326-2019-03-20T10:08:23.326Z/formsgraphql.zip"
+          "S3Key": "serverless/formsgraphql/dev/1553157451218-2019-03-21T08:37:31.218Z/formsgraphql.zip"
         },
         "FunctionName": "formsgraphql-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -204,7 +204,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsgraphql/dev/1553076503326-2019-03-20T10:08:23.326Z/formsgraphql.zip"
+          "S3Key": "serverless/formsgraphql/dev/1553157451218-2019-03-21T08:37:31.218Z/formsgraphql.zip"
         },
         "FunctionName": "formsgraphql-invite",
         "Handler": "src/invite.handle",
@@ -469,7 +469,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1553076503427": {
+    "ApiGatewayDeployment1553157451313": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -1982,6 +1982,28 @@
         }
       }
     },
+    "GraphQlResolverQuerylistAllAccountForms": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Query",
+        "FieldName": "listAllAccountForms",
+        "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2017-02-28\",\n    \"operation\": \"Query\",\n    \"index\"    : \"formsgraphql_table_appdata_gsi\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"FORM\"},\n            \":meta\" : {\"S\" : \"${context.source.id}\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\",\n    \"limit\": $util.defaultIfNull(${ctx.args.limit}, 20),\n    \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))\n}",
+        "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
     "GraphQlResolverMutationaddAccount": {
       "Type": "AWS::AppSync::Resolver",
       "DependsOn": "GraphQlSchema",
@@ -2083,7 +2105,7 @@
         "TypeName": "Mutation",
         "FieldName": "addForm",
         "RequestMappingTemplate": "#set($items = [])\n\n#set($userId = $context.identity.sub)\n#set($accountId = $context.identity.claims.get(\"custom:tenantId\"))\n#if(!$accountId)\n    $utils.unauthorized()\n#end\n#set($formId = $util.autoId())\n#set($historyId = $util.autoId())\n#set($timeNow = $util.time.nowISO8601())\n#set($form = {})\n$util.qr($form.put(\"id\", $formId))\n$util.qr($form.put(\"type\", \"FORM\"))\n$util.qr($form.put(\"itemType\", \"FORM\"))\n$util.qr($form.put(\"meta\", \"${accountId}#${userId}\"))\n$util.qr($form.put(\"owner\", $context.identity.sub))\n$util.qr($form.put(\"accountId\", $accountId))\n$util.qr($form.put(\"versionId\", $historyId))\n$util.qr($form.put(\"isDeleted\", false))\n$util.qr($form.put(\"createdAt\", $timeNow))\n$util.qr($form.put(\"name\", $context.arguments.form.name))\n$util.qr($form.put(\"desc\", $context.arguments.form.desc))\n#if($context.arguments.form.startsAt)\n    $util.qr($form.put(\"startsAt\", $context.arguments.form.startsAt))\n#end\n#if($context.arguments.form.endsAt)\n    $util.qr($form.put(\"endsAt\", $context.arguments.form.endsAt))\n#end\n$util.qr($form.put(\"isPaused\", $util.defaultIfNull($context.arguments.form.isPaused, false)))\n\n#set($history = {})\n$util.qr($history.put(\"id\", $historyId))\n$util.qr($history.put(\"type\", \"FORMVERSION\"))\n$util.qr($history.put(\"itemType\", \"FORMVERSION\"))\n$util.qr($history.put(\"owner\", $context.identity.sub))\n$util.qr($history.put(\"createdAt\", $timeNow))\n$util.qr($history.put(\"formData\", $util.defaultIfNull($context.arguments.form.formData, {})))\n$util.qr($history.put(\"meta\", \"${formId}#${timeNow}\"))\n$util.qr($history.put(\"notes\", $context.arguments.notes))\n$util.qr($items.add($util.dynamodb.toMapValues($history)))\n$util.qr($items.add($util.dynamodb.toMapValues($form)))\n{\n    \"version\" : \"2018-05-29\",\n    \"operation\" : \"BatchPutItem\",\n    \"tables\" : {\n        \"formsgraphql_table_appdata\": $utils.toJson($items)\n    }\n}",
-        "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n#if($ctx.result)\n    $util.toJson($ctx.result)\n#else\n    #return\n#end",
+        "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n#if($ctx.result && $ctx.result.unprocessedItems.formsgraphql_table_appdata.size() == 0)\n    $util.toJson($ctx.result.data.formsgraphql_table_appdata[1])\n#else\n    #return\n#end",
         "DataSourceName": {
           "Fn::GetAtt": [
             "GraphQlDsAppData",

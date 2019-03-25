@@ -93,6 +93,11 @@
   request: getPlanType-request.vtl
   response: passthrough-response.vtl
 - dataSource: AppData
+  type: Query
+  field: listAllAccountForms
+  request: getAccountForms-request.vtl
+  response: getAccountForms-response.vtl
+- dataSource: AppData
   type: Mutation
   field: addAccount
   request: addAccount-request.vtl

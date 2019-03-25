@@ -3,8 +3,8 @@
     $util.error($ctx.error.message, $ctx.error.type)
 #end
 ## Pass back the result from DynamoDB
-#if($ctx.result)
-    $util.toJson($ctx.result)
+#if($ctx.result && $ctx.result.unprocessedItems.formsgraphql_table_appdata.size() == 0)
+    $util.toJson($ctx.result.data.formsgraphql_table_appdata[1])
 #else
     #return
 #end
