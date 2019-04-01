@@ -1,8 +1,10 @@
 #set($items = [])
 
 #set($userId = $context.identity.sub)
-#set($accountId = $context.identity.claims.get("custom:tenantId"))
-#if(!$accountId)
+#set($accountId = $context.identity.claims["custom:tenantId"])
+$util.qr($ctx.stash.put("userId", $context.identity.sub))
+$util.qr($ctx.stash.put("accountId", $context.identity.claims["custom:tenantId"]))
+#if($util.isNullOrEmpty($accountId))
     $utils.unauthorized()
 #end
 #set($formId = $util.autoId())

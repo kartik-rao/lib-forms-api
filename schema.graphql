@@ -53,7 +53,7 @@ type Form @versioned {
     name: String!
     desc: String!
     versionId: ID!
-    formData(versionId: ID!): FormVersion!
+    formData: FormVersion!
     ownedBy: User!
     accountId: ID!
     account: Account!
