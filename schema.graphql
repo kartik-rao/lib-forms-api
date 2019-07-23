@@ -1,15 +1,3 @@
-type AppData @model {
-    id: ID!
-    type: ID!
-    meta: String!
-    itemType: String!
-    owner: ID!
-    createdAt: AWSDateTime!
-    updatedAt: AWSDateTime
-    isDeleted: Boolean
-    version: Int
-}
-
 type FormEntry @model {
     id: ID!
     type: ID!
@@ -47,7 +35,7 @@ type PaginatedFormVersion {
   nextToken: String
 }
 
-type Form @versioned  {
+type Form @versioned @model {
     id: ID!
     owner: ID!
     name: String!
@@ -90,7 +78,7 @@ type PaginatedForm {
   nextToken: String
 }
 
-type User @versioned {
+type User @versioned  @model {
   id: ID!
   owner: ID!
   accountId: ID!
@@ -136,7 +124,7 @@ enum AddressType {
   CONTACT
 }
 
-type Address @versioned {
+type Address @versioned  @model {
   id: ID!
   name: String!
   addressee: String
@@ -166,7 +154,7 @@ type PaginatedAddress {
   nextToken: String
 }
 
-type Account @versioned {
+type Account @versioned  @model {
   id: ID!
   name: String!
   addresses(limit: Int, nextToken: String): PaginatedAddress
