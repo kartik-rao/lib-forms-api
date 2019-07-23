@@ -47,7 +47,7 @@ type PaginatedFormVersion {
   nextToken: String
 }
 
-type Form @versioned {
+type Form @versioned  {
     id: ID!
     owner: ID!
     name: String!
@@ -414,7 +414,7 @@ type Mutation {
   attachPlan(input: AddPlanInput): Account
 }
 
-type Schema {
+schema {
   query: Query
   mutation: Mutation
 }
