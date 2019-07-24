@@ -61,3 +61,12 @@ Resources:
                 ProvisionedThroughput:
                   ReadCapacityUnits: 5
                   WriteCapacityUnits: 5
+# Print out the name of the FormEntriesTable
+Outputs:
+  FormEntriesTable:
+    Value:
+      Ref: FormEntriesTable
+# Print out the name of the AppDataTable
+  AppDataTable:
+    Value:
+      Ref: AppDataTable
