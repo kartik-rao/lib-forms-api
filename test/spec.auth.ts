@@ -23,7 +23,7 @@ describe("Cognito", () => {
     })
 
     it("can sign in as Admin user", async () => {
-        const user = await Auth.signIn(config["UserPoolAdminUser"], "2fb#owbV");
+        const user = await Auth.signIn(config["UserPoolAdminUser"], "Pd8Ohek..");
         expect(user).toBeDefined();
     });
 
