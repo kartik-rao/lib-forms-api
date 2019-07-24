@@ -1,18 +1,25 @@
 {
-    "staging": {
+    "dev": {
         "awscloudformation": {
-            "AuthRoleName": "lib-forms-api-20190724120255-authRole",
-            "UnauthRoleArn": "arn:aws:iam::523242459359:role/lib-forms-api-20190724120255-unauthRole",
-            "AuthRoleArn": "arn:aws:iam::523242459359:role/lib-forms-api-20190724120255-authRole",
+            "AuthRoleName": "lib-forms-api-dev-20190724143534-authRole",
+            "UnauthRoleArn": "arn:aws:iam::644527192227:role/lib-forms-api-dev-20190724143534-unauthRole",
+            "AuthRoleArn": "arn:aws:iam::644527192227:role/lib-forms-api-dev-20190724143534-authRole",
             "Region": "ap-southeast-2",
-            "DeploymentBucketName": "lib-forms-api-20190724120255-deployment",
-            "UnauthRoleName": "lib-forms-api-20190724120255-unauthRole",
-            "StackName": "lib-forms-api-20190724120255",
-            "StackId": "arn:aws:cloudformation:ap-southeast-2:523242459359:stack/lib-forms-api-20190724120255/270bdca0-adb7-11e9-8b69-0accf194060a"
+            "DeploymentBucketName": "lib-forms-api-dev-20190724143534-deployment",
+            "UnauthRoleName": "lib-forms-api-dev-20190724143534-unauthRole",
+            "StackName": "lib-forms-api-dev-20190724143534",
+            "StackId": "arn:aws:cloudformation:ap-southeast-2:644527192227:stack/lib-forms-api-dev-20190724143534/7a52ef60-adcc-11e9-9a43-0a843035a916"
         },
         "categories": {
+            "function": {
+                "libformsapiPostConfirmation": {
+                    "GROUP": ""
+                }
+            },
             "auth": {
-                "libFormsApiUserPoolStaging": {}
+                "libformsapi": {
+                    "hostedUIProviderCreds": "[]"
+                }
             }
         }
     }

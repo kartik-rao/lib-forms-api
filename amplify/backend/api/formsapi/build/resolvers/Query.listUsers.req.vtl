@@ -1,0 +1,138 @@
+## [Start] Set query expression for @key **
+#set( $modelQueryExpression = {} )
+## [Start] Validate key arguments. **
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt) && $util.isNullOrBlank($ctx.args.id) )
+  $util.error("When providing argument 'accountIdGroupCreatedAt' you must also provide 'id'.", "InvalidArgumentsError")
+#end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt) )
+  #set( $sortKeyArgumentOperations = $ctx.args.accountIdGroupCreatedAt.keySet() )
+  #if( $sortKeyArgumentOperations.size() > 1 )
+    $util.error("Argument accountIdGroupCreatedAt must specify at most one key condition operation.", "InvalidArgumentsError")
+  #end
+  #foreach( $operation in $sortKeyArgumentOperations )
+    #if( $operation == "between" )
+      #if( $ctx.args.accountIdGroupCreatedAt.between.size() != 2 )
+        $util.error("Argument 'accountIdGroupCreatedAt.between' expects exactly two elements.", "InvalidArgumentsError")
+      #end
+      #if( !$util.isNullOrBlank($ctx.args.accountIdGroupCreatedAt.between[0].createdAt) && $util.isNullOrBlank($ctx.args.accountIdGroupCreatedAt.between[0].group) )
+        $util.error("When providing argument 'accountIdGroupCreatedAt.between[0].createdAt' you must also provide 'accountIdGroupCreatedAt.between[0].group'.", "InvalidArgumentsError")
+      #end
+      #if( !$util.isNullOrBlank($ctx.args.accountIdGroupCreatedAt.between[1].createdAt) && $util.isNullOrBlank($ctx.args.accountIdGroupCreatedAt.between[1].group) )
+        $util.error("When providing argument 'accountIdGroupCreatedAt.between[1].createdAt' you must also provide 'accountIdGroupCreatedAt.between[1].group'.", "InvalidArgumentsError")
+      #end
+      #if( !$util.isNullOrBlank($ctx.args.accountIdGroupCreatedAt.between[0].group) && $util.isNullOrBlank($ctx.args.accountIdGroupCreatedAt.between[0].accountId) )
+        $util.error("When providing argument 'accountIdGroupCreatedAt.between[0].group' you must also provide 'accountIdGroupCreatedAt.between[0].accountId'.", "InvalidArgumentsError")
+      #end
+      #if( !$util.isNullOrBlank($ctx.args.accountIdGroupCreatedAt.between[1].group) && $util.isNullOrBlank($ctx.args.accountIdGroupCreatedAt.between[1].accountId) )
+        $util.error("When providing argument 'accountIdGroupCreatedAt.between[1].group' you must also provide 'accountIdGroupCreatedAt.between[1].accountId'.", "InvalidArgumentsError")
+      #end
+    #else
+      #if( !$util.isNullOrBlank($ctx.args.accountIdGroupCreatedAt.get("$operation").createdAt) && $util.isNullOrBlank($ctx.args.accountIdGroupCreatedAt.get("$operation").group) )
+        $util.error("When providing argument 'accountIdGroupCreatedAt.$operation.createdAt' you must also provide 'accountIdGroupCreatedAt.$operation.group'.", "InvalidArgumentsError")
+      #end
+      #if( !$util.isNullOrBlank($ctx.args.accountIdGroupCreatedAt.get("$operation").group) && $util.isNullOrBlank($ctx.args.accountIdGroupCreatedAt.get("$operation").accountId) )
+        $util.error("When providing argument 'accountIdGroupCreatedAt.$operation.group' you must also provide 'accountIdGroupCreatedAt.$operation.accountId'.", "InvalidArgumentsError")
+      #end
+    #end
+  #end
+#end
+## [End] Validate key arguments. **
+#if( !$util.isNull($ctx.args.id) )
+  #set( $modelQueryExpression.expression = "#id = :id" )
+  #set( $modelQueryExpression.expressionNames = {
+  "#id": "id"
+} )
+  #set( $modelQueryExpression.expressionValues = {
+  ":id": {
+      "S": "$ctx.args.id"
+  }
+} )
+#end
+## [Start] Applying Key Condition **
+#set( $sortKeyValue = "" )
+#set( $sortKeyValue2 = "" )
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt) && !$util.isNull($ctx.args.accountIdGroupCreatedAt.beginsWith) )
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.beginsWith.accountId) ) #set( $sortKeyValue = "$ctx.args.accountIdGroupCreatedAt.beginsWith.accountId" ) #end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.beginsWith.group) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.accountIdGroupCreatedAt.beginsWith.group" ) #end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.beginsWith.createdAt) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.accountIdGroupCreatedAt.beginsWith.createdAt" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND begins_with(#sortKey, :sortKey)" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "accountId#group#createdAt"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt) && !$util.isNull($ctx.args.accountIdGroupCreatedAt.between) )
+  #if( $ctx.args.accountIdGroupCreatedAt.between.size() != 2 )
+    $util.error("Argument accountIdGroupCreatedAt.between expects exactly 2 elements.")
+  #end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.between[0].accountId) ) #set( $sortKeyValue = "$ctx.args.accountIdGroupCreatedAt.between[0].accountId" ) #end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.between[0].group) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.accountIdGroupCreatedAt.between[0].group" ) #end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.between[0].createdAt) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.accountIdGroupCreatedAt.between[0].createdAt" ) #end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.between[1].accountId) ) #set( $sortKeyValue2 = "$ctx.args.accountIdGroupCreatedAt.between[1].accountId" ) #end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.between[1].group) ) #set( $sortKeyValue2 = "$sortKeyValue2#$ctx.args.accountIdGroupCreatedAt.between[1].group" ) #end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.between[1].createdAt) ) #set( $sortKeyValue2 = "$sortKeyValue2#$ctx.args.accountIdGroupCreatedAt.between[1].createdAt" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey BETWEEN :sortKey0 AND :sortKey1" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "accountId#group#createdAt"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey0", { "S": "$sortKeyValue" }))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey1", { "S": "$sortKeyValue2" }))
+#end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt) && !$util.isNull($ctx.args.accountIdGroupCreatedAt.eq) )
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.eq.accountId) ) #set( $sortKeyValue = "$ctx.args.accountIdGroupCreatedAt.eq.accountId" ) #end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.eq.group) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.accountIdGroupCreatedAt.eq.group" ) #end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.eq.createdAt) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.accountIdGroupCreatedAt.eq.createdAt" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey = :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "accountId#group#createdAt"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt) && !$util.isNull($ctx.args.accountIdGroupCreatedAt.lt) )
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.lt.accountId) ) #set( $sortKeyValue = "$ctx.args.accountIdGroupCreatedAt.lt.accountId" ) #end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.lt.group) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.accountIdGroupCreatedAt.lt.group" ) #end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.lt.createdAt) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.accountIdGroupCreatedAt.lt.createdAt" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey < :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "accountId#group#createdAt"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt) && !$util.isNull($ctx.args.accountIdGroupCreatedAt.le) )
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.le.accountId) ) #set( $sortKeyValue = "$ctx.args.accountIdGroupCreatedAt.le.accountId" ) #end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.le.group) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.accountIdGroupCreatedAt.le.group" ) #end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.le.createdAt) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.accountIdGroupCreatedAt.le.createdAt" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey <= :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "accountId#group#createdAt"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt) && !$util.isNull($ctx.args.accountIdGroupCreatedAt.gt) )
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.gt.accountId) ) #set( $sortKeyValue = "$ctx.args.accountIdGroupCreatedAt.gt.accountId" ) #end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.gt.group) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.accountIdGroupCreatedAt.gt.group" ) #end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.gt.createdAt) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.accountIdGroupCreatedAt.gt.createdAt" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey > :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "accountId#group#createdAt"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt) && !$util.isNull($ctx.args.accountIdGroupCreatedAt.ge) )
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.ge.accountId) ) #set( $sortKeyValue = "$ctx.args.accountIdGroupCreatedAt.ge.accountId" ) #end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.ge.group) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.accountIdGroupCreatedAt.ge.group" ) #end
+#if( !$util.isNull($ctx.args.accountIdGroupCreatedAt.ge.createdAt) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.accountIdGroupCreatedAt.ge.createdAt" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey >= :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "accountId#group#createdAt"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+
+
+## [End] Applying Key Condition **
+## [End] Set query expression for @key **
+#set( $limit = $util.defaultIfNull($context.args.limit, 10) )
+#set( $ListRequest = {
+  "version": "2017-02-28",
+  "limit": $limit
+} )
+#if( $context.args.nextToken )
+  #set( $ListRequest.nextToken = "$context.args.nextToken" )
+#end
+#if( $context.args.filter )
+  #set( $ListRequest.filter = $util.parseJson("$util.transform.toDynamoDBFilterExpression($ctx.args.filter)") )
+#end
+#if( !$util.isNull($modelQueryExpression) && !$util.isNullOrEmpty($modelQueryExpression.expression) )
+  $util.qr($ListRequest.put("operation", "Query"))
+  $util.qr($ListRequest.put("query", $modelQueryExpression))
+#else
+  $util.qr($ListRequest.put("operation", "Scan"))
+#end
+$util.toJson($ListRequest)

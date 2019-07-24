@@ -1,0 +1,25 @@
+## [Start] Set query expression for @key **
+#set( $modelQueryExpression = {} )
+#if( !$util.isNull($ctx.args.accountId) )
+  #set( $modelQueryExpression.expression = "#accountId = :accountId" )
+  #set( $modelQueryExpression.expressionNames = {
+  "#accountId": "accountId"
+} )
+  #set( $modelQueryExpression.expressionValues = {
+  ":accountId": {
+      "S": "$ctx.args.accountId"
+  }
+} )
+#end
+## [End] Set query expression for @key **
+#set( $limit = $util.defaultIfNull($context.args.limit, 10) )
+#set( $QueryRequest = {
+  "version": "2017-02-28",
+  "operation": "Query",
+  "limit": $limit,
+  "query": $modelQueryExpression,
+  "index": "ByAccount"
+} )
+#if( $context.args.nextToken ) #set( $QueryRequest.nextToken = "$context.args.nextToken" ) #end
+#if( $context.args.filter ) #set( $QueryRequest.filter = $util.parseJson("$util.transform.toDynamoDBFilterExpression($ctx.args.filter)") ) #end
+$util.toJson($QueryRequest)

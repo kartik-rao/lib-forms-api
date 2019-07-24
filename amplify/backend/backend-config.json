@@ -1,8 +1,24 @@
 {
+	"function": {
+		"libformsapiPostConfirmation": {
+			"service": "Lambda",
+			"providerPlugin": "awscloudformation",
+			"build": true
+		}
+	},
 	"auth": {
-		"libFormsApiUserPoolStaging": {
+		"libformsapi": {
 			"service": "Cognito",
 			"providerPlugin": "awscloudformation"
+		}
+	},
+	"api": {
+		"formsapi": {
+			"service": "AppSync",
+			"providerPlugin": "awscloudformation",
+			"output": {
+				"securityType": "AMAZON_COGNITO_USER_POOLS"
+			}
 		}
 	}
 }

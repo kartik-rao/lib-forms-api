@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "info": "cross-env \"SLS_DEBUG=*\" NODE_ENV=development sls info --stage dev --region ap-southeast-2 --aws-profile fl-infrastructure-dev",
-    "compile" : "cross-env \"SLS_DEBUG=*\" NODE_ENV=development sls package --stage dev --region ap-southeast-2 --aws-profile fl-infrastructure-dev",
+    "compile": "cross-env \"SLS_DEBUG=*\" NODE_ENV=development sls package --stage dev --region ap-southeast-2 --aws-profile fl-infrastructure-dev",
     "deploy": "cross-env \"SLS_DEBUG=*\" NODE_ENV=development sls deploy -v --stage dev --region ap-southeast-2 --aws-profile fl-infrastructure-dev",
     "remove": "cross-env NODE_ENV=development sls remove -v --stage dev --region ap-southeast-2 --aws-profile fl-infrastructure-dev",
     "deploy-prod": "cross-env NODE_ENV=production sls deploy -v --stage prod --region ap-southeast-2 --aws-profile fl-infrastructure-prod",
@@ -33,6 +33,7 @@
     "@types/webpack-env": "^1.13.9",
     "awesome-typescript-loader": "^5.2.1",
     "aws-appsync": "^1.7.1",
+    "aws-cognito-idp-userpool-domain": "^0.1.5",
     "copy-webpack-plugin": "^5.0.0",
     "cross-env": "^5.2.0",
     "hard-source-webpack-plugin": "^0.13.1",

@@ -1,0 +1,121 @@
+## [Start] Set query expression for @key **
+#set( $modelQueryExpression = {} )
+## [Start] Validate key arguments. **
+#if( !$util.isNull($ctx.args.ownerPlanTypeId) && $util.isNullOrBlank($ctx.args.id) )
+  $util.error("When providing argument 'ownerPlanTypeId' you must also provide 'id'.", "InvalidArgumentsError")
+#end
+#if( !$util.isNull($ctx.args.ownerPlanTypeId) )
+  #set( $sortKeyArgumentOperations = $ctx.args.ownerPlanTypeId.keySet() )
+  #if( $sortKeyArgumentOperations.size() > 1 )
+    $util.error("Argument ownerPlanTypeId must specify at most one key condition operation.", "InvalidArgumentsError")
+  #end
+  #foreach( $operation in $sortKeyArgumentOperations )
+    #if( $operation == "between" )
+      #if( $ctx.args.ownerPlanTypeId.between.size() != 2 )
+        $util.error("Argument 'ownerPlanTypeId.between' expects exactly two elements.", "InvalidArgumentsError")
+      #end
+      #if( !$util.isNullOrBlank($ctx.args.ownerPlanTypeId.between[0].planTypeId) && $util.isNullOrBlank($ctx.args.ownerPlanTypeId.between[0].owner) )
+        $util.error("When providing argument 'ownerPlanTypeId.between[0].planTypeId' you must also provide 'ownerPlanTypeId.between[0].owner'.", "InvalidArgumentsError")
+      #end
+      #if( !$util.isNullOrBlank($ctx.args.ownerPlanTypeId.between[1].planTypeId) && $util.isNullOrBlank($ctx.args.ownerPlanTypeId.between[1].owner) )
+        $util.error("When providing argument 'ownerPlanTypeId.between[1].planTypeId' you must also provide 'ownerPlanTypeId.between[1].owner'.", "InvalidArgumentsError")
+      #end
+    #else
+      #if( !$util.isNullOrBlank($ctx.args.ownerPlanTypeId.get("$operation").planTypeId) && $util.isNullOrBlank($ctx.args.ownerPlanTypeId.get("$operation").owner) )
+        $util.error("When providing argument 'ownerPlanTypeId.$operation.planTypeId' you must also provide 'ownerPlanTypeId.$operation.owner'.", "InvalidArgumentsError")
+      #end
+    #end
+  #end
+#end
+## [End] Validate key arguments. **
+#if( !$util.isNull($ctx.args.id) )
+  #set( $modelQueryExpression.expression = "#id = :id" )
+  #set( $modelQueryExpression.expressionNames = {
+  "#id": "id"
+} )
+  #set( $modelQueryExpression.expressionValues = {
+  ":id": {
+      "S": "$ctx.args.id"
+  }
+} )
+#end
+## [Start] Applying Key Condition **
+#set( $sortKeyValue = "" )
+#set( $sortKeyValue2 = "" )
+#if( !$util.isNull($ctx.args.ownerPlanTypeId) && !$util.isNull($ctx.args.ownerPlanTypeId.beginsWith) )
+#if( !$util.isNull($ctx.args.ownerPlanTypeId.beginsWith.owner) ) #set( $sortKeyValue = "$ctx.args.ownerPlanTypeId.beginsWith.owner" ) #end
+#if( !$util.isNull($ctx.args.ownerPlanTypeId.beginsWith.planTypeId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.ownerPlanTypeId.beginsWith.planTypeId" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND begins_with(#sortKey, :sortKey)" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "owner#planTypeId"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.ownerPlanTypeId) && !$util.isNull($ctx.args.ownerPlanTypeId.between) )
+  #if( $ctx.args.ownerPlanTypeId.between.size() != 2 )
+    $util.error("Argument ownerPlanTypeId.between expects exactly 2 elements.")
+  #end
+#if( !$util.isNull($ctx.args.ownerPlanTypeId.between[0].owner) ) #set( $sortKeyValue = "$ctx.args.ownerPlanTypeId.between[0].owner" ) #end
+#if( !$util.isNull($ctx.args.ownerPlanTypeId.between[0].planTypeId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.ownerPlanTypeId.between[0].planTypeId" ) #end
+#if( !$util.isNull($ctx.args.ownerPlanTypeId.between[1].owner) ) #set( $sortKeyValue2 = "$ctx.args.ownerPlanTypeId.between[1].owner" ) #end
+#if( !$util.isNull($ctx.args.ownerPlanTypeId.between[1].planTypeId) ) #set( $sortKeyValue2 = "$sortKeyValue2#$ctx.args.ownerPlanTypeId.between[1].planTypeId" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey BETWEEN :sortKey0 AND :sortKey1" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "owner#planTypeId"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey0", { "S": "$sortKeyValue" }))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey1", { "S": "$sortKeyValue2" }))
+#end
+#if( !$util.isNull($ctx.args.ownerPlanTypeId) && !$util.isNull($ctx.args.ownerPlanTypeId.eq) )
+#if( !$util.isNull($ctx.args.ownerPlanTypeId.eq.owner) ) #set( $sortKeyValue = "$ctx.args.ownerPlanTypeId.eq.owner" ) #end
+#if( !$util.isNull($ctx.args.ownerPlanTypeId.eq.planTypeId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.ownerPlanTypeId.eq.planTypeId" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey = :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "owner#planTypeId"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.ownerPlanTypeId) && !$util.isNull($ctx.args.ownerPlanTypeId.lt) )
+#if( !$util.isNull($ctx.args.ownerPlanTypeId.lt.owner) ) #set( $sortKeyValue = "$ctx.args.ownerPlanTypeId.lt.owner" ) #end
+#if( !$util.isNull($ctx.args.ownerPlanTypeId.lt.planTypeId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.ownerPlanTypeId.lt.planTypeId" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey < :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "owner#planTypeId"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.ownerPlanTypeId) && !$util.isNull($ctx.args.ownerPlanTypeId.le) )
+#if( !$util.isNull($ctx.args.ownerPlanTypeId.le.owner) ) #set( $sortKeyValue = "$ctx.args.ownerPlanTypeId.le.owner" ) #end
+#if( !$util.isNull($ctx.args.ownerPlanTypeId.le.planTypeId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.ownerPlanTypeId.le.planTypeId" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey <= :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "owner#planTypeId"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.ownerPlanTypeId) && !$util.isNull($ctx.args.ownerPlanTypeId.gt) )
+#if( !$util.isNull($ctx.args.ownerPlanTypeId.gt.owner) ) #set( $sortKeyValue = "$ctx.args.ownerPlanTypeId.gt.owner" ) #end
+#if( !$util.isNull($ctx.args.ownerPlanTypeId.gt.planTypeId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.ownerPlanTypeId.gt.planTypeId" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey > :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "owner#planTypeId"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.ownerPlanTypeId) && !$util.isNull($ctx.args.ownerPlanTypeId.ge) )
+#if( !$util.isNull($ctx.args.ownerPlanTypeId.ge.owner) ) #set( $sortKeyValue = "$ctx.args.ownerPlanTypeId.ge.owner" ) #end
+#if( !$util.isNull($ctx.args.ownerPlanTypeId.ge.planTypeId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.ownerPlanTypeId.ge.planTypeId" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey >= :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "owner#planTypeId"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+
+
+## [End] Applying Key Condition **
+## [End] Set query expression for @key **
+#set( $limit = $util.defaultIfNull($context.args.limit, 10) )
+#set( $ListRequest = {
+  "version": "2017-02-28",
+  "limit": $limit
+} )
+#if( $context.args.nextToken )
+  #set( $ListRequest.nextToken = "$context.args.nextToken" )
+#end
+#if( $context.args.filter )
+  #set( $ListRequest.filter = $util.parseJson("$util.transform.toDynamoDBFilterExpression($ctx.args.filter)") )
+#end
+#if( !$util.isNull($modelQueryExpression) && !$util.isNullOrEmpty($modelQueryExpression.expression) )
+  $util.qr($ListRequest.put("operation", "Query"))
+  $util.qr($ListRequest.put("query", $modelQueryExpression))
+#else
+  $util.qr($ListRequest.put("operation", "Scan"))
+#end
+$util.toJson($ListRequest)

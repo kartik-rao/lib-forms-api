@@ -1,0 +1,121 @@
+## [Start] Set query expression for @key **
+#set( $modelQueryExpression = {} )
+## [Start] Validate key arguments. **
+#if( !$util.isNull($ctx.args.formIdCreatedAt) && $util.isNullOrBlank($ctx.args.id) )
+  $util.error("When providing argument 'formIdCreatedAt' you must also provide 'id'.", "InvalidArgumentsError")
+#end
+#if( !$util.isNull($ctx.args.formIdCreatedAt) )
+  #set( $sortKeyArgumentOperations = $ctx.args.formIdCreatedAt.keySet() )
+  #if( $sortKeyArgumentOperations.size() > 1 )
+    $util.error("Argument formIdCreatedAt must specify at most one key condition operation.", "InvalidArgumentsError")
+  #end
+  #foreach( $operation in $sortKeyArgumentOperations )
+    #if( $operation == "between" )
+      #if( $ctx.args.formIdCreatedAt.between.size() != 2 )
+        $util.error("Argument 'formIdCreatedAt.between' expects exactly two elements.", "InvalidArgumentsError")
+      #end
+      #if( !$util.isNullOrBlank($ctx.args.formIdCreatedAt.between[0].createdAt) && $util.isNullOrBlank($ctx.args.formIdCreatedAt.between[0].formId) )
+        $util.error("When providing argument 'formIdCreatedAt.between[0].createdAt' you must also provide 'formIdCreatedAt.between[0].formId'.", "InvalidArgumentsError")
+      #end
+      #if( !$util.isNullOrBlank($ctx.args.formIdCreatedAt.between[1].createdAt) && $util.isNullOrBlank($ctx.args.formIdCreatedAt.between[1].formId) )
+        $util.error("When providing argument 'formIdCreatedAt.between[1].createdAt' you must also provide 'formIdCreatedAt.between[1].formId'.", "InvalidArgumentsError")
+      #end
+    #else
+      #if( !$util.isNullOrBlank($ctx.args.formIdCreatedAt.get("$operation").createdAt) && $util.isNullOrBlank($ctx.args.formIdCreatedAt.get("$operation").formId) )
+        $util.error("When providing argument 'formIdCreatedAt.$operation.createdAt' you must also provide 'formIdCreatedAt.$operation.formId'.", "InvalidArgumentsError")
+      #end
+    #end
+  #end
+#end
+## [End] Validate key arguments. **
+#if( !$util.isNull($ctx.args.id) )
+  #set( $modelQueryExpression.expression = "#id = :id" )
+  #set( $modelQueryExpression.expressionNames = {
+  "#id": "id"
+} )
+  #set( $modelQueryExpression.expressionValues = {
+  ":id": {
+      "S": "$ctx.args.id"
+  }
+} )
+#end
+## [Start] Applying Key Condition **
+#set( $sortKeyValue = "" )
+#set( $sortKeyValue2 = "" )
+#if( !$util.isNull($ctx.args.formIdCreatedAt) && !$util.isNull($ctx.args.formIdCreatedAt.beginsWith) )
+#if( !$util.isNull($ctx.args.formIdCreatedAt.beginsWith.formId) ) #set( $sortKeyValue = "$ctx.args.formIdCreatedAt.beginsWith.formId" ) #end
+#if( !$util.isNull($ctx.args.formIdCreatedAt.beginsWith.createdAt) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.formIdCreatedAt.beginsWith.createdAt" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND begins_with(#sortKey, :sortKey)" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "formId#createdAt"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.formIdCreatedAt) && !$util.isNull($ctx.args.formIdCreatedAt.between) )
+  #if( $ctx.args.formIdCreatedAt.between.size() != 2 )
+    $util.error("Argument formIdCreatedAt.between expects exactly 2 elements.")
+  #end
+#if( !$util.isNull($ctx.args.formIdCreatedAt.between[0].formId) ) #set( $sortKeyValue = "$ctx.args.formIdCreatedAt.between[0].formId" ) #end
+#if( !$util.isNull($ctx.args.formIdCreatedAt.between[0].createdAt) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.formIdCreatedAt.between[0].createdAt" ) #end
+#if( !$util.isNull($ctx.args.formIdCreatedAt.between[1].formId) ) #set( $sortKeyValue2 = "$ctx.args.formIdCreatedAt.between[1].formId" ) #end
+#if( !$util.isNull($ctx.args.formIdCreatedAt.between[1].createdAt) ) #set( $sortKeyValue2 = "$sortKeyValue2#$ctx.args.formIdCreatedAt.between[1].createdAt" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey BETWEEN :sortKey0 AND :sortKey1" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "formId#createdAt"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey0", { "S": "$sortKeyValue" }))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey1", { "S": "$sortKeyValue2" }))
+#end
+#if( !$util.isNull($ctx.args.formIdCreatedAt) && !$util.isNull($ctx.args.formIdCreatedAt.eq) )
+#if( !$util.isNull($ctx.args.formIdCreatedAt.eq.formId) ) #set( $sortKeyValue = "$ctx.args.formIdCreatedAt.eq.formId" ) #end
+#if( !$util.isNull($ctx.args.formIdCreatedAt.eq.createdAt) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.formIdCreatedAt.eq.createdAt" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey = :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "formId#createdAt"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.formIdCreatedAt) && !$util.isNull($ctx.args.formIdCreatedAt.lt) )
+#if( !$util.isNull($ctx.args.formIdCreatedAt.lt.formId) ) #set( $sortKeyValue = "$ctx.args.formIdCreatedAt.lt.formId" ) #end
+#if( !$util.isNull($ctx.args.formIdCreatedAt.lt.createdAt) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.formIdCreatedAt.lt.createdAt" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey < :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "formId#createdAt"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.formIdCreatedAt) && !$util.isNull($ctx.args.formIdCreatedAt.le) )
+#if( !$util.isNull($ctx.args.formIdCreatedAt.le.formId) ) #set( $sortKeyValue = "$ctx.args.formIdCreatedAt.le.formId" ) #end
+#if( !$util.isNull($ctx.args.formIdCreatedAt.le.createdAt) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.formIdCreatedAt.le.createdAt" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey <= :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "formId#createdAt"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.formIdCreatedAt) && !$util.isNull($ctx.args.formIdCreatedAt.gt) )
+#if( !$util.isNull($ctx.args.formIdCreatedAt.gt.formId) ) #set( $sortKeyValue = "$ctx.args.formIdCreatedAt.gt.formId" ) #end
+#if( !$util.isNull($ctx.args.formIdCreatedAt.gt.createdAt) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.formIdCreatedAt.gt.createdAt" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey > :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "formId#createdAt"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.formIdCreatedAt) && !$util.isNull($ctx.args.formIdCreatedAt.ge) )
+#if( !$util.isNull($ctx.args.formIdCreatedAt.ge.formId) ) #set( $sortKeyValue = "$ctx.args.formIdCreatedAt.ge.formId" ) #end
+#if( !$util.isNull($ctx.args.formIdCreatedAt.ge.createdAt) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.formIdCreatedAt.ge.createdAt" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey >= :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "formId#createdAt"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+
+
+## [End] Applying Key Condition **
+## [End] Set query expression for @key **
+#set( $limit = $util.defaultIfNull($context.args.limit, 10) )
+#set( $ListRequest = {
+  "version": "2017-02-28",
+  "limit": $limit
+} )
+#if( $context.args.nextToken )
+  #set( $ListRequest.nextToken = "$context.args.nextToken" )
+#end
+#if( $context.args.filter )
+  #set( $ListRequest.filter = $util.parseJson("$util.transform.toDynamoDBFilterExpression($ctx.args.filter)") )
+#end
+#if( !$util.isNull($modelQueryExpression) && !$util.isNullOrEmpty($modelQueryExpression.expression) )
+  $util.qr($ListRequest.put("operation", "Query"))
+  $util.qr($ListRequest.put("query", $modelQueryExpression))
+#else
+  $util.qr($ListRequest.put("operation", "Scan"))
+#end
+$util.toJson($ListRequest)

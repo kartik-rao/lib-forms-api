@@ -1,0 +1,100 @@
+{
+    "identityPoolName": "lib_forms_api6c503edf_identitypool_6c503edf",
+    "allowUnauthenticatedIdentities": false,
+    "openIdLambdaRoleName": "libfor6c503edf_openid_lambda_role",
+    "resourceNameTruncated": "libfor6c503edf",
+    "userPoolName": "lib_forms_api6c503edf_userpool_6c503edf",
+    "autoVerifiedAttributes": [
+        "email"
+    ],
+    "mfaConfiguration": "OPTIONAL",
+    "mfaTypes": [
+        "SMS Text Message"
+    ],
+    "smsAuthenticationMessage": "Your Forms.li auth code is {####}",
+    "smsVerificationMessage": "Your verification code is {####}",
+    "emailVerificationSubject": "Your Forms.li email verification code is {####}",
+    "emailVerificationMessage": "Your Forms.li verification code is {####}",
+    "defaultPasswordPolicy": false,
+    "passwordPolicyMinLength": 8,
+    "passwordPolicyCharacters": [],
+    "requiredAttributes": [
+        "email",
+        "family_name",
+        "given_name"
+    ],
+    "userpoolClientName": "libfor6c503edf_app_client",
+    "userpoolClientGenerateSecret": true,
+    "userpoolClientRefreshTokenValidity": 30,
+    "userpoolClientWriteAttributes": [
+        "email"
+    ],
+    "userpoolClientReadAttributes": [
+        "email"
+    ],
+    "mfaLambdaRole": "libfor6c503edf_totp_lambda_role",
+    "userpoolClientLambdaRole": "libfor6c503edf_userpoolclient_lambda_role",
+    "userpoolClientSetAttributes": false,
+    "useDefault": "manual",
+    "authSelections": "identityPoolAndUserPool",
+    "resourceName": "libformsapi",
+    "thirdPartyAuth": false,
+    "usernameAttributes": [
+        "email"
+    ],
+    "triggers": "{\"PostConfirmation\":[\"add-to-group\"]}",
+    "hostedUI": true,
+    "hostedUIDomainName": "dev-forms-li",
+    "newCallbackURLs": [
+        "http://localhost:8085/"
+    ],
+    "newLogoutURLs": [
+        "http://localhost:8085/"
+    ],
+    "AllowedOAuthFlows": "code",
+    "AllowedOAuthScopes": [
+        "phone",
+        "email",
+        "openid",
+        "profile"
+    ],
+    "authProvidersUserPool": [],
+    "hostedUIProviderMeta": "[]",
+    "oAuthMetadata": "{\"AllowedOAuthFlows\":[\"code\"],\"AllowedOAuthScopes\":[\"phone\",\"email\",\"openid\",\"profile\"],\"CallbackURLs\":[\"http://localhost:8085/\"],\"LogoutURLs\":[\"http://localhost:8085/\"]}",
+    "authRoleName": {
+        "Ref": "AuthRoleName"
+    },
+    "unauthRoleName": {
+        "Ref": "UnauthRoleName"
+    },
+    "authRoleArn": {
+        "Fn::GetAtt": [
+            "AuthRole",
+            "Arn"
+        ]
+    },
+    "unauthRoleArn": {
+        "Fn::GetAtt": [
+            "UnauthRole",
+            "Arn"
+        ]
+    },
+    "PostConfirmation": "libformsapiPostConfirmation",
+    "parentStack": {
+        "Ref": "AWS::StackId"
+    },
+    "permissions": [
+        "{\"policyName\":\"AddToGroupCognito\",\"trigger\":\"PostConfirmation\",\"effect\":\"Allow\",\"actions\":[\"cognito-idp:AdminAddUserToGroup\",\"cognito-idp:GetGroup\",\"cognito-idp:CreateGroup\"],\"resource\":{\"paramType\":\"!GetAtt\",\"keys\":[\"UserPool\",\"Arn\"]}}"
+    ],
+    "dependsOn": [
+        {
+            "category": "function",
+            "resourceName": "libformsapiPostConfirmation",
+            "triggerProvider": "Cognito",
+            "attributes": [
+                "Arn",
+                "Name"
+            ]
+        }
+    ]
+}

@@ -1,0 +1,138 @@
+## [Start] Set query expression for @key **
+#set( $modelQueryExpression = {} )
+## [Start] Validate key arguments. **
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId) && $util.isNullOrBlank($ctx.args.id) )
+  $util.error("When providing argument 'integrationTypeIdAccountIdFormId' you must also provide 'id'.", "InvalidArgumentsError")
+#end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId) )
+  #set( $sortKeyArgumentOperations = $ctx.args.integrationTypeIdAccountIdFormId.keySet() )
+  #if( $sortKeyArgumentOperations.size() > 1 )
+    $util.error("Argument integrationTypeIdAccountIdFormId must specify at most one key condition operation.", "InvalidArgumentsError")
+  #end
+  #foreach( $operation in $sortKeyArgumentOperations )
+    #if( $operation == "between" )
+      #if( $ctx.args.integrationTypeIdAccountIdFormId.between.size() != 2 )
+        $util.error("Argument 'integrationTypeIdAccountIdFormId.between' expects exactly two elements.", "InvalidArgumentsError")
+      #end
+      #if( !$util.isNullOrBlank($ctx.args.integrationTypeIdAccountIdFormId.between[0].formId) && $util.isNullOrBlank($ctx.args.integrationTypeIdAccountIdFormId.between[0].accountId) )
+        $util.error("When providing argument 'integrationTypeIdAccountIdFormId.between[0].formId' you must also provide 'integrationTypeIdAccountIdFormId.between[0].accountId'.", "InvalidArgumentsError")
+      #end
+      #if( !$util.isNullOrBlank($ctx.args.integrationTypeIdAccountIdFormId.between[1].formId) && $util.isNullOrBlank($ctx.args.integrationTypeIdAccountIdFormId.between[1].accountId) )
+        $util.error("When providing argument 'integrationTypeIdAccountIdFormId.between[1].formId' you must also provide 'integrationTypeIdAccountIdFormId.between[1].accountId'.", "InvalidArgumentsError")
+      #end
+      #if( !$util.isNullOrBlank($ctx.args.integrationTypeIdAccountIdFormId.between[0].accountId) && $util.isNullOrBlank($ctx.args.integrationTypeIdAccountIdFormId.between[0].integrationTypeId) )
+        $util.error("When providing argument 'integrationTypeIdAccountIdFormId.between[0].accountId' you must also provide 'integrationTypeIdAccountIdFormId.between[0].integrationTypeId'.", "InvalidArgumentsError")
+      #end
+      #if( !$util.isNullOrBlank($ctx.args.integrationTypeIdAccountIdFormId.between[1].accountId) && $util.isNullOrBlank($ctx.args.integrationTypeIdAccountIdFormId.between[1].integrationTypeId) )
+        $util.error("When providing argument 'integrationTypeIdAccountIdFormId.between[1].accountId' you must also provide 'integrationTypeIdAccountIdFormId.between[1].integrationTypeId'.", "InvalidArgumentsError")
+      #end
+    #else
+      #if( !$util.isNullOrBlank($ctx.args.integrationTypeIdAccountIdFormId.get("$operation").formId) && $util.isNullOrBlank($ctx.args.integrationTypeIdAccountIdFormId.get("$operation").accountId) )
+        $util.error("When providing argument 'integrationTypeIdAccountIdFormId.$operation.formId' you must also provide 'integrationTypeIdAccountIdFormId.$operation.accountId'.", "InvalidArgumentsError")
+      #end
+      #if( !$util.isNullOrBlank($ctx.args.integrationTypeIdAccountIdFormId.get("$operation").accountId) && $util.isNullOrBlank($ctx.args.integrationTypeIdAccountIdFormId.get("$operation").integrationTypeId) )
+        $util.error("When providing argument 'integrationTypeIdAccountIdFormId.$operation.accountId' you must also provide 'integrationTypeIdAccountIdFormId.$operation.integrationTypeId'.", "InvalidArgumentsError")
+      #end
+    #end
+  #end
+#end
+## [End] Validate key arguments. **
+#if( !$util.isNull($ctx.args.id) )
+  #set( $modelQueryExpression.expression = "#id = :id" )
+  #set( $modelQueryExpression.expressionNames = {
+  "#id": "id"
+} )
+  #set( $modelQueryExpression.expressionValues = {
+  ":id": {
+      "S": "$ctx.args.id"
+  }
+} )
+#end
+## [Start] Applying Key Condition **
+#set( $sortKeyValue = "" )
+#set( $sortKeyValue2 = "" )
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId) && !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.beginsWith) )
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.beginsWith.integrationTypeId) ) #set( $sortKeyValue = "$ctx.args.integrationTypeIdAccountIdFormId.beginsWith.integrationTypeId" ) #end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.beginsWith.accountId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.integrationTypeIdAccountIdFormId.beginsWith.accountId" ) #end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.beginsWith.formId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.integrationTypeIdAccountIdFormId.beginsWith.formId" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND begins_with(#sortKey, :sortKey)" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "integrationTypeId#accountId#formId"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId) && !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.between) )
+  #if( $ctx.args.integrationTypeIdAccountIdFormId.between.size() != 2 )
+    $util.error("Argument integrationTypeIdAccountIdFormId.between expects exactly 2 elements.")
+  #end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.between[0].integrationTypeId) ) #set( $sortKeyValue = "$ctx.args.integrationTypeIdAccountIdFormId.between[0].integrationTypeId" ) #end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.between[0].accountId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.integrationTypeIdAccountIdFormId.between[0].accountId" ) #end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.between[0].formId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.integrationTypeIdAccountIdFormId.between[0].formId" ) #end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.between[1].integrationTypeId) ) #set( $sortKeyValue2 = "$ctx.args.integrationTypeIdAccountIdFormId.between[1].integrationTypeId" ) #end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.between[1].accountId) ) #set( $sortKeyValue2 = "$sortKeyValue2#$ctx.args.integrationTypeIdAccountIdFormId.between[1].accountId" ) #end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.between[1].formId) ) #set( $sortKeyValue2 = "$sortKeyValue2#$ctx.args.integrationTypeIdAccountIdFormId.between[1].formId" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey BETWEEN :sortKey0 AND :sortKey1" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "integrationTypeId#accountId#formId"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey0", { "S": "$sortKeyValue" }))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey1", { "S": "$sortKeyValue2" }))
+#end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId) && !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.eq) )
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.eq.integrationTypeId) ) #set( $sortKeyValue = "$ctx.args.integrationTypeIdAccountIdFormId.eq.integrationTypeId" ) #end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.eq.accountId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.integrationTypeIdAccountIdFormId.eq.accountId" ) #end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.eq.formId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.integrationTypeIdAccountIdFormId.eq.formId" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey = :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "integrationTypeId#accountId#formId"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId) && !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.lt) )
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.lt.integrationTypeId) ) #set( $sortKeyValue = "$ctx.args.integrationTypeIdAccountIdFormId.lt.integrationTypeId" ) #end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.lt.accountId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.integrationTypeIdAccountIdFormId.lt.accountId" ) #end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.lt.formId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.integrationTypeIdAccountIdFormId.lt.formId" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey < :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "integrationTypeId#accountId#formId"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId) && !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.le) )
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.le.integrationTypeId) ) #set( $sortKeyValue = "$ctx.args.integrationTypeIdAccountIdFormId.le.integrationTypeId" ) #end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.le.accountId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.integrationTypeIdAccountIdFormId.le.accountId" ) #end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.le.formId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.integrationTypeIdAccountIdFormId.le.formId" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey <= :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "integrationTypeId#accountId#formId"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId) && !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.gt) )
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.gt.integrationTypeId) ) #set( $sortKeyValue = "$ctx.args.integrationTypeIdAccountIdFormId.gt.integrationTypeId" ) #end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.gt.accountId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.integrationTypeIdAccountIdFormId.gt.accountId" ) #end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.gt.formId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.integrationTypeIdAccountIdFormId.gt.formId" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey > :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "integrationTypeId#accountId#formId"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId) && !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.ge) )
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.ge.integrationTypeId) ) #set( $sortKeyValue = "$ctx.args.integrationTypeIdAccountIdFormId.ge.integrationTypeId" ) #end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.ge.accountId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.integrationTypeIdAccountIdFormId.ge.accountId" ) #end
+#if( !$util.isNull($ctx.args.integrationTypeIdAccountIdFormId.ge.formId) ) #set( $sortKeyValue = "$sortKeyValue#$ctx.args.integrationTypeIdAccountIdFormId.ge.formId" ) #end
+  #set( $modelQueryExpression.expression = "$modelQueryExpression.expression AND #sortKey >= :sortKey" )
+  $util.qr($modelQueryExpression.expressionNames.put("#sortKey", "integrationTypeId#accountId#formId"))
+  $util.qr($modelQueryExpression.expressionValues.put(":sortKey", { "S": "$sortKeyValue" }))
+#end
+
+
+## [End] Applying Key Condition **
+## [End] Set query expression for @key **
+#set( $limit = $util.defaultIfNull($context.args.limit, 10) )
+#set( $ListRequest = {
+  "version": "2017-02-28",
+  "limit": $limit
+} )
+#if( $context.args.nextToken )
+  #set( $ListRequest.nextToken = "$context.args.nextToken" )
+#end
+#if( $context.args.filter )
+  #set( $ListRequest.filter = $util.parseJson("$util.transform.toDynamoDBFilterExpression($ctx.args.filter)") )
+#end
+#if( !$util.isNull($modelQueryExpression) && !$util.isNullOrEmpty($modelQueryExpression.expression) )
+  $util.qr($ListRequest.put("operation", "Query"))
+  $util.qr($ListRequest.put("query", $modelQueryExpression))
+#else
+  $util.qr($ListRequest.put("operation", "Scan"))
+#end
+$util.toJson($ListRequest)
