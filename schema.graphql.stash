@@ -1,23 +1,17 @@
-type AppData @model {
+# Begin FormEntry model
+type FormEntry @model
+@key(fields: ["id", "formId", "createdAt"] )
+ {
     id: ID!
-    type: ID!
-    meta: String!
-    itemType: String!
-    owner: ID!
+    formId: ID!
+    form: Form! @connection(name: "FormEntries", keyField: "formId", sortField: "createdAt")
+    meta: AWSJSON
     createdAt: AWSDateTime!
-    updatedAt: AWSDateTime
-    isDeleted: Boolean
-    version: Int
-}
-
-type FormEntry @model {
-    id: ID!
-    type: ID!
-    meta: String!
-    createdAt: AWSDateTime!
+    data: AWSJSON!
 }
 
 input AddFormEntryInput {
+  meta: AWSJSON
   data: AWSJSON!
 }
 
@@ -26,11 +20,16 @@ type PaginatedFormEntries {
   nextToken: String
 }
 
-type FormVersion {
+# Begin FormEntry model
+type FormVersion @model
+@key(fields: ["id", "formId", "createdAt"] )
+{
   id: ID!
+  formId: ID!
+  form: Form! @connection(name: "FormVersion", keyField: "formId")
   owner: ID!
   ownedBy: User!
-  createdAt: AWSDateTime
+  createdAt: AWSDateTime!
   notes: String
   formData: AWSJSON
 }
@@ -47,24 +46,28 @@ type PaginatedFormVersion {
   nextToken: String
 }
 
-type Form @versioned  {
+type Form @versioned @model
+@key(fields: ["id", "accountId", "owner", "createdAt"] )
+@key(name: "ByAccountCreated", fields: ["accountId", "createdAt"], queryField: "formsByAccountCreatedAt")
+@key(name: "ByOwnerCreated", fields: ["owner", "createdAt"], queryField: "formsByOwnerCreatedAt")
+ {
     id: ID!
     owner: ID!
     name: String!
     desc: String!
     versionId: ID!
-    formData: FormVersion!
-    ownedBy: User!
+    formData: FormVersion! @connection(name: "FormVersion", keyField: "versionId")
+    ownedBy: User! @connection(name: "UserForm", keyField: "owner")
     accountId: ID!
-    account: Account!
+    account: Account! @connection(name: "AccountForm", keyField: "accountId")
     createdAt: AWSDateTime!
     updatedAt: AWSDateTime
     startsAt: AWSDateTime
     endsAt: AWSDateTime
     isPaused: Boolean
-    versions(limit: Int, nextToken: String): PaginatedFormVersion
-    integrations(limit: Int, nextToken: String): PaginatedIntegration
-    entries(limit: Int, nextToken: String): PaginatedFormEntries
+    versions: [FormVersion] @connection(name: "FormVersion", sortField: "createdAt", keyField: "formId")
+    integrations: [Integration] @connection(name: "FormIntegration", keyField: "formId")
+    entries: [FormEntry] @connection(name: "FormEntries", sortField: "createdAt", keyField: "formId")
 }
 
 input AddFormInput {
@@ -90,17 +93,23 @@ type PaginatedForm {
   nextToken: String
 }
 
-type User @versioned {
+type User @versioned  @model
+@key(fields: ["id", "accountId", "group", "createdAt"] )
+@key(name: "ByAccountCreatedAt", fields: ["accountId", "createdAt"], queryField: "usersByAccountCreatedAt")
+@key(name: "ByAccountGroup", fields: ["accountId", "group"], queryField: "usersByAccountGroup")
+{
   id: ID!
-  owner: ID!
+  ownedBy: User @connection(keyField: "id")
   accountId: ID!
-  account: Account
+  account: Account @connection(name: "UserAccount", keyField: "accountId")
+  forms: [Form] @connection(name: "UserForm", keyField: "id")
+  integrations: [Integration] @connection(name: "UserIntegration", keyField: "id")
   email: String!
   group: String!
   given_name: String!
   family_name: String!
   phone_number: AWSPhone
-  createdAt: AWSDateTime
+  createdAt: AWSDateTime!
   updatedAt: AWSDateTime
   isDeleted: Boolean
 }
@@ -136,10 +145,12 @@ enum AddressType {
   CONTACT
 }
 
-type Address @versioned {
+type Address @versioned  @model {
   id: ID!
   name: String!
   addressee: String
+  accountId: ID!
+  account: Account! @connection(name: "AccountAddress", keyField: "accountId")
   addressType: AddressType!
   phone_number: AWSPhone
   email: String!
@@ -166,19 +177,25 @@ type PaginatedAddress {
   nextToken: String
 }
 
-type Account @versioned {
+type Account @versioned  @model
+@key(fields: ["id", "owner", "createdAt"] )
+@key(name: "ByPlan", fields: ["planId"], queryField: "accountsByPlan")
+@key(name: "ByCreatedAt", fields: ["createdAt"], queryField: "accountsByCreatedAt")
+{
   id: ID!
   name: String!
-  addresses(limit: Int, nextToken: String): PaginatedAddress
+  addresses: [Address] @connection(name: "AccountAddress", keyField: "accountId")
   website: String
   taxId: String
   owner: ID!
-  ownedBy: User!
-  plan : Plan
-  createdAt: AWSDateTime
+  ownedBy: User! @connection(keyField: "owner")
+  planId: ID
+  plan: Plan @connection(keyField: "planId")
+  createdAt: AWSDateTime!
   updatedAt: AWSDateTime
-  users(limit: Int, nextToken: String): PaginatedUser
-  forms(limit: Int, nextToken: String): PaginatedForm
+  users: [User] @connection(name: "UserAccount", keyField: "accountId")
+  forms: [Form] @connection(name: "AccountForm", keyField: "accountId")
+  integrations: [Integration] @connection(name: "AccountIntegration", keyField: "accountId")
 }
 
 input UpdateAccountInput {
@@ -196,10 +213,10 @@ type PaginatedAccount {
   nextToken: String
 }
 
-type PlanType @versioned {
+type PlanType @versioned @model {
   id: ID!
   owner: ID!
-  ownedBy: User!
+  ownedBy: User! @connection(keyField: "owner")
   name: String!
   cost: Float!
   active: Boolean!
@@ -228,20 +245,24 @@ type PaginatedPlanType {
   nextToken: String
 }
 
-type Plan @versioned {
+type Plan @versioned @model
+@key(fields: ["id", "accountId", "planTypeId"] )
+@key(name: "ByPlanType", fields: ["planTypeId"], queryField: "plansByPlanType")
+@key(name: "ByCreatedAt", fields: ["createdAt"], queryField: "plansByCreatedAt")
+{
   id: ID!
-  accountId: ID!
-  account: Account!
   owner: ID!
-  ownedBy: User!
+  accountId: ID!
   planTypeId: ID!
+  account: Account! @connection(keyField: "accountId")
+  ownedBy: User! @connection(keyField: "owner")
+  planType: PlanType @connection(keyField: "planTypeId")
   startDate: AWSDateTime!
   endDate: AWSDateTime
   active: Boolean
   lastBillDate: AWSDateTime
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
-  planType: PlanType
 }
 
 input AddPlanInput {
@@ -262,12 +283,16 @@ type PaginatedPlan {
   nextToken: String
 }
 
-type IntegrationType {
+type IntegrationType @model @versioned
+@key(fields: ["id", "owner", "planTypeId"] )
+@key(name: "ByOwner", fields: ["owner"], queryField: "integrationTypeByOwner")
+@key(name: "ByPlanType", fields: ["planTypeId"], queryField: "integrationTypeByPlanType")
+ {
   id: ID!
   owner: ID!
-  ownedBy: User!
   planTypeId: ID!
-  planType: PlanType
+  ownedBy: User! @connection(keyField: "owner")
+  planType: PlanType @connection(keyField: "planTypeId")
   name: String!
   active: Boolean!
   createdAt: AWSDateTime
@@ -290,14 +315,20 @@ type PaginatedIntegrationType {
   nextToken: String
 }
 
-type Integration @versioned {
+type Integration @versioned @model
+@key(fields: ["id", "integrationTypeId", "accountId", "formId"] )
+@key(name: "ByOwner", fields: ["owner"], queryField: "integrationTypeByOwner")
+@key(name: "ByAccount", fields: ["accountId"], queryField: "integrationTypeByAccount")
+ {
   id: ID!
   integrationTypeId: ID!
-  integrationType: IntegrationType
+  integrationType: IntegrationType! @connection(keyField: "integrationTypeId")
   owner: ID!
+  ownedBy: User! @connection(name: "UserIntegration", keyField: "owner")
   accountId: ID!
+  account: Account! @connection(name: "AccountIntegration", keyField: "accountId")
   formId: ID!
-  form: Form!
+  form: Form! @connection(name: "FormIntegration", keyField: "formId")
   active: Boolean!
   authType: String
   auth: AWSJSON
@@ -343,78 +374,78 @@ type PaginatedIntegration {
   nextToken: String
 }
 
-type Query {
-  getAccount(accountId: ID!): Account
-  listAllAccounts(limit: Int, nextToken: String): PaginatedAccount!
-  getUser(userId: ID!): User
-  listAllUsers(limit: Int, nextToken: String) : PaginatedUser!
-  listAllAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedUser!
-  listAllAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedUser!
-  listAccountUsersInGroup(accountId: String!, group: String!, limit: Int, nextToken: String): PaginatedUser!
+# type Query {
+#   getAccount(accountId: ID!): Account
+#   listAllAccounts(limit: Int, nextToken: String): [Account]
+#   getUser(userId: ID!): User
+#   listAllUsers(limit: Int, nextToken: String) : PaginatedUser!
+#   listAllAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedUser!
+#   listAllAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedUser!
+#   listAccountUsersInGroup(accountId: String!, group: String!, limit: Int, nextToken: String): PaginatedUser!
 
-  getPlan(planId: String!): Plan
-  listAllPlans(limit: Int, nextToken: String): PaginatedPlan!
-  listAllAccountPlans(accountId: String!, limit: Int, nextToken: String): PaginatedPlan!
-  getActiveAccountPlan(accountId: String!): PaginatedPlan!
-  getPlanType(planTypeId: String!): PlanType
-  listAllPlanTypes(limit: Int, nextToken: String): PaginatedPlanType!
-  listAllActivePlanTypes(limit: Int, nextToken: String): PaginatedPlanType!
+#   getPlan(planId: String!): Plan
+#   listAllPlans(limit: Int, nextToken: String): PaginatedPlan!
+#   listAllAccountPlans(accountId: String!, limit: Int, nextToken: String): PaginatedPlan!
+#   getActiveAccountPlan(accountId: String!): PaginatedPlan!
+#   getPlanType(planTypeId: String!): PlanType
+#   listAllPlanTypes(limit: Int, nextToken: String): PaginatedPlanType!
+#   listAllActivePlanTypes(limit: Int, nextToken: String): PaginatedPlanType!
 
-  getForm(formId: String!, versionId: ID!) : Form!
-  listAllForms(limit: Int, nextToken: String) : PaginatedForm!
-  listAllAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedForm!
-  listAllAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!
-  listAllAccountFormsByUser(accountId: String!, userId: String!, limit: Int, nextToken: String) : PaginatedForm!
-  listAllAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!
+#   getForm(formId: String!, versionId: ID!) : Form!
+#   listAllForms(limit: Int, nextToken: String) : PaginatedForm!
+#   listAllAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedForm!
+#   listAllAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!
+#   listAllAccountFormsByUser(accountId: String!, userId: String!, limit: Int, nextToken: String) : PaginatedForm!
+#   listAllAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!
 
-  getIntegrationType(integrationTypeId: String!): IntegrationType
-  listAllIntegrationTypes(limit: Int, nextToken: String): PaginatedIntegrationType!
-  listAllIntegrationTypesByPlanType(planTypeId: String!, limit: Int, nextToken: String): PaginatedIntegrationType!
-  listAllIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegrationType!
+#   getIntegrationType(integrationTypeId: String!): IntegrationType
+#   listAllIntegrationTypes(limit: Int, nextToken: String): PaginatedIntegrationType!
+#   listAllIntegrationTypesByPlanType(planTypeId: String!, limit: Int, nextToken: String): PaginatedIntegrationType!
+#   listAllIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegrationType!
 
-  getIntegration(integrationId: String!): Integration
-  listAllIntegrations(limit: Int, nextToken: String): PaginatedIntegration!
-  listAllAccountIntegrations(accountId: String!, limit: Int, nextToken: String): PaginatedIntegration!
-  listAllAccountFormIntegrations(accountId: String!, formId: String!, limit: Int, nextToken: String): PaginatedIntegration!
-  listAllAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegration!
+#   getIntegration(integrationId: String!): Integration
+#   listAllIntegrations(limit: Int, nextToken: String): PaginatedIntegration!
+#   listAllAccountIntegrations(accountId: String!, limit: Int, nextToken: String): PaginatedIntegration!
+#   listAllAccountFormIntegrations(accountId: String!, formId: String!, limit: Int, nextToken: String): PaginatedIntegration!
+#   listAllAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegration!
 
-  getFormEntry(formEntryId: String!): FormEntry
-  listAllFormEntries(formId: String!) : PaginatedFormEntries!
-  listAllFormEntriesByTime(formId: String!, timestampPrefix: String!): PaginatedFormEntries!
-}
+#   # getFormEntry(formEntryId: String!): FormEntry
+#   listAllFormEntries(formId: String!) : PaginatedFormEntries!
+#   listAllFormEntriesByTime(formId: String!, timestampPrefix: String!): PaginatedFormEntries!
+# }
 
-type Mutation {
-  addPlanType(input: AddPlanTypeInput): PlanType!
-  addPlan(input: AddPlanInput): Plan!
-  addAccount(input: AddAccountInput): Account!
-  addUser(input: AddUserInput): User!
-  addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!
-  addIntegration(input: AddIntegrationInput): Integration!
-  addForm(form: AddFormInput!, notes: String!): Form!
-  addFormVersion(version: AddFormVersionInput): FormVersion!
+# type Mutation {
+#   addPlanType(input: AddPlanTypeInput): PlanType!
+#   addPlan(input: AddPlanInput): Plan!
+#   addAccount(input: AddAccountInput): Account!
+#   addUser(input: AddUserInput): User!
+#   addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!
+#   addIntegration(input: AddIntegrationInput): Integration!
+#   addForm(form: AddFormInput!, notes: String!): Form!
+#   addFormVersion(version: AddFormVersionInput): FormVersion!
 
-  updatePlanType(input: UpdatePlanTypeInput): PlanType!
-  updatePlan(input: UpdatePlanInput): Plan!
-  updateAccount(input: UpdateAccountInput): Account!
-  updateUser(input: UpdateUserInput): User!
-  updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!
-  updateIntegration(input: UpdateIntegrationInput): Integration!
-  updateForm(input: UpdateFormInput): Form!
+#   updatePlanType(input: UpdatePlanTypeInput): PlanType!
+#   updatePlan(input: UpdatePlanInput): Plan!
+#   updateAccount(input: UpdateAccountInput): Account!
+#   updateUser(input: UpdateUserInput): User!
+#   updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!
+#   updateIntegration(input: UpdateIntegrationInput): Integration!
+#   updateForm(input: UpdateFormInput): Form!
 
-  deletePlanType(id: ID!): PlanType!
-  deletePlan(id: ID!): Plan!
-  deleteAccount(id: ID!): Account!
-  deleteUser(id: ID!): User!
-  deleteIntegrationType(id: ID!): IntegrationType!
-  deleteIntegration(id: ID!): Integration!
-  deleteForm(id: ID!): Form!
+#   deletePlanType(id: ID!): PlanType!
+#   deletePlan(id: ID!): Plan!
+#   deleteAccount(id: ID!): Account!
+#   deleteUser(id: ID!): User!
+#   deleteIntegrationType(id: ID!): IntegrationType!
+#   deleteIntegration(id: ID!): Integration!
+#   deleteForm(id: ID!): Form!
 
-  addFormEntry(input: AddFormEntryInput!): FormEntry!
-  testPipeline: AWSJSON
-  attachPlan(input: AddPlanInput): Account
-}
+#   addFormEntry(input: AddFormEntryInput!): FormEntry!
+#   testPipeline: AWSJSON
+#   attachPlan(input: AddPlanInput): Account
+# }
 
-schema {
-  query: Query
-  mutation: Mutation
-}
+# schema {
+#   query: Query
+#   mutation: Mutation
+# }

@@ -1,5 +1,5 @@
 #serverless.yml
-service: forms-li
+service: formsli
 
 provider:
   name: aws
@@ -16,7 +16,9 @@ provider:
     urlPrefix: ${opt:urlPrefix, '${self:provider.environment.protocol}${self:provider.environment.domain}'}
     region: ${self:provider.region}
     environment: ${self:provider.stage}
-    serviceName: formsli
+    serviceName: ${self:service}
+    table_form_entries: ${self:service}_table_form_entries
+    table_app_data: ${self:service}_table_appdata
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -24,7 +26,7 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:BatchWriteItem
-      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/*"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.table_app_data}"
     - Effect: Allow
       Action:
         - ses:SendEmail
@@ -36,7 +38,7 @@ provider:
         - dynamodb:PutItem
         - dynamodb:UpdateItem
         - dynamodb:BatchWriteItem
-      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/*"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.table_form_entries}"
     - Effect: Allow
       Action:
         - cognito-idp:AdminAddUserToGroup
@@ -49,17 +51,16 @@ provider:
 plugins:
   - serverless-webpack
   - serverless-pseudo-parameters
-  - aws-cognito-idp-userpool-domain
   - serverless-iam-roles-per-function
-#   - serverless-appsync-plugin
+  - serverless-appsync-plugin
   - serverless-dynamodb-local
   - '@anttiviljami/serverless-stack-output'
-#   - serverless-appsync-offline
+  - serverless-appsync-offline
   - serverless-offline
 
 resources:
-#   - ${file(resources/iam.yml)}
-#   - ${file(resources/dynamodb.yml)}
+  - ${file(resources/iam.yml)}
+  - ${file(resources/dynamodb.yml)}
   - ${file(resources/s3.yml)}
   - ${file(resources/cognito.userpool.yml)}
   - ${file(resources/cognito.identitypool.yml)}
@@ -77,55 +78,45 @@ custom:
     includeModules:
       forceInclude:
         - source-map-support
-#   bucket: ${self:provider.stage}-${self:service}-data
-#   dynamodb:
-#     start:
-#       port: 8000
-#       inMemory: true
-#   appsync-offline:
-#     port: 62222
-#     dynamodb:
-#       client:
-#         endpoint: "http://localhost:8000"
-#         region: localhost
-#   appSync:
-#     name:  ${self:provider.stage}${self:service}
-#     # apiKey # only required for update-appsync/delete-appsync
-#     authenticationType: AMAZON_COGNITO_USER_POOLS
-#     # if AMAZON_COGNITO_USER_POOLS
-#     serviceRoleArn: { Fn::GetAtt: [AppSyncDynamoDBRole, Arn] }
-#     userPoolConfig:
-#       awsRegion: ${self:provider.region}
-#       defaultAction: ALLOW
-#       userPoolId:
-#         Ref: CognitoUserPoolMyUserPool
-#     logConfig:
-#       loggingRoleArn: { Fn::GetAtt: [AppSyncCloudWatchRole, Arn] } # Where AppSyncLoggingServiceRole is a role with CloudWatch Logs write access
-#       level: ALL
-#     schema: schema.graphql
-#     dataSources:
-#       - type: AMAZON_DYNAMODB
-#         name: FormVersion
-#         description: FormVersions
-#         config:
-#           tableName: "${self:provider.environment.table_prefix}form_versions"
-#       - type: AMAZON_DYNAMODB
-#         name: FormEntries
-#         description: FormEntries Table
-#         config:
-#           tableName: "${self:provider.environment.table_prefix}form_entries"
-#       - type: AMAZON_DYNAMODB
-#         name: Form
-#         description: Forms Table
-#         config:
-#           tableName: "${self:provider.environment.table_prefix}form"
-#       - type: AMAZON_DYNAMODB
-#         name: Form
-#         description: Forms Table
-#         config:
-#           tableName: "${self:provider.environment.table_prefix}form"
-#     mappingTemplatesLocation: src/mapping-templates
-#     mappingTemplates: ${file(serverless.appsync-mappings.yml)}
+  bucket: ${self:service}-${self:provider.stage}-data
+  dynamodb:
+    start:
+      port: 8000
+      inMemory: true
+  appsync-offline:
+    port: 62222
+    dynamodb:
+      client:
+        endpoint: "http://localhost:8000"
+        region: localhost
+  appSync:
+    name:  ai-forms-backend
+    # apiKey # only required for update-appsync/delete-appsync
+    authenticationType: AMAZON_COGNITO_USER_POOLS
+    # if AMAZON_COGNITO_USER_POOLS
+    serviceRoleArn: { Fn::GetAtt: [AppSyncDynamoDBRole, Arn] }
+    userPoolConfig:
+      awsRegion: ${self:provider.region}
+      defaultAction: ALLOW
+      userPoolId:
+        Ref: CognitoUserPoolMyUserPool
+    logConfig:
+      loggingRoleArn: { Fn::GetAtt: [AppSyncCloudWatchRole, Arn] } # Where AppSyncLoggingServiceRole is a role with CloudWatch Logs write access
+      level: ALL
+    schema: schema.graphql
+    dataSources:
+      - type: AMAZON_DYNAMODB
+        name: AppData
+        description: App Data Table
+        config:
+          tableName: ${self:provider.environment.table_app_data} # Where AppDataTable is a dynamodb table defined in Resources
+      - type: AMAZON_DYNAMODB
+        name: FormEntries
+        description: FormEntries Table
+        config:
+          tableName: ${self:provider.environment.table_form_entries} # Where AppDataTable is a dynamodb table defined in Resources
+    mappingTemplatesLocation: src/mapping-templates
+    mappingTemplates: ${file(serverless.appsync-mappings.yml)}
 functions:
   postConfirmation:
     name: ${self:provider.functions.postconfirmation}
