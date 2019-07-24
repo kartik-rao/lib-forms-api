@@ -1,0 +1,8 @@
+{
+	"auth": {
+		"libFormsApiUserPoolStaging": {
+			"service": "Cognito",
+			"providerPlugin": "awscloudformation"
+		}
+	}
+}

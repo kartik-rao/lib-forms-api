@@ -6,10 +6,10 @@
     },
     "provider": {
       "stage": "dev",
-      "region": "ap-southeast-2",
-      "variableSyntax": "\\${([ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)]+?)}",
+      "variableSyntax": "\\${([ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)*]+?)}",
       "name": "aws",
       "runtime": "nodejs8.10",
+      "region": "ap-southeast-2",
       "functions": {
         "postconfirmation": "formsgraphql-postconfirmation",
         "invite": "formsgraphql-invite"
@@ -141,6 +141,9 @@
                         ],
                         "Resource": [
                           {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsgraphql-dev*:*"
+                          },
+                          {
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsgraphql-postconfirmation:*"
                           },
                           {
@@ -154,6 +157,9 @@
                           "logs:PutLogEvents"
                         ],
                         "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsgraphql-dev*:*:*"
+                          },
                           {
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsgraphql-postconfirmation:*:*"
                           },
@@ -185,7 +191,9 @@
                   [
                     "formsgraphql",
                     "dev",
-                    "ap-southeast-2",
+                    {
+                      "Ref": "AWS::Region"
+                    },
                     "lambdaRole"
                   ]
                 ]
@@ -199,7 +207,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsgraphql/dev/1554119968322-2019-04-01T11:59:28.322Z/formsgraphql.zip"
+                "S3Key": "serverless/formsgraphql/dev/1563935170259-2019-07-24T02:26:10.259Z/formsgraphql.zip"
               },
               "FunctionName": "formsgraphql-postconfirmation",
               "Handler": "src/postconfirmation.handle",
@@ -230,14 +238,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "PostConfirmationLambdaVersionQSYYmSf2bnBg5VYO4wlGh0XBBfuLaWAEp6z7FttuR4": {
+          "PostConfirmationLambdaVersioncT4YtnRxA51IocaPdAmdgKltFi5YErKr9gIrJbn1s": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "PostConfirmationLambdaFunction"
               },
-              "CodeSha256": "KWp35yJuxq6AUdb7FUuCLquiVIzY6LRdToce470Rb3o="
+              "CodeSha256": "qk3ps+Vu9Fh8QEk9p5Jne/Ou7ahbKErGSA0B38Xu+i4="
             }
           },
           "SignupLambdaFunction": {
@@ -247,7 +255,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsgraphql/dev/1554119968322-2019-04-01T11:59:28.322Z/formsgraphql.zip"
+                "S3Key": "serverless/formsgraphql/dev/1563935170259-2019-07-24T02:26:10.259Z/formsgraphql.zip"
               },
               "FunctionName": "formsgraphql-invite",
               "Handler": "src/invite.handle",
@@ -278,14 +286,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "SignupLambdaVersiongEHOtNtFNGwQVMEkPpUV8vma3GwA8DaBSX4IjOWOY": {
+          "SignupLambdaVersion1k5fzffbJWCFCM1lmGRd1wZ0Kp752KYwoqAJcfgjPY": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SignupLambdaFunction"
               },
-              "CodeSha256": "KWp35yJuxq6AUdb7FUuCLquiVIzY6LRdToce470Rb3o="
+              "CodeSha256": "qk3ps+Vu9Fh8QEk9p5Jne/Ou7ahbKErGSA0B38Xu+i4="
             }
           },
           "ApiGatewayRestApi": {
@@ -363,7 +371,7 @@
                       "method.response.header.Access-Control-Allow-Credentials": "'false'"
                     },
                     "ResponseTemplates": {
-                      "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin == \"*\") #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
+                      "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".*\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
                     }
                   }
                 ]
@@ -410,7 +418,7 @@
                       "method.response.header.Access-Control-Allow-Credentials": "'false'"
                     },
                     "ResponseTemplates": {
-                      "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin == \"*\") #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
+                      "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".*\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
                     }
                   }
                 ]
@@ -512,7 +520,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1554119968424": {
+          "ApiGatewayDeployment1563935140857": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -537,17 +545,7 @@
                 ]
               },
               "Action": "lambda:InvokeFunction",
-              "Principal": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "apigateway.",
-                    {
-                      "Ref": "AWS::URLSuffix"
-                    }
-                  ]
-                ]
-              },
+              "Principal": "apigateway.amazonaws.com",
               "SourceArn": {
                 "Fn::Join": [
                   "",
@@ -584,17 +582,7 @@
                 ]
               },
               "Action": "lambda:InvokeFunction",
-              "Principal": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "apigateway.",
-                    {
-                      "Ref": "AWS::URLSuffix"
-                    }
-                  ]
-                ]
-              },
+              "Principal": "apigateway.amazonaws.com",
               "SourceArn": {
                 "Fn::Join": [
                   "",
@@ -712,17 +700,7 @@
                 ]
               },
               "Action": "lambda:InvokeFunction",
-              "Principal": {
-                "Fn::Join": [
-                  "",
-                  [
-                    "cognito-idp.",
-                    {
-                      "Ref": "AWS::URLSuffix"
-                    }
-                  ]
-                ]
-              },
+              "Principal": "cognito-idp.amazonaws.com",
               "SourceArn": {
                 "Fn::GetAtt": [
                   "CognitoUserPoolMyUserPool",
@@ -1352,12 +1330,13 @@
             "Properties": {
               "Name": "ai-forms-backend",
               "AuthenticationType": "AMAZON_COGNITO_USER_POOLS",
+              "AdditionalAuthenticationProviders": [],
               "UserPoolConfig": {
                 "AwsRegion": "ap-southeast-2",
-                "DefaultAction": "ALLOW",
                 "UserPoolId": {
                   "Ref": "CognitoUserPoolMyUserPool"
-                }
+                },
+                "DefaultAction": "ALLOW"
               },
               "LogConfig": {
                 "CloudWatchLogsRoleArn": {
@@ -1392,7 +1371,7 @@
           "GraphQlSchema": {
             "Type": "AWS::AppSync::GraphQLSchema",
             "Properties": {
-              "Definition": "type AppData @model {\n    id: ID!\n    type: ID!\n    meta: String!\n    itemType: String!\n    owner: ID!\n    createdAt: AWSDateTime!\n    updatedAt: AWSDateTime\n    isDeleted: Boolean\n    version: Int\n}\n\ntype FormEntry @model {\n    id: ID!\n    type: ID!\n    meta: String!\n    createdAt: AWSDateTime!\n}\n\ninput AddFormEntryInput {\n  data: AWSJSON!\n}\n\ntype PaginatedFormEntries {\n  items: [FormEntry!]\n  nextToken: String\n}\n\ntype FormVersion {\n  id: ID!\n  owner: ID!\n  ownedBy: User!\n  createdAt: AWSDateTime\n  notes: String\n  formData: AWSJSON\n}\n\ninput AddFormVersionInput {\n  formId: ID!\n  owner: ID!\n  notes: String\n  formData: AWSJSON!\n}\n\ntype PaginatedFormVersion {\n  items: [FormVersion!]\n  nextToken: String\n}\n\ntype Form @versioned {\n    id: ID!\n    owner: ID!\n    name: String!\n    desc: String!\n    versionId: ID!\n    formData: FormVersion!\n    ownedBy: User!\n    accountId: ID!\n    account: Account!\n    createdAt: AWSDateTime!\n    updatedAt: AWSDateTime\n    startsAt: AWSDateTime\n    endsAt: AWSDateTime\n    isPaused: Boolean\n    versions(limit: Int, nextToken: String): PaginatedFormVersion\n    integrations(limit: Int, nextToken: String): PaginatedIntegration\n    entries(limit: Int, nextToken: String): PaginatedFormEntries\n}\n\ninput AddFormInput {\n  name: String!\n  desc: String\n  startsAt: AWSDateTime\n  endsAt: AWSDateTime\n  isPaused: Boolean\n}\n\ninput UpdateFormInput  {\n  id: ID!\n  currentVersionId: ID\n  name: String\n  desc: String\n  startsAt: AWSDateTime\n  endsAt: AWSDateTime\n  isPaused: Boolean\n}\n\ntype PaginatedForm {\n  items: [Form!]\n  nextToken: String\n}\n\ntype User @versioned {\n  id: ID!\n  owner: ID!\n  accountId: ID!\n  account: Account\n  email: String!\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Boolean\n}\n\ninput UpdateUserInputData {\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ninput UpdateUserInput {\n  id: ID!\n  data: UpdateUserInputData!\n}\n\ninput AddUserInput {\n  email: String!\n  group: String!\n  accountId: ID!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ntype PaginatedUser {\n  items: [User!]\n  nextToken: String\n}\n\nenum AddressType {\n  BILLING\n  CONTACT\n}\n\ntype Address @versioned {\n  id: ID!\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype AddAddressInput {\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype PaginatedAddress {\n  items: [Address!]\n  nextToken: String\n}\n\ntype Account @versioned {\n  id: ID!\n  name: String!\n  addresses(limit: Int, nextToken: String): PaginatedAddress\n  website: String\n  taxId: String\n  owner: ID!\n  ownedBy: User!\n  plan : Plan\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  users(limit: Int, nextToken: String): PaginatedUser\n  forms(limit: Int, nextToken: String): PaginatedForm\n}\n\ninput UpdateAccountInput {\n  id: ID!\n  name: String\n  planId: ID\n}\n\ninput AddAccountInput {\n  name: String!\n}\n\ntype PaginatedAccount {\n  items: [Account!]\n  nextToken: String\n}\n\ntype PlanType @versioned {\n  id: ID!\n  owner: ID!\n  ownedBy: User!\n  name: String!\n  cost: Float!\n  active: Boolean!\n  billingTerm: String!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\ninput AddPlanTypeInput {\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Boolean!\n}\n\ninput UpdatePlanTypeInput {\n  id: ID!\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Boolean!\n}\n\ntype PaginatedPlanType {\n  items: [PlanType!]\n  nextToken: String\n}\n\ntype Plan @versioned {\n  id: ID!\n  accountId: ID!\n  account: Account!\n  owner: ID!\n  ownedBy: User!\n  planTypeId: ID!\n  startDate: AWSDateTime!\n  endDate: AWSDateTime\n  active: Boolean\n  lastBillDate: AWSDateTime\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  planType: PlanType\n}\n\ninput AddPlanInput {\n  accountId: ID!\n  planTypeId: ID!\n  endDate: AWSDateTime\n  active: Boolean\n}\n\ninput UpdatePlanInput {\n  id: ID!\n  endDate: AWSDateTime\n  active: Boolean!\n}\n\ntype PaginatedPlan {\n  items: [Plan!]\n  nextToken: String\n}\n\ntype IntegrationType {\n  id: ID!\n  owner: ID!\n  ownedBy: User!\n  planTypeId: ID!\n  planType: PlanType\n  name: String!\n  active: Boolean!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\ninput AddIntegrationTypeInput {\n  name: String!\n  active: Boolean\n}\n\ninput UpdateIntegrationTypeInput {\n  id: ID!\n  name: String!\n  active: Boolean\n}\n\ntype PaginatedIntegrationType {\n  items: [IntegrationType!]\n  nextToken: String\n}\n\ntype Integration @versioned {\n  id: ID!\n  integrationTypeId: ID!\n  integrationType: IntegrationType\n  owner: ID!\n  accountId: ID!\n  formId: ID!\n  form: Form!\n  active: Boolean!\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  lastExecuted: AWSDateTime\n  lastExecutionResult: Boolean\n  lastExecutionResultMessage: String\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\ninput AddIntegrationInput {\n  integrationTypeId: ID!\n  accountId: ID!\n  formId: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationTypeInputData {\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationInput {\n  id: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ntype PaginatedIntegration {\n  items: [Integration!]\n  nextToken: String\n}\n\ntype Query {\n  getAccount(accountId: ID!): Account\n  listAllAccounts(limit: Int, nextToken: String): PaginatedAccount!\n  getUser(userId: ID!): User\n  listAllUsers(limit: Int, nextToken: String) : PaginatedUser!\n  listAllAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n  listAllAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n  listAccountUsersInGroup(accountId: String!, group: String!, limit: Int, nextToken: String): PaginatedUser!\n\n  getPlan(planId: String!): Plan\n  listAllPlans(limit: Int, nextToken: String): PaginatedPlan!\n  listAllAccountPlans(accountId: String!, limit: Int, nextToken: String): PaginatedPlan!\n  getActiveAccountPlan(accountId: String!): PaginatedPlan!\n  getPlanType(planTypeId: String!): PlanType\n  listAllPlanTypes(limit: Int, nextToken: String): PaginatedPlanType!\n  listAllActivePlanTypes(limit: Int, nextToken: String): PaginatedPlanType!\n\n  getForm(formId: String!, versionId: ID!) : Form!\n  listAllForms(limit: Int, nextToken: String) : PaginatedForm!\n  listAllAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedForm!\n  listAllAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n  listAllAccountFormsByUser(accountId: String!, userId: String!, limit: Int, nextToken: String) : PaginatedForm!\n  listAllAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n\n  getIntegrationType(integrationTypeId: String!): IntegrationType\n  listAllIntegrationTypes(limit: Int, nextToken: String): PaginatedIntegrationType!\n  listAllIntegrationTypesByPlanType(planTypeId: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n  listAllIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n\n  getIntegration(integrationId: String!): Integration\n  listAllIntegrations(limit: Int, nextToken: String): PaginatedIntegration!\n  listAllAccountIntegrations(accountId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  listAllAccountFormIntegrations(accountId: String!, formId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  listAllAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegration!\n\n  getFormEntry(formEntryId: String!): FormEntry\n  listAllFormEntries(formId: String!) : PaginatedFormEntries!\n  listAllFormEntriesByTime(formId: String!, timestampPrefix: String!): PaginatedFormEntries!\n}\n\ntype Mutation {\n  addPlanType(input: AddPlanTypeInput): PlanType!\n  addPlan(input: AddPlanInput): Plan!\n  addAccount(input: AddAccountInput): Account!\n  addUser(input: AddUserInput): User!\n  addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!\n  addIntegration(input: AddIntegrationInput): Integration!\n  addForm(form: AddFormInput!, notes: String!): Form!\n  addFormVersion(version: AddFormVersionInput): FormVersion!\n\n  updatePlanType(input: UpdatePlanTypeInput): PlanType!\n  updatePlan(input: UpdatePlanInput): Plan!\n  updateAccount(input: UpdateAccountInput): Account!\n  updateUser(input: UpdateUserInput): User!\n  updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!\n  updateIntegration(input: UpdateIntegrationInput): Integration!\n  updateForm(input: UpdateFormInput): Form!\n\n  deletePlanType(id: ID!): PlanType!\n  deletePlan(id: ID!): Plan!\n  deleteAccount(id: ID!): Account!\n  deleteUser(id: ID!): User!\n  deleteIntegrationType(id: ID!): IntegrationType!\n  deleteIntegration(id: ID!): Integration!\n  deleteForm(id: ID!): Form!\n\n  addFormEntry(input: AddFormEntryInput!): FormEntry!\n  testPipeline: AWSJSON\n  attachPlan(input: AddPlanInput): Account\n}\n\ntype Schema {\n  query: Query\n  mutation: Mutation\n}",
+              "Definition": "# Begin FormEntry model\ntype FormEntry @model\n@key(fields: [\"id\", \"formId\", \"createdAt\"] )\n {\n    id: ID!\n    formId: ID!\n    form: Form! @connection(name: \"FormEntryForm\", keyField: \"formId\")\n    meta: AWSJSON\n    createdAt: AWSDateTime!\n    data: AWSJSON!\n}\n\ninput AddFormEntryInput {\n  meta: AWSJSON\n  data: AWSJSON!\n}\n\ntype PaginatedFormEntries {\n  items: [FormEntry!]\n  nextToken: String\n}\n\n# Begin FormEntry model\ntype FormVersion @model\n@key(fields: [\"id\", \"formId\", \"createdAt\"] )\n{\n  id: ID!\n  formId: ID!\n  owner: ID!\n  ownedBy: User!\n  createdAt: AWSDateTime\n  notes: String\n  formData: AWSJSON\n}\n\ninput AddFormVersionInput {\n  formId: ID!\n  owner: ID!\n  notes: String\n  formData: AWSJSON!\n}\n\ntype PaginatedFormVersion {\n  items: [FormVersion!]\n  nextToken: String\n}\n\ntype Form @versioned @model\n@key(fields: [\"id\", \"accountId\", \"owner\", \"createdAt\"] )\n@key(name: \"ByAccountCreated\", fields: [\"accountId\", \"createdAt\"], queryField: \"formsByAccountCreatedAt\")\n@key(name: \"ByOwnerCreated\", fields: [\"owner\", \"createdAt\"], queryField: \"formsByOwnerCreatedAt\")\n {\n    id: ID!\n    owner: ID!\n    name: String!\n    desc: String!\n    versionId: ID!\n    formData: FormVersion! @connection(name: \"FormVersionLatest\")\n    ownedBy: User! @connection(name: \"FormOwner\")\n    accountId: ID!\n    account: Account! @connection(name: \"FormAccount\", keyField: \"accountId\")\n    createdAt: AWSDateTime!\n    updatedAt: AWSDateTime\n    startsAt: AWSDateTime\n    endsAt: AWSDateTime\n    isPaused: Boolean\n    versions: [FormVersion] @connection(name: \"FormVersions\", sortField: \"createdAt\", keyField: \"formId\")\n    integrations: [Integration] @connection(name: \"FormIntegrations\", sortField: \"active\", sortDirection: \"ASC\")\n    entries: [FormEntry] @connection(name: \"FormEntries\", sortField: \"createdAt\", sortDirection: \"DESC\")\n}\n\n# Create a join model and disable queries as you don't need them\n# and can query through Form.integrations and Integration.forms\ntype FormIntegration @model(queries: null) {\n  id: ID!\n  form: Form! @connection(name: \"FormIntegrations\")\n  integration: User! @connection(name: \"IntegrationForms\")\n}\n\ninput AddFormInput {\n  name: String!\n  desc: String\n  startsAt: AWSDateTime\n  endsAt: AWSDateTime\n  isPaused: Boolean\n}\n\ninput UpdateFormInput  {\n  id: ID!\n  currentVersionId: ID\n  name: String\n  desc: String\n  startsAt: AWSDateTime\n  endsAt: AWSDateTime\n  isPaused: Boolean\n}\n\ntype PaginatedForm {\n  items: [Form!]\n  nextToken: String\n}\n\ntype User @versioned  @model\n@key(fields: [\"id\", \"accountId\", \"owner\", \"createdAt\"] )\n@key(name: \"ByAccountCreatedAt\", fields: [\"accountId\", \"createdAt\"], queryField: \"usersByAccountCreatedAt\")\n@key(name: \"ByAccountGroup\", fields: [\"accountId\", \"group\"], queryField: \"usersByAccountGroup\")\n{\n  id: ID!\n  owner: User @connection(name: \"UserOwner\", keyField: \"id\")\n  accountId: ID!\n  account: Account @connection(name: \"UserAccount\", keyField: \"accountId\")\n  email: String!\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Boolean\n}\n\ninput UpdateUserInputData {\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ninput UpdateUserInput {\n  id: ID!\n  data: UpdateUserInputData!\n}\n\ninput AddUserInput {\n  email: String!\n  group: String!\n  accountId: ID!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ntype PaginatedUser {\n  items: [User!]\n  nextToken: String\n}\n\nenum AddressType {\n  BILLING\n  CONTACT\n}\n\ntype Address @versioned  @model {\n  id: ID!\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype AddAddressInput {\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype PaginatedAddress {\n  items: [Address!]\n  nextToken: String\n}\n\ntype Account @versioned  @model\n@key(fields: [\"id\", \"owner\", \"createdAt\"] )\n@key(name: \"ByPlan\", fields: [\"planId\"], queryField: \"accountsByPlan\")\n@key(name: \"ByCreatedAt\", fields: [\"createdAt\"], queryField: \"accountsByCreatedAt\")\n{\n  id: ID!\n  name: String!\n  addresses: [Address] @connection(name: \"AccountAddresses\")\n  website: String\n  taxId: String\n  owner: ID!\n  ownedBy: User! @connection(name: \"AccountOwner\", keyField: \"owner\")\n  planId: ID\n  plan: Plan @connection(name: \"AccountPlan\", keyField: \"planId\")\n  createdAt: AWSDateTime!\n  updatedAt: AWSDateTime\n  users: [User] @connection(name: \"AccountUsers\", keyField: \"accountId\")\n  forms: [Form] @connection(name: \"Form\", keyField: \"accountId\")\n}\n\ninput UpdateAccountInput {\n  id: ID!\n  name: String\n  planId: ID\n}\n\ninput AddAccountInput {\n  name: String!\n}\n\ntype PaginatedAccount {\n  items: [Account!]\n  nextToken: String\n}\n\ntype PlanType @versioned @model {\n  id: ID!\n  owner: ID!\n  ownedBy: User! @connection(name:\"PlanTypeOwner\", keyField: \"owner\")\n  name: String!\n  cost: Float!\n  active: Boolean!\n  billingTerm: String!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\ninput AddPlanTypeInput {\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Boolean!\n}\n\ninput UpdatePlanTypeInput {\n  id: ID!\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Boolean!\n}\n\ntype PaginatedPlanType {\n  items: [PlanType!]\n  nextToken: String\n}\n\ntype Plan @versioned @model\n@key(fields: [\"id\", \"accountId\", \"planTypeId\", \"active\"] )\n@key(name: \"ByPlanType\", fields: [\"planTypeId\"], queryField: \"plansByPlanType\")\n@key(name: \"ByCreatedAt\", fields: [\"createdAt\"], queryField: \"plansByCreatedAt\")\n{\n  id: ID!\n  owner: ID!\n  accountId: ID!\n  planTypeId: ID!\n  account: Account! @connection(name:\"AccountPlan\", keyField: \"accountId\")\n  ownedBy: User! @connection(name:\"PlanOwner\", keyField: \"owner\")\n  planType: PlanType @connection(name: \"PlanPlanType\", keyField: \"planTypeId\")\n  startDate: AWSDateTime!\n  endDate: AWSDateTime\n  active: Boolean\n  lastBillDate: AWSDateTime\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n\n}\n\ninput AddPlanInput {\n  accountId: ID!\n  planTypeId: ID!\n  endDate: AWSDateTime\n  active: Boolean\n}\n\ninput UpdatePlanInput {\n  id: ID!\n  endDate: AWSDateTime\n  active: Boolean!\n}\n\ntype PaginatedPlan {\n  items: [Plan!]\n  nextToken: String\n}\n\ntype IntegrationType @model @versioned\n@key(fields: [\"id\", \"owner\", \"planTypeId\", \"active\"] )\n@key(name: \"ByOwner\", fields: [\"owner\"], queryField: \"integrationTypeByOwner\")\n@key(name: \"ByPlanType\", fields: [\"planTypeId\"], queryField: \"integrationTypeByPlanType\")\n@key(name: \"ByActive\", fields: [\"active\"], queryField: \"integrationTypeByActive\")\n {\n  id: ID!\n  owner: ID!\n  planTypeId: ID!\n  ownedBy: User! @connection(name: \"IntegrationTypeOwner\", keyField: \"owner\")\n  planType: PlanType @connection(name: \"IntegrationTypePlanType\", keyField: \"planTypeId\")\n  name: String!\n  active: Boolean!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\ninput AddIntegrationTypeInput {\n  name: String!\n  active: Boolean\n}\n\ninput UpdateIntegrationTypeInput {\n  id: ID!\n  name: String!\n  active: Boolean\n}\n\ntype PaginatedIntegrationType {\n  items: [IntegrationType!]\n  nextToken: String\n}\n\ntype Integration @versioned @model\n@key(fields: [\"id\", \"integrationTypeId\", \"accountId\", \"formId\"] )\n@key(name: \"ByOwner\", fields: [\"owner\"], queryField: \"integrationTypeByOwner\")\n@key(name: \"ByAccount\", fields: [\"accountId\"], queryField: \"integrationTypeByAccount\")\n {\n  id: ID!\n  integrationTypeId: ID!\n  integrationType: IntegrationType! @connection(name: \"IntegrationIntegrationType\", keyField: \"integrationTypeId\")\n  owner: ID!\n  ownedBy: User! @connection(name: \"IntegrationOwner\", keyField: \"owner\")\n  accountId: ID!\n  account: Account! @connection(name: \"IntegrationAccount\", keyField: \"accountId\")\n  formId: ID!\n  form: Form! @connection(name: \"IntegrationForm\", keyField: \"formId\")\n  active: Boolean!\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  lastExecuted: AWSDateTime\n  lastExecutionResult: Boolean\n  lastExecutionResultMessage: String\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\ninput AddIntegrationInput {\n  integrationTypeId: ID!\n  accountId: ID!\n  formId: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationTypeInputData {\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationInput {\n  id: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ntype PaginatedIntegration {\n  items: [Integration!]\n  nextToken: String\n}\n\ntype Query {\n  getAccount(accountId: ID!): Account\n  listAllAccounts(limit: Int, nextToken: String): [Account]\n  getUser(userId: ID!): User\n  listAllUsers(limit: Int, nextToken: String) : PaginatedUser!\n  listAllAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n  listAllAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n  listAccountUsersInGroup(accountId: String!, group: String!, limit: Int, nextToken: String): PaginatedUser!\n\n  getPlan(planId: String!): Plan\n  listAllPlans(limit: Int, nextToken: String): PaginatedPlan!\n  listAllAccountPlans(accountId: String!, limit: Int, nextToken: String): PaginatedPlan!\n  getActiveAccountPlan(accountId: String!): PaginatedPlan!\n  getPlanType(planTypeId: String!): PlanType\n  listAllPlanTypes(limit: Int, nextToken: String): PaginatedPlanType!\n  listAllActivePlanTypes(limit: Int, nextToken: String): PaginatedPlanType!\n\n  getForm(formId: String!, versionId: ID!) : Form!\n  listAllForms(limit: Int, nextToken: String) : PaginatedForm!\n  listAllAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedForm!\n  listAllAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n  listAllAccountFormsByUser(accountId: String!, userId: String!, limit: Int, nextToken: String) : PaginatedForm!\n  listAllAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n\n  getIntegrationType(integrationTypeId: String!): IntegrationType\n  listAllIntegrationTypes(limit: Int, nextToken: String): PaginatedIntegrationType!\n  listAllIntegrationTypesByPlanType(planTypeId: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n  listAllIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n\n  getIntegration(integrationId: String!): Integration\n  listAllIntegrations(limit: Int, nextToken: String): PaginatedIntegration!\n  listAllAccountIntegrations(accountId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  listAllAccountFormIntegrations(accountId: String!, formId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n  listAllAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegration!\n\n  getFormEntry(formEntryId: String!): FormEntry\n  listAllFormEntries(formId: String!) : PaginatedFormEntries!\n  listAllFormEntriesByTime(formId: String!, timestampPrefix: String!): PaginatedFormEntries!\n}\n\ntype Mutation {\n  addPlanType(input: AddPlanTypeInput): PlanType!\n  addPlan(input: AddPlanInput): Plan!\n  addAccount(input: AddAccountInput): Account!\n  addUser(input: AddUserInput): User!\n  addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!\n  addIntegration(input: AddIntegrationInput): Integration!\n  addForm(form: AddFormInput!, notes: String!): Form!\n  addFormVersion(version: AddFormVersionInput): FormVersion!\n\n  updatePlanType(input: UpdatePlanTypeInput): PlanType!\n  updatePlan(input: UpdatePlanInput): Plan!\n  updateAccount(input: UpdateAccountInput): Account!\n  updateUser(input: UpdateUserInput): User!\n  updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!\n  updateIntegration(input: UpdateIntegrationInput): Integration!\n  updateForm(input: UpdateFormInput): Form!\n\n  deletePlanType(id: ID!): PlanType!\n  deletePlan(id: ID!): Plan!\n  deleteAccount(id: ID!): Account!\n  deleteUser(id: ID!): User!\n  deleteIntegrationType(id: ID!): IntegrationType!\n  deleteIntegration(id: ID!): Integration!\n  deleteForm(id: ID!): Form!\n\n  addFormEntry(input: AddFormEntryInput!): FormEntry!\n  testPipeline: AWSJSON\n  attachPlan(input: AddPlanInput): Account\n}\n\nschema {\n  query: Query\n  mutation: Mutation\n}",
               "ApiId": {
                 "Fn::GetAtt": [
                   "GraphQlApi",
@@ -1427,7 +1406,6 @@
                     "Version": "2012-10-17",
                     "Statement": [
                       {
-                        "Effect": "Allow",
                         "Action": [
                           "dynamodb:DeleteItem",
                           "dynamodb:GetItem",
@@ -1438,6 +1416,7 @@
                           "dynamodb:BatchGetItem",
                           "dynamodb:BatchWriteItem"
                         ],
+                        "Effect": "Allow",
                         "Resource": [
                           {
                             "Fn::Join": [
@@ -1507,7 +1486,6 @@
                     "Version": "2012-10-17",
                     "Statement": [
                       {
-                        "Effect": "Allow",
                         "Action": [
                           "dynamodb:DeleteItem",
                           "dynamodb:GetItem",
@@ -1518,6 +1496,7 @@
                           "dynamodb:BatchGetItem",
                           "dynamodb:BatchWriteItem"
                         ],
+                        "Effect": "Allow",
                         "Resource": [
                           {
                             "Fn::Join": [
@@ -2149,13 +2128,13 @@
           "PostConfirmationLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "PostConfirmationLambdaVersionQSYYmSf2bnBg5VYO4wlGh0XBBfuLaWAEp6z7FttuR4"
+              "Ref": "PostConfirmationLambdaVersioncT4YtnRxA51IocaPdAmdgKltFi5YErKr9gIrJbn1s"
             }
           },
           "SignupLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SignupLambdaVersiongEHOtNtFNGwQVMEkPpUV8vma3GwA8DaBSX4IjOWOY"
+              "Ref": "SignupLambdaVersion1k5fzffbJWCFCM1lmGRd1wZ0Kp752KYwoqAJcfgjPY"
             }
           },
           "ServiceEndpoint": {
@@ -2168,7 +2147,11 @@
                   {
                     "Ref": "ApiGatewayRestApi"
                   },
-                  ".execute-api.ap-southeast-2.",
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
                   {
                     "Ref": "AWS::URLSuffix"
                   },
@@ -3327,10 +3310,11 @@
         }
       }
     },
+    "serviceFilename": "serverless.yml",
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsgraphql/dev/1554119968322-2019-04-01T11:59:28.322Z",
+    "artifactDirectoryName": "serverless/formsgraphql/dev/1563935170259-2019-07-24T02:26:10.259Z",
     "artifact": ""
   }
 }
