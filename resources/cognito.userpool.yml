@@ -13,6 +13,10 @@ Resources:
       EmailVerificationMessage: "{####}"
       EmailConfiguration:
         SourceArn: "arn:aws:ses:us-east-1:#{AWS::AccountId}:identity/no-reply@forms.li"
+      AdminCreateUserConfig:
+        InviteMessageTemplate:
+          EmailSubject: "Welcome to Forms.li"
+          EmailMessage: "Your username is {username} and temporary password is {####}"
       Schema:
         - AttributeDataType: String
           DeveloperOnlyAttribute: False
