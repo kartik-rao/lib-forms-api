@@ -164,7 +164,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1563976711747-2019-07-24T13:58:31.747Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1564065450915-2019-07-25T14:37:30.915Z/formsli.zip"
         },
         "FunctionName": "formsli-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -212,7 +212,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1563976711747-2019-07-24T13:58:31.747Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1564065450915-2019-07-25T14:37:30.915Z/formsli.zip"
         },
         "FunctionName": "formsli-invite",
         "Handler": "src/invite.handle",
@@ -477,7 +477,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1563976685718": {
+    "ApiGatewayDeployment1564065425953": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -589,6 +589,12 @@
         "EmailConfiguration": {
           "SourceArn": {
             "Fn::Sub": "arn:aws:ses:us-east-1:${AWS::AccountId}:identity/no-reply@forms.li"
+          }
+        },
+        "AdminCreateUserConfig": {
+          "InviteMessageTemplate": {
+            "EmailSubject": "Welcome to Forms.li",
+            "EmailMessage": "Your username is {username} and temporary password is {####}"
           }
         },
         "Schema": [
