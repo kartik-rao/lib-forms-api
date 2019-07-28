@@ -4,7 +4,7 @@ import Amplify from '@aws-amplify/core';
 import { MailSlurp } from "mailslurp-client";
 import { ISignUpResult, CognitoUser, CognitoUserSession } from 'amazon-cognito-identity-js';
 import { Inbox } from 'mailslurp-swagger-sdk-ts';
-const config = require("../outputs/stack.json");
+const config = require("../outputs/stack.dev.json");
 const mailSlurp = new MailSlurp({ apiKey: "85117a16750ebeb8c6e659c6e9984ac0290557c2dfa90df89d54fc72b170ac8a" })
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 120000;

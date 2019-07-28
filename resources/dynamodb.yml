@@ -61,12 +61,17 @@ Resources:
                 ProvisionedThroughput:
                   ReadCapacityUnits: 5
                   WriteCapacityUnits: 5
+
 # Print out the name of the FormEntriesTable
 Outputs:
   FormEntriesTable:
     Value:
       Ref: FormEntriesTable
+  FormEntriesGSI:
+    Value: ${self:provider.environment.table_form_entries}_gsi
 # Print out the name of the AppDataTable
   AppDataTable:
     Value:
       Ref: AppDataTable
+  AppDataGSI:
+    Value: ${self:provider.environment.table_app_data}_gsi

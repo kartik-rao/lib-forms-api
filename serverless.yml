@@ -52,6 +52,7 @@ plugins:
   - serverless-webpack
   - serverless-pseudo-parameters
   - serverless-iam-roles-per-function
+  - aws-cognito-idp-userpool-domain
   - serverless-appsync-plugin
   - serverless-dynamodb-local
   - '@anttiviljami/serverless-stack-output'
@@ -69,7 +70,7 @@ resources:
 custom:
   # Stack Output Plugin
   output:
-    file: outputs/stack.json # toml, yaml, yml, and json format is available
+    file: outputs/stack.${self:provider.stage}.json # toml, yaml, yml, and json format is available
   # Servlerless Webpack (for functions)
   packagePath: './package.json'
   webpack:

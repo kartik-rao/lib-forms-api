@@ -69,3 +69,11 @@ Resources:
               - logs:CreateLogStream
               - logs:PutLogEvents
             Resource: "*"
+
+Outputs:
+  Region:
+    Value: ${self:provider.region}
+  Stage:
+    Value: ${self:provider.stage}
+  Service:
+    Value: ${self:service}

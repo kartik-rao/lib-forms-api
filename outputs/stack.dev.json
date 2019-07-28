@@ -1,0 +1,16 @@
+{
+  "SignupLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-southeast-2:644527192227:function:formsli-invite:1",
+  "ServerlessDeploymentBucketName": "formsli-dev-serverlessdeploymentbucket-y6bd6ad419br",
+  "PostConfirmationLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-southeast-2:644527192227:function:formsli-postconfirmation:1",
+  "AttachmentsBucketName": "formsli-dev-data",
+  "UserPoolClientId": "5n2slg4v7ebj3cbjbkpkl7v1jr",
+  "GraphQlApiUrl": "https://k7eapgiwizb3hiuzqqfzwjuona.appsync-api.ap-southeast-2.amazonaws.com/graphql",
+  "AppDataTable": "formsli_table_appdata",
+  "UserPoolId": "ap-southeast-2_MaaMKUF0g",
+  "UserPoolAdminUser": "infrastructure.dev@forms.li",
+  "AdminUserPoolClientId": "5l4uacgv0gnt0atog3up6edrc6",
+  "AuthorizerId": "zbleqo",
+  "FormEntriesTable": "formsli_table_form_entries",
+  "IdentityPoolId": "ap-southeast-2:4f9f7b2a-ce06-4bd5-9860-fae13b4db15b",
+  "ServiceEndpoint": "https://whg72h0rk9.execute-api.ap-southeast-2.amazonaws.com/dev"
+}
