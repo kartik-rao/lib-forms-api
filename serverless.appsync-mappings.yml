@@ -94,6 +94,16 @@
   response: passthrough-response.vtl
 - dataSource: AppData
   type: Query
+  field: listAllPlanTypes
+  request: listAllPlanTypes-request.vtl
+  response: passthrough-paginated-response.vtl
+- dataSource: AppData
+  type: Query
+  field: listAllActivePlanTypes
+  request: listAllActivePlanTypes-request.vtl
+  response: passthrough-paginated-response.vtl
+- dataSource: AppData
+  type: Query
   field: listAllAccountForms
   request: getAccountForms-request.vtl
   response: getAccountForms-response.vtl
