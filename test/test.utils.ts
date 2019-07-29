@@ -3,9 +3,7 @@ import { CognitoUser, CognitoUserSession } from 'amazon-cognito-identity-js';
 import { AdminCreateUserResponse, AdminDisableUserRequest, AdminDeleteUserRequest, AdminGetUserRequest, AttributeType } from 'aws-sdk/clients/cognitoidentityserviceprovider';
 import { MailSlurp } from "mailslurp-client";
 
-import  API, {graphqlOperation } from "@aws-amplify/api";
-
-import AWS from 'aws-sdk';
+import * as AWS from 'aws-sdk';
 const config = require("../outputs/stack.dev.json");
 const mailSlurp = new MailSlurp({ apiKey: "85117a16750ebeb8c6e659c6e9984ac0290557c2dfa90df89d54fc72b170ac8a" })
 
@@ -13,7 +11,6 @@ var credentials = new AWS.SharedIniFileCredentials({profile: 'fl-infrastructure-
 AWS.config.credentials = credentials;
 AWS.config.region = 'ap-southeast-2';
 let UserPool = new AWS.CognitoIdentityServiceProvider();
-
 
 interface IFormsAppUser {
     username: string,
@@ -23,13 +20,24 @@ interface IFormsAppUser {
     group: string,
     attributes: any
 }
+const TenantStateParameter = "/App/formsli/dev/tenantstate";
+const TenantAccountAdmin   = "/App/formsli/dev/tenantAccountAdmin";
+const TenantAccountEditor  = "/App/formsli/dev/tenantAccountEditor";
+const TenantAccountViewer  = "/App/formsli/dev/tenantAccountViewer";
 
 export class TestUtils {
-    private static __instance : TestUtils;
-    private static globalAdmin;
-    private static accountAdmin : IFormsAppUser;
-    private static accountEditor : IFormsAppUser;
-    private static accountViewer : IFormsAppUser;
+    static globalAdmin: IFormsAppUser = {
+        username: config["UserPoolAdminUser"],
+        password: "Pd8Ohek..",
+        group: "Admin",
+        tenantName: null,
+        attributes: null,
+        usersub: null
+    }
+
+    static accountAdmin : IFormsAppUser;
+    static accountEditor : IFormsAppUser;
+    static accountViewer : IFormsAppUser;
 
     private constructor() {
 
@@ -37,29 +45,54 @@ export class TestUtils {
 
     static async setup() {
         return new Promise(async (resolve, reject) => {
+            const ssm = new AWS.SSM();
             try {
-                TestUtils.accountAdmin = await TestUtils.setupTenant("P@ssword1", `lib-forms-api ${1e5 * Math.random()}`);
-                let {username, password} = TestUtils.accountAdmin;
-                TestUtils.accountEditor = await TestUtils.inviteUser(username, password, 'Editor');
-                TestUtils.accountViewer = await TestUtils.inviteUser(username, password, 'Viewer');
-                resolve();
-            } catch (error) {
-                reject(error);
-            }
-        })
-    }
+                console.log("TestUtils.checking tenant state");
+                // Check if tenant has already been setup on this instance
+                await ssm.getParameter({Name: TenantStateParameter, WithDecryption: true}).promise();
+                let taa = await ssm.getParameter({Name: TenantAccountAdmin, WithDecryption: true}).promise();
+                TestUtils.accountAdmin = JSON.parse(taa.Parameter.Value) as IFormsAppUser;
 
-    static async teardown() {
-        return new Promise(async (resolve, reject)=> {
-            try {
-                await TestUtils.deleteUser(TestUtils.accountViewer);
-                await TestUtils.deleteUser(TestUtils.accountEditor);
-                await TestUtils.deleteUser(TestUtils.accountAdmin);
+                let tae = await ssm.getParameter({Name: TenantAccountEditor, WithDecryption: true}).promise();
+                TestUtils.accountEditor = JSON.parse(tae.Parameter.Value) as IFormsAppUser;
+
+                let tav = await ssm.getParameter({Name: TenantAccountViewer, WithDecryption: true}).promise();
+                TestUtils.accountViewer = JSON.parse(tav.Parameter.Value) as IFormsAppUser;
                 resolve();
             } catch (error) {
-                reject(error);
+                console.log("TestUtils.checking tenant state - Creating new tenant");
+                // Test Tenant has not been setup
+                try {
+                    TestUtils.accountAdmin = await TestUtils.setupTenant("P@ssword1", `lib-forms-api ${1e5 * Math.random()}`);
+                    let {username, password} = TestUtils.accountAdmin;
+                    await ssm.putParameter({
+                        Name: TenantAccountAdmin,
+                        Type: 'String',
+                        Value: JSON.stringify(TestUtils.accountAdmin),
+                        Tier: "Standard"}).promise();
+                    TestUtils.accountEditor = await TestUtils.inviteUser(username, password, 'Editor');
+                    await ssm.putParameter({
+                        Name: TenantAccountEditor,
+                        Type: 'String',
+                        Value: JSON.stringify(TestUtils.accountEditor),
+                        Tier: "Standard"}).promise();
+                    TestUtils.accountViewer = await TestUtils.inviteUser(username, password, 'Viewer');
+                    await ssm.putParameter({
+                        Name: TenantAccountViewer,
+                        Type: 'String',
+                        Value: JSON.stringify(TestUtils.accountViewer),
+                        Tier: "Standard"}).promise();
+                    await ssm.putParameter({
+                        Name: TenantStateParameter,
+                        Type: 'String',
+                        Value: "1",
+                        Tier: "Standard"}).promise();
+                        resolve();
+                } catch (error) {
+                    reject(error);
+                }
             }
-        })
+        });
     }
 
     static attributeListToMap(attrs: AttributeType[]) : any {
@@ -78,6 +111,8 @@ export class TestUtils {
                     username: inbox.emailAddress,
                     password: password,
                     attributes : {
+                        given_name: "Formsli",
+                        family_name: "AccountAdmin",
                         "custom:tenantName": tenantName
                     }
                 });
