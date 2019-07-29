@@ -52,7 +52,6 @@ plugins:
   - serverless-webpack
   - serverless-pseudo-parameters
   - serverless-iam-roles-per-function
-  - aws-cognito-idp-userpool-domain
   - serverless-appsync-plugin
   - serverless-dynamodb-local
   - '@anttiviljami/serverless-stack-output'
