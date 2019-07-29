@@ -119,6 +119,16 @@
   response: passthrough-response.vtl
 - dataSource: AppData
   type: Mutation
+  field: updatePlanType
+  request: updatePlanType-request.vtl
+  response: passthrough-response.vtl
+- dataSource: AppData
+  type: Mutation
+  field: deletePlanType
+  request: deletePlanType-request.vtl
+  response: passthrough-response.vtl
+- dataSource: AppData
+  type: Mutation
   field: addPlan
   request: addPlan-request.vtl
   response: passthrough-response.vtl

@@ -83,6 +83,7 @@ input UpdateFormInput  {
   startsAt: AWSDateTime
   endsAt: AWSDateTime
   isPaused: Boolean
+  expectedVersion: Int!
 }
 
 type PaginatedForm {
@@ -110,11 +111,13 @@ input UpdateUserInputData {
   given_name: String!
   family_name: String!
   phone_number: AWSPhone
+  expectedVersion: Int!
 }
 
 input UpdateUserInput {
   id: ID!
   data: UpdateUserInputData!
+  expectedVersion: Int!
 }
 
 input AddUserInput {
@@ -185,6 +188,7 @@ input UpdateAccountInput {
   id: ID!
   name: String
   planId: ID
+  expectedVersion: Int!
 }
 
 input AddAccountInput {
@@ -221,6 +225,7 @@ input UpdatePlanTypeInput {
   cost: Float!
   billingTerm: String!
   active: Boolean!
+  expectedVersion: Int!
 }
 
 type PaginatedPlanType {
@@ -255,6 +260,7 @@ input UpdatePlanInput {
   id: ID!
   endDate: AWSDateTime
   active: Boolean!
+  expectedVersion: Int!
 }
 
 type PaginatedPlan {
@@ -283,6 +289,7 @@ input UpdateIntegrationTypeInput {
   id: ID!
   name: String!
   active: Boolean
+  expectedVersion: Int!
 }
 
 type PaginatedIntegrationType {
@@ -327,6 +334,7 @@ input UpdateIntegrationTypeInputData {
   auth: AWSJSON
   target: String
   method: String
+  expectedVersion: Int!
 }
 
 input UpdateIntegrationInput {
@@ -336,6 +344,7 @@ input UpdateIntegrationInput {
   auth: AWSJSON
   target: String
   method: String
+  expectedVersion: Int!
 }
 
 type PaginatedIntegration {

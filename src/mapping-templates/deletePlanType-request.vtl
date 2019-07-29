@@ -1,0 +1,28 @@
+#foreach($group in $context.identity.claims.get("cognito:groups"))
+    $util.qr($ctx.stash.put("group", $group))
+    #if($group == "Admin")
+        #set($isAdmin = true)
+        $util.qr($ctx.stash.put("isAdmin", true))
+    #end
+#end
+## Only Admins allowed
+#if (!$isAdmin == true)
+    $utils.unauthorized()
+#end
+{
+    "version" : "2017-02-28",
+    "operation" : "UpdateItem",
+    "key": {
+        "id":   {"S": "$context.arguments.input.id"},
+        "type": {"S": "PLANTYPE"}
+    },
+    "update" : {
+        "expression" : "SET active = :active, isDeleted = :isDeleted, meta = :meta, updatedAt = :updatedAt",
+        "expressionValues": {
+            ":active"   : {"BOOL": false}.
+            ":isDeleted": {"BOOL": true},
+            ":meta"     : {"BOOL": false},
+            ":updatedAt": {"S" : "$util.time.nowISO8601()"}
+        }
+    }
+}
