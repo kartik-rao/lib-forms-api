@@ -50,14 +50,15 @@ describe("PlanType", () => {
         it("List", async(done) => {
             const listPlanTypes = {
                 query: `query {
-                    listAllPlanTypes {
+                    listAllActivePlanTypes {
                       items {
+                        id,
                         name,
                         cost
                       },
                       nextToken
                     }
-                  }`}
+                }`}
 
             try {
                 const options = {
@@ -74,6 +75,8 @@ describe("PlanType", () => {
                 expect(response.status).toEqual(200);
                 const { data } = await response.json();
                 console.log("List.Response Data", data);
+                expect(data.listAllActivePlanTypes).toBeDefined();
+                expect(data.listAllActivePlanTypes.items).toBeDefined();
                 done();
             } catch (error) {
                 fail(error);
@@ -85,6 +88,7 @@ describe("PlanType", () => {
         let user: CognitoUser;
         let token: string;
         let planId: string;
+        let planVersion;
         beforeAll(async (done) => {
             user = await Auth.signIn(TestUtils.globalAdmin);
             token = (await Auth.currentSession()).getIdToken().getJwtToken();
@@ -102,7 +106,6 @@ describe("PlanType", () => {
         });
 
         it("Add", async (done) => {
-            let args = {limit: 50, nextToken: this.nextToken};
             let planName = `Test Plan - ${Math.random()}`
             const addPlanType = {query: `mutation {
                 addPlanType (input: {
@@ -111,7 +114,7 @@ describe("PlanType", () => {
                   cost: 50,
                   active: false
                 })
-                {id, name, billingTerm, cost, createdAt, updatedAt}
+                {id, name, billingTerm, cost, version, createdAt, updatedAt}
               }
             `};
 
@@ -131,6 +134,7 @@ describe("PlanType", () => {
                 const { data } = await response.json();
                 expect(data).toBeDefined();
                 planId = data.addPlanType.planId;
+                planVersion = data.addPlanType.planVersion;
                 expect(data.addPlanType).toBeDefined();
                 expect(data.addPlanType.name).toEqual(planName);
                 expect(data.addPlanType.billingTerm).toEqual("Monthly");
@@ -143,7 +147,42 @@ describe("PlanType", () => {
         });
 
         it("Update", async (done) => {
-            done();
+            let planName = `Test Plan - ${Math.random()}`
+            const updatePlanType = {query: `mutation {
+                updatePlanType (input: {
+                    id: "${planId}",
+                    billingTerm: "Quarterly",
+                    cost: 150,
+                    active: true,
+                    expectedVersion: ${planVersion}
+                })
+                {id, name, billingTerm, cost, active, updatedAt, version}
+              }
+            `};
+
+            try {
+                const options = {
+                    method: 'POST',
+                    body: JSON.stringify(updatePlanType),
+                    headers: {
+                      host: endpoint.host,
+                      'Content-Type': 'application/json',
+                      Authorization: token,
+                    },
+                };
+
+                const response = await fetch(endpoint.href, options);
+                expect(response.status).toEqual(200);
+                const { data } = await response.json();
+                expect(data).toBeDefined();
+                expect(data.updatePlanType).toBeDefined();
+                expect(data.updatePlanType.billingTerm).toEqual("Quarterly");
+                expect(data.addPlanType.cost).toEqual(150.0);
+                expect(data.addPlanType.active).toBeTruthy();
+                done();
+            } catch (error) {
+                fail(error);
+            }
         });
 
         it("Delete", async (done) => {

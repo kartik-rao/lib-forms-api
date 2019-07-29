@@ -210,6 +210,7 @@ type PlanType @versioned {
   billingTerm: String!
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
+  version: Int
 }
 
 input AddPlanTypeInput {
@@ -221,10 +222,10 @@ input AddPlanTypeInput {
 
 input UpdatePlanTypeInput {
   id: ID!
-  name: String!
-  cost: Float!
-  billingTerm: String!
-  active: Boolean!
+  name: String
+  cost: Float
+  billingTerm: String
+  active: Boolean
   expectedVersion: Int!
 }
 
