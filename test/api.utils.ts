@@ -9,7 +9,7 @@ export default {
     'aws_appsync_authenticationType': 'AMAZON_COGNITO_USER_POOLS',
     oauth: {
         // Domain name
-        domain : 'dev-formsli.auth.ap-southeast-2.amazoncognito.com',
+        domain : 'dev-forms-li.auth.ap-southeast-2.amazoncognito.com',
         // Authorized scopes
         scope : ['phone', 'email', 'profile', 'openid'],
         // Callback URL
@@ -31,7 +31,7 @@ export default {
     },
     Auth: {
         userPoolId: config['UserPoolId'],
-        // userPoolWebClientId: config[] "5uh5s9bfv5m9gk7ndt9e718da6",
+        userPoolWebClientId: config["UserPoolClientId"],
         identityPoolId: config['IdentityPoolId'],
         region: 'ap-southeast-2',
         mandatorySignIn: true
