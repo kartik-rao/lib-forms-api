@@ -14,12 +14,12 @@ import { AdminDisableUserRequest, AdminDeleteUserRequest, AdminCreateUserRespons
 
 var credentials = new AWS.SharedIniFileCredentials({profile: 'fl-infrastructure-dev'});
 AWS.config.credentials = credentials;
-AWS.config.region = 'ap-southeast-2';
+AWS.config.region = config['Region'];
 let UserPool = new AWS.CognitoIdentityServiceProvider();
 
 Amplify.configure({
     Auth: {
-      region: 'ap-southeast-2',
+      region: config['Region'],
       userPoolId: config["UserPoolId"],
       userPoolWebClientId: config["UserPoolClientId"]
     }
