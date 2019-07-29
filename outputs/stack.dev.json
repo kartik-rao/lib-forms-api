@@ -14,7 +14,6 @@
   "AdminUserPoolClientId": "5l4uacgv0gnt0atog3up6edrc6",
   "AuthorizerId": "zbleqo",
   "FormEntriesTable": "formsli_table_form_entries",
-  "UserPoolIdCognitoUserPoolMyUserPool": "ap-southeast-2_MaaMKUF0g",
   "Region": "ap-southeast-2",
   "Stage": "dev",
   "IdentityPoolId": "ap-southeast-2:4f9f7b2a-ce06-4bd5-9860-fae13b4db15b",
