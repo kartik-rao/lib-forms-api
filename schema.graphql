@@ -211,6 +211,7 @@ type PlanType @versioned {
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   version: Int
+  isDeleted: Boolean
 }
 
 input AddPlanTypeInput {
@@ -248,6 +249,7 @@ type Plan @versioned {
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   planType: PlanType
+  isDeleted: Boolean
 }
 
 input AddPlanInput {
@@ -316,6 +318,7 @@ type Integration @versioned {
   lastExecutionResultMessage: String
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
+  isDeleted: Boolean
 }
 
 input AddIntegrationInput {
