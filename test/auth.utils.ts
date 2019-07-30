@@ -60,7 +60,7 @@ export class AuthUtils {
                 return;
             }
             try {
-                console.log("AuthUtils.checking tenant state");
+                console.log("\n   AuthUtils.checking tenant state");
                 // Check if tenant has already been setup on this instance
                 let params = await ssm.getParametersByPath({Path: "/App/formsli/dev/", WithDecryption: true}).promise();
                 let state = AuthUtils.findParameter(SSM.State, params.Parameters);
@@ -74,7 +74,7 @@ export class AuthUtils {
                 AuthUtils.initialized = true;
                 resolve();
             } catch (error) {
-                console.log("AuthUtils.checking tenant state - Creating new tenant");
+                console.log("\n   AuthUtils.checking tenant state - Creating new tenant");
                 // Test Tenant has not been setup
                 try {
                     // Set password for Global Admin and save in SSM

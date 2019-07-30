@@ -2,7 +2,6 @@ import Auth, { CognitoUser } from '@aws-amplify/auth';
 import * as url from 'url';
 import { ApiHelper } from "./api.utils";
 import { AuthUtils } from "./auth.utils";
-import {GraphQLResponse} from "./types";
 import * as AWS from 'aws-sdk';
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
@@ -11,7 +10,6 @@ const config = require("../outputs/stack.dev.json");
 Auth.configure(ApiHelper.apiConfig().Auth);
 
 describe("PlanType", () => {
-    const endpoint = url.parse(config["GraphQlApiUrl"]);
     let token: string;
     let planId: string;
     let planVersion: number;
@@ -54,17 +52,6 @@ describe("PlanType", () => {
             }
         `};
 
-        const options = {
-            method: 'POST',
-            body: JSON.stringify(addPlanType),
-            headers: {
-                host: endpoint.host,
-                'Content-Type': 'application/json',
-                Authorization: token,
-            },
-        };
-
-
         try {
             let response = await ApiHelper.makeRequest("addPlanType", addPlanType, token);
             let {status, parsed, hasErrors, errors} = response;
@@ -81,15 +68,15 @@ describe("PlanType", () => {
             expect(parsed.billingTerm).toEqual("Monthly");
             expect(parsed.cost).toEqual(50.0);
             expect(parsed.active).toBeFalsy();
-            done();
         } catch (error) {
             console.error(error);
             fail(error);
         }
+        done();
     });
 
     it("List", async(done) => {
-        const listPlanTypes = {
+        const listAllActivePlanTypes = {
             query: `query {
                 listAllActivePlanTypes {
                     items {
@@ -102,32 +89,19 @@ describe("PlanType", () => {
             }`}
 
         try {
-            const options = {
-                method: 'POST',
-                body: JSON.stringify(listPlanTypes),
-                headers: {
-                    host: endpoint.host,
-                    'Content-Type': 'application/json',
-                    Authorization: token,
-                },
-            };
+            let response = await ApiHelper.makeRequest("listAllActivePlanTypes", listAllActivePlanTypes, token);
+            let {status, parsed, hasErrors, errors} = response;
 
-            const res = await fetch(endpoint.href, options);
-            expect(res.status).toEqual(200);
-            const responseText = await res.text();
-            const response = JSON.parse(responseText) as GraphQLResponse;
-            const hasErrors = response.errors && response.errors.length > 0;
+            expect(status).toEqual(200);
             expect(hasErrors).toBeFalsy("Response should not have errors");
-            hasErrors && done.fail(response.errors[0].message);
+            hasErrors && done.fail(errors[0].message);
+            expect(parsed).toBeDefined();
+            expect(parsed.items).toBeDefined();
 
-            let {data} = response;
-
-            expect(data.listAllActivePlanTypes).toBeDefined();
-            expect(data.listAllActivePlanTypes.items).toBeDefined();
-            done();
         } catch (error) {
             fail(error);
         }
+        done();
     });
 
     it("Update", async (done) => {
@@ -144,35 +118,21 @@ describe("PlanType", () => {
         `};
 
         try {
-            const options = {
-                method: 'POST',
-                body: JSON.stringify(updatePlanType),
-                headers: {
-                    host: endpoint.host,
-                    'Content-Type': 'application/json',
-                    Authorization: token,
-                },
-            };
+            let response = await ApiHelper.makeRequest("updatePlanType", updatePlanType, token);
+            let {status, parsed, hasErrors, errors} = response;
 
-            const res = await fetch(endpoint.href, options);
-            expect(res.status).toEqual(200);
-
-            const responseText = await res.text();
-            const response = JSON.parse(responseText) as GraphQLResponse;
-            const hasErrors = response.errors && response.errors.length > 0;
+            expect(status).toEqual(200);
             expect(hasErrors).toBeFalsy("Response should not have errors");
-            hasErrors && done.fail(response.errors[0].message);
+            hasErrors && done.fail(errors[0].message);
 
-            let {data} = response;
-            expect(data).toBeDefined("Response.data should exist");
-            expect(data.updatePlanType).toBeDefined();
-            expect(data.updatePlanType.billingTerm).toEqual("Quarterly");
-            expect(data.updatePlanType.cost).toEqual(150.0);
-            expect(data.updatePlanType.active).toBeTruthy();
-            done();
+            expect(parsed).toBeDefined("Response.data should exist");
+            expect(parsed.billingTerm).toEqual("Quarterly");
+            expect(parsed.cost).toEqual(150.0);
+            expect(parsed.active).toBeTruthy();
         } catch (error) {
-            done.fail(error);
+            fail(error);
         }
+        done();
     });
 
     it("Delete", async (done) => {
@@ -181,37 +141,23 @@ describe("PlanType", () => {
             {id, name, isDeleted, cost, billingTerm, active, updatedAt, version}
             }
         `};
-        const options = {
-            method: 'POST',
-            body: JSON.stringify(deletePlanType),
-            headers: {
-                host: endpoint.host,
-                'Content-Type': 'application/json',
-                Authorization: token,
-            },
-        };
 
         try {
-            const res = await fetch(endpoint.href, options);
-            expect(res.status).toEqual(200);
+            let response = await ApiHelper.makeRequest("deletePlanType", deletePlanType, token);
+            let {status, parsed, hasErrors, errors} = response;
 
-            const responseText = await res.text();
-            const response = JSON.parse(responseText) as GraphQLResponse;
-
-            const hasErrors = response.errors && response.errors.length > 0;
+            expect(status).toEqual(200);
             expect(hasErrors).toBeFalsy("Response should not have errors");
-            hasErrors && done.fail(response.errors[0].message);
+            hasErrors && done.fail(errors[0].message);
 
-            let {data} = response;
-            expect(data).toBeDefined("Response.data should exist");
-            expect(data.deletePlanType).toBeDefined();
-            expect(data.deletePlanType.billingTerm).toEqual("Quarterly");
-            expect(data.deletePlanType.cost).toEqual(150.0);
-            expect(data.deletePlanType.active).toBeFalsy();
-            expect(data.deletePlanType.isDeleted).toBeTruthy();
-            done();
+            expect(parsed).toBeDefined("Response.data should exist");
+            expect(parsed.billingTerm).toEqual("Quarterly");
+            expect(parsed.cost).toEqual(150.0);
+            expect(parsed.active).toBeFalsy();
+            expect(parsed.isDeleted).toBeTruthy();
         } catch (error) {
             fail(error);
         }
+        done();
     });
 });

@@ -70,7 +70,6 @@ export class ApiHelper {
                 const responseText = await res.text();
                 const response = JSON.parse(responseText) as GraphQLResponse;
                 const hasErrors = response.errors && response.errors.length > 0;
-
                 resolve({
                     raw: res,
                     text: responseText,
