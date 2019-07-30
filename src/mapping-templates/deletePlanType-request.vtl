@@ -13,15 +13,15 @@
     "version" : "2017-02-28",
     "operation" : "UpdateItem",
     "key": {
-        "id":   {"S": "$context.arguments.input.id"},
+        "id":   {"S": "$context.arguments.id"},
         "type": {"S": "PLANTYPE"}
     },
     "update" : {
         "expression" : "SET active = :active, isDeleted = :isDeleted, meta = :meta, updatedAt = :updatedAt",
         "expressionValues": {
-            ":active"   : {"BOOL": false}.
+            ":active"   : {"BOOL": false},
             ":isDeleted": {"BOOL": true},
-            ":meta"     : {"BOOL": false},
+            ":meta"     : {"S": "true"},
             ":updatedAt": {"S" : "$util.time.nowISO8601()"}
         }
     }

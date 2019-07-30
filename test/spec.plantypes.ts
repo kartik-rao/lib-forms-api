@@ -1,7 +1,7 @@
 import Auth, { CognitoUser } from '@aws-amplify/auth';
 import * as url from 'url';
 import apiConfig from "./api.utils";
-import { TestUtils } from "./test.utils";
+import { AuthUtils } from "./auth.utils";
 import {GraphQLResponse} from "./types";
 import * as AWS from 'aws-sdk';
 
@@ -19,8 +19,8 @@ describe("PlanType", () => {
 
     beforeAll(async (done) => {
         try {
-            await TestUtils.setup();
-            user = await Auth.signIn(TestUtils.globalAdmin);
+            await AuthUtils.setup();
+            user = await Auth.signIn(AuthUtils.globalAdmin);
             token = (await Auth.currentSession()).getIdToken().getJwtToken();
             done();
         } catch (error) {
@@ -133,7 +133,6 @@ describe("PlanType", () => {
     });
 
     it("Update", async (done) => {
-        console.log("UPDATE version", planVersion);
         const updatePlanType = {query: `mutation {
             updatePlanType (input: {
                 id: "${planId}",
@@ -167,7 +166,7 @@ describe("PlanType", () => {
             hasErrors && done.fail(response.errors[0].message);
 
             let {data} = response;
-            expect(data).toBeDefined("Response.data should exsit");
+            expect(data).toBeDefined("Response.data should exist");
             expect(data.updatePlanType).toBeDefined();
             expect(data.updatePlanType.billingTerm).toEqual("Quarterly");
             expect(data.updatePlanType.cost).toEqual(150.0);
@@ -181,7 +180,7 @@ describe("PlanType", () => {
     it("Delete", async (done) => {
         const deletePlanType = {query: `mutation {
             deletePlanType (id: "${planId}")
-            {id, name, isDeleted, active, updatedAt, version}
+            {id, name, isDeleted, cost, billingTerm, active, updatedAt, version}
             }
         `};
         const options = {
@@ -201,15 +200,17 @@ describe("PlanType", () => {
             const responseText = await res.text();
             const response = JSON.parse(responseText) as GraphQLResponse;
 
-            expect(response.errors == null || response.errors.length == 0).toBeTruthy("Response should not have errors");
+            const hasErrors = response.errors && response.errors.length > 0;
+            expect(hasErrors).toBeFalsy("Response should not have errors");
+            hasErrors && done.fail(response.errors[0].message);
 
             let {data} = response;
-            expect(data).toBeDefined("Response.data should exsit");
+            expect(data).toBeDefined("Response.data should exist");
             expect(data.deletePlanType).toBeDefined();
             expect(data.deletePlanType.billingTerm).toEqual("Quarterly");
             expect(data.deletePlanType.cost).toEqual(150.0);
             expect(data.deletePlanType.active).toBeFalsy();
-            expect(data.deletePlanType.isDeleted).toBeFalsy();
+            expect(data.deletePlanType.isDeleted).toBeTruthy();
             done();
         } catch (error) {
             fail(error);

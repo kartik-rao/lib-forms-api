@@ -29,7 +29,7 @@ const SSM = {
     AccountViewer : "/App/formsli/dev/tenantAccountViewer",
 }
 
-export class TestUtils {
+export class AuthUtils {
     static globalAdmin: IFormsAppUser;
     static accountAdmin : IFormsAppUser;
     static accountEditor : IFormsAppUser;
@@ -59,14 +59,14 @@ export class TestUtils {
                 console.log("TestUtils.checking tenant state");
                 // Check if tenant has already been setup on this instance
                 let params = await ssm.getParametersByPath({Path: "/App/formsli/dev/", WithDecryption: true}).promise();
-                let state = TestUtils.findParameter(SSM.State, params.Parameters);
+                let state = AuthUtils.findParameter(SSM.State, params.Parameters);
                 if (!state || state != "1") {
                     throw new Error("NotSetup");
                 }
-                TestUtils.globalAdmin = TestUtils.findParameter(SSM.GlobalAdmin, params.Parameters) as IFormsAppUser;
-                TestUtils.accountAdmin = TestUtils.findParameter(SSM.AccountAdmin, params.Parameters) as IFormsAppUser;
-                TestUtils.accountEditor = TestUtils.findParameter(SSM.AccountEditor, params.Parameters) as IFormsAppUser;
-                TestUtils.accountViewer = TestUtils.findParameter(SSM.AccountViewer, params.Parameters) as IFormsAppUser;
+                AuthUtils.globalAdmin = AuthUtils.findParameter(SSM.GlobalAdmin, params.Parameters) as IFormsAppUser;
+                AuthUtils.accountAdmin = AuthUtils.findParameter(SSM.AccountAdmin, params.Parameters) as IFormsAppUser;
+                AuthUtils.accountEditor = AuthUtils.findParameter(SSM.AccountEditor, params.Parameters) as IFormsAppUser;
+                AuthUtils.accountViewer = AuthUtils.findParameter(SSM.AccountViewer, params.Parameters) as IFormsAppUser;
                 resolve();
             } catch (error) {
                 console.log("TestUtils.checking tenant state - Creating new tenant");
@@ -82,27 +82,27 @@ export class TestUtils {
                         Value: JSON.stringify(adminUser),
                         Tier: "Standard"}).promise();
                     await UserPool.adminSetUserPassword({UserPoolId: config['UserPoolId'], Username:config['UserPoolAdminUser'], Password: adminPwd, Permanent: true}).promise();
-                    TestUtils.globalAdmin = adminUser as IFormsAppUser;
+                    AuthUtils.globalAdmin = adminUser as IFormsAppUser;
 
                     // Setup new test tenant and save in SSM
-                    TestUtils.accountAdmin = await TestUtils.setupTenant("P@ssword1", `lib-forms-api ${1e5 * Math.random()}`);
-                    let {username, password} = TestUtils.accountAdmin;
+                    AuthUtils.accountAdmin = await AuthUtils.setupTenant("P@ssword1", `lib-forms-api ${1e5 * Math.random()}`);
+                    let {username, password} = AuthUtils.accountAdmin;
                     await ssm.putParameter({
                         Name: SSM.AccountAdmin,
                         Type: 'String',
-                        Value: JSON.stringify(TestUtils.accountAdmin),
+                        Value: JSON.stringify(AuthUtils.accountAdmin),
                         Tier: "Standard"}).promise();
-                    TestUtils.accountEditor = await TestUtils.inviteUser(username, password, 'Editor');
+                    AuthUtils.accountEditor = await AuthUtils.inviteUser(username, password, 'Editor');
                     await ssm.putParameter({
                         Name: SSM.AccountEditor,
                         Type: 'String',
-                        Value: JSON.stringify(TestUtils.accountEditor),
+                        Value: JSON.stringify(AuthUtils.accountEditor),
                         Tier: "Standard"}).promise();
-                    TestUtils.accountViewer = await TestUtils.inviteUser(username, password, 'Viewer');
+                    AuthUtils.accountViewer = await AuthUtils.inviteUser(username, password, 'Viewer');
                     await ssm.putParameter({
                         Name: SSM.AccountViewer,
                         Type: 'String',
-                        Value: JSON.stringify(TestUtils.accountViewer),
+                        Value: JSON.stringify(AuthUtils.accountViewer),
                         Tier: "Standard"}).promise();
                     await ssm.putParameter({
                         Name: SSM.State,
@@ -145,7 +145,7 @@ export class TestUtils {
                     forceAliasCreation: true
                 });
                 let user = await UserPool.adminGetUser({UserPoolId:config["UserPoolId"], Username: signupResult.userSub} as AdminGetUserRequest).promise();
-                let attributes = TestUtils.attributeListToMap(user.UserAttributes);
+                let attributes = AuthUtils.attributeListToMap(user.UserAttributes);
                 resolve({
                     username: inbox.emailAddress,
                     password: password,
@@ -191,7 +191,7 @@ export class TestUtils {
 
                 const emails = await mailSlurp.getEmails(inbox.id, { minCount: 1 });
                 let email = await mailSlurp.getEmail(emails[0].id);
-                let attributes = TestUtils.attributeListToMap(res.User.Attributes);
+                let attributes = AuthUtils.attributeListToMap(res.User.Attributes);
 
                 resolve({
                     username: attributes['email'],
