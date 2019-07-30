@@ -1,5 +1,4 @@
 import Auth, { CognitoUser } from '@aws-amplify/auth';
-import * as url from 'url';
 import { ApiHelper } from "./api.utils";
 import { AuthUtils } from "./auth.utils";
 import * as AWS from 'aws-sdk';
