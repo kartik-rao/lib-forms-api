@@ -1,5 +1,5 @@
 import Auth from '@aws-amplify/auth';
-import { CognitoUser, CognitoUserSession } from 'amazon-cognito-identity-js';
+import { CognitoUser, CognitoUserSession, CognitoUserAttribute } from 'amazon-cognito-identity-js';
 import { AdminCreateUserResponse, AdminDisableUserRequest, AdminDeleteUserRequest, AdminGetUserRequest, AttributeType } from 'aws-sdk/clients/cognitoidentityserviceprovider';
 import { MailSlurp } from "mailslurp-client";
 const pwdGenerator = require('generate-password');
@@ -90,7 +90,8 @@ export class AuthUtils {
                     AuthUtils.globalAdmin = adminUser as IFormsAppUser;
 
                     // Setup new test tenant and save in SSM
-                    AuthUtils.accountAdmin = await AuthUtils.setupTenant("P@ssword1", `lib-forms-api ${1e5 * Math.random()}`);
+                    const tenantId = new Date().toISOString();
+                    AuthUtils.accountAdmin = await AuthUtils.setupTenant("P@ssword1", `lib-forms-api ${config['Stage']} ${tenantId}`);
                     let {username, password} = AuthUtils.accountAdmin;
                     await ssm.putParameter({
                         Name: SSM.AccountAdmin,
@@ -120,6 +121,22 @@ export class AuthUtils {
                     reject(error);
                 }
             }
+        });
+    }
+
+    static async loadUserAttributes(user: CognitoUser) {
+        return new Promise((resolve, reject) => {
+            user.getUserAttributes((err, result: CognitoUserAttribute[]=[]) => {
+                if(err) {
+                    reject(err);
+                } else {
+                    let attributes = {};
+                    result.map((a) => {
+                        attributes[a.getName()] = a.getValue();
+                    })
+                    resolve(attributes);
+                }
+            })
         });
     }
 
