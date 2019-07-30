@@ -9,11 +9,12 @@
 #if (!$isAdmin == true)
     $utils.unauthorized()
 #end
+#set($attribs = $context.arguments.input)
 {
     "version" : "2017-02-28",
     "operation" : "UpdateItem",
     "key" : {
-        "id" : { "S" : "${context.arguments.id}" }
+        "id" : { "S" : "${attribs.id}" }
     },
 
     ## Set up some space to keep track of things you're updating **
@@ -28,7 +29,7 @@
     $!{expValues.put(":one", { "N" : 1 })}
 
     ## Iterate through each argument, skipping "id" and "expectedVersion" **
-    #foreach( $entry in $context.arguments.entrySet() )
+    #foreach( $entry in $attribs.entrySet() )
         #if( $entry.key != "id" && $entry.key != "expectedVersion" )
             #if( (!$entry.value) && ("$!{entry.value}" == "") )
                 ## If the argument is set to "null", then remove that attribute from the item in DynamoDB **
@@ -92,7 +93,7 @@
     "condition" : {
         "expression"       : "version = :expectedVersion",
         "expressionValues" : {
-            ":expectedVersion" : { "N" : ${context.arguments.expectedVersion} }
+            ":expectedVersion" : { "N" : ${attribs.expectedVersion} }
         }
     }
 }
