@@ -30,11 +30,11 @@ const SSM = {
 }
 
 export class AuthUtils {
-    static globalAdmin: IFormsAppUser;
-    static accountAdmin : IFormsAppUser;
+    static globalAdmin   : IFormsAppUser;
+    static accountAdmin  : IFormsAppUser;
     static accountEditor : IFormsAppUser;
     static accountViewer : IFormsAppUser;
-
+    static initialized   : boolean = false;
     private constructor() {
 
     }
@@ -55,8 +55,12 @@ export class AuthUtils {
     static async setup() {
         return new Promise(async (resolve, reject) => {
             const ssm = new AWS.SSM();
+            if (AuthUtils.initialized == true) {
+                resolve();
+                return;
+            }
             try {
-                console.log("TestUtils.checking tenant state");
+                console.log("AuthUtils.checking tenant state");
                 // Check if tenant has already been setup on this instance
                 let params = await ssm.getParametersByPath({Path: "/App/formsli/dev/", WithDecryption: true}).promise();
                 let state = AuthUtils.findParameter(SSM.State, params.Parameters);
@@ -67,9 +71,10 @@ export class AuthUtils {
                 AuthUtils.accountAdmin = AuthUtils.findParameter(SSM.AccountAdmin, params.Parameters) as IFormsAppUser;
                 AuthUtils.accountEditor = AuthUtils.findParameter(SSM.AccountEditor, params.Parameters) as IFormsAppUser;
                 AuthUtils.accountViewer = AuthUtils.findParameter(SSM.AccountViewer, params.Parameters) as IFormsAppUser;
+                AuthUtils.initialized = true;
                 resolve();
             } catch (error) {
-                console.log("TestUtils.checking tenant state - Creating new tenant");
+                console.log("AuthUtils.checking tenant state - Creating new tenant");
                 // Test Tenant has not been setup
                 try {
                     // Set password for Global Admin and save in SSM
@@ -109,7 +114,8 @@ export class AuthUtils {
                         Type: 'String',
                         Value: "1",
                         Tier: "Standard"}).promise();
-                        resolve();
+                    AuthUtils.initialized = true;
+                    resolve();
                 } catch (error) {
                     reject(error);
                 }

@@ -1,6 +1,6 @@
 import Auth, { CognitoUser } from '@aws-amplify/auth';
 import * as url from 'url';
-import apiConfig from "./api.utils";
+import { ApiHelper } from "./api.utils";
 import { AuthUtils } from "./auth.utils";
 import {GraphQLResponse} from "./types";
 import * as AWS from 'aws-sdk';
@@ -8,11 +8,10 @@ import * as AWS from 'aws-sdk';
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 const config = require("../outputs/stack.dev.json");
 
-Auth.configure(apiConfig.Auth);
+Auth.configure(ApiHelper.apiConfig().Auth);
 
 describe("PlanType", () => {
     const endpoint = url.parse(config["GraphQlApiUrl"]);
-    let user: CognitoUser;
     let token: string;
     let planId: string;
     let planVersion: number;
@@ -20,11 +19,11 @@ describe("PlanType", () => {
     beforeAll(async (done) => {
         try {
             await AuthUtils.setup();
-            user = await Auth.signIn(AuthUtils.globalAdmin);
+            const user: CognitoUser = await Auth.signIn(AuthUtils.globalAdmin);
             token = (await Auth.currentSession()).getIdToken().getJwtToken();
             done();
         } catch (error) {
-            console.error(error);
+            console.error("spec.plantypes - beforeAll - ERROR", error);
             done.fail(error);
         }
     });
@@ -35,10 +34,11 @@ describe("PlanType", () => {
         try {
             await client.delete({TableName : config["FormEntriesTable"], Key: {id: planId, type: "PLANTYPE"}}).promise();
             await Auth.signOut();
+            done();
         } catch (error) {
             console.error("spec.plantypes - afterAll - ERROR", error);
+            done.fail(error);
         }
-        done();
     });
 
     it("Add", async (done) => {
@@ -64,25 +64,23 @@ describe("PlanType", () => {
             },
         };
 
+
         try {
-            const res = await fetch(endpoint.href, options);
-            expect(res.status).toEqual(200);
-            const responseText = await res.text();
-            const response = JSON.parse(responseText) as GraphQLResponse;
-            const hasErrors = response.errors && response.errors.length > 0;
+            let response = await ApiHelper.makeRequest("addPlanType", addPlanType, token);
+            let {status, parsed, hasErrors, errors} = response;
+
+            expect(status).toEqual(200);
             expect(hasErrors).toBeFalsy("Response should not have errors");
-            hasErrors && done.fail(response.errors[0].message);
+            hasErrors && done.fail(errors[0].message);
 
-            let {data} = response;
-
-            expect(data).toBeDefined();
-            planId = data.addPlanType.id;
-            planVersion = data.addPlanType.version;
-            expect(data.addPlanType).toBeDefined();
-            expect(data.addPlanType.name).toEqual(planName);
-            expect(data.addPlanType.billingTerm).toEqual("Monthly");
-            expect(data.addPlanType.cost).toEqual(50.0);
-            expect(data.addPlanType.active).toBeFalsy();
+            expect(parsed).toBeDefined();
+            planId = parsed.id;
+            planVersion = parsed.version;
+            expect(parsed).toBeDefined();
+            expect(parsed.name).toEqual(planName);
+            expect(parsed.billingTerm).toEqual("Monthly");
+            expect(parsed.cost).toEqual(50.0);
+            expect(parsed.active).toBeFalsy();
             done();
         } catch (error) {
             console.error(error);
