@@ -2,6 +2,7 @@ import Auth, { CognitoUser } from '@aws-amplify/auth';
 import * as url from 'url';
 import apiConfig from "./api.utils";
 import { TestUtils } from "./test.utils";
+import {GraphQLResponse} from "./types";
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 const config = require("../outputs/stack.dev.json");
@@ -62,10 +63,13 @@ describe("PlanType", () => {
                     },
                 };
 
-                const response = await fetch(endpoint.href, options);
-                expect(response.status).toEqual(200);
-                const { data } = await response.json();
-                console.log("List.Response Data", data);
+                const res = await fetch(endpoint.href, options);
+                expect(res.status).toEqual(200);
+                const responseText = await res.text();
+                const response = JSON.parse(responseText) as GraphQLResponse;
+                expect(response.errors == null || response.errors.length == 0).toBeTruthy("Response should not have errors");
+                let {data} = response;
+
                 expect(data.listAllActivePlanTypes).toBeDefined();
                 expect(data.listAllActivePlanTypes.items).toBeDefined();
                 done();
@@ -124,25 +128,28 @@ describe("PlanType", () => {
                   Authorization: token,
                 },
             };
-            let response;
+
             try {
-                response = await fetch(endpoint.href, options);
+                const res = await fetch(endpoint.href, options);
+                expect(res.status).toEqual(200);
+                const responseText = await res.text();
+                const response = JSON.parse(responseText) as GraphQLResponse;
+                expect(response.errors == null || response.errors.length == 0).toBeTruthy("Response should not have errors");
+                let {data} = response;
+
+                expect(data).toBeDefined();
+                planId = data.addPlanType.planId;
+                planVersion = data.addPlanType.planVersion;
+                expect(data.addPlanType).toBeDefined();
+                expect(data.addPlanType.name).toEqual(planName);
+                expect(data.addPlanType.billingTerm).toEqual("Monthly");
+                expect(data.addPlanType.cost).toEqual(50.0);
+                expect(data.addPlanType.active).toBeFalsy();
+                done();
             } catch (error) {
-                console.error("Add Error", error);
+                console.error(error);
                 fail(error);
             }
-
-            expect(response.status).toEqual(200);
-            const { data } = await response.json();
-            expect(data).toBeDefined();
-            planId = data.addPlanType.planId;
-            planVersion = data.addPlanType.planVersion;
-            expect(data.addPlanType).toBeDefined();
-            expect(data.addPlanType.name).toEqual(planName);
-            expect(data.addPlanType.billingTerm).toEqual("Monthly");
-            expect(data.addPlanType.cost).toEqual(50.0);
-            expect(data.addPlanType.active).toBeFalsy();
-            done();
         });
 
         it("Update", async (done) => {
@@ -170,17 +177,23 @@ describe("PlanType", () => {
                     },
                 };
 
-                const response = await fetch(endpoint.href, options);
-                expect(response.status).toEqual(200);
-                const { data } = await response.json();
-                expect(data).toBeDefined();
+                const res = await fetch(endpoint.href, options);
+                expect(res.status).toEqual(200);
+
+                const responseText = await res.text();
+                const response = JSON.parse(responseText) as GraphQLResponse;
+
+                expect(response.errors == null || response.errors.length == 0).toBeTruthy("Response should not have errors");
+                let {data} = response;
+                expect(data).toBeDefined("Response.data should exsit");
                 expect(data.updatePlanType).toBeDefined();
                 expect(data.updatePlanType.billingTerm).toEqual("Quarterly");
                 expect(data.addPlanType.cost).toEqual(150.0);
                 expect(data.addPlanType.active).toBeTruthy();
                 done();
             } catch (error) {
-                fail(error);
+                console.error(error);
+                done.fail(error);
             }
         });
 

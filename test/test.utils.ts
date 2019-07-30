@@ -67,8 +67,6 @@ export class TestUtils {
                 TestUtils.accountAdmin = TestUtils.findParameter(SSM.AccountAdmin, params.Parameters) as IFormsAppUser;
                 TestUtils.accountEditor = TestUtils.findParameter(SSM.AccountEditor, params.Parameters) as IFormsAppUser;
                 TestUtils.accountViewer = TestUtils.findParameter(SSM.AccountViewer, params.Parameters) as IFormsAppUser;
-                console.log("PARAMS", params.Parameters);
-                console.log("GLOBAL ADMIN", TestUtils.globalAdmin);
                 resolve();
             } catch (error) {
                 console.log("TestUtils.checking tenant state - Creating new tenant");
