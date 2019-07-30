@@ -2,7 +2,7 @@ import Auth from '@aws-amplify/auth';
 import { CognitoUser, CognitoUserSession } from 'amazon-cognito-identity-js';
 import { AdminCreateUserResponse, AdminDisableUserRequest, AdminDeleteUserRequest, AdminGetUserRequest, AttributeType } from 'aws-sdk/clients/cognitoidentityserviceprovider';
 import { MailSlurp } from "mailslurp-client";
-
+const pwdGenerator = require('generate-password');
 import * as AWS from 'aws-sdk';
 const config = require("../outputs/stack.dev.json");
 const mailSlurp = new MailSlurp({ apiKey: "85117a16750ebeb8c6e659c6e9984ac0290557c2dfa90df89d54fc72b170ac8a" })
@@ -20,21 +20,17 @@ interface IFormsAppUser {
     group: string,
     attributes: any
 }
-const TenantStateParameter = "/App/formsli/dev/tenantstate";
-const TenantAccountAdmin   = "/App/formsli/dev/tenantAccountAdmin";
-const TenantAccountEditor  = "/App/formsli/dev/tenantAccountEditor";
-const TenantAccountViewer  = "/App/formsli/dev/tenantAccountViewer";
+
+const SSM = {
+    State : "/App/formsli/dev/tenantState",
+    GlobalAdmin : "/App/formsli/dev/globalAdmin",
+    AccountAdmin : "/App/formsli/dev/tenantAccountAdmin",
+    AccountEditor : "/App/formsli/dev/tenantAccountEditor",
+    AccountViewer : "/App/formsli/dev/tenantAccountViewer",
+}
 
 export class TestUtils {
-    static globalAdmin: IFormsAppUser = {
-        username: config["UserPoolAdminUser"],
-        password: "Pd8Ohek..",
-        group: "Admin",
-        tenantName: null,
-        attributes: null,
-        usersub: null
-    }
-
+    static globalAdmin: IFormsAppUser;
     static accountAdmin : IFormsAppUser;
     static accountEditor : IFormsAppUser;
     static accountViewer : IFormsAppUser;
@@ -43,47 +39,75 @@ export class TestUtils {
 
     }
 
+    static findParameter(key:string, params: AWS.SSM.Parameter[] = [], noParse: boolean = false) : any {
+        let param = params.find((p) => {
+            return p.Name == key;
+        });
+
+        if(param) {
+            if (noParse) {
+                return param.Value;
+            }
+            return JSON.parse(param.Value);
+        }
+    }
+
     static async setup() {
         return new Promise(async (resolve, reject) => {
             const ssm = new AWS.SSM();
             try {
                 console.log("TestUtils.checking tenant state");
                 // Check if tenant has already been setup on this instance
-                await ssm.getParameter({Name: TenantStateParameter, WithDecryption: true}).promise();
-                let taa = await ssm.getParameter({Name: TenantAccountAdmin, WithDecryption: true}).promise();
-                TestUtils.accountAdmin = JSON.parse(taa.Parameter.Value) as IFormsAppUser;
-
-                let tae = await ssm.getParameter({Name: TenantAccountEditor, WithDecryption: true}).promise();
-                TestUtils.accountEditor = JSON.parse(tae.Parameter.Value) as IFormsAppUser;
-
-                let tav = await ssm.getParameter({Name: TenantAccountViewer, WithDecryption: true}).promise();
-                TestUtils.accountViewer = JSON.parse(tav.Parameter.Value) as IFormsAppUser;
+                let params = await ssm.getParametersByPath({Path: "/App/formsli/dev/", WithDecryption: true}).promise();
+                let state = TestUtils.findParameter(SSM.State, params.Parameters);
+                if (!state || state != "1") {
+                    throw new Error("NotSetup");
+                }
+                TestUtils.globalAdmin = TestUtils.findParameter(SSM.GlobalAdmin, params.Parameters) as IFormsAppUser;
+                TestUtils.accountAdmin = TestUtils.findParameter(SSM.AccountAdmin, params.Parameters) as IFormsAppUser;
+                TestUtils.accountEditor = TestUtils.findParameter(SSM.AccountEditor, params.Parameters) as IFormsAppUser;
+                TestUtils.accountViewer = TestUtils.findParameter(SSM.AccountViewer, params.Parameters) as IFormsAppUser;
+                console.log("PARAMS", params.Parameters);
+                console.log("GLOBAL ADMIN", TestUtils.globalAdmin);
                 resolve();
             } catch (error) {
                 console.log("TestUtils.checking tenant state - Creating new tenant");
                 // Test Tenant has not been setup
                 try {
+                    // Set password for Global Admin and save in SSM
+                    let adminPwd = pwdGenerator.generate({length:8, numbers: true, symbols: true, uppercase: true, strict: true});
+                    let adminUser = { username: config["UserPoolAdminUser"], password: adminPwd, group: "Admin"};
+                    await ssm.putParameter({
+                        Name: SSM.GlobalAdmin,
+                        Type: 'String',
+                        Overwrite: true,
+                        Value: JSON.stringify(adminUser),
+                        Tier: "Standard"}).promise();
+                    await UserPool.adminSetUserPassword({UserPoolId: config['UserPoolId'], Username:config['UserPoolAdminUser'], Password: adminPwd, Permanent: true}).promise();
+                    TestUtils.globalAdmin = adminUser as IFormsAppUser;
+
+                    // Setup new test tenant and save in SSM
                     TestUtils.accountAdmin = await TestUtils.setupTenant("P@ssword1", `lib-forms-api ${1e5 * Math.random()}`);
                     let {username, password} = TestUtils.accountAdmin;
                     await ssm.putParameter({
-                        Name: TenantAccountAdmin,
+                        Name: SSM.AccountAdmin,
                         Type: 'String',
                         Value: JSON.stringify(TestUtils.accountAdmin),
                         Tier: "Standard"}).promise();
                     TestUtils.accountEditor = await TestUtils.inviteUser(username, password, 'Editor');
                     await ssm.putParameter({
-                        Name: TenantAccountEditor,
+                        Name: SSM.AccountEditor,
                         Type: 'String',
                         Value: JSON.stringify(TestUtils.accountEditor),
                         Tier: "Standard"}).promise();
                     TestUtils.accountViewer = await TestUtils.inviteUser(username, password, 'Viewer');
                     await ssm.putParameter({
-                        Name: TenantAccountViewer,
+                        Name: SSM.AccountViewer,
                         Type: 'String',
                         Value: JSON.stringify(TestUtils.accountViewer),
                         Tier: "Standard"}).promise();
                     await ssm.putParameter({
-                        Name: TenantStateParameter,
+                        Name: SSM.State,
                         Type: 'String',
                         Value: "1",
                         Tier: "Standard"}).promise();
