@@ -1,157 +1,157 @@
 - dataSource: AppData
   type: Query
   field: getUser
-  request: getUser-request.vtl
-  response: passthrough-response.vtl
+  request: getUser_REQ.vtl
+  response: passthrough_RES.vtl
 - dataSource: AppData
   type: Query
   field: getAccount
-  request: getAccount-request.vtl
-  response: passthrough-response.vtl
+  request: getAccount_REQ.vtl
+  response: passthrough_RES.vtl
 # Account.plan
 - dataSource: AppData
   type: Account
   field: plan
-  request: getAccountPlan-request.vtl
-  response: getAccountPlan-response.vtl
+  request: getAccountPlan_REQ.vtl
+  response: getAccountPlan_RES.vtl
 # Plan.planType
 - dataSource: AppData
   type: Plan
   field: planType
-  request: getPlanPlanType-request.vtl
-  response: getPlanPlanType-response.vtl
+  request: getPlanPlanType_REQ.vtl
+  response: getPlanPlanType_RES.vtl
 # Account.ownedBy
 - dataSource: AppData
   type: Account
   field: ownedBy
-  request: getOwnedBy-request.vtl
-  response: getOwnedBy-response.vtl
+  request: getOwnedBy_REQ.vtl
+  response: getOwnedBy_RES.vtl
 # Account.forms
 - dataSource: AppData
   type: Account
   field: forms
-  request: getAccountForms-request.vtl
-  response: getAccountForms-response.vtl
+  request: getAccountForms_REQ.vtl
+  response: getAccountForms_RES.vtl
 # Account.users
 - dataSource: AppData
   type: Account
   field: users
-  request: getAccountUsers-request.vtl
-  response: getAccountUsers-response.vtl
+  request: getAccountUsers_REQ.vtl
+  response: getAccountUsers_RES.vtl
 - dataSource: AppData
   type: Query
   field: getForm
-  request: getForm-request.vtl
-  response: passthrough-response.vtl
+  request: getForm_REQ.vtl
+  response: passthrough_RES.vtl
 # Form.ownedBy
 - dataSource: AppData
   type: Form
   field: ownedBy
-  request: getOwnedBy-request.vtl
-  response: getOwnedBy-response.vtl
+  request: getOwnedBy_REQ.vtl
+  response: getOwnedBy_RES.vtl
 # Form.account
 - dataSource: AppData
   type: Form
   field: account
-  request: getParentAccount-request.vtl
-  response: getParentAccount-response.vtl
+  request: getParentAccount_REQ.vtl
+  response: getParentAccount_RES.vtl
 # Form.formData
 - dataSource: AppData
   type: Form
   field: formData
-  request: getFormVersion-request.vtl
-  response: passthrough-response.vtl
+  request: getFormVersion_REQ.vtl
+  response: passthrough_RES.vtl
 # Form.versions
 - dataSource: AppData
   type: Form
   field: versions
-  request: getFormVersions-request.vtl
-  response: passthrough-paginated-response.vtl
+  request: getFormVersions_REQ.vtl
+  response: passthrough-paginated_RES.vtl
 - dataSource: AppData
   type: Query
   field: listAllAccounts
-  request: listAllAccounts-request.vtl
-  response: passthrough-paginated-response.vtl
+  request: listAllAccounts_REQ.vtl
+  response: passthrough-paginated_RES.vtl
 - dataSource: AppData
   type: Query
   field: listAllForms
-  request: listAllForms-request.vtl
-  response: passthrough-paginated-response.vtl
+  request: listAllForms_REQ.vtl
+  response: passthrough-paginated_RES.vtl
 - dataSource: AppData
   type: Query
   field: listAllUsers
-  request: listAllUsers-request.vtl
-  response: passthrough-paginated-response.vtl
+  request: listAllUsers_REQ.vtl
+  response: passthrough-paginated_RES.vtl
 - dataSource: AppData
   type: Query
   field: getPlan
-  request: getPlan-request.vtl
-  response: passthrough-response.vtl
+  request: getPlan_REQ.vtl
+  response: passthrough_RES.vtl
 - dataSource: AppData
   type: Query
   field: getPlanType
-  request: getPlanType-request.vtl
-  response: passthrough-response.vtl
+  request: getPlanType_REQ.vtl
+  response: passthrough_RES.vtl
 - dataSource: AppData
   type: Query
   field: listAllPlanTypes
-  request: listAllPlanTypes-request.vtl
-  response: passthrough-paginated-response.vtl
+  request: listAllPlanTypes_REQ.vtl
+  response: passthrough-paginated_RES.vtl
 - dataSource: AppData
   type: Query
   field: listAllActivePlanTypes
-  request: listAllActivePlanTypes-request.vtl
-  response: passthrough-paginated-response.vtl
+  request: listAllActivePlanTypes_REQ.vtl
+  response: passthrough-paginated_RES.vtl
 - dataSource: AppData
   type: Query
   field: listAllAccountForms
-  request: getAccountForms-request.vtl
-  response: getAccountForms-response.vtl
+  request: getAccountForms_REQ.vtl
+  response: getAccountForms_RES.vtl
 - dataSource: AppData
   type: Mutation
   field: addAccount
-  request: addAccount-request.vtl
-  response: passthrough-response.vtl
+  request: addAccount_REQ.vtl
+  response: passthrough_RES.vtl
 - dataSource: AppData
   type: Mutation
   field: addPlanType
-  request: addPlanType-request.vtl
-  response: passthrough-response.vtl
+  request: addPlanType_REQ.vtl
+  response: passthrough_RES.vtl
 - dataSource: AppData
   type: Mutation
   field: updatePlanType
-  request: updatePlanType-request.vtl
-  response: passthrough-response.vtl
+  request: updatePlanType_REQ.vtl
+  response: passthrough_RES.vtl
 - dataSource: AppData
   type: Mutation
   field: deletePlanType
-  request: deletePlanType-request.vtl
-  response: passthrough-response.vtl
+  request: deletePlanType_REQ.vtl
+  response: passthrough_RES.vtl
 - dataSource: AppData
   type: Mutation
   field: addPlan
-  request: addPlan-request.vtl
-  response: passthrough-response.vtl
+  request: addPlan_REQ.vtl
+  response: passthrough_RES.vtl
 - dataSource: AppData
   type: Mutation
   field: addUser
-  request: addUser-request.vtl
-  response: passthrough-response.vtl
+  request: addUser_REQ.vtl
+  response: passthrough_RES.vtl
 - dataSource: AppData
   type: Mutation
   field: addForm
-  request: addForm-request.vtl
-  response: addForm-response.vtl
+  request: addForm_REQ.vtl
+  response: addForm_RES.vtl
 - dataSource: AppData
   type: Mutation
   field: addFormVersion
-  request: addFormVersion-request.vtl
-  response: passthrough-response.vtl
+  request: addFormVersion_REQ.vtl
+  response: passthrough_RES.vtl
 # - dataSource:  AppData
 #   type: Mutation
 #   field: testPipeline
-#   request: authorize-request.vtl
-#   response: authorize-response.vtl
+#   request: authorize_REQ.vtl
+#   response: authorize_RES.vtl
 #   kind: PIPELINE
 #   functions:
 #     - authorizeFunction
