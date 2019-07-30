@@ -3,6 +3,7 @@ import * as url from 'url';
 import apiConfig from "./api.utils";
 import { TestUtils } from "./test.utils";
 import {GraphQLResponse} from "./types";
+import * as AWS from 'aws-sdk';
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 const config = require("../outputs/stack.dev.json");
@@ -11,196 +12,207 @@ Auth.configure(apiConfig.Auth);
 
 describe("PlanType", () => {
     const endpoint = url.parse(config["GraphQlApiUrl"]);
+    let user: CognitoUser;
+    let token: string;
+    let planId: string;
+    let planVersion: number;
 
     beforeAll(async (done) => {
-        await TestUtils.setup();
-        await Auth.signOut();
-        done();
+        try {
+            await TestUtils.setup();
+            user = await Auth.signIn(TestUtils.globalAdmin);
+            token = (await Auth.currentSession()).getIdToken().getJwtToken();
+            done();
+        } catch (error) {
+            console.error(error);
+            done.fail(error);
+        }
     });
 
     afterAll(async (done) => {
-        await Auth.signOut();
+        // Hard delete from dynamo
+        let client = new AWS.DynamoDB.DocumentClient();
+        try {
+            await client.delete({TableName : config["FormEntriesTable"], Key: {id: planId, type: "PLANTYPE"}}).promise();
+            await Auth.signOut();
+        } catch (error) {
+            console.error("spec.plantypes - afterAll - ERROR", error);
+        }
         done();
     });
 
-    describe("Queries", () => {
-        let user: CognitoUser;
-        let token: string;
-
-        beforeAll(async(done) => {
-            let {username, password} = TestUtils.accountAdmin;
-            user = await Auth.signIn(username, password);
-            token = (await Auth.currentSession()).getIdToken().getJwtToken();
-            done();
-        });
-
-        afterAll( async (done) => {
-            await Auth.signOut();
-            done();
-        });
-
-        it("List", async(done) => {
-            const listPlanTypes = {
-                query: `query {
-                    listAllActivePlanTypes {
-                      items {
-                        id,
-                        name,
-                        cost
-                      },
-                      nextToken
-                    }
-                }`}
-
-            try {
-                const options = {
-                    method: 'POST',
-                    body: JSON.stringify(listPlanTypes),
-                    headers: {
-                      host: endpoint.host,
-                      'Content-Type': 'application/json',
-                      Authorization: token,
-                    },
-                };
-
-                const res = await fetch(endpoint.href, options);
-                expect(res.status).toEqual(200);
-                const responseText = await res.text();
-                const response = JSON.parse(responseText) as GraphQLResponse;
-                expect(response.errors == null || response.errors.length == 0).toBeTruthy("Response should not have errors");
-                let {data} = response;
-
-                expect(data.listAllActivePlanTypes).toBeDefined();
-                expect(data.listAllActivePlanTypes.items).toBeDefined();
-                done();
-            } catch (error) {
-                fail(error);
+    it("Add", async (done) => {
+        let planName = `Test Plan - ${Math.random()}`
+        const addPlanType = {query: `mutation {
+            addPlanType (input: {
+                name: "${planName}",
+                billingTerm: "Monthly",
+                cost: 50,
+                active: false
+            })
+            {id, name, billingTerm, cost, version, createdAt, updatedAt}
             }
-        });
+        `};
+
+        const options = {
+            method: 'POST',
+            body: JSON.stringify(addPlanType),
+            headers: {
+                host: endpoint.host,
+                'Content-Type': 'application/json',
+                Authorization: token,
+            },
+        };
+
+        try {
+            const res = await fetch(endpoint.href, options);
+            expect(res.status).toEqual(200);
+            const responseText = await res.text();
+            const response = JSON.parse(responseText) as GraphQLResponse;
+            const hasErrors = response.errors && response.errors.length > 0;
+            expect(hasErrors).toBeFalsy("Response should not have errors");
+            hasErrors && done.fail(response.errors[0].message);
+
+            let {data} = response;
+
+            expect(data).toBeDefined();
+            planId = data.addPlanType.id;
+            planVersion = data.addPlanType.version;
+            expect(data.addPlanType).toBeDefined();
+            expect(data.addPlanType.name).toEqual(planName);
+            expect(data.addPlanType.billingTerm).toEqual("Monthly");
+            expect(data.addPlanType.cost).toEqual(50.0);
+            expect(data.addPlanType.active).toBeFalsy();
+            done();
+        } catch (error) {
+            console.error(error);
+            fail(error);
+        }
     });
 
-    describe("Mutations", () => {
-        let user: CognitoUser;
-        let token: string;
-        let planId: string;
-        let planVersion;
-        beforeAll(async (done) => {
-            try {
-                user = await Auth.signIn(TestUtils.globalAdmin);
-                token = (await Auth.currentSession()).getIdToken().getJwtToken();
-                done();
-            } catch (error) {
-                console.error(error);
-                done.fail(error);
-                throw error;
-            }
-        });
+    it("List", async(done) => {
+        const listPlanTypes = {
+            query: `query {
+                listAllActivePlanTypes {
+                    items {
+                    id,
+                    name,
+                    cost
+                    },
+                    nextToken
+                }
+            }`}
 
-        afterAll(async (done) => {
-            // REMOVE THIS TEST PLAN
-            await Auth.signOut();
-            done();
-        });
-
-        it("Security", async (done) => {
-            done();
-        });
-
-        it("Add", async (done) => {
-            let planName = `Test Plan - ${Math.random()}`
-            const addPlanType = {query: `mutation {
-                addPlanType (input: {
-                  name: "${planName}",
-                  billingTerm: "Monthly",
-                  cost: 50,
-                  active: false
-                })
-                {id, name, billingTerm, cost, version, createdAt, updatedAt}
-              }
-            `};
-
+        try {
             const options = {
                 method: 'POST',
-                body: JSON.stringify(addPlanType),
+                body: JSON.stringify(listPlanTypes),
                 headers: {
-                  host: endpoint.host,
-                  'Content-Type': 'application/json',
-                  Authorization: token,
+                    host: endpoint.host,
+                    'Content-Type': 'application/json',
+                    Authorization: token,
                 },
             };
 
-            try {
-                const res = await fetch(endpoint.href, options);
-                expect(res.status).toEqual(200);
-                const responseText = await res.text();
-                const response = JSON.parse(responseText) as GraphQLResponse;
-                expect(response.errors == null || response.errors.length == 0).toBeTruthy("Response should not have errors");
-                let {data} = response;
+            const res = await fetch(endpoint.href, options);
+            expect(res.status).toEqual(200);
+            const responseText = await res.text();
+            const response = JSON.parse(responseText) as GraphQLResponse;
+            const hasErrors = response.errors && response.errors.length > 0;
+            expect(hasErrors).toBeFalsy("Response should not have errors");
+            hasErrors && done.fail(response.errors[0].message);
 
-                expect(data).toBeDefined();
-                planId = data.addPlanType.planId;
-                planVersion = data.addPlanType.planVersion;
-                expect(data.addPlanType).toBeDefined();
-                expect(data.addPlanType.name).toEqual(planName);
-                expect(data.addPlanType.billingTerm).toEqual("Monthly");
-                expect(data.addPlanType.cost).toEqual(50.0);
-                expect(data.addPlanType.active).toBeFalsy();
-                done();
-            } catch (error) {
-                console.error(error);
-                fail(error);
-            }
-        });
+            let {data} = response;
 
-        it("Update", async (done) => {
-            let planName = `Test Plan - ${Math.random()}`
-            const updatePlanType = {query: `mutation {
-                updatePlanType (input: {
-                    id: "${planId}",
-                    billingTerm: "Quarterly",
-                    cost: 150,
-                    active: true,
-                    expectedVersion: ${planVersion}
-                })
-                {id, name, billingTerm, cost, active, updatedAt, version}
-              }
-            `};
-
-            try {
-                const options = {
-                    method: 'POST',
-                    body: JSON.stringify(updatePlanType),
-                    headers: {
-                      host: endpoint.host,
-                      'Content-Type': 'application/json',
-                      Authorization: token,
-                    },
-                };
-
-                const res = await fetch(endpoint.href, options);
-                expect(res.status).toEqual(200);
-
-                const responseText = await res.text();
-                const response = JSON.parse(responseText) as GraphQLResponse;
-
-                expect(response.errors == null || response.errors.length == 0).toBeTruthy("Response should not have errors");
-                let {data} = response;
-                expect(data).toBeDefined("Response.data should exsit");
-                expect(data.updatePlanType).toBeDefined();
-                expect(data.updatePlanType.billingTerm).toEqual("Quarterly");
-                expect(data.addPlanType.cost).toEqual(150.0);
-                expect(data.addPlanType.active).toBeTruthy();
-                done();
-            } catch (error) {
-                console.error(error);
-                done.fail(error);
-            }
-        });
-
-        it("Delete", async (done) => {
+            expect(data.listAllActivePlanTypes).toBeDefined();
+            expect(data.listAllActivePlanTypes.items).toBeDefined();
             done();
-        });
-
+        } catch (error) {
+            fail(error);
+        }
     });
 
-})
+    it("Update", async (done) => {
+        console.log("UPDATE version", planVersion);
+        const updatePlanType = {query: `mutation {
+            updatePlanType (input: {
+                id: "${planId}",
+                billingTerm: "Quarterly",
+                cost: 150,
+                active: true,
+                expectedVersion: ${planVersion}
+            })
+            {id, name, billingTerm, cost, active, updatedAt, version}
+            }
+        `};
+
+        try {
+            const options = {
+                method: 'POST',
+                body: JSON.stringify(updatePlanType),
+                headers: {
+                    host: endpoint.host,
+                    'Content-Type': 'application/json',
+                    Authorization: token,
+                },
+            };
+
+            const res = await fetch(endpoint.href, options);
+            expect(res.status).toEqual(200);
+
+            const responseText = await res.text();
+            const response = JSON.parse(responseText) as GraphQLResponse;
+            const hasErrors = response.errors && response.errors.length > 0;
+            expect(hasErrors).toBeFalsy("Response should not have errors");
+            hasErrors && done.fail(response.errors[0].message);
+
+            let {data} = response;
+            expect(data).toBeDefined("Response.data should exsit");
+            expect(data.updatePlanType).toBeDefined();
+            expect(data.updatePlanType.billingTerm).toEqual("Quarterly");
+            expect(data.updatePlanType.cost).toEqual(150.0);
+            expect(data.updatePlanType.active).toBeTruthy();
+            done();
+        } catch (error) {
+            done.fail(error);
+        }
+    });
+
+    it("Delete", async (done) => {
+        const deletePlanType = {query: `mutation {
+            deletePlanType (id: "${planId}")
+            {id, name, isDeleted, active, updatedAt, version}
+            }
+        `};
+        const options = {
+            method: 'POST',
+            body: JSON.stringify(deletePlanType),
+            headers: {
+                host: endpoint.host,
+                'Content-Type': 'application/json',
+                Authorization: token,
+            },
+        };
+
+        try {
+            const res = await fetch(endpoint.href, options);
+            expect(res.status).toEqual(200);
+
+            const responseText = await res.text();
+            const response = JSON.parse(responseText) as GraphQLResponse;
+
+            expect(response.errors == null || response.errors.length == 0).toBeTruthy("Response should not have errors");
+
+            let {data} = response;
+            expect(data).toBeDefined("Response.data should exsit");
+            expect(data.deletePlanType).toBeDefined();
+            expect(data.deletePlanType.billingTerm).toEqual("Quarterly");
+            expect(data.deletePlanType.cost).toEqual(150.0);
+            expect(data.deletePlanType.active).toBeFalsy();
+            expect(data.deletePlanType.isDeleted).toBeFalsy();
+            done();
+        } catch (error) {
+            fail(error);
+        }
+    });
+});
