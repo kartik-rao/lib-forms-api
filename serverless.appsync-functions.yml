@@ -1,0 +1,5 @@
+- dataSource: AppData
+  type: Query
+  name: getAccountFN
+  request: getAccount_REQ.vtl
+  response: pipeline_passthrough_RES.vtl

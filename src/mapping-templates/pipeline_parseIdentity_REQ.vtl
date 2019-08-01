@@ -1,0 +1,22 @@
+## Store tenantId, group in stash
+$util.qr($ctx.stash.put("tenantId", $context.identity.claims.get("custom:tenantId")))
+$util.qr($ctx.stash.put("callerId", $ctx.identity.sub))
+#foreach($group in $context.identity.claims.get("cognito:groups"))
+    #if($group == "Admin")
+        #set($isAdmin = true)
+        $util.qr($ctx.stash.put("isAdmin", true))
+    #end
+    #if($group == "AccountAdmin")
+        #set($isAccountAdmin = true)
+        $util.qr($ctx.stash.put("isAccountAdmin", true))
+    #end
+    #if($group == "AccountEditor")
+        #set($isAccountAdmin = true)
+        $util.qr($ctx.stash.put("isAccountEditor", true))
+    #end
+    #if($group == "AccountViewer")
+        #set($isAccountAdmin = true)
+        $util.qr($ctx.stash.put("isAccountViewer", true))
+    #end
+#end
+{}

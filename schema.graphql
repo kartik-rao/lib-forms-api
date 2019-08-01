@@ -357,6 +357,7 @@ type PaginatedIntegration {
 }
 
 type Query {
+  getAccountPipeline(accountId: ID!): Account
   getAccount(accountId: ID!): Account
   listAllAccounts(limit: Int, nextToken: String): PaginatedAccount!
   getUser(userId: ID!): User

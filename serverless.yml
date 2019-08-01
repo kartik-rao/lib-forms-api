@@ -117,6 +117,7 @@ custom:
           tableName: ${self:provider.environment.table_form_entries} # Where AppDataTable is a dynamodb table defined in Resources
     mappingTemplatesLocation: src/mapping-templates
     mappingTemplates: ${file(serverless.appsync-mappings.yml)}
+    functionConfigurations: ${file(serverless.appsync-functions.yml)}
     ## Add substitutions here to replace all hardcoded table/index names in mapping templates
     substitutions:
       # ${exampleVar1} will be replaced with given value in all mapping templates

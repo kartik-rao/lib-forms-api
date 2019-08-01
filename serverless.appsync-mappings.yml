@@ -147,20 +147,11 @@
   field: addFormVersion
   request: addFormVersion_REQ.vtl
   response: passthrough_RES.vtl
-# - dataSource:  AppData
-#   type: Mutation
-#   field: testPipeline
-#   request: authorize_REQ.vtl
-#   response: authorize_RES.vtl
-#   kind: PIPELINE
-#   functions:
-#     - authorizeFunction
-# - dataSource: AppData
-#   type: Mutation
-#   field: attachPlan
-#   request: createAccountPlan-before.vtl
-#   response: createAccountPlan-after.vtl
-#   kind: PIPELINE
-#   functions:
-#     - addPlan
-#     - updateAccount
+- dataSource: AppData
+  type: Query
+  field: getAccountPipeline
+  request: pipeline_parseIdentity_REQ.vtl
+  response: pipeline_passthrough_RES.vtl
+  kind: PIPELINE
+  functions:
+    - getAccountFN
