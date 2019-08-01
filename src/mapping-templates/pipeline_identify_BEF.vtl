@@ -1,6 +1,7 @@
 ## Store tenantId, group in stash
 $util.qr($ctx.stash.put("tenantId", $context.identity.claims.get("custom:tenantId")))
 $util.qr($ctx.stash.put("callerId", $ctx.identity.sub))
+$util.qr($ctx.stash.put("context", $util.toJson($ctx)))
 #foreach($group in $context.identity.claims.get("cognito:groups"))
     #if($group == "Admin")
         #set($isAdmin = true)

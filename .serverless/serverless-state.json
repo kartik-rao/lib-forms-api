@@ -207,7 +207,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1564642924741-2019-08-01T07:02:04.741Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1564652589290-2019-08-01T09:43:09.290Z/formsli.zip"
               },
               "FunctionName": "formsli-postconfirmation",
               "Handler": "src/postconfirmation.handle",
@@ -238,14 +238,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "PostConfirmationLambdaVersionsI1GBLYvbvUT6JXShookdPhotNZdWWNIxoVpE0nImg": {
+          "PostConfirmationLambdaVersionOQQzX6oz8SlWRNAYgOwLjsHXSURNvPnmStTQZufeY": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "PostConfirmationLambdaFunction"
               },
-              "CodeSha256": "xAQzUJnq27eiorGqFg8oqRguYoj6vraybaGOB/T7P04="
+              "CodeSha256": "E2rsQxqd8xSBsiw7eTuzm3XWhRVyxzHfvp8Qa3i4qh8="
             }
           },
           "SignupLambdaFunction": {
@@ -255,7 +255,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1564642924741-2019-08-01T07:02:04.741Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1564652589290-2019-08-01T09:43:09.290Z/formsli.zip"
               },
               "FunctionName": "formsli-invite",
               "Handler": "src/invite.handle",
@@ -286,14 +286,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "SignupLambdaVersion26kCohcSix2yZBGxaY19dt4JkMW3R4AsbvEembVM": {
+          "SignupLambdaVersiongoG6XsNRwX01kxI0p6FTRon4GM71EzQNeKKlZDqItg": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SignupLambdaFunction"
               },
-              "CodeSha256": "xAQzUJnq27eiorGqFg8oqRguYoj6vraybaGOB/T7P04="
+              "CodeSha256": "E2rsQxqd8xSBsiw7eTuzm3XWhRVyxzHfvp8Qa3i4qh8="
             }
           },
           "ApiGatewayRestApi": {
@@ -520,7 +520,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1564642890919": {
+          "ApiGatewayDeployment1564652566989": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -1613,28 +1613,7 @@
                 ]
               },
               "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"GetItem\",\n    \"key\": {\n        \"id\"  : {\"S\": \"${attribs.accountId}\"},\n        \"type\": {\"S\": \"ACCOUNT\"}\n    }\n}",
-              "ResponseMappingTemplate": "$util.qr($ctx.stash.put(\"tenant\", $context.identity.claims.get(\"custom:tenantId\")))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($ctx.stash.put(\"isAccountAdmin\", true))\n    #end\n#end\n\n#if($ctx.result.owner == $context.identity.sub)\n    #set($isRecordOwner = true)\n#end\n#if($isAdmin == true || $ctx.result.type == \"PLANTYPE\" || $ctx.result.type == \"INTEGRATIONTYPE\")\n    #set($isAllowed = true)\n#elseif (($ctx.result.accountId == $ctx.stash.tenant) && $isAccountAdmin == true)\n    #set($isAllowed = true)\n#else\n    #set($isAllowed = $isRecordOwner == true)\n#end\n\n$util.qr($ctx.stash.put(\"recordType\", $ctx.result.type))\n$util.qr($ctx.stash.put(\"isRecordOwner\", $isRecordOwner))\n$util.qr($ctx.stash.put(\"authResult\", $isAllowed))\n\n## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n## Pass back the result from DynamoDB\n#if ($isAllowed == true)\n    $util.toJson($ctx.result)\n#else\n    $utils.unauthorized()\n#end",
-              "FunctionVersion": "2018-05-29"
-            }
-          },
-          "GraphQlFunctionConfigurationgetAccount": {
-            "Type": "AWS::AppSync::FunctionConfiguration",
-            "Properties": {
-              "ApiId": {
-                "Fn::GetAtt": [
-                  "GraphQlApi",
-                  "ApiId"
-                ]
-              },
-              "Name": "GraphQlFunctionConfigurationgetAccount",
-              "DataSourceName": {
-                "Fn::GetAtt": [
-                  "GraphQlDsAppData",
-                  "Name"
-                ]
-              },
-              "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\" : \"2017-02-28\",\n    \"operation\" : \"GetItem\",\n    \"key\": {\n        \"id\"  : {\"S\": \"${attribs.accountId}\"},\n        \"type\": {\"S\": \"ACCOUNT\"}\n    }\n}",
-              "ResponseMappingTemplate": "$util.qr($ctx.stash.put(\"tenant\", $context.identity.claims.get(\"custom:tenantId\")))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($ctx.stash.put(\"isAccountAdmin\", true))\n    #end\n#end\n\n#if($ctx.result.owner == $context.identity.sub)\n    #set($isRecordOwner = true)\n#end\n#if($isAdmin == true || $ctx.result.type == \"PLANTYPE\" || $ctx.result.type == \"INTEGRATIONTYPE\")\n    #set($isAllowed = true)\n#elseif (($ctx.result.accountId == $ctx.stash.tenant) && $isAccountAdmin == true)\n    #set($isAllowed = true)\n#else\n    #set($isAllowed = $isRecordOwner == true)\n#end\n\n$util.qr($ctx.stash.put(\"recordType\", $ctx.result.type))\n$util.qr($ctx.stash.put(\"isRecordOwner\", $isRecordOwner))\n$util.qr($ctx.stash.put(\"authResult\", $isAllowed))\n\n## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n## Pass back the result from DynamoDB\n#if ($isAllowed == true)\n    $util.toJson($ctx.result)\n#else\n    $utils.unauthorized()\n#end",
+              "ResponseMappingTemplate": "$util.toJson($ctx.result)",
               "FunctionVersion": "2018-05-29"
             }
           },
@@ -2426,8 +2405,8 @@
               },
               "TypeName": "Query",
               "FieldName": "getAccountPipeline",
-              "RequestMappingTemplate": "## Store tenantId, group in stash\n$util.qr($ctx.stash.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($ctx.stash.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($ctx.stash.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($ctx.stash.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($ctx.stash.put(\"isAccountViewer\", true))\n    #end\n#end\n{}",
-              "ResponseMappingTemplate": "$util.toJson($ctx.result)",
+              "RequestMappingTemplate": "## Store tenantId, group in stash\n$util.qr($ctx.stash.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($ctx.stash.put(\"callerId\", $ctx.identity.sub))\n$util.qr($ctx.stash.put(\"context\", $util.toJson($ctx)))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($ctx.stash.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($ctx.stash.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($ctx.stash.put(\"isAccountViewer\", true))\n    #end\n#end\n{}",
+              "ResponseMappingTemplate": "#if($ctx.result.owner == $context.stash.callerId)\n    #set($isRecordOwner = true)\n#end\n#if($ctx.stash.isAdmin == true || $ctx.result.type == \"PLANTYPE\" || $ctx.result.type == \"INTEGRATIONTYPE\")\n    #set($isAllowed = true)\n#elseif (($ctx.result.accountId == $ctx.stash.tenantId) && $ctx.stash.isAccountAdmin == true)\n    #set($isAllowed = true)\n#else\n    #set($isAllowed = $isRecordOwner == true)\n#end\n\n## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n## Pass back the result from DynamoDB\n#if ($isAllowed == true)\n    $util.toJson($ctx.result)\n#else\n    $utils.unauthorized()\n#end",
               "Kind": "PIPELINE",
               "PipelineConfig": {
                 "Functions": [
@@ -2451,13 +2430,13 @@
           "PostConfirmationLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "PostConfirmationLambdaVersionsI1GBLYvbvUT6JXShookdPhotNZdWWNIxoVpE0nImg"
+              "Ref": "PostConfirmationLambdaVersionOQQzX6oz8SlWRNAYgOwLjsHXSURNvPnmStTQZufeY"
             }
           },
           "SignupLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SignupLambdaVersion26kCohcSix2yZBGxaY19dt4JkMW3R4AsbvEembVM"
+              "Ref": "SignupLambdaVersiongoG6XsNRwX01kxI0p6FTRon4GM71EzQNeKKlZDqItg"
             }
           },
           "ServiceEndpoint": {
@@ -2855,8 +2834,8 @@
             "dataSource": "AppData",
             "type": "Query",
             "field": "getAccountPipeline",
-            "request": "pipeline_parseIdentity_REQ.vtl",
-            "response": "pipeline_passthrough_RES.vtl",
+            "request": "pipeline_identify_BEF.vtl",
+            "response": "pipeline_authorize_AFT.vtl",
             "kind": "PIPELINE",
             "functions": [
               "getAccountFN"
@@ -2869,14 +2848,7 @@
             "type": "Query",
             "name": "getAccountFN",
             "request": "getAccount_REQ.vtl",
-            "response": "passthrough_RES.vtl"
-          },
-          {
-            "dataSource": "AppData",
-            "type": "Query",
-            "name": "getAccount",
-            "request": "getAccount_REQ.vtl",
-            "response": "passthrough_RES.vtl"
+            "response": "pipeline_passthrough_RES.vtl"
           }
         ],
         "substitutions": {
@@ -3752,7 +3724,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli/dev/1564642924741-2019-08-01T07:02:04.741Z",
+    "artifactDirectoryName": "serverless/formsli/dev/1564652589290-2019-08-01T09:43:09.290Z",
     "artifact": ""
   }
 }

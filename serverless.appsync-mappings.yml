@@ -150,7 +150,7 @@
 - dataSource: AppData
   type: Query
   field: getAccountPipeline
-  request: pipeline_parseIdentity_BEF.vtl
+  request: pipeline_identify_BEF.vtl
   response: pipeline_authorize_AFT.vtl
   kind: PIPELINE
   functions:

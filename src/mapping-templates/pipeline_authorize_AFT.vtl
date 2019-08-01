@@ -1,9 +1,9 @@
-#if($ctx.result.owner == $context.identity.sub)
+#if($ctx.result.owner == $context.stash.callerId)
     #set($isRecordOwner = true)
 #end
-#if($isAdmin == true || $ctx.result.type == "PLANTYPE" || $ctx.result.type == "INTEGRATIONTYPE")
+#if($ctx.stash.isAdmin == true || $ctx.result.type == "PLANTYPE" || $ctx.result.type == "INTEGRATIONTYPE")
     #set($isAllowed = true)
-#elseif (($ctx.result.accountId == $ctx.stash.tenant) && $isAccountAdmin == true)
+#elseif (($ctx.result.accountId == $ctx.stash.tenantId) && $ctx.stash.isAccountAdmin == true)
     #set($isAllowed = true)
 #else
     #set($isAllowed = $isRecordOwner == true)
