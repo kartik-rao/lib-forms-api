@@ -150,8 +150,8 @@
 - dataSource: AppData
   type: Query
   field: getAccountPipeline
-  request: pipeline_parseIdentity_REQ.vtl
-  response: pipeline_passthrough_RES.vtl
+  request: pipeline_parseIdentity_BEF.vtl
+  response: pipeline_authorize_AFT.vtl
   kind: PIPELINE
   functions:
     - getAccountFN
