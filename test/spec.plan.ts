@@ -20,7 +20,7 @@ describe("Plan", () => {
             token = (await Auth.currentSession()).getIdToken().getJwtToken();
             done();
         } catch (error) {
-            console.error("spec.plantypes - beforeAll - ERROR", error);
+            console.error("spec.plan - beforeAll - ERROR", error);
             done.fail(error);
         }
     });
@@ -33,46 +33,47 @@ describe("Plan", () => {
             await Auth.signOut();
             done();
         } catch (error) {
-            console.error("spec.plantypes - afterAll - ERROR", error);
+            console.error("spec.plan - afterAll - ERROR", error);
             done.fail(error);
         }
     });
 
-    // it("Add", async (done) => {
-    //     let planName = `Test Plan - ${Math.random()}`
-    //     const addPlanType = {query: `mutation {
-    //         addPlanType (input: {
-    //             name: "${planName}",
-    //             billingTerm: "Monthly",
-    //             cost: 50,
-    //             active: false
-    //         })
-    //         {id, name, billingTerm, cost, version, createdAt, updatedAt}
-    //         }
-    //     `};
 
-    //     try {
-    //         let response = await ApiHelper.makeRequest("addPlanType", addPlanType, token);
-    //         let {status, parsed, hasErrors, errors} = response;
+    it("Add", async (done) => {
+        let planName = `Test Plan - ${Math.random()}`
+        const addPlanType = {query: `mutation {
+            addPlan (input: {
+                accountId: "${planName}",
+                planTypeId: "",
+                endDate: "",
+                active: true
+            })
+            {id, name, billingTerm, cost, version, createdAt, updatedAt}
+            }
+        `};
 
-    //         expect(status).toEqual(200);
-    //         expect(hasErrors).toBeFalsy("Response should not have errors");
-    //         hasErrors && done.fail(errors[0].message);
+        try {
+            let response = await ApiHelper.makeRequest("addPlanType", addPlanType, token);
+            let {status, parsed, hasErrors, errors} = response;
 
-    //         expect(parsed).toBeDefined();
-    //         planId = parsed.id;
-    //         planVersion = parsed.version;
-    //         expect(parsed).toBeDefined();
-    //         expect(parsed.name).toEqual(planName);
-    //         expect(parsed.billingTerm).toEqual("Monthly");
-    //         expect(parsed.cost).toEqual(50.0);
-    //         expect(parsed.active).toBeFalsy();
-    //     } catch (error) {
-    //         console.error(error);
-    //         fail(error);
-    //     }
-    //     done();
-    // });
+            expect(status).toEqual(200);
+            expect(hasErrors).toBeFalsy("Response should not have errors");
+            hasErrors && done.fail(errors[0].message);
+
+            expect(parsed).toBeDefined();
+            planId = parsed.id;
+            planVersion = parsed.version;
+            expect(parsed).toBeDefined();
+            expect(parsed.name).toEqual(planName);
+            expect(parsed.billingTerm).toEqual("Monthly");
+            expect(parsed.cost).toEqual(50.0);
+            expect(parsed.active).toBeFalsy();
+        } catch (error) {
+            console.error(error);
+            fail(error);
+        }
+        done();
+    });
 
     // it("List", async(done) => {
     //     const listAllActivePlanTypes = {
