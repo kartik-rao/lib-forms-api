@@ -1,9 +1,20 @@
-#set($attribs = $context.arguments)
-{
-    "version" : "2017-02-28",
-    "operation" : "GetItem",
-    "key": {
-        "id"  : {"S": "${attribs.accountId}"},
-        "type": {"S": "ACCOUNT"}
-    }
-}
+#if(!$util.isNull($ctx.stash.request))
+    #set ($ctx.stash.prevRequest = $ctx.stash.request)
+#end
+
+#set ($request = {})
+$util.qr($request.put("id", $ctx.arguments.id))
+$util.qr($request.put("operation", 'get'))
+$util.qr($request.put("itemType", 'ACCOUNT'))
+$util.qr($ctx.stash.put("request", $request))
+
+#set($isAllowed = false)
+#if($ctx.stash.identity.tenantId == $ctx.arguments.id || $ctx.stash.identity.isAdmin == true)
+    #set($isAllowed = true)
+#end
+
+#if($isAllowed == true)
+    #return({})
+#else
+    $util.error("User [${ctx.stash.identity.callerId}] cannot execute [${request.operation}] on [${request.id}]", "Unauthorized")
+#end

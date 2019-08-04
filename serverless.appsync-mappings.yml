@@ -1,13 +1,31 @@
+# - dataSource: AppData
+#   type: Query
+#   field: getUser
+#   request: getUser_REQ.vtl
+#   response: passthrough_RES.vtl
 - dataSource: AppData
   type: Query
   field: getUser
-  request: getUser_REQ.vtl
-  response: passthrough_RES.vtl
+  request: pipeline_identify_BEF.vtl
+  response: FN_common_tenantCheck_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_getUser
+    - FN_executeGet
 - dataSource: AppData
   type: Query
   field: getAccount
-  request: getAccount_REQ.vtl
-  response: passthrough_RES.vtl
+  request: pipeline_identify_BEF.vtl
+  response: FN_passthrough_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_getAccount
+    - FN_executeGet
+# - dataSource: AppData
+#   type: Query
+#   field: getAccount
+#   request: getAccount_REQ.vtl
+#   response: passthrough_RES.vtl
 # Account.plan
 - dataSource: AppData
   type: Account
@@ -67,11 +85,11 @@
   field: versions
   request: getFormVersions_REQ.vtl
   response: passthrough-paginated_RES.vtl
-- dataSource: AppData
-  type: Query
-  field: listAllAccounts
-  request: listAllAccounts_REQ.vtl
-  response: passthrough-paginated_RES.vtl
+# - dataSource: AppData
+#   type: Query
+#   field: listAllAccounts
+#   request: listAllAccounts_REQ.vtl
+#   response: passthrough-paginated_RES.vtl
 - dataSource: AppData
   type: Query
   field: listAllForms
@@ -149,9 +167,10 @@
   response: passthrough_RES.vtl
 - dataSource: AppData
   type: Query
-  field: getAccountPipeline
+  field: listAccounts
   request: pipeline_identify_BEF.vtl
-  response: pipeline_authorize_AFT.vtl
+  response: FN_passthrough_RES.vtl
   kind: PIPELINE
   functions:
-    - getAccountFN
+    - FN_listAccounts
+    - FN_executeList

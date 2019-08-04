@@ -1,0 +1,19 @@
+#set($ids = [])
+#set($account = {})
+$util.qr($account.put("id", $util.dynamodb.toString($ctx.stash.accountId)))
+$util.qr($account.put("type", "ACCOUNT"))
+$util.qr($ids.add($account))
+#set($planType = {})
+$util.qr($account.put("id", $util.dynamodb.toString($ctx.stash.planTypeId)))
+$util.qr($account.put("type", "PLANTYPE"))
+$util.qr($ids.add($planType))
+{
+    "version" : "2018-05-29",
+    "operation" : "BatchGetItem",
+    "tables" : {
+        "Posts": {
+            "keys": $util.toJson($ids),
+            "consistentRead": true
+        }
+    }
+}

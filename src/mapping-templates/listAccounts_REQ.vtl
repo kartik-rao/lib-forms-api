@@ -1,0 +1,22 @@
+#if(!$util.isNull($ctx.stash.request))
+    #set ($ctx.stash.prevRequest = $ctx.stash.request)
+#end
+
+#set ($request = {})
+$util.qr($request.put("operation", 'query'))
+$util.qr($request.put("itemType", 'ACCOUNT'))
+$util.qr($request.put("limit", $ctx.arguments.limit))
+$util.qr($request.put("nextToken", $ctx.arguments.nextToken))
+$util.qr($ctx.stash.put("request", $request))
+
+#set($isAllowed = false)
+#if($ctx.stash.identity.isAdmin == true)
+    #set($isAllowed = true)
+#end
+
+#if($isAllowed == true)
+    #return({})
+#else
+    $util.error("User [${ctx.stash.identity.callerId}] cannot execute [${request.operation}] on [${request.itemType}]", "Unauthorized")
+#end
+

@@ -1,21 +1,10 @@
-#foreach($group in $context.identity.claims.get("cognito:groups"))
-    $util.qr($ctx.stash.put("group", $group))
-    #if($group == "Admin")
-        #set($isAdmin = true)
-        $util.qr($ctx.stash.put("isAdmin", true))
-    #end
-#end
-## Only Admins allowed
-#if (!$isAdmin == true)
-    $utils.unauthorized()
-#end
-#set($attribs = $context.arguments.input)
+#set($attribs = $context.stash.request.input)
 {
     "version" : "2018-05-29",
     "operation" : "UpdateItem",
     "key" : {
-        "id"  : { "S" : "${attribs.id}" },
-        "type": {"S": "PLANTYPE"}
+        "id"  : { "S": "${attribs.id}" },
+        "type": { "S": "${context.stash.request.itemType}"}
     },
 
     ## Set up some space to keep track of things you're updating **
@@ -38,7 +27,6 @@
                 $!{expNames.put("#${entry.key}", "$entry.key")}
             #else
                 ## Otherwise set (or update) the attribute on the item in DynamoDB **
-
                 $!{expSet.put("#${entry.key}", ":${entry.key}")}
                 $!{expNames.put("#${entry.key}", "$entry.key")}
                 $!{expValues.put(":${entry.key}", { "S" : "${entry.value}" })}

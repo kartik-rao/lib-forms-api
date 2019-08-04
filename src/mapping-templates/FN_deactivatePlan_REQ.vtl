@@ -1,19 +1,12 @@
-#foreach($group in $context.identity.claims.get("cognito:groups"))
-    $util.qr($ctx.stash.put("group", $group))
-    #if($group == "Admin")
-        #set($isAdmin = true)
-        $util.qr($ctx.stash.put("isAdmin", true))
-    #end
-#end
-## Only Admins allowed
-#if (!$isAdmin == true)
+## Only Admins and AccountAdmin allowed
+#if ($ctx.stash.isAdmin == true || ($ctx.stash.isAccountAdmin && $ctx.stash.callerId == $ctx.stash.accountId))
     $utils.unauthorized()
 #end
 {
     "version" : "2018-05-29",
     "operation" : "UpdateItem",
     "key": {
-        "id":   {"S": "$context.arguments.id"},
+        "id":   {"S": "$context.stash.planTypeId"},
         "type": {"S": "PLANTYPE"}
     },
     "update" : {

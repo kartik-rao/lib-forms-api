@@ -1,23 +1,24 @@
-## Store tenantId, group in stash
-$util.qr($ctx.stash.put("tenantId", $context.identity.claims.get("custom:tenantId")))
-$util.qr($ctx.stash.put("callerId", $ctx.identity.sub))
-$util.qr($ctx.stash.put("context", $util.toJson($ctx)))
+## Store tenantId, group in stash.identity
+#set ($identity = {})
+$util.qr($identity.put("tenantId", $context.identity.claims.get("custom:tenantId")))
+$util.qr($identity.put("callerId", $ctx.identity.sub))
 #foreach($group in $context.identity.claims.get("cognito:groups"))
     #if($group == "Admin")
         #set($isAdmin = true)
-        $util.qr($ctx.stash.put("isAdmin", true))
+        $util.qr($identity.put("isAdmin", true))
     #end
     #if($group == "AccountAdmin")
         #set($isAccountAdmin = true)
-        $util.qr($ctx.stash.put("isAccountAdmin", true))
+        $util.qr($identity.put("isAccountAdmin", true))
     #end
     #if($group == "AccountEditor")
         #set($isAccountAdmin = true)
-        $util.qr($ctx.stash.put("isAccountEditor", true))
+        $util.qr($identity.put("isAccountEditor", true))
     #end
     #if($group == "AccountViewer")
         #set($isAccountAdmin = true)
-        $util.qr($ctx.stash.put("isAccountViewer", true))
+        $util.qr($identity.put("isAccountViewer", true))
     #end
 #end
+$util.qr($ctx.stash.put("identity", $identity))
 {}

@@ -8,6 +8,19 @@ type AppData @model {
     updatedAt: AWSDateTime
     isDeleted: Boolean
     version: Int
+    searchField: String
+}
+
+type FilterStringInput {
+  ne: String
+  eq: String
+  le: String
+  lt: String
+  ge: String
+  contains: String
+  notContains: String
+  between: [String]
+  beginsWith: String
 }
 
 type FormEntry @model {
@@ -357,10 +370,9 @@ type PaginatedIntegration {
 }
 
 type Query {
-  getAccountPipeline(accountId: ID!): Account
   getAccount(accountId: ID!): Account
-  listAllAccounts(limit: Int, nextToken: String): PaginatedAccount!
-  getUser(userId: ID!): User
+  listAccounts(limit: Int, nextToken: String): PaginatedAccount!
+  getUser(id: ID!): User
   listAllUsers(limit: Int, nextToken: String) : PaginatedUser!
   listAllAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedUser!
   listAllAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedUser!

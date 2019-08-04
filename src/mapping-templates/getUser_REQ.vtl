@@ -1,8 +1,18 @@
-{
-  "version" : "2017-02-28",
-  "operation" : "GetItem",
-  "key": {
-    "id": $util.dynamodb.toDynamoDBJson($context.arguments.userId),
-    "type" : $util.dynamodb.toDynamoDBJson("FORM")
-  }
-}
+#if(!$util.isNull($ctx.stash.request))
+    #set ($ctx.stash.prevRequest = $ctx.stash.request)
+#end
+
+#set ($request = {})
+$util.qr($request.put("id", $ctx.arguments.id))
+$util.qr($request.put("operation", 'get'))
+$util.qr($request.put("itemType", 'USER'))
+$util.qr($ctx.stash.put("request", $request))
+
+## Only allow admin and account admin to get other users
+#set($isAllowed = $ctx.stash.identity.isAdmin == true || $ctx.stash.identity.isAccountAdmin == true || $ctx.arguments.id == $ctx.stash.identity.callerId)
+
+#if($isAllowed == true)
+    #return({})
+#else
+    $util.error("User [${ctx.stash.identity.callerId}] cannot execute [${request.operation}] on [${request.id}]", "Unauthorized")
+#end
