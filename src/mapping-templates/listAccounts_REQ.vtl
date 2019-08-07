@@ -2,8 +2,9 @@
     #set ($ctx.stash.prevRequest = $ctx.stash.request)
 #end
 
+$util.qr($ctx.stash.put("operation", 'query'))
+
 #set ($request = {})
-$util.qr($request.put("operation", 'query'))
 $util.qr($request.put("itemType", 'ACCOUNT'))
 $util.qr($request.put("limit", $ctx.arguments.limit))
 $util.qr($request.put("nextToken", $ctx.arguments.nextToken))

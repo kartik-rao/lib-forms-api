@@ -371,40 +371,41 @@ type PaginatedIntegration {
 
 type Query {
   getAccount(accountId: ID!): Account
+  getUser(userId: ID!): User
+  getPlan(planId: String!): Plan
+  getActiveAccountPlan(accountId: String!): PaginatedPlan
+  getPlanType(planTypeId: String!): PlanType
+  getForm(formId: String!, versionId: ID!) : Form!
+  getIntegrationType(integrationTypeId: String!): IntegrationType
+  getIntegration(integrationId: String!): Integration
+  getFormEntry(formEntryId: String!): FormEntry
+
   listAccounts(limit: Int, nextToken: String): PaginatedAccount!
-  getUser(id: ID!): User
   listAllUsers(limit: Int, nextToken: String) : PaginatedUser!
   listAllAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedUser!
   listAllAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedUser!
   listAccountUsersInGroup(accountId: String!, group: String!, limit: Int, nextToken: String): PaginatedUser!
 
-  getPlan(planId: String!): Plan
   listAllPlans(limit: Int, nextToken: String): PaginatedPlan!
   listAllAccountPlans(accountId: String!, limit: Int, nextToken: String): PaginatedPlan!
-  getActiveAccountPlan(accountId: String!): PaginatedPlan!
-  getPlanType(planTypeId: String!): PlanType
   listAllPlanTypes(limit: Int, nextToken: String): PaginatedPlanType!
   listAllActivePlanTypes(limit: Int, nextToken: String): PaginatedPlanType!
 
-  getForm(formId: String!, versionId: ID!) : Form!
   listAllForms(limit: Int, nextToken: String) : PaginatedForm!
   listAllAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedForm!
   listAllAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!
   listAllAccountFormsByUser(accountId: String!, userId: String!, limit: Int, nextToken: String) : PaginatedForm!
   listAllAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!
 
-  getIntegrationType(integrationTypeId: String!): IntegrationType
   listAllIntegrationTypes(limit: Int, nextToken: String): PaginatedIntegrationType!
   listAllIntegrationTypesByPlanType(planTypeId: String!, limit: Int, nextToken: String): PaginatedIntegrationType!
   listAllIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegrationType!
 
-  getIntegration(integrationId: String!): Integration
   listAllIntegrations(limit: Int, nextToken: String): PaginatedIntegration!
   listAllAccountIntegrations(accountId: String!, limit: Int, nextToken: String): PaginatedIntegration!
   listAllAccountFormIntegrations(accountId: String!, formId: String!, limit: Int, nextToken: String): PaginatedIntegration!
   listAllAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegration!
 
-  getFormEntry(formEntryId: String!): FormEntry
   listAllFormEntries(formId: String!) : PaginatedFormEntries!
   listAllFormEntriesByTime(formId: String!, timestampPrefix: String!): PaginatedFormEntries!
 }
@@ -427,17 +428,16 @@ type Mutation {
   updateIntegration(input: UpdateIntegrationInput): Integration!
   updateForm(input: UpdateFormInput): Form!
 
-  deletePlanType(id: ID!): PlanType!
-  deletePlan(id: ID!): Plan!
-  deleteAccount(id: ID!): Account!
-  deleteUser(id: ID!): User!
-  deleteIntegrationType(id: ID!): IntegrationType!
-  deleteIntegration(id: ID!): Integration!
-  deleteForm(id: ID!): Form!
+  deletePlanType(planTypeId: ID!): PlanType!
+  deletePlan(accountId: ID!, planId: ID!): Plan!
+  deleteAccount(accountId: ID!): Account!
+  deleteUser(userId: ID!): User!
+  deleteIntegrationType(integrationTypeId: ID!): IntegrationType!
+  deleteIntegration(integrationId: ID!): Integration!
+  deleteForm(formId: ID!): Form!
 
   addFormEntry(input: AddFormEntryInput!): FormEntry!
-  testPipeline: AWSJSON
-  attachPlan(input: AddPlanInput): Account
+
 }
 
 schema {

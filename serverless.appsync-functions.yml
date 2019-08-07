@@ -4,9 +4,24 @@
   request: FN_common_GET.vtl
   response: FN_passthrough_RES.vtl
 - dataSource: AppData
+  type: Mutation
+  name: FN_executeUpdate
+  request: FN_common_UPDATE.vtl
+  response: FN_passthrough_RES.vtl
+- dataSource: AppData
+  type: Mutation
+  name: FN_executePut
+  request: FN_common_PUT.vtl
+  response: FN_passthrough_RES.vtl
+- dataSource: AppData
   type: Query
   name: FN_executeList
   request: FN_common_LIST.vtl
+  response: FN_passthrough_RES.vtl
+- dataSource: AppData
+  type: Mutation
+  name: FN_executeDelete
+  request: FN_common_DELETE.vtl
   response: FN_passthrough_RES.vtl
 - dataSource: AppData
   type: Query
@@ -29,7 +44,22 @@
   request: FN_validateChangePlan_REQ.vtl
   response: FN_passthrough_RES.vtl
 - dataSource: AppData
+  type: Mutation
+  name: FN_createPlan
+  request: addPlan_REQ.vtl
+  response: FN_passthrough_RES.vtl
+- dataSource: AppData
+  type: Mutation
+  name: FN_updateAccountPlan
+  request: updateAccountPlan_REQ.vtl
+  response: FN_passthrough_RES.vtl
+- dataSource: AppData
+  type: Mutation
+  name: FN_deletePlan
+  request: deletePlan_REQ.vtl
+  response: FN_passthrough_RES.vtl
+- dataSource: AppData
   type: Query
-  name: FN_getAccountPlan
-  request: FN_validateChangePlan_REQ.vtl
-  response: pipeline_passthrough_RES.vtl
+  name: FN_getPlan
+  request: getPlan_REQ.vtl
+  response: FN_passthrough_RES.vtl

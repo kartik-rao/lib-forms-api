@@ -1,0 +1,20 @@
+#set($id = $util.autoId())
+#set($attribs = $ctx.stash.request)
+#set($attribs.version = 1)
+#set($attribs.owner = $context.stash.identity.callerId)
+#set($attribs.createdAt = $util.defaultIfNullOrBlank($attribs.createdAt, $util.time.nowISO8601()))
+{
+    "version": "2018-05-29",
+    "operation": "PutItem",
+    "key": {
+        "id"  : $util.dynamodb.toDynamoDBJson($id),
+        "type": {"S" : "${attribs.itemType}"}
+    },
+    "attributeValues": $util.toJson($util.dynamodb.toMapValues($attribs)),
+    "condition": {
+        "expression": "attribute_not_exists(#id)",
+        "expressionNames": {
+            "#id": "id"
+        }
+    }
+}

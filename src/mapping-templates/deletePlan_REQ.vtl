@@ -1,0 +1,33 @@
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments)
+#set($results=$ctx.stash.results)
+
+#if($util.isNull($results) || $util.isNull($results.PLAN))
+    $util.error("Out of order invocation, no PLAN", "InvocationOrderException")
+#end
+
+
+#set($isAllowed = false)
+#if($identity.isAdmin || ($identity.isAccountAdmin == true && $identity.tenantId == $args.accountId))
+    #set($isAllowed = true)
+#end
+
+#if($isAllowed == true)
+    #set($attribs.id = $results.PLAN.id)
+    #set($attribs.itemType = "PLAN")
+    #set($attribs.active = false)
+    #set($attribs.meta = "${args.accountId}#false")
+    #set($attribs.endDate = $util.time.nowISO8601())
+    #set($attribs.isDeleted = true)
+    #set($attribs.expectedVersion = $results.PLAN.version)
+    #if(!$util.isNull($ctx.stash.request))
+        #set ($ctx.stash.prevRequest = $ctx.stash.request)
+    #end
+
+    #set ($request = {})
+    $util.qr($ctx.stash.put("operation", "update"))
+    $util.qr($ctx.stash.put("request", $attribs))
+    #return({})
+#else
+    $util.error("User [${identity.callerId}] cannot execute [DELETE] on [Plan ${attribs.id}]", "Unauthorized")
+#end

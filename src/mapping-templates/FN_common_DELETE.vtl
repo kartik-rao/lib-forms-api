@@ -1,0 +1,22 @@
+{
+    "version" : "2018-05-29",
+    "operation" : "UpdateItem",
+    "key": {
+        "id"  : {"S": "${ctx.stash.request.id}"},
+        "type": {"S": "${ctx.stash.request.itemType}"}
+    },
+    "update" : {
+        #if(!$util.isNull($ctx.stash.request.active))
+            "expression" : "SET updatedAt = :updatedAt, isDeleted = :isDeleted, active = :active",
+        #else
+            "expression" : "SET updatedAt = :updatedAt, isDeleted = :isDeleted",
+        #end
+        "expressionValues": {
+            ":isDeleted" : {"BOOL" :true},
+            #if(!$util.isNull($ctx.stash.request.active))
+            ":active" : {"BOOL": $ctx.stash.request.active},
+            #end
+            ":updatedAt" : {"S" : "$util.time.nowISO8601()"}
+        }
+    }
+}

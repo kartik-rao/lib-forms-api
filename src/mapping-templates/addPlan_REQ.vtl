@@ -1,24 +1,28 @@
-#set($id = $util.autoId())
-#set($attribs = $context.arguments.input)
-#set($attribs.meta = "${context.arguments.input.accountId}#true")
-#set($attribs.owner = $context.identity.sub)
-#set($attribs.itemType = "PLAN")
-#set($attribs.isDeleted = false)
-#set($attribs.createdAt = $util.time.nowISO8601())
-#set($attribs.startDate = $attribs.createdAt)
-#set($attribs.active = true)
-{
-    "version": "2018-05-29",
-    "operation": "PutItem",
-    "key": {
-        "id"  : $util.dynamodb.toDynamoDBJson($id),
-        "type": {"S": "PLAN"}
-    },
-    "attributeValues": $util.toJson($util.dynamodb.toMapValues($attribs)),
-    "condition": {
-        "expression": "attribute_not_exists(#id)",
-        "expressionNames": {
-            "#id": "id",
-        }
-    }
-}
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments)
+
+#set($isAllowed = false)
+#if(($identity.isAccountAdmin == true && $identity.callerId == $args.input.accountId) || $identity.isAdmin == true)
+    #set($isAllowed = true)
+#end
+
+#if($isAllowed == true)
+    #set($attribs = $args.input)
+    #set($attribs.meta = "${args.input.accountId}#true")
+    #set($attribs.itemType = "PLAN")
+    #set($attribs.isDeleted = false)
+    #set($attribs.createdAt = $util.time.nowISO8601())
+    #set($attribs.startDate = $attribs.createdAt)
+    #set($attribs.active = $util.defaultIfNullOrBlank($args.input.active, false))
+
+    #if(!$util.isNull($ctx.stash.request))
+        #set ($ctx.stash.prevRequest = $ctx.stash.request)
+    #end
+
+    $util.qr($ctx.stash.put("operation", 'put'))
+    #set ($request = {})
+    $util.qr($ctx.stash.put("request", $attribs))
+    #return({})
+#else
+    $util.error("User [${ctx.stash.identity.callerId}] cannot execute [PUT] on [Plan]", "Unauthorized")
+#end

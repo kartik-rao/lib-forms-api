@@ -2,9 +2,10 @@
     #set ($ctx.stash.prevRequest = $ctx.stash.request)
 #end
 
+$util.qr($ctx.stash.put("operation", 'get'))
+
 #set ($request = {})
 $util.qr($request.put("id", $ctx.arguments.id))
-$util.qr($request.put("operation", 'get'))
 $util.qr($request.put("itemType", 'USER'))
 $util.qr($ctx.stash.put("request", $request))
 

@@ -1,8 +1,24 @@
-{
-  "version" : "2018-05-29",
-  "operation" : "GetItem",
-  "key": {
-    "id": $util.dynamodb.toDynamoDBJson($context.arguments.planId),
-    "type" : $util.dynamodb.toDynamoDBJson("PLAN")
-  }
-}
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments)
+
+#set($isAllowed = false)
+#if($identity.tenantId == $args.accountId || $identity.isAdmin == true)
+    #set($isAllowed = true)
+#end
+
+#if(!$util.isNull($ctx.stash.request))
+    #set ($ctx.stash.prevRequest = $ctx.stash.request)
+#end
+
+$util.qr($ctx.stash.put("operation", 'get'))
+
+#set ($request = {})
+$util.qr($request.put("id", $args.planId))
+$util.qr($request.put("itemType", 'PLAN'))
+$util.qr($ctx.stash.put("request", $request))
+
+#if($isAllowed == true)
+    #return({})
+#else
+    $util.error("User [${identity.callerId}] cannot execute [${ctx.stash.operation}] on [Plan ${request.id}]", "Unauthorized")
+#end

@@ -1,8 +1,3 @@
-# - dataSource: AppData
-#   type: Query
-#   field: getUser
-#   request: getUser_REQ.vtl
-#   response: passthrough_RES.vtl
 - dataSource: AppData
   type: Query
   field: getUser
@@ -21,11 +16,32 @@
   functions:
     - FN_getAccount
     - FN_executeGet
-# - dataSource: AppData
-#   type: Query
-#   field: getAccount
-#   request: getAccount_REQ.vtl
-#   response: passthrough_RES.vtl
+- dataSource: AppData
+  type: Mutation
+  field: deletePlan
+  request: pipeline_identify_BEF.vtl
+  response: FN_passthrough_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_getAccount
+    - FN_executeGet
+    - FN_getPlan
+    - FN_executeGet
+    - FN_deletePlan
+    - FN_executeUpdate
+    - FN_updateAccountPlan
+- dataSource: AppData
+  type: Mutation
+  field: addPlan
+  request: pipeline_identify_BEF.vtl
+  response: FN_passthrough_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_getAccount
+    - FN_executeGet
+    - FN_createPlan
+    - FN_executePut
+    - FN_updateAccountPlan
 # Account.plan
 - dataSource: AppData
   type: Account
@@ -145,11 +161,11 @@
   field: deletePlanType
   request: deletePlanType_REQ.vtl
   response: passthrough_RES.vtl
-- dataSource: AppData
-  type: Mutation
-  field: addPlan
-  request: addPlan_REQ.vtl
-  response: passthrough_RES.vtl
+# - dataSource: AppData
+#   type: Mutation
+#   field: addPlan
+#   request: addPlan_REQ.vtl
+#   response: passthrough_RES.vtl
 - dataSource: AppData
   type: Mutation
   field: addUser

@@ -6,22 +6,23 @@
     "query"     : {
         "expression": "#type = :objectType",
         "expressionNames" : {
-                "#type" : "type"
-            },
+            "#type" : "type"
+        },
         "expressionValues" : {
             ":objectType" : { "S": "${ctx.stash.request.itemType}" }
         }
     }
 #else
     "query"    : {
-        "expression" : "#type = :type AND begins_with(#meta, :meta)",
+        "expression" : "#type = :type AND begins_with(#meta, :meta) AND #isDeleted = :isDeleted",
         "expressionNames" : {
             "#type" : "type",
             "#meta" : "meta"
         },
         "expressionValues": {
             ":type" : {"S" : "${ctx.stash.request.itemType}"},
-            ":meta" : {"S" : "${ctx.stash.identity.tenantId}"}
+            ":meta" : {"S" : "${ctx.stash.identity.tenantId}"},
+            ":isDeleted" : {"BOOL": false}
         }
     }
 #end
