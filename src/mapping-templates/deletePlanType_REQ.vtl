@@ -1,4 +1,5 @@
 #set($identity=$ctx.stash.identity)
+#set($results=$ctx.stash.results)
 #set($args=$ctx.arguments)
 
 #set($isAllowed = false)
@@ -7,14 +8,14 @@
 #end
 
 #if($isAllowed == true)
-    #set($request = $args.input)
+    #set($request = {})
     #set($request.meta = false)
     #set($request.expectedVersion = $results.PLANTYPE.version)
-    #set($request.planTypeId = $args.input.planTypeId)
+    #set($request.id = $args.planTypeId)
     #set($request.itemType = "PLANTYPE")
     #set($request.isDeleted = true)
     #set($request.updatedAt = $util.time.nowISO8601())
-    #set($request.active = $util.defaultIfNullOrBlank($args.input.active, false))
+    #set($request.active = false)
 
     #if(!$util.isNull($ctx.stash.request))
         #set ($ctx.stash.prevRequest = $ctx.stash.request)

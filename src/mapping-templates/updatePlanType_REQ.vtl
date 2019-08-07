@@ -12,7 +12,8 @@
     #if(!$util.isNull($ctx.stash.request))
         #set ($ctx.stash.prevRequest = $ctx.stash.request)
     #end
-
+    #set($request.expectedVersion = $results.PLANTYPE.version)
+    #set($request.itemType = "PLANTYPE")
     $util.qr($ctx.stash.put("operation", 'put'))
     $util.qr($ctx.stash.put("request", $request))
     #return({})

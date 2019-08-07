@@ -10,8 +10,8 @@ Auth.configure(ApiHelper.apiConfig().Auth);
 
 describe("PlanType", () => {
     let token: string;
-    let planId: string;
-    let planVersion: number;
+    let planTypeId: string;
+    let planTypeVersion: number;
 
     beforeAll(async (done) => {
         try {
@@ -29,7 +29,7 @@ describe("PlanType", () => {
         // Hard delete from dynamo
         let client = new AWS.DynamoDB.DocumentClient();
         try {
-            await client.delete({TableName : config["FormEntriesTable"], Key: {id: planId, type: "PLANTYPE"}}).promise();
+            await client.delete({TableName : config["FormEntriesTable"], Key: {id: planTypeId, type: "PLANTYPE"}}).promise();
             await Auth.signOut();
             done();
         } catch (error) {
@@ -60,8 +60,8 @@ describe("PlanType", () => {
             hasErrors && done.fail(errors[0].message);
 
             expect(parsed).toBeDefined();
-            planId = parsed.id;
-            planVersion = parsed.version;
+            planTypeId = parsed.id;
+            planTypeVersion = parsed.version;
             expect(parsed).toBeDefined();
             expect(parsed.name).toEqual(planName);
             expect(parsed.billingTerm).toEqual("Monthly");
@@ -106,11 +106,11 @@ describe("PlanType", () => {
     it("Update", async (done) => {
         const updatePlanType = {query: `mutation {
             updatePlanType (input: {
-                id: "${planId}",
+                id: "${planTypeId}",
                 billingTerm: "Quarterly",
                 cost: 150,
                 active: true,
-                expectedVersion: ${planVersion}
+                expectedVersion: ${planTypeVersion}
             })
             {id, name, billingTerm, cost, active, updatedAt, version}
             }
@@ -136,7 +136,7 @@ describe("PlanType", () => {
 
     it("Delete", async (done) => {
         const deletePlanType = {query: `mutation {
-            deletePlanType (planTypeId: "${planId}")
+            deletePlanType (planTypeId: "${planTypeId}")
             {id, name, isDeleted, cost, billingTerm, active, updatedAt, version}
             }
         `};
