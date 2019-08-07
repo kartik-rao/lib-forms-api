@@ -1,5 +1,10 @@
-#if($util.isNull($ctx.stash.results))
-    $util.qr($ctx.stash.put("results", {}))
+#if( $context.result && $context.result.error )
+    $util.qr($ctx.stash.put("error", $context.result.error))
+    $utils.error($context.result.error)
+#else
+    #if($util.isNull($ctx.stash.results))
+        $util.qr($ctx.stash.put("results", {}))
+    #end
+    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))
+    $util.toJson($ctx.result)
 #end
-$util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))
-$util.toJson($ctx.result)
