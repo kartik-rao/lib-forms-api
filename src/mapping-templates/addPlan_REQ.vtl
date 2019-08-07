@@ -9,6 +9,7 @@
 #if($isAllowed == true)
     #set($attribs = $args.input)
     #set($attribs.meta = "${args.input.accountId}#true")
+    #set($attribs.planTypeId = $args.input.planTypeId)
     #set($attribs.itemType = "PLAN")
     #set($attribs.isDeleted = false)
     #set($attribs.createdAt = $util.time.nowISO8601())

@@ -3,6 +3,8 @@ Resources:
       Type: 'AWS::DynamoDB::Table'
       Properties:
           TableName: ${self:provider.environment.table_app_data}
+          StreamSpecification:
+            StreamViewType: NEW_AND_OLD_IMAGES
           AttributeDefinitions:
               - AttributeName: id
                 AttributeType: S
@@ -34,6 +36,8 @@ Resources:
       Type: 'AWS::DynamoDB::Table'
       Properties:
           TableName: ${self:provider.environment.table_form_entries}
+          StreamSpecification:
+            StreamViewType: NEW_IMAGE
           AttributeDefinitions:
               - AttributeName: id
                 AttributeType: S

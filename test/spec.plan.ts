@@ -12,12 +12,34 @@ describe("Plan", () => {
     let token: string;
     let planId: string;
     let planVersion: number;
+    let planTypeId: string;
+    let tenantId: string;
 
     beforeAll(async (done) => {
         try {
             await AuthUtils.setup();
             const user: CognitoUser = await Auth.signIn(AuthUtils.globalAdmin);
             token = (await Auth.currentSession()).getIdToken().getJwtToken();
+            tenantId = AuthUtils.accountAdmin.attributes["custom:tenantId"];
+            let planName = `Test PlanType - ${Math.random()}`
+            const addPlanType = {query: `mutation {
+                addPlanType (input: {
+                    name: "${planName}",
+                    billingTerm: "Monthly",
+                    cost: 50,
+                    active: true
+                })
+                {id, name, billingTerm, cost, version, createdAt, updatedAt}
+                }
+            `};
+            let response = await ApiHelper.makeRequest("addPlanType", addPlanType, token);
+            let {status, parsed, hasErrors, errors} = response;
+
+            expect(status).toEqual(200);
+            expect(hasErrors).toBeFalsy();
+            hasErrors && done.fail(errors[0].message);
+            expect(parsed).toBeDefined();
+            planTypeId = parsed.id;
             done();
         } catch (error) {
             console.error("spec.plan - beforeAll - ERROR", error);
@@ -41,12 +63,11 @@ describe("Plan", () => {
 
     it("Add", async (done) => {
         let planName = `Test Plan - ${Math.random()}`
+
         const addPlanType = {query: `mutation {
             addPlan (input: {
-                accountId: "${planName}",
-                planTypeId: "",
-                endDate: "",
-                active: true
+                accountId: "${tenantId}",
+                planTypeId: "${planTypeId}"
             })
             {id, name, billingTerm, cost, version, createdAt, updatedAt}
             }
@@ -64,10 +85,6 @@ describe("Plan", () => {
             planId = parsed.id;
             planVersion = parsed.version;
             expect(parsed).toBeDefined();
-            expect(parsed.name).toEqual(planName);
-            expect(parsed.billingTerm).toEqual("Monthly");
-            expect(parsed.cost).toEqual(50.0);
-            expect(parsed.active).toBeFalsy();
         } catch (error) {
             console.error(error);
             fail(error);
@@ -135,29 +152,28 @@ describe("Plan", () => {
     //     done();
     // });
 
-    // it("Delete", async (done) => {
-    //     const deletePlanType = {query: `mutation {
-    //         deletePlanType (id: "${planId}")
-    //         {id, name, isDeleted, cost, billingTerm, active, updatedAt, version}
-    //         }
-    //     `};
+    it("Delete", async (done) => {
+        const deletePlanType = {query: `mutation {
+            deletePlan (planId: "${planId}", accountId: "${tenantId}")
+            {id, name, isDeleted, cost, billingTerm, active, updatedAt, version}
+            }
+        `};
 
-    //     try {
-    //         let response = await ApiHelper.makeRequest("deletePlanType", deletePlanType, token);
-    //         let {status, parsed, hasErrors, errors} = response;
+        try {
+            let response = await ApiHelper.makeRequest("deletePlan", deletePlanType, token);
+            let {status, parsed, hasErrors, errors} = response;
 
-    //         expect(status).toEqual(200);
-    //         expect(hasErrors).toBeFalsy("Response should not have errors");
-    //         hasErrors && done.fail(errors[0].message);
+            expect(status).toEqual(200);
+            expect(hasErrors).toBeFalsy("Response should not have errors");
+            hasErrors && done.fail(errors[0].message);
 
-    //         expect(parsed).toBeDefined("Response.data should exist");
-    //         expect(parsed.billingTerm).toEqual("Quarterly");
-    //         expect(parsed.cost).toEqual(150.0);
-    //         expect(parsed.active).toBeFalsy();
-    //         expect(parsed.isDeleted).toBeTruthy();
-    //     } catch (error) {
-    //         fail(error);
-    //     }
-    //     done();
-    // });
+            expect(parsed).toBeDefined("Response.data should exist");
+            expect(parsed.cost).toEqual(150.0);
+            expect(parsed.active).toBeFalsy();
+            expect(parsed.isDeleted).toBeTruthy();
+        } catch (error) {
+            fail(error);
+        }
+        done();
+    });
 });

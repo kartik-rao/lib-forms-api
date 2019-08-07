@@ -1,11 +1,23 @@
-#if($ctx.arguments.planTypeId)
-  $util.qr($ctx.stash.put("planTypeId", $ctx.arguments.planTypeId))
-  {
-    "version" : "2018-05-29",
-    "operation" : "GetItem",
-    "key": {
-          "id": $util.dynamodb.toDynamoDBJson($ctx.arguments.planTypeId),
-          "type" : {"S" : "PLANTYPE"}
-    }
-  }
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments)
+
+#set($isAllowed = false)
+#if($identity.isAdmin == true)
+    #set($isAllowed = true)
+#end
+
+#if($isAllowed == true)
+    #set ($request = {})
+    #set($request.id = $ctx.arguments.planTypeId)
+    #set($request.itemType = "PLANTYPE")
+
+    #if(!$util.isNull($ctx.stash.request))
+        #set ($ctx.stash.prevRequest = $ctx.stash.request)
+    #end
+
+    $util.qr($ctx.stash.put("operation", 'get'))
+    $util.qr($ctx.stash.put("request", $request))
+    #return({})
+#else
+    $util.error("User [${ctx.stash.identity.callerId}] cannot execute [GET] on [PlanType]", "Unauthorized")
 #end

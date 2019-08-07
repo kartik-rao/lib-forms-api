@@ -13,21 +13,21 @@
 #end
 
 #if($isAllowed == true)
-    #set($attribs.id = $results.PLAN.id)
-    #set($attribs.itemType = "PLAN")
-    #set($attribs.active = false)
-    #set($attribs.meta = "${args.accountId}#false")
-    #set($attribs.endDate = $util.time.nowISO8601())
-    #set($attribs.isDeleted = true)
-    #set($attribs.expectedVersion = $results.PLAN.version)
+    #set($request = {})
+    #set($request.id = $results.PLAN.id)
+    #set($request.itemType = "PLAN")
+    #set($request.active = false)
+    #set($request.meta = "${args.accountId}#false")
+    #set($request.endDate = $util.time.nowISO8601())
+    #set($request.isDeleted = true)
+    #set($request.expectedVersion = $results.PLAN.version)
     #if(!$util.isNull($ctx.stash.request))
         #set ($ctx.stash.prevRequest = $ctx.stash.request)
     #end
 
-    #set ($request = {})
     $util.qr($ctx.stash.put("operation", "update"))
-    $util.qr($ctx.stash.put("request", $attribs))
+    $util.qr($ctx.stash.put("request", $request))
     #return({})
 #else
-    $util.error("User [${identity.callerId}] cannot execute [DELETE] on [Plan ${attribs.id}]", "Unauthorized")
+    $util.error("User [${identity.callerId}] cannot execute [DELETE] on [Plan ${request.id}]", "Unauthorized")
 #end

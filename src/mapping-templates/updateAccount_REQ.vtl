@@ -1,0 +1,24 @@
+## Only allow admin and account admin to update account
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments)
+#set($isAllowed = $identity.isAdmin == true || ($identity.isAccountAdmin == true && $args.accountId == $identity.tenantId))
+#set($results=$ctx.stash.results)
+
+#if($util.isNull($results) || $util.isNull($results.ACCOUNT))
+    $util.error("Out of order invocation, no ACCOUNT", "InvocationOrderException")
+#end
+
+#if($isAllowed == true)
+    #if(!$util.isNull($ctx.stash.request))
+        #set ($ctx.stash.prevRequest = $ctx.stash.request)
+    #end
+
+    #set($request = $args)
+    $util.qr($request.put("expectedVersion", $results.ACCOUNT.version))
+    $util.qr($request.put("itemType", 'ACCOUNT'))
+    $util.qr($ctx.stash.put("request", $request))
+    $util.qr($ctx.stash.put("operation", 'update'))
+    #return({})
+#else
+    $util.error("User [${identity.callerId}] cannot execute [${request.operation}] on [${args.accountId}]", "Unauthorized")
+#end

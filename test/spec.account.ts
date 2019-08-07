@@ -64,17 +64,14 @@ describe("Account", () => {
     it("List (as AccountAdmin)", async(done) => {
         const listAllAccounts = {
             query: `query {
-                listAllAccounts {
-                    items {
-                    id,
-                    name
-                    },
+                listAccounts {
+                    items { id, name },
                     nextToken
                 }
             }`}
 
         try {
-            let response = await ApiHelper.makeRequest("listAllAccounts", listAllAccounts, token);
+            let response = await ApiHelper.makeRequest("listAccounts", listAllAccounts, token);
             let {status, parsed, hasErrors, errors} = response;
 
             expect(status).toEqual(200);
@@ -89,11 +86,8 @@ describe("Account", () => {
     it("List (as Admin)", async(done) => {
         const listAllAccounts = {
             query: `query {
-                listAllAccounts {
-                    items {
-                    id,
-                    name
-                    },
+                listAccounts {
+                    items { id, name },
                     nextToken
                 }
             }`}
@@ -101,7 +95,7 @@ describe("Account", () => {
         try {
             const user: CognitoUser = await Auth.signIn(AuthUtils.globalAdmin);
             token = (await Auth.currentSession()).getIdToken().getJwtToken();
-            let response = await ApiHelper.makeRequest("listAllAccounts", listAllAccounts, token);
+            let response = await ApiHelper.makeRequest("listAccounts", listAllAccounts, token);
             let {status, parsed, hasErrors, errors} = response;
 
             expect(status).toEqual(200);
