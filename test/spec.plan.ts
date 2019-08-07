@@ -121,36 +121,36 @@ describe("Plan", () => {
     //     done();
     // });
 
-    // it("Update", async (done) => {
-    //     const updatePlanType = {query: `mutation {
-    //         updatePlanType (input: {
-    //             id: "${planId}",
-    //             billingTerm: "Quarterly",
-    //             cost: 150,
-    //             active: true,
-    //             expectedVersion: ${planVersion}
-    //         })
-    //         {id, name, billingTerm, cost, active, updatedAt, version}
-    //         }
-    //     `};
+    it("Update", async (done) => {
+        const updatePlanType = {query: `mutation {
+            updatePlanType (input: {
+                id: "${planId}",
+                billingTerm: "Quarterly",
+                cost: 150,
+                active: true,
+                expectedVersion: ${planVersion}
+            })
+            {id, name, billingTerm, cost, active, updatedAt, version}
+            }
+        `};
 
-    //     try {
-    //         let response = await ApiHelper.makeRequest("updatePlanType", updatePlanType, token);
-    //         let {status, parsed, hasErrors, errors} = response;
+        try {
+            let response = await ApiHelper.makeRequest("updatePlanType", updatePlanType, token);
+            let {status, parsed, hasErrors, errors} = response;
 
-    //         expect(status).toEqual(200);
-    //         expect(hasErrors).toBeFalsy("Response should not have errors");
-    //         hasErrors && done.fail(errors[0].message);
+            expect(status).toEqual(200);
+            expect(hasErrors).toBeFalsy("Response should not have errors");
+            hasErrors && done.fail(errors[0].message);
 
-    //         expect(parsed).toBeDefined("Response.data should exist");
-    //         expect(parsed.billingTerm).toEqual("Quarterly");
-    //         expect(parsed.cost).toEqual(150.0);
-    //         expect(parsed.active).toBeTruthy();
-    //     } catch (error) {
-    //         fail(error);
-    //     }
-    //     done();
-    // });
+            expect(parsed).toBeDefined("Response.data should exist");
+            expect(parsed.billingTerm).toEqual("Quarterly");
+            expect(parsed.cost).toEqual(150.0);
+            expect(parsed.active).toBeTruthy();
+        } catch (error) {
+            fail(error);
+        }
+        done();
+    });
 
     it("Delete", async (done) => {
         const deletePlanType = {query: `mutation {
