@@ -136,7 +136,7 @@ describe("PlanType", () => {
 
     it("Delete", async (done) => {
         const deletePlanType = {query: `mutation {
-            deletePlanType (id: "${planId}")
+            deletePlanType (planTypeId: "${planId}")
             {id, name, isDeleted, cost, billingTerm, active, updatedAt, version}
             }
         `};
