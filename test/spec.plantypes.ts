@@ -77,7 +77,7 @@ describe("PlanType", () => {
     it("List", async(done) => {
         const listAllActivePlanTypes = {
             query: `query {
-                listAllActivePlanTypes {
+                listPlanTypes(filter:{active: {eq: true}}) {
                     items {
                     id,
                     name,

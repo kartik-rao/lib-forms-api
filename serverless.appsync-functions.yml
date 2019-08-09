@@ -57,23 +57,25 @@
   name: FN_deletePlanType
   request: deletePlanType_REQ.vtl
   response: FN_passthrough_RES.vtl
-
 - dataSource: AppData
   type: Mutation
   name: FN_updatePlanType
   request: updatePlanType_REQ.vtl
   response: FN_passthrough_RES.vtl
-
 - dataSource: AppData
   type: Query
   name: FN_addPlanType
   request: addPlanType_REQ.vtl
   response: FN_passthrough_RES.vtl
-
 - dataSource: AppData
   type: Query
   name: FN_getPlanType
   request: getPlanType_REQ.vtl
+  response: FN_passthrough_RES.vtl
+- dataSource: AppData
+  type: Query
+  name: FN_listPlanTypes
+  request: listPlanTypes_REQ.vtl
   response: FN_passthrough_RES.vtl
 
   ## Plan

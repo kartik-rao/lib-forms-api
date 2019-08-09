@@ -1,23 +1,19 @@
-#if(!$util.isNull($ctx.stash.request))
-    #set ($ctx.stash.prevRequest = $ctx.stash.request)
-#end
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments)
 
-$util.qr($ctx.stash.put("operation", 'query'))
-
-#set ($request = {})
-$util.qr($request.put("itemType", 'ACCOUNT'))
-$util.qr($request.put("limit", $ctx.arguments.limit))
-$util.qr($request.put("nextToken", $ctx.arguments.nextToken))
-$util.qr($ctx.stash.put("request", $request))
-
-#set($isAllowed = false)
-#if($ctx.stash.identity.isAdmin == true)
-    #set($isAllowed = true)
-#end
-
-#if($isAllowed == true)
+#if($identity.isAdmin == true)
+    $util.qr($ctx.stash.put("operation", 'query'))
+    #set ($request = {})
+    $util.qr($request.put("itemType", 'ACCOUNT'))
+    $util.qr($request.put("limit", $ctx.args.limit))
+    $util.qr($request.put("nextToken", $ctx.args.nextToken))
+    $util.qr($request.put("filter", $util.defaultIfNull($args.filter, {})))
+    $util.qr($request.filter.put("active", $util.defaultIfNull($request.filter, {"eq": true})))
+    #if(!$util.isNull($ctx.stash.request))
+        #set ($ctx.stash.prevRequest = $ctx.stash.request)
+    #end
+    $util.qr($ctx.stash.put("request", $request))
     #return({})
 #else
     $util.error("User [${ctx.stash.identity.callerId}] cannot execute [${request.operation}] on [${request.itemType}]", "Unauthorized")
 #end
-

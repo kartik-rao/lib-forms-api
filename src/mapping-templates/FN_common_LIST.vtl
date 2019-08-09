@@ -13,7 +13,7 @@
         }
     }
 #else
-    "query"    : {
+    "query": {
         "expression" : "#type = :type AND begins_with(#meta, :meta) AND #isDeleted = :isDeleted",
         "expressionNames" : {
             "#type" : "type",
@@ -26,6 +26,20 @@
         }
     }
 #end
-  ,"limit": $util.defaultIfNull(${ctx.stash.request.limit}, 20),
+    ,"scanIndexForward":   #if( $context.stash.request.sortDirection )
+        #if( $context.stash.request.sortDirection == "ASC" )
+            true
+        #else
+            false
+        #end
+    #else
+        true
+    #end,
+    ## "filter": #if(!$util.isNull($context.stash.request.filter))
+    ##     $util.transform.toDynamoDBFilterExpression($context.stash.request.filter)
+    ## #else
+    ##     null
+    ## #end,
+  "limit": $util.defaultIfNull(${ctx.stash.request.limit}, 20),
   "nextToken": $util.toJson($util.defaultIfNullOrBlank(${ctx.stash.request.nextToken}, null))
 }

@@ -62,8 +62,6 @@ describe("Plan", () => {
 
 
     it("Add", async (done) => {
-        let planName = `Test Plan - ${Math.random()}`
-
         const addPlanType = {query: `mutation {
             addPlan (input: {
                 accountId: "${tenantId}",
@@ -92,34 +90,29 @@ describe("Plan", () => {
         done();
     });
 
-    // it("List", async(done) => {
-    //     const listAllActivePlanTypes = {
-    //         query: `query {
-    //             listAllActivePlanTypes {
-    //                 items {
-    //                 id,
-    //                 name,
-    //                 cost
-    //                 },
-    //                 nextToken
-    //             }
-    //         }`}
+    it("Get", async (done) => {
+        const getPlan = {query: `mutation {
+            getPlan (input: {
+                planId: "${planId}"
+            })
+            {id, planType, version, createdAt, updatedAt}
+            }
+        `};
 
-    //     try {
-    //         let response = await ApiHelper.makeRequest("listAllActivePlanTypes", listAllActivePlanTypes, token);
-    //         let {status, parsed, hasErrors, errors} = response;
+        try {
+            let response = await ApiHelper.makeRequest("getPlan", getPlan, token);
+            let {status, parsed, hasErrors, errors} = response;
 
-    //         expect(status).toEqual(200);
-    //         expect(hasErrors).toBeFalsy("Response should not have errors");
-    //         hasErrors && done.fail(errors[0].message);
-    //         expect(parsed).toBeDefined();
-    //         expect(parsed.items).toBeDefined();
-
-    //     } catch (error) {
-    //         fail(error);
-    //     }
-    //     done();
-    // });
+            expect(status).toEqual(200);
+            expect(hasErrors).toBeFalsy("Response should not have errors");
+            hasErrors && done.fail(errors[0].message);
+            expect(parsed).toBeDefined();
+        } catch (error) {
+            console.error(error);
+            fail(error);
+        }
+        done();
+    });
 
     it("Update", async (done) => {
         const updatePlanType = {query: `mutation {

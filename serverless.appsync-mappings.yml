@@ -9,6 +9,23 @@
     - FN_executeGet
 
 - dataSource: AppData
+  type: Query
+  field: listUsers
+  request: listAllUsers_REQ.vtl
+  response: passthrough-paginated_RES.vtl
+
+## Plan
+- dataSource: AppData
+  type: Query
+  field: getPlan
+  request: pipeline_identify_BEF.vtl
+  response: FN_passthrough_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_getPlan
+    - FN_executeGet
+
+- dataSource: AppData
   type: Mutation
   field: deletePlan
   request: pipeline_identify_BEF.vtl
@@ -30,6 +47,7 @@
     - FN_createPlan
     - FN_executePut
 
+## Account
 - dataSource: AppData
   type: Query
   field: getAccount
@@ -87,6 +105,8 @@
   field: getForm
   request: getForm_REQ.vtl
   response: passthrough_RES.vtl
+
+## Form
 # Form.ownedBy
 - dataSource: AppData
   type: Form
@@ -114,41 +134,21 @@
 
 - dataSource: AppData
   type: Query
-  field: listAllForms
+  field: listForms
   request: listAllForms_REQ.vtl
   response: passthrough-paginated_RES.vtl
-- dataSource: AppData
-  type: Query
-  field: listAllUsers
-  request: listAllUsers_REQ.vtl
-  response: passthrough-paginated_RES.vtl
-- dataSource: AppData
-  type: Query
-  field: getPlan
-  request: getPlan_REQ.vtl
-  response: passthrough_RES.vtl
-- dataSource: AppData
-  type: Query
-  field: getPlanType
-  request: getPlanType_REQ.vtl
-  response: passthrough_RES.vtl
-- dataSource: AppData
-  type: Query
-  field: listAllPlanTypes
-  request: listAllPlanTypes_REQ.vtl
-  response: passthrough-paginated_RES.vtl
 
-- dataSource: AppData
-  type: Query
-  field: listAllActivePlanTypes
-  request: listAllActivePlanTypes_REQ.vtl
-  response: passthrough-paginated_RES.vtl
+# - dataSource: AppData
+#   type: Query
+#   field: listActivePlanTypes
+#   request: listAllActivePlanTypes_REQ.vtl
+#   response: passthrough-paginated_RES.vtl
 
-- dataSource: AppData
-  type: Query
-  field: listAllAccountForms
-  request: getAccountForms_REQ.vtl
-  response: getAccountForms_RES.vtl
+# - dataSource: AppData
+#   type: Query
+#   field: listAccountForms
+#   request: getAccountForms_REQ.vtl
+#   response: getAccountForms_RES.vtl
 
 - dataSource: AppData
   type: Mutation
@@ -156,13 +156,27 @@
   request: addAccount_REQ.vtl
   response: passthrough_RES.vtl
 
-- dataSource: AppData
-  type: Mutation
-  field: addPlanType
-  request: addPlanType_REQ.vtl
-  response: passthrough_RES.vtl
-
 ## PlanType
+- dataSource: AppData
+  type: Query
+  field: listPlanTypes
+  request: pipeline_identify_BEF.vtl
+  response: FN_passthrough_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_listPlanTypes
+    - FN_executeList
+
+- dataSource: AppData
+  type: Query
+  field: getPlanType
+  request: pipeline_identify_BEF.vtl
+  response: FN_passthrough_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_getPlanType
+    - FN_executeGet
+
 - dataSource: AppData
   type: Mutation
   field: addPlanType
