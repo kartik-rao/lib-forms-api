@@ -6,7 +6,7 @@
   kind: PIPELINE
   functions:
     - FN_getUser
-    - FN_executeGet
+    - FN_common_GET
 
 - dataSource: AppData
   type: Query
@@ -23,7 +23,7 @@
   kind: PIPELINE
   functions:
     - FN_getPlan
-    - FN_executeGet
+    - FN_common_GET
 
 - dataSource: AppData
   type: Mutation
@@ -33,9 +33,9 @@
   kind: PIPELINE
   functions:
     - FN_getPlan
-    - FN_executeGet
+    - FN_common_GET
     - FN_deletePlan
-    - FN_executeUpdate
+    - FN_common_UPDATE
 
 - dataSource: AppData
   type: Mutation
@@ -45,7 +45,17 @@
   kind: PIPELINE
   functions:
     - FN_createPlan
-    - FN_executePut
+    - FN_common_PUT
+
+- dataSource: AppData
+  type: Mutation
+  field: updatePlan
+  request: pipeline_identify_BEF.vtl
+  response: FN_passthrough_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_updatePlan
+    - FN_common_UPDATE
 
 ## Account
 - dataSource: AppData
@@ -56,7 +66,7 @@
   kind: PIPELINE
   functions:
     - FN_getAccount
-    - FN_executeGet
+    - FN_common_GET
 
 - dataSource: AppData
   type: Mutation
@@ -66,9 +76,9 @@
   kind: PIPELINE
   functions:
     - FN_getAccount
-    - FN_executeGet
+    - FN_common_GET
     - FN_updateAccount
-    - FN_executeUpdate
+    - FN_common_UPDATE
 
 # Account.plan
 - dataSource: AppData
@@ -138,18 +148,6 @@
   request: listAllForms_REQ.vtl
   response: passthrough-paginated_RES.vtl
 
-# - dataSource: AppData
-#   type: Query
-#   field: listActivePlanTypes
-#   request: listAllActivePlanTypes_REQ.vtl
-#   response: passthrough-paginated_RES.vtl
-
-# - dataSource: AppData
-#   type: Query
-#   field: listAccountForms
-#   request: getAccountForms_REQ.vtl
-#   response: getAccountForms_RES.vtl
-
 - dataSource: AppData
   type: Mutation
   field: addAccount
@@ -165,7 +163,7 @@
   kind: PIPELINE
   functions:
     - FN_listPlanTypes
-    - FN_executeList
+    - FN_common_LIST
 
 - dataSource: AppData
   type: Query
@@ -175,7 +173,7 @@
   kind: PIPELINE
   functions:
     - FN_getPlanType
-    - FN_executeGet
+    - FN_common_GET
 
 - dataSource: AppData
   type: Mutation
@@ -185,7 +183,7 @@
   kind: PIPELINE
   functions:
     - FN_addPlanType
-    - FN_executePut
+    - FN_common_PUT
 
 - dataSource: AppData
   type: Mutation
@@ -195,9 +193,9 @@
   kind: PIPELINE
   functions:
     - FN_getPlanType
-    - FN_executeGet
+    - FN_common_GET
     - FN_updatePlanType
-    - FN_executeUpdate
+    - FN_common_UPDATE
 
 - dataSource: AppData
   type: Mutation
@@ -207,10 +205,9 @@
   kind: PIPELINE
   functions:
     - FN_getPlanType
-    - FN_executeGet
+    - FN_common_GET
     - FN_deletePlanType
-    - FN_executeUpdate
-
+    - FN_common_UPDATE
 
 - dataSource: AppData
   type: Mutation
@@ -238,4 +235,4 @@
   kind: PIPELINE
   functions:
     - FN_listAccounts
-    - FN_executeList
+    - FN_common_LIST

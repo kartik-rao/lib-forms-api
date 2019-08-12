@@ -345,6 +345,7 @@ type Plan @versioned {
   updatedAt: AWSDateTime
   planType: PlanType
   isDeleted: Boolean
+  version: Int
 }
 
 input PlanFilterInput {

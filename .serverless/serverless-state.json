@@ -207,7 +207,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1565356599091-2019-08-09T13:16:39.091Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1565568097951-2019-08-12T00:01:37.951Z/formsli.zip"
               },
               "FunctionName": "formsli-postconfirmation",
               "Handler": "src/postconfirmation.handle",
@@ -255,7 +255,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1565356599091-2019-08-09T13:16:39.091Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1565568097951-2019-08-12T00:01:37.951Z/formsli.zip"
               },
               "FunctionName": "formsli-invite",
               "Handler": "src/invite.handle",
@@ -520,7 +520,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1565356572920": {
+          "ApiGatewayDeployment1565568073069": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -1383,7 +1383,7 @@
           "GraphQlSchema": {
             "Type": "AWS::AppSync::GraphQLSchema",
             "Properties": {
-              "Definition": "input TableDateFilterInput {\n    ne: AWSDateTime\n    eq: AWSDateTime\n    le: AWSDateTime\n    lt: AWSDateTime\n    ge: AWSDateTime\n    gt: AWSDateTime\n    between: [AWSDateTime]\n}\n\ninput TableBooleanFilterInput {\n    ne: Boolean\n    eq: Boolean\n}\n\ninput TableFloatFilterInput {\n    ne: Float\n    eq: Float\n    le: Float\n    lt: Float\n    ge: Float\n    gt: Float\n    between: [Float]\n}\n\ninput TableIntFilterInput {\n    ne: Int\n    eq: Int\n    le: Int\n    lt: Int\n    ge: Int\n    gt: Int\n    between: [Int]\n}\n\ninput TableStringFilterInput {\n    ne: String\n    eq: String\n    le: String\n    lt: String\n    ge: String\n    gt: String\n    contains: String\n    notContains: String\n    between: [String]\n    beginsWith: String\n}\n\ntype AppData @model {\n    id: ID!\n    type: ID!\n    meta: String!\n    itemType: String!\n    owner: ID!\n    createdAt: AWSDateTime!\n    updatedAt: AWSDateTime\n    isDeleted: Boolean\n    version: Int\n    searchField: String\n}\n\ntype FormEntry @model {\n    id: ID!\n    type: ID!\n    meta: String!\n    createdAt: AWSDateTime!\n}\n\ninput AddFormEntryInput {\n  data: AWSJSON!\n}\n\ntype PaginatedFormEntries {\n  items: [FormEntry!]\n  nextToken: String\n}\n\ntype FormVersion {\n  id: ID!\n  owner: ID!\n  ownedBy: User!\n  createdAt: AWSDateTime\n  notes: String\n  formData: AWSJSON\n}\n\ninput AddFormVersionInput {\n  formId: ID!\n  owner: ID!\n  notes: String\n  formData: AWSJSON!\n}\n\ntype PaginatedFormVersion {\n  items: [FormVersion!]\n  nextToken: String\n}\n\ntype Form @versioned  {\n    id: ID!\n    owner: ID!\n    name: String!\n    desc: String!\n    versionId: ID!\n    formData: FormVersion!\n    ownedBy: User!\n    accountId: ID!\n    account: Account!\n    createdAt: AWSDateTime!\n    updatedAt: AWSDateTime\n    startsAt: AWSDateTime\n    endsAt: AWSDateTime\n    isPaused: Boolean\n    versions(limit: Int, nextToken: String): PaginatedFormVersion\n    integrations(limit: Int, nextToken: String): PaginatedIntegration\n    entries(limit: Int, nextToken: String): PaginatedFormEntries\n}\n\ninput FormFilterInput {\n    owner: TableIntFilterInput\n    name: TableStringFilterInput\n    createdAt: TableDateFilterInput\n    updatedAt: TableDateFilterInput\n    startsAt: TableDateFilterInput\n    endsAt: TableDateFilterInput\n}\n\ninput AddFormInput {\n  name: String!\n  desc: String\n  startsAt: AWSDateTime\n  endsAt: AWSDateTime\n  isPaused: Boolean\n}\n\ninput UpdateFormInput  {\n  id: ID!\n  currentVersionId: ID\n  name: String\n  desc: String\n  startsAt: AWSDateTime\n  endsAt: AWSDateTime\n  isPaused: Boolean\n  expectedVersion: Int!\n}\n\ntype PaginatedForm {\n    items: [Form!]\n    nextToken: String\n}\n\ntype User @versioned {\n    id: ID!\n    owner: ID!\n    accountId: ID!\n    account: Account\n    email: String!\n    group: String!\n    given_name: String!\n    family_name: String!\n    phone_number: AWSPhone\n    createdAt: AWSDateTime\n    updatedAt: AWSDateTime\n    isDeleted: Boolean\n}\n\ninput UserFilterInput {\n    owner: TableIntFilterInput\n    email: TableStringFilterInput\n    given_name: TableStringFilterInput\n    family_name: TableStringFilterInput\n    createdAt: TableDateFilterInput\n    updatedAt: TableDateFilterInput\n    startsAt: TableDateFilterInput\n    endsAt: TableDateFilterInput\n}\n\ninput UpdateUserInputData {\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n  expectedVersion: Int!\n}\n\ninput UpdateUserInput {\n  id: ID!\n  data: UpdateUserInputData!\n  expectedVersion: Int!\n}\n\ninput AddUserInput {\n  email: String!\n  group: String!\n  accountId: ID!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ntype PaginatedUser {\n  items: [User!]\n  nextToken: String\n}\n\nenum AddressType {\n  BILLING\n  CONTACT\n}\n\ntype Address @versioned {\n  id: ID!\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ninput AddressFilterInput {\n    owner: TableIntFilterInput\n    name: TableStringFilterInput\n    createdAt: TableDateFilterInput\n    updatedAt: TableDateFilterInput\n    startsAt: TableDateFilterInput\n    endsAt: TableDateFilterInput\n}\n\ntype AddAddressInput {\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype PaginatedAddress {\n  items: [Address!]\n  nextToken: String\n}\n\ntype Account @versioned {\n  id: ID!\n  name: String!\n  addresses(limit: Int, nextToken: String): PaginatedAddress\n  website: String\n  taxId: String\n  owner: ID!\n  ownedBy: User!\n  plan : Plan\n  planId: ID\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  active: Boolean\n  users(limit: Int, nextToken: String): PaginatedUser\n  forms(limit: Int, nextToken: String): PaginatedForm\n}\n\ninput AccountFilterInput {\n    name: TableStringFilterInput\n    createdAt: TableDateFilterInput\n    updatedAt: TableDateFilterInput\n}\n\ninput UpdateAccountInput {\n  id: ID!\n  name: String\n  planId: ID\n  expectedVersion: Int!\n}\n\ninput AddAccountInput {\n  name: String!\n}\n\ntype PaginatedAccount {\n  items: [Account!]\n  nextToken: String\n}\n\ntype PlanType @versioned {\n  id: ID!\n  owner: ID!\n  ownedBy: User!\n  name: String!\n  cost: Float!\n  active: Boolean!\n  billingTerm: String!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  version: Int\n  isDeleted: Boolean\n}\n\ninput PlanTypeFilterInput {\n    name: TableStringFilterInput\n    cost: TableFloatFilterInput\n    active: TableBooleanFilterInput\n    billingTerm: TableStringFilterInput\n    createdAt: TableDateFilterInput\n    updatedAt: TableDateFilterInput\n}\n\ninput AddPlanTypeInput {\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Boolean!\n}\n\ninput UpdatePlanTypeInput {\n  id: ID!\n  name: String\n  cost: Float\n  billingTerm: String\n  active: Boolean\n  expectedVersion: Int!\n}\n\ntype PaginatedPlanType {\n  items: [PlanType!]\n  nextToken: String\n}\n\ntype Plan @versioned {\n  id: ID!\n  accountId: ID!\n  account: Account!\n  owner: ID!\n  ownedBy: User!\n  planTypeId: ID!\n  startDate: AWSDateTime!\n  endDate: AWSDateTime\n  active: Boolean\n  lastBillDate: AWSDateTime\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  planType: PlanType\n  isDeleted: Boolean\n}\n\ninput PlanFilterInput {\n    id: TableIntFilterInput\n    accountId: TableIntFilterInput\n    active: TableBooleanFilterInput\n    startDate: TableDateFilterInput\n    endDate: TableDateFilterInput\n    lastBillDate: TableDateFilterInput\n    createdAt: TableDateFilterInput\n    updatedAt: TableDateFilterInput\n}\n\ninput AddPlanInput {\n  accountId: ID!\n  planTypeId: ID!\n  endDate: AWSDateTime\n  active: Boolean\n}\n\ninput UpdatePlanInput {\n  id: ID!\n  endDate: AWSDateTime\n  active: Boolean!\n  expectedVersion: Int!\n}\n\ntype PaginatedPlan {\n  items: [Plan!]\n  nextToken: String\n}\n\ntype IntegrationType {\n  id: ID!\n  owner: ID!\n  ownedBy: User!\n  planTypeId: ID!\n  planType: PlanType\n  name: String!\n  active: Boolean!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\ninput IntegrationTypeFilterInput {\n    id: TableIntFilterInput\n    planTypeId: TableIntFilterInput\n    active: TableBooleanFilterInput\n    name: TableStringFilterInput\n    createdAt: TableDateFilterInput\n    updatedAt: TableDateFilterInput\n}\n\ninput AddIntegrationTypeInput {\n  name: String!\n  active: Boolean\n}\n\ninput UpdateIntegrationTypeInput {\n  id: ID!\n  name: String!\n  active: Boolean\n  expectedVersion: Int!\n}\n\ntype PaginatedIntegrationType {\n  items: [IntegrationType!]\n  nextToken: String\n}\n\ntype Integration @versioned {\n  id: ID!\n  integrationTypeId: ID!\n  integrationType: IntegrationType\n  owner: ID!\n  accountId: ID!\n  formId: ID!\n  form: Form!\n  active: Boolean!\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  lastExecuted: AWSDateTime\n  lastExecutionResult: Boolean\n  lastExecutionResultMessage: String\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Boolean\n}\n\ninput IntegrationFilterInput {\n    id: TableIntFilterInput\n    integrationTypeId: TableIntFilterInput\n    accountId: TableIntFilterInput\n    formId: TableIntFilterInput\n    active: TableBooleanFilterInput\n    lastExecutionResult: TableBooleanFilterInput\n}\n\ninput AddIntegrationInput {\n  integrationTypeId: ID!\n  accountId: ID!\n  formId: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationTypeInputData {\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  expectedVersion: Int!\n}\n\ninput UpdateIntegrationInput {\n  id: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  expectedVersion: Int!\n}\n\ntype PaginatedIntegration {\n  items: [Integration!]\n  nextToken: String\n}\n\ntype Query {\n  getAccount(accountId: ID!): Account\n  getUser(userId: ID!): User\n  getPlan(planId: String!): Plan\n  getActiveAccountPlan(accountId: String!): PaginatedPlan\n  getPlanType(planTypeId: String!): PlanType\n  getForm(formId: String!, versionId: ID!) : Form!\n  getIntegrationType(integrationTypeId: String!): IntegrationType\n  getIntegration(integrationId: String!): Integration\n  getFormEntry(formEntryId: String!): FormEntry\n\n  listAccounts(limit: Int, nextToken: String, filter: AccountFilterInput): PaginatedAccount!\n  listUsers(limit: Int, nextToken: String, filter: UserFilterInput) : PaginatedUser!\n#   listAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n#   listAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n#   listAccountUsersInGroup(accountId: String!, group: String!, limit: Int, nextToken: String): PaginatedUser!\n\n  listPlans(limit: Int, nextToken: String, filter: PlanFilterInput): PaginatedPlan!\n#   listAccountPlans(accountId: String!, limit: Int, nextToken: String): PaginatedPlan!\n  listPlanTypes(limit: Int, nextToken: String, filter: PlanTypeFilterInput): PaginatedPlanType!\n#   listActivePlanTypes(limit: Int, nextToken: String): PaginatedPlanType!\n\n  listForms(limit: Int, nextToken: String, filter: FormFilterInput) : PaginatedForm!\n#   listAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedForm!\n#   listAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n#   listAccountFormsByUser(accountId: String!, userId: String!, limit: Int, nextToken: String) : PaginatedForm!\n#   listAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n\n  listIntegrationTypes(limit: Int, nextToken: String, filter: IntegrationTypeFilterInput): PaginatedIntegrationType!\n#   listIntegrationTypesByPlanType(planTypeId: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n#   listIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n\n  listIntegrations(limit: Int, nextToken: String, filter: IntegrationFilterInput): PaginatedIntegration!\n#   listAccountIntegrations(accountId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n#   listAccountFormIntegrations(accountId: String!, formId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n#   listAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegration!\n\n  listFormEntries(formId: String!) : PaginatedFormEntries!\n  listFormEntriesByTime(formId: String!, timestampPrefix: String!): PaginatedFormEntries!\n}\n\ntype Mutation {\n  addPlanType(input: AddPlanTypeInput): PlanType!\n  addPlan(input: AddPlanInput): Plan!\n  addAccount(input: AddAccountInput): Account!\n  addUser(input: AddUserInput): User!\n  addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!\n  addIntegration(input: AddIntegrationInput): Integration!\n  addForm(form: AddFormInput!, notes: String!): Form!\n  addFormVersion(version: AddFormVersionInput): FormVersion!\n\n  updatePlanType(input: UpdatePlanTypeInput): PlanType!\n  updatePlan(input: UpdatePlanInput): Plan!\n  updateAccount(input: UpdateAccountInput): Account!\n  updateUser(input: UpdateUserInput): User!\n  updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!\n  updateIntegration(input: UpdateIntegrationInput): Integration!\n  updateForm(input: UpdateFormInput): Form!\n\n  deletePlanType(planTypeId: ID!): PlanType!\n  deletePlan(accountId: ID!, planId: ID!): Plan!\n  deleteAccount(accountId: ID!): Account!\n  deleteUser(userId: ID!): User!\n  deleteIntegrationType(integrationTypeId: ID!): IntegrationType!\n  deleteIntegration(integrationId: ID!): Integration!\n  deleteForm(formId: ID!): Form!\n\n  addFormEntry(input: AddFormEntryInput!): FormEntry!\n\n}\n\nschema {\n  query: Query\n  mutation: Mutation\n}\n",
+              "Definition": "input TableDateFilterInput {\n    ne: AWSDateTime\n    eq: AWSDateTime\n    le: AWSDateTime\n    lt: AWSDateTime\n    ge: AWSDateTime\n    gt: AWSDateTime\n    between: [AWSDateTime]\n}\n\ninput TableBooleanFilterInput {\n    ne: Boolean\n    eq: Boolean\n}\n\ninput TableFloatFilterInput {\n    ne: Float\n    eq: Float\n    le: Float\n    lt: Float\n    ge: Float\n    gt: Float\n    between: [Float]\n}\n\ninput TableIntFilterInput {\n    ne: Int\n    eq: Int\n    le: Int\n    lt: Int\n    ge: Int\n    gt: Int\n    between: [Int]\n}\n\ninput TableStringFilterInput {\n    ne: String\n    eq: String\n    le: String\n    lt: String\n    ge: String\n    gt: String\n    contains: String\n    notContains: String\n    between: [String]\n    beginsWith: String\n}\n\ntype AppData @model {\n    id: ID!\n    type: ID!\n    meta: String!\n    itemType: String!\n    owner: ID!\n    createdAt: AWSDateTime!\n    updatedAt: AWSDateTime\n    isDeleted: Boolean\n    version: Int\n    searchField: String\n}\n\ntype FormEntry @model {\n    id: ID!\n    type: ID!\n    meta: String!\n    createdAt: AWSDateTime!\n}\n\ninput AddFormEntryInput {\n  data: AWSJSON!\n}\n\ntype PaginatedFormEntries {\n  items: [FormEntry!]\n  nextToken: String\n}\n\ntype FormVersion {\n  id: ID!\n  owner: ID!\n  ownedBy: User!\n  createdAt: AWSDateTime\n  notes: String\n  formData: AWSJSON\n}\n\ninput AddFormVersionInput {\n  formId: ID!\n  owner: ID!\n  notes: String\n  formData: AWSJSON!\n}\n\ntype PaginatedFormVersion {\n  items: [FormVersion!]\n  nextToken: String\n}\n\ntype Form @versioned  {\n    id: ID!\n    owner: ID!\n    name: String!\n    desc: String!\n    versionId: ID!\n    formData: FormVersion!\n    ownedBy: User!\n    accountId: ID!\n    account: Account!\n    createdAt: AWSDateTime!\n    updatedAt: AWSDateTime\n    startsAt: AWSDateTime\n    endsAt: AWSDateTime\n    isPaused: Boolean\n    versions(limit: Int, nextToken: String): PaginatedFormVersion\n    integrations(limit: Int, nextToken: String): PaginatedIntegration\n    entries(limit: Int, nextToken: String): PaginatedFormEntries\n}\n\ninput FormFilterInput {\n    owner: TableIntFilterInput\n    name: TableStringFilterInput\n    createdAt: TableDateFilterInput\n    updatedAt: TableDateFilterInput\n    startsAt: TableDateFilterInput\n    endsAt: TableDateFilterInput\n}\n\ninput AddFormInput {\n  name: String!\n  desc: String\n  startsAt: AWSDateTime\n  endsAt: AWSDateTime\n  isPaused: Boolean\n}\n\ninput UpdateFormInput  {\n  id: ID!\n  currentVersionId: ID\n  name: String\n  desc: String\n  startsAt: AWSDateTime\n  endsAt: AWSDateTime\n  isPaused: Boolean\n  expectedVersion: Int!\n}\n\ntype PaginatedForm {\n    items: [Form!]\n    nextToken: String\n}\n\ntype User @versioned {\n    id: ID!\n    owner: ID!\n    accountId: ID!\n    account: Account\n    email: String!\n    group: String!\n    given_name: String!\n    family_name: String!\n    phone_number: AWSPhone\n    createdAt: AWSDateTime\n    updatedAt: AWSDateTime\n    isDeleted: Boolean\n}\n\ninput UserFilterInput {\n    owner: TableIntFilterInput\n    email: TableStringFilterInput\n    given_name: TableStringFilterInput\n    family_name: TableStringFilterInput\n    createdAt: TableDateFilterInput\n    updatedAt: TableDateFilterInput\n    startsAt: TableDateFilterInput\n    endsAt: TableDateFilterInput\n}\n\ninput UpdateUserInputData {\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n  expectedVersion: Int!\n}\n\ninput UpdateUserInput {\n  id: ID!\n  data: UpdateUserInputData!\n  expectedVersion: Int!\n}\n\ninput AddUserInput {\n  email: String!\n  group: String!\n  accountId: ID!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ntype PaginatedUser {\n  items: [User!]\n  nextToken: String\n}\n\nenum AddressType {\n  BILLING\n  CONTACT\n}\n\ntype Address @versioned {\n  id: ID!\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ninput AddressFilterInput {\n    owner: TableIntFilterInput\n    name: TableStringFilterInput\n    createdAt: TableDateFilterInput\n    updatedAt: TableDateFilterInput\n    startsAt: TableDateFilterInput\n    endsAt: TableDateFilterInput\n}\n\ntype AddAddressInput {\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype PaginatedAddress {\n  items: [Address!]\n  nextToken: String\n}\n\ntype Account @versioned {\n  id: ID!\n  name: String!\n  addresses(limit: Int, nextToken: String): PaginatedAddress\n  website: String\n  taxId: String\n  owner: ID!\n  ownedBy: User!\n  plan : Plan\n  planId: ID\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  active: Boolean\n  users(limit: Int, nextToken: String): PaginatedUser\n  forms(limit: Int, nextToken: String): PaginatedForm\n}\n\ninput AccountFilterInput {\n    name: TableStringFilterInput\n    createdAt: TableDateFilterInput\n    updatedAt: TableDateFilterInput\n}\n\ninput UpdateAccountInput {\n  id: ID!\n  name: String\n  planId: ID\n  expectedVersion: Int!\n}\n\ninput AddAccountInput {\n  name: String!\n}\n\ntype PaginatedAccount {\n  items: [Account!]\n  nextToken: String\n}\n\ntype PlanType @versioned {\n  id: ID!\n  owner: ID!\n  ownedBy: User!\n  name: String!\n  cost: Float!\n  active: Boolean!\n  billingTerm: String!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  version: Int\n  isDeleted: Boolean\n}\n\ninput PlanTypeFilterInput {\n    name: TableStringFilterInput\n    cost: TableFloatFilterInput\n    active: TableBooleanFilterInput\n    billingTerm: TableStringFilterInput\n    createdAt: TableDateFilterInput\n    updatedAt: TableDateFilterInput\n}\n\ninput AddPlanTypeInput {\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Boolean!\n}\n\ninput UpdatePlanTypeInput {\n  id: ID!\n  name: String\n  cost: Float\n  billingTerm: String\n  active: Boolean\n  expectedVersion: Int!\n}\n\ntype PaginatedPlanType {\n  items: [PlanType!]\n  nextToken: String\n}\n\ntype Plan @versioned {\n  id: ID!\n  accountId: ID!\n  account: Account!\n  owner: ID!\n  ownedBy: User!\n  planTypeId: ID!\n  startDate: AWSDateTime!\n  endDate: AWSDateTime\n  active: Boolean\n  lastBillDate: AWSDateTime\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  planType: PlanType\n  isDeleted: Boolean\n  version: Int\n}\n\ninput PlanFilterInput {\n    id: TableIntFilterInput\n    accountId: TableIntFilterInput\n    active: TableBooleanFilterInput\n    startDate: TableDateFilterInput\n    endDate: TableDateFilterInput\n    lastBillDate: TableDateFilterInput\n    createdAt: TableDateFilterInput\n    updatedAt: TableDateFilterInput\n}\n\ninput AddPlanInput {\n  accountId: ID!\n  planTypeId: ID!\n  endDate: AWSDateTime\n  active: Boolean\n}\n\ninput UpdatePlanInput {\n  id: ID!\n  endDate: AWSDateTime\n  active: Boolean!\n  expectedVersion: Int!\n}\n\ntype PaginatedPlan {\n  items: [Plan!]\n  nextToken: String\n}\n\ntype IntegrationType {\n  id: ID!\n  owner: ID!\n  ownedBy: User!\n  planTypeId: ID!\n  planType: PlanType\n  name: String!\n  active: Boolean!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\ninput IntegrationTypeFilterInput {\n    id: TableIntFilterInput\n    planTypeId: TableIntFilterInput\n    active: TableBooleanFilterInput\n    name: TableStringFilterInput\n    createdAt: TableDateFilterInput\n    updatedAt: TableDateFilterInput\n}\n\ninput AddIntegrationTypeInput {\n  name: String!\n  active: Boolean\n}\n\ninput UpdateIntegrationTypeInput {\n  id: ID!\n  name: String!\n  active: Boolean\n  expectedVersion: Int!\n}\n\ntype PaginatedIntegrationType {\n  items: [IntegrationType!]\n  nextToken: String\n}\n\ntype Integration @versioned {\n  id: ID!\n  integrationTypeId: ID!\n  integrationType: IntegrationType\n  owner: ID!\n  accountId: ID!\n  formId: ID!\n  form: Form!\n  active: Boolean!\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  lastExecuted: AWSDateTime\n  lastExecutionResult: Boolean\n  lastExecutionResultMessage: String\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Boolean\n}\n\ninput IntegrationFilterInput {\n    id: TableIntFilterInput\n    integrationTypeId: TableIntFilterInput\n    accountId: TableIntFilterInput\n    formId: TableIntFilterInput\n    active: TableBooleanFilterInput\n    lastExecutionResult: TableBooleanFilterInput\n}\n\ninput AddIntegrationInput {\n  integrationTypeId: ID!\n  accountId: ID!\n  formId: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationTypeInputData {\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  expectedVersion: Int!\n}\n\ninput UpdateIntegrationInput {\n  id: ID!\n  active: Boolean\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  expectedVersion: Int!\n}\n\ntype PaginatedIntegration {\n  items: [Integration!]\n  nextToken: String\n}\n\ntype Query {\n  getAccount(accountId: ID!): Account\n  getUser(userId: ID!): User\n  getPlan(planId: String!): Plan\n  getActiveAccountPlan(accountId: String!): PaginatedPlan\n  getPlanType(planTypeId: String!): PlanType\n  getForm(formId: String!, versionId: ID!) : Form!\n  getIntegrationType(integrationTypeId: String!): IntegrationType\n  getIntegration(integrationId: String!): Integration\n  getFormEntry(formEntryId: String!): FormEntry\n\n  listAccounts(limit: Int, nextToken: String, filter: AccountFilterInput): PaginatedAccount!\n  listUsers(limit: Int, nextToken: String, filter: UserFilterInput) : PaginatedUser!\n#   listAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n#   listAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedUser!\n#   listAccountUsersInGroup(accountId: String!, group: String!, limit: Int, nextToken: String): PaginatedUser!\n\n  listPlans(limit: Int, nextToken: String, filter: PlanFilterInput): PaginatedPlan!\n#   listAccountPlans(accountId: String!, limit: Int, nextToken: String): PaginatedPlan!\n  listPlanTypes(limit: Int, nextToken: String, filter: PlanTypeFilterInput): PaginatedPlanType!\n#   listActivePlanTypes(limit: Int, nextToken: String): PaginatedPlanType!\n\n  listForms(limit: Int, nextToken: String, filter: FormFilterInput) : PaginatedForm!\n#   listAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedForm!\n#   listAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n#   listAccountFormsByUser(accountId: String!, userId: String!, limit: Int, nextToken: String) : PaginatedForm!\n#   listAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!\n\n  listIntegrationTypes(limit: Int, nextToken: String, filter: IntegrationTypeFilterInput): PaginatedIntegrationType!\n#   listIntegrationTypesByPlanType(planTypeId: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n#   listIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegrationType!\n\n  listIntegrations(limit: Int, nextToken: String, filter: IntegrationFilterInput): PaginatedIntegration!\n#   listAccountIntegrations(accountId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n#   listAccountFormIntegrations(accountId: String!, formId: String!, limit: Int, nextToken: String): PaginatedIntegration!\n#   listAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegration!\n\n  listFormEntries(formId: String!) : PaginatedFormEntries!\n  listFormEntriesByTime(formId: String!, timestampPrefix: String!): PaginatedFormEntries!\n}\n\ntype Mutation {\n  addPlanType(input: AddPlanTypeInput): PlanType!\n  addPlan(input: AddPlanInput): Plan!\n  addAccount(input: AddAccountInput): Account!\n  addUser(input: AddUserInput): User!\n  addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!\n  addIntegration(input: AddIntegrationInput): Integration!\n  addForm(form: AddFormInput!, notes: String!): Form!\n  addFormVersion(version: AddFormVersionInput): FormVersion!\n\n  updatePlanType(input: UpdatePlanTypeInput): PlanType!\n  updatePlan(input: UpdatePlanInput): Plan!\n  updateAccount(input: UpdateAccountInput): Account!\n  updateUser(input: UpdateUserInput): User!\n  updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!\n  updateIntegration(input: UpdateIntegrationInput): Integration!\n  updateForm(input: UpdateFormInput): Form!\n\n  deletePlanType(planTypeId: ID!): PlanType!\n  deletePlan(accountId: ID!, planId: ID!): Plan!\n  deleteAccount(accountId: ID!): Account!\n  deleteUser(userId: ID!): User!\n  deleteIntegrationType(integrationTypeId: ID!): IntegrationType!\n  deleteIntegration(integrationId: ID!): Integration!\n  deleteForm(formId: ID!): Form!\n\n  addFormEntry(input: AddFormEntryInput!): FormEntry!\n\n}\n\nschema {\n  query: Query\n  mutation: Mutation\n}\n",
               "ApiId": {
                 "Fn::GetAtt": [
                   "GraphQlApi",
@@ -1602,7 +1602,7 @@
               }
             }
           },
-          "GraphQlFunctionConfigurationFNexecuteGet": {
+          "GraphQlFunctionConfigurationFNcommonGET": {
             "Type": "AWS::AppSync::FunctionConfiguration",
             "Properties": {
               "ApiId": {
@@ -1611,7 +1611,7 @@
                   "ApiId"
                 ]
               },
-              "Name": "GraphQlFunctionConfigurationFNexecuteGet",
+              "Name": "GraphQlFunctionConfigurationFNcommonGET",
               "DataSourceName": {
                 "Fn::GetAtt": [
                   "GraphQlDsAppData",
@@ -1623,7 +1623,7 @@
               "FunctionVersion": "2018-05-29"
             }
           },
-          "GraphQlFunctionConfigurationFNexecuteUpdate": {
+          "GraphQlFunctionConfigurationFNcommonUPDATE": {
             "Type": "AWS::AppSync::FunctionConfiguration",
             "Properties": {
               "ApiId": {
@@ -1632,7 +1632,7 @@
                   "ApiId"
                 ]
               },
-              "Name": "GraphQlFunctionConfigurationFNexecuteUpdate",
+              "Name": "GraphQlFunctionConfigurationFNcommonUPDATE",
               "DataSourceName": {
                 "Fn::GetAtt": [
                   "GraphQlDsAppData",
@@ -1644,7 +1644,7 @@
               "FunctionVersion": "2018-05-29"
             }
           },
-          "GraphQlFunctionConfigurationFNexecutePut": {
+          "GraphQlFunctionConfigurationFNcommonPUT": {
             "Type": "AWS::AppSync::FunctionConfiguration",
             "Properties": {
               "ApiId": {
@@ -1653,7 +1653,7 @@
                   "ApiId"
                 ]
               },
-              "Name": "GraphQlFunctionConfigurationFNexecutePut",
+              "Name": "GraphQlFunctionConfigurationFNcommonPUT",
               "DataSourceName": {
                 "Fn::GetAtt": [
                   "GraphQlDsAppData",
@@ -1665,7 +1665,7 @@
               "FunctionVersion": "2018-05-29"
             }
           },
-          "GraphQlFunctionConfigurationFNexecuteList": {
+          "GraphQlFunctionConfigurationFNcommonLIST": {
             "Type": "AWS::AppSync::FunctionConfiguration",
             "Properties": {
               "ApiId": {
@@ -1674,7 +1674,7 @@
                   "ApiId"
                 ]
               },
-              "Name": "GraphQlFunctionConfigurationFNexecuteList",
+              "Name": "GraphQlFunctionConfigurationFNcommonLIST",
               "DataSourceName": {
                 "Fn::GetAtt": [
                   "GraphQlDsAppData",
@@ -1702,7 +1702,7 @@
               "FunctionVersion": "2018-05-29"
             }
           },
-          "GraphQlFunctionConfigurationFNexecuteDelete": {
+          "GraphQlFunctionConfigurationFNcommonDELETE": {
             "Type": "AWS::AppSync::FunctionConfiguration",
             "Properties": {
               "ApiId": {
@@ -1711,7 +1711,7 @@
                   "ApiId"
                 ]
               },
-              "Name": "GraphQlFunctionConfigurationFNexecuteDelete",
+              "Name": "GraphQlFunctionConfigurationFNcommonDELETE",
               "DataSourceName": {
                 "Fn::GetAtt": [
                   "GraphQlDsAppData",
@@ -2000,7 +2000,7 @@
                   },
                   {
                     "Fn::GetAtt": [
-                      "GraphQlFunctionConfigurationFNexecuteGet",
+                      "GraphQlFunctionConfigurationFNcommonGET",
                       "FunctionId"
                     ]
                   }
@@ -2071,7 +2071,7 @@
                   },
                   {
                     "Fn::GetAtt": [
-                      "GraphQlFunctionConfigurationFNexecuteGet",
+                      "GraphQlFunctionConfigurationFNcommonGET",
                       "FunctionId"
                     ]
                   }
@@ -2104,7 +2104,7 @@
                   },
                   {
                     "Fn::GetAtt": [
-                      "GraphQlFunctionConfigurationFNexecuteGet",
+                      "GraphQlFunctionConfigurationFNcommonGET",
                       "FunctionId"
                     ]
                   },
@@ -2116,7 +2116,7 @@
                   },
                   {
                     "Fn::GetAtt": [
-                      "GraphQlFunctionConfigurationFNexecuteUpdate",
+                      "GraphQlFunctionConfigurationFNcommonUPDATE",
                       "FunctionId"
                     ]
                   }
@@ -2149,7 +2149,7 @@
                   },
                   {
                     "Fn::GetAtt": [
-                      "GraphQlFunctionConfigurationFNexecutePut",
+                      "GraphQlFunctionConfigurationFNcommonPUT",
                       "FunctionId"
                     ]
                   }
@@ -2182,7 +2182,7 @@
                   },
                   {
                     "Fn::GetAtt": [
-                      "GraphQlFunctionConfigurationFNexecuteGet",
+                      "GraphQlFunctionConfigurationFNcommonGET",
                       "FunctionId"
                     ]
                   }
@@ -2215,7 +2215,7 @@
                   },
                   {
                     "Fn::GetAtt": [
-                      "GraphQlFunctionConfigurationFNexecuteGet",
+                      "GraphQlFunctionConfigurationFNcommonGET",
                       "FunctionId"
                     ]
                   },
@@ -2227,7 +2227,7 @@
                   },
                   {
                     "Fn::GetAtt": [
-                      "GraphQlFunctionConfigurationFNexecuteUpdate",
+                      "GraphQlFunctionConfigurationFNcommonUPDATE",
                       "FunctionId"
                     ]
                   }
@@ -2604,7 +2604,7 @@
                   },
                   {
                     "Fn::GetAtt": [
-                      "GraphQlFunctionConfigurationFNexecuteList",
+                      "GraphQlFunctionConfigurationFNcommonLIST",
                       "FunctionId"
                     ]
                   }
@@ -2637,7 +2637,7 @@
                   },
                   {
                     "Fn::GetAtt": [
-                      "GraphQlFunctionConfigurationFNexecuteGet",
+                      "GraphQlFunctionConfigurationFNcommonGET",
                       "FunctionId"
                     ]
                   }
@@ -2670,7 +2670,7 @@
                   },
                   {
                     "Fn::GetAtt": [
-                      "GraphQlFunctionConfigurationFNexecutePut",
+                      "GraphQlFunctionConfigurationFNcommonPUT",
                       "FunctionId"
                     ]
                   }
@@ -2703,7 +2703,7 @@
                   },
                   {
                     "Fn::GetAtt": [
-                      "GraphQlFunctionConfigurationFNexecuteGet",
+                      "GraphQlFunctionConfigurationFNcommonGET",
                       "FunctionId"
                     ]
                   },
@@ -2715,7 +2715,7 @@
                   },
                   {
                     "Fn::GetAtt": [
-                      "GraphQlFunctionConfigurationFNexecuteUpdate",
+                      "GraphQlFunctionConfigurationFNcommonUPDATE",
                       "FunctionId"
                     ]
                   }
@@ -2748,7 +2748,7 @@
                   },
                   {
                     "Fn::GetAtt": [
-                      "GraphQlFunctionConfigurationFNexecuteGet",
+                      "GraphQlFunctionConfigurationFNcommonGET",
                       "FunctionId"
                     ]
                   },
@@ -2760,7 +2760,7 @@
                   },
                   {
                     "Fn::GetAtt": [
-                      "GraphQlFunctionConfigurationFNexecuteUpdate",
+                      "GraphQlFunctionConfigurationFNcommonUPDATE",
                       "FunctionId"
                     ]
                   }
@@ -2859,7 +2859,7 @@
                   },
                   {
                     "Fn::GetAtt": [
-                      "GraphQlFunctionConfigurationFNexecuteList",
+                      "GraphQlFunctionConfigurationFNcommonLIST",
                       "FunctionId"
                     ]
                   }
@@ -3090,7 +3090,7 @@
             "kind": "PIPELINE",
             "functions": [
               "FN_getUser",
-              "FN_executeGet"
+              "FN_common_GET"
             ]
           },
           {
@@ -3109,7 +3109,7 @@
             "kind": "PIPELINE",
             "functions": [
               "FN_getPlan",
-              "FN_executeGet"
+              "FN_common_GET"
             ]
           },
           {
@@ -3121,9 +3121,9 @@
             "kind": "PIPELINE",
             "functions": [
               "FN_getPlan",
-              "FN_executeGet",
+              "FN_common_GET",
               "FN_deletePlan",
-              "FN_executeUpdate"
+              "FN_common_UPDATE"
             ]
           },
           {
@@ -3135,7 +3135,7 @@
             "kind": "PIPELINE",
             "functions": [
               "FN_createPlan",
-              "FN_executePut"
+              "FN_common_PUT"
             ]
           },
           {
@@ -3147,7 +3147,7 @@
             "kind": "PIPELINE",
             "functions": [
               "FN_getAccount",
-              "FN_executeGet"
+              "FN_common_GET"
             ]
           },
           {
@@ -3159,9 +3159,9 @@
             "kind": "PIPELINE",
             "functions": [
               "FN_getAccount",
-              "FN_executeGet",
+              "FN_common_GET",
               "FN_updateAccount",
-              "FN_executeUpdate"
+              "FN_common_UPDATE"
             ]
           },
           {
@@ -3257,7 +3257,7 @@
             "kind": "PIPELINE",
             "functions": [
               "FN_listPlanTypes",
-              "FN_executeList"
+              "FN_common_LIST"
             ]
           },
           {
@@ -3269,7 +3269,7 @@
             "kind": "PIPELINE",
             "functions": [
               "FN_getPlanType",
-              "FN_executeGet"
+              "FN_common_GET"
             ]
           },
           {
@@ -3281,7 +3281,7 @@
             "kind": "PIPELINE",
             "functions": [
               "FN_addPlanType",
-              "FN_executePut"
+              "FN_common_PUT"
             ]
           },
           {
@@ -3293,9 +3293,9 @@
             "kind": "PIPELINE",
             "functions": [
               "FN_getPlanType",
-              "FN_executeGet",
+              "FN_common_GET",
               "FN_updatePlanType",
-              "FN_executeUpdate"
+              "FN_common_UPDATE"
             ]
           },
           {
@@ -3307,9 +3307,9 @@
             "kind": "PIPELINE",
             "functions": [
               "FN_getPlanType",
-              "FN_executeGet",
+              "FN_common_GET",
               "FN_deletePlanType",
-              "FN_executeUpdate"
+              "FN_common_UPDATE"
             ]
           },
           {
@@ -3342,7 +3342,7 @@
             "kind": "PIPELINE",
             "functions": [
               "FN_listAccounts",
-              "FN_executeList"
+              "FN_common_LIST"
             ]
           }
         ],
@@ -3350,35 +3350,35 @@
           {
             "dataSource": "AppData",
             "type": "Query",
-            "name": "FN_executeGet",
+            "name": "FN_common_GET",
             "request": "FN_common_GET.vtl",
             "response": "FN_passthrough_RES.vtl"
           },
           {
             "dataSource": "AppData",
             "type": "Mutation",
-            "name": "FN_executeUpdate",
+            "name": "FN_common_UPDATE",
             "request": "FN_common_UPDATE.vtl",
             "response": "FN_passthrough_RES.vtl"
           },
           {
             "dataSource": "AppData",
             "type": "Mutation",
-            "name": "FN_executePut",
+            "name": "FN_common_PUT",
             "request": "FN_common_PUT.vtl",
             "response": "FN_passthrough_RES.vtl"
           },
           {
             "dataSource": "AppData",
             "type": "Query",
-            "name": "FN_executeList",
+            "name": "FN_common_LIST",
             "request": "FN_common_LIST.vtl",
             "response": "FN_passthrough_RES.vtl"
           },
           {
             "dataSource": "AppData",
             "type": "Mutation",
-            "name": "FN_executeDelete",
+            "name": "FN_common_DELETE",
             "request": "FN_common_DELETE.vtl",
             "response": "FN_passthrough_RES.vtl"
           },
@@ -4346,7 +4346,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli/dev/1565356599091-2019-08-09T13:16:39.091Z",
+    "artifactDirectoryName": "serverless/formsli/dev/1565568097951-2019-08-12T00:01:37.951Z",
     "artifact": ""
   }
 }

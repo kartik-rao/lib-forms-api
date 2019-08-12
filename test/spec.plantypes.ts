@@ -29,6 +29,7 @@ describe("PlanType", () => {
         // Hard delete from dynamo
         let client = new AWS.DynamoDB.DocumentClient();
         try {
+            console.log(`DELETING [${planTypeId}]`)
             await client.delete({TableName : config["FormEntriesTable"], Key: {id: planTypeId, type: "PLANTYPE"}}).promise();
             await Auth.signOut();
             done();
@@ -75,7 +76,7 @@ describe("PlanType", () => {
     });
 
     it("List", async(done) => {
-        const listAllActivePlanTypes = {
+        const listPlanTypes = {
             query: `query {
                 listPlanTypes(filter:{active: {eq: true}}) {
                     items {
@@ -88,7 +89,7 @@ describe("PlanType", () => {
             }`}
 
         try {
-            let response = await ApiHelper.makeRequest("listAllActivePlanTypes", listAllActivePlanTypes, token);
+            let response = await ApiHelper.makeRequest("listPlanTypes", listPlanTypes, token);
             let {status, parsed, hasErrors, errors} = response;
 
             expect(status).toEqual(200);

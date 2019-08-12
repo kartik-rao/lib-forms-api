@@ -1,27 +1,27 @@
 ## Common operations
 - dataSource: AppData
   type: Query
-  name: FN_executeGet
+  name: FN_common_GET
   request: FN_common_GET.vtl
   response: FN_passthrough_RES.vtl
 - dataSource: AppData
   type: Mutation
-  name: FN_executeUpdate
+  name: FN_common_UPDATE
   request: FN_common_UPDATE.vtl
   response: FN_passthrough_RES.vtl
 - dataSource: AppData
   type: Mutation
-  name: FN_executePut
+  name: FN_common_PUT
   request: FN_common_PUT.vtl
   response: FN_passthrough_RES.vtl
 - dataSource: AppData
   type: Query
-  name: FN_executeList
+  name: FN_common_LIST
   request: FN_common_LIST.vtl
   response: FN_passthrough_RES.vtl
 - dataSource: AppData
   type: Mutation
-  name: FN_executeDelete
+  name: FN_common_DELETE
   request: FN_common_DELETE.vtl
   response: FN_passthrough_RES.vtl
 
@@ -83,6 +83,11 @@
   type: Mutation
   name: FN_createPlan
   request: addPlan_REQ.vtl
+  response: FN_passthrough_RES.vtl
+- dataSource: AppData
+  type: Mutation
+  name: FN_updatePlan
+  request: updatePlan_REQ.vtl
   response: FN_passthrough_RES.vtl
 - dataSource: AppData
   type: Mutation

@@ -51,7 +51,7 @@ describe("Plan", () => {
         // Hard delete from dynamo
         let client = new AWS.DynamoDB.DocumentClient();
         try {
-            await client.delete({TableName : config["FormEntriesTable"], Key: {id: planId, type: "PLANTYPE"}}).promise();
+            await client.delete({TableName : config["FormEntriesTable"], Key: {id: planTypeId, type: "PLANTYPE"}}).promise();
             await Auth.signOut();
             done();
         } catch (error) {
@@ -62,17 +62,17 @@ describe("Plan", () => {
 
 
     it("Add", async (done) => {
-        const addPlanType = {query: `mutation {
+        const addPlan = {query: `mutation {
             addPlan (input: {
                 accountId: "${tenantId}",
                 planTypeId: "${planTypeId}"
             })
-            {id, name, billingTerm, cost, version, createdAt, updatedAt}
+            {id, startDate, endDate, active, planTypeId, accountId, createdAt, updatedAt, version}
             }
         `};
 
         try {
-            let response = await ApiHelper.makeRequest("addPlanType", addPlanType, token);
+            let response = await ApiHelper.makeRequest("addPlan", addPlan, token);
             let {status, parsed, hasErrors, errors} = response;
 
             expect(status).toEqual(200);
@@ -82,6 +82,8 @@ describe("Plan", () => {
             expect(parsed).toBeDefined();
             planId = parsed.id;
             planVersion = parsed.version;
+            expect(parsed.accountId).toEqual(tenantId);
+            expect(parsed.planTypeId).toEqual(planTypeId);
             expect(parsed).toBeDefined();
         } catch (error) {
             console.error(error);
@@ -91,11 +93,14 @@ describe("Plan", () => {
     });
 
     it("Get", async (done) => {
-        const getPlan = {query: `mutation {
-            getPlan (input: {
-                planId: "${planId}"
-            })
-            {id, planType, version, createdAt, updatedAt}
+        if(!planId) {
+            fail("No planId");
+            done();
+        }
+
+        const getPlan = {query: `query {
+            getPlan (planId: "${planId}")
+            {id, planType {id name cost}, version, createdAt, updatedAt}
             }
         `};
 
@@ -115,30 +120,31 @@ describe("Plan", () => {
     });
 
     it("Update", async (done) => {
-        const updatePlanType = {query: `mutation {
-            updatePlanType (input: {
+        if(!planId) {
+            fail("No planId");
+            done();
+        }
+        const updatePlan = {query: `mutation {
+            updatePlan (input: {
                 id: "${planId}",
-                billingTerm: "Quarterly",
-                cost: 150,
-                active: true,
+                active: false,
                 expectedVersion: ${planVersion}
             })
-            {id, name, billingTerm, cost, active, updatedAt, version}
+            {id, version, active, updatedAt, version}
             }
         `};
 
         try {
-            let response = await ApiHelper.makeRequest("updatePlanType", updatePlanType, token);
+            let response = await ApiHelper.makeRequest("updatePlan", updatePlan, token);
             let {status, parsed, hasErrors, errors} = response;
 
             expect(status).toEqual(200);
             expect(hasErrors).toBeFalsy("Response should not have errors");
             hasErrors && done.fail(errors[0].message);
-
             expect(parsed).toBeDefined("Response.data should exist");
-            expect(parsed.billingTerm).toEqual("Quarterly");
-            expect(parsed.cost).toEqual(150.0);
             expect(parsed.active).toBeTruthy();
+            expect(parsed.version).toBeGreaterThan(planVersion);
+            planVersion = parsed.version;
         } catch (error) {
             fail(error);
         }
@@ -146,14 +152,19 @@ describe("Plan", () => {
     });
 
     it("Delete", async (done) => {
-        const deletePlanType = {query: `mutation {
+        if(!planId) {
+            fail("No planId");
+            done();
+        }
+
+        const deletePlan = {query: `mutation {
             deletePlan (planId: "${planId}", accountId: "${tenantId}")
-            {id, name, isDeleted, cost, billingTerm, active, updatedAt, version}
+            {id, isDeleted, active, updatedAt, version}
             }
         `};
 
         try {
-            let response = await ApiHelper.makeRequest("deletePlan", deletePlanType, token);
+            let response = await ApiHelper.makeRequest("deletePlan", deletePlan, token);
             let {status, parsed, hasErrors, errors} = response;
 
             expect(status).toEqual(200);
@@ -161,8 +172,6 @@ describe("Plan", () => {
             hasErrors && done.fail(errors[0].message);
 
             expect(parsed).toBeDefined("Response.data should exist");
-            expect(parsed.cost).toEqual(150.0);
-            expect(parsed.active).toBeFalsy();
             expect(parsed.isDeleted).toBeTruthy();
         } catch (error) {
             fail(error);
