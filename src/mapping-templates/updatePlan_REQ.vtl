@@ -7,10 +7,6 @@
     #set($isAllowed = true)
 #end
 
-#if($util.isNull($results) || $util.isNull($results.PLAN))
-    $util.error("Out of order invocation, no PLAN", "InvocationOrderException")
-#end
-
 #if($isAllowed == true)
     #if(!$util.isNull($ctx.stash.request))
         #set ($ctx.stash.prevRequest = $ctx.stash.request)

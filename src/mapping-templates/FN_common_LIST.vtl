@@ -1,15 +1,17 @@
+#set($identity=$ctx.stash.identity)
+#set($request=$ctx.stash.request)
 {
     "version"   : "2018-05-29",
     "operation" : "Query",
     "index"    : "${index_appdata_gsi}",
-#if($ctx.stash.identity.isAdmin == true)
+#if($identity.isAdmin == true)
     "query"     : {
         "expression": "#type = :objectType",
         "expressionNames" : {
             "#type" : "type"
         },
         "expressionValues" : {
-            ":objectType" : { "S": "${ctx.stash.request.itemType}" }
+            ":objectType" : { "S": "${request.itemType}" }
         }
     }
 #else
@@ -20,14 +22,14 @@
             "#meta" : "meta"
         },
         "expressionValues": {
-            ":type" : {"S" : "${ctx.stash.request.itemType}"},
-            ":meta" : {"S" : "${ctx.stash.identity.tenantId}"},
+            ":type" : {"S" : "${request.itemType}"},
+            ":meta" : {"S" : "${identity.tenantId}"},
             ":isDeleted" : {"BOOL": false}
         }
     }
 #end
-    ,"scanIndexForward":   #if( $context.stash.request.sortDirection )
-        #if( $context.stash.request.sortDirection == "ASC" )
+    ,"scanIndexForward":   #if( $request.sortDirection )
+        #if( $request.sortDirection == "ASC" )
             true
         #else
             false
@@ -35,11 +37,11 @@
     #else
         true
     #end,
-    ## "filter": #if(!$util.isNull($context.stash.request.filter))
-    ##     $util.transform.toDynamoDBFilterExpression($context.stash.request.filter)
-    ## #else
-    ##     null
-    ## #end,
-  "limit": $util.defaultIfNull(${ctx.stash.request.limit}, 20),
-  "nextToken": $util.toJson($util.defaultIfNullOrBlank(${ctx.stash.request.nextToken}, null))
+    "filter": #if(!$util.isNull($request.filter))
+        $util.transform.toDynamoDBFilterExpression($request.filter)
+    #else
+        null
+    #end,
+  "limit": $util.defaultIfNull(${request.limit}, 20),
+  "nextToken": $util.toJson($util.defaultIfNullOrBlank(${request.nextToken}, null))
 }
