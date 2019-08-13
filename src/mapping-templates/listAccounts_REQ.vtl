@@ -8,7 +8,9 @@
     $util.qr($request.put("limit", $ctx.args.limit))
     $util.qr($request.put("nextToken", $ctx.args.nextToken))
     $util.qr($request.put("filter", $util.defaultIfNull($args.filter, {})))
-    $util.qr($request.filter.put("active", $util.defaultIfNull($request.filter, {"eq": true})))
+    #if($util.isNull($args.filter.planTypeId))
+        $util.qr($request.filter.put("meta", {"begins_with" : "${args.filter.planTypeId}"}))
+    #end
     #if(!$util.isNull($ctx.stash.request))
         #set ($ctx.stash.prevRequest = $ctx.stash.request)
     #end

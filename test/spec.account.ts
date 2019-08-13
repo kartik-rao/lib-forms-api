@@ -72,7 +72,7 @@ describe("Account", () => {
 
         try {
             let response = await ApiHelper.makeRequest("listAccounts", listAllAccounts, token);
-            let {status, parsed, hasErrors, errors} = response;
+            let {status, parsed, hasErrors} = response;
 
             expect(status).toEqual(200);
             expect(hasErrors).toBeTruthy("Should not succeed");
@@ -99,7 +99,7 @@ describe("Account", () => {
             let {status, parsed, hasErrors, errors} = response;
 
             expect(status).toEqual(200);
-            expect(hasErrors).toBeFalsy("Response should not have errors");
+            hasErrors && done.fail(errors[0].message);
             expect(parsed).toBeDefined();
             expect(parsed.items).toBeDefined();
             expect(parsed.items.length).toBeGreaterThan(0);

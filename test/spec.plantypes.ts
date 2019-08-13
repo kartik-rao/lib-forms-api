@@ -29,7 +29,6 @@ describe("PlanType", () => {
         // Hard delete from dynamo
         let client = new AWS.DynamoDB.DocumentClient();
         try {
-            console.log(`DELETING [${planTypeId}]`)
             await client.delete({TableName : config["AppDataTable"], Key: {id: planTypeId, itemType: "PLANTYPE"}}).promise();
             await Auth.signOut();
             done();

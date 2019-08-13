@@ -1,47 +1,24 @@
 #set($identity=$ctx.stash.identity)
 #set($request=$ctx.stash.request)
+#set($queryExp="#itemType = :itemType")
+#set($queryExpNames={})
+#set($queryExpValues={})
+$util.qr($queryExpNames.put("#itemType", "itemType"))
+$util.qr($queryExpValues.put(":itemType", { "S": "${request.itemType}" }))
 {
     "version"   : "2018-05-29",
     "operation" : "Query",
     "index"    : "${index_appdata_gsi_meta}",
-#if($identity.isAdmin == true)
-    "query"     : {
-        "expression": "#itemType = :itemType",
-        "expressionNames" : {
-            "#itemType": "itemType"
-        },
-        "expressionValues" : {
-            ":itemType": { "S": "${request.itemType}" }
-        }
-    }
-#else
     "query": {
-        "expression" : "#type = :type AND begins_with(#meta, :meta) AND #isDeleted = :isDeleted",
-        "expressionNames" : {
-            "#itemType": "itemType",
-            "#meta": "meta"
-        },
-        "expressionValues": {
-            ":itemType": {"S" : "${request.itemType}"},
-            ":meta": {"S" : "${identity.tenantId}"},
-            ":isDeleted": {"BOOL": false}
-        }
+        "expression": "${queryExp}",
+        "expressionNames": $util.toJson($queryExpNames),
+        "expressionValues" : $util.toJson($queryExpValues)
     }
-#end
-    ,"scanIndexForward":   #if( $request.sortDirection )
-        #if( $request.sortDirection == "ASC" )
-            true
-        #else
-            false
-        #end
+    ,"scanIndexForward":   #if($request.sortDirection)
+        #if( $request.sortDirection == "ASC" ) true #else false #end
     #else
         true
     #end,
-    "filter": #if(!$util.isNull($request.filter))
-        $util.transform.toDynamoDBFilterExpression($request.filter)
-    #else
-        null
-    #end,
-  "limit": $util.defaultIfNull(${request.limit}, 20),
-  "nextToken": $util.toJson($util.defaultIfNullOrBlank(${request.nextToken}, null))
+    "limit": $util.defaultIfNull(${request.limit}, 20),
+    "nextToken": $util.toJson($util.defaultIfNullOrBlank(${request.nextToken}, null))
 }

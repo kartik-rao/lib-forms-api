@@ -164,7 +164,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1565668946984-2019-08-13T04:02:26.984Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1565683220536-2019-08-13T08:00:20.536Z/formsli.zip"
         },
         "FunctionName": "formsli-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -212,7 +212,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1565668946984-2019-08-13T04:02:26.984Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1565683220536-2019-08-13T08:00:20.536Z/formsli.zip"
         },
         "FunctionName": "formsli-invite",
         "Handler": "src/invite.handle",
@@ -477,7 +477,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1565668921897": {
+    "ApiGatewayDeployment1565683191855": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -1730,7 +1730,7 @@
           "Fn::Join": [
             "",
             [
-              "#set($identity=$ctx.stash.identity)\n#set($request=$ctx.stash.request)\n{\n    \"version\"   : \"2018-05-29\",\n    \"operation\" : \"Query\",\n    \"index\"    : \"",
+              "#set($identity=$ctx.stash.identity)\n#set($request=$ctx.stash.request)\n#set($queryExp=\"#itemType = :itemType\")\n#set($queryExpNames={})\n#set($queryExpValues={})\n$util.qr($queryExpNames.put(\"#itemType\", \"itemType\"))\n$util.qr($queryExpValues.put(\":itemType\", { \"S\": \"${request.itemType}\" }))\n{\n    \"version\"   : \"2018-05-29\",\n    \"operation\" : \"Query\",\n    \"index\"    : \"",
               {
                 "Fn::Sub": [
                   "${index_appdata_gsi_meta}",
@@ -1739,7 +1739,7 @@
                   }
                 ]
               },
-              "\",\n#if($identity.isAdmin == true)\n    \"query\"     : {\n        \"expression\": \"#itemType = :itemType\",\n        \"expressionNames\" : {\n            \"#itemType\": \"itemType\"\n        },\n        \"expressionValues\" : {\n            \":itemType\": { \"S\": \"${request.itemType}\" }\n        }\n    }\n#else\n    \"query\": {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta) AND #isDeleted = :isDeleted\",\n        \"expressionNames\" : {\n            \"#itemType\": \"itemType\",\n            \"#meta\": \"meta\"\n        },\n        \"expressionValues\": {\n            \":itemType\": {\"S\" : \"${request.itemType}\"},\n            \":meta\": {\"S\" : \"${identity.tenantId}\"},\n            \":isDeleted\": {\"BOOL\": false}\n        }\n    }\n#end\n    ,\"scanIndexForward\":   #if( $request.sortDirection )\n        #if( $request.sortDirection == \"ASC\" )\n            true\n        #else\n            false\n        #end\n    #else\n        true\n    #end,\n    \"filter\": #if(!$util.isNull($request.filter))\n        $util.transform.toDynamoDBFilterExpression($request.filter)\n    #else\n        null\n    #end,\n  \"limit\": $util.defaultIfNull(${request.limit}, 20),\n  \"nextToken\": $util.toJson($util.defaultIfNullOrBlank(${request.nextToken}, null))\n}"
+              "\",\n    \"query\": {\n        \"expression\": \"${queryExp}\",\n        \"expressionNames\": $util.toJson($queryExpNames),\n        \"expressionValues\" : $util.toJson($queryExpValues)\n    }\n    ,\"scanIndexForward\":   #if($request.sortDirection)\n        #if( $request.sortDirection == \"ASC\" )\n            true\n        #else\n            false\n        #end\n    #else\n        true\n    #end,\n    \"limit\": $util.defaultIfNull(${request.limit}, 20),\n    \"nextToken\": $util.toJson($util.defaultIfNullOrBlank(${request.nextToken}, null))\n}"
             ]
           ]
         },
@@ -1805,7 +1805,7 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#if($identity.isAdmin == true)\n    $util.qr($ctx.stash.put(\"operation\", 'query'))\n    #set ($request = {})\n    $util.qr($request.put(\"itemType\", 'ACCOUNT'))\n    $util.qr($request.put(\"limit\", $ctx.args.limit))\n    $util.qr($request.put(\"nextToken\", $ctx.args.nextToken))\n    $util.qr($request.put(\"filter\", $util.defaultIfNull($args.filter, {})))\n    $util.qr($request.filter.put(\"active\", $util.defaultIfNull($request.filter, {\"eq\": true})))\n    #if(!$util.isNull($ctx.stash.request))\n        #set ($ctx.stash.prevRequest = $ctx.stash.request)\n    #end\n    $util.qr($ctx.stash.put(\"request\", $request))\n    #return({})\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [${request.operation}] on [${request.itemType}]\", \"Unauthorized\")\n#end",
+        "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#if($identity.isAdmin == true)\n    $util.qr($ctx.stash.put(\"operation\", 'query'))\n    #set ($request = {})\n    $util.qr($request.put(\"itemType\", 'ACCOUNT'))\n    $util.qr($request.put(\"limit\", $ctx.args.limit))\n    $util.qr($request.put(\"nextToken\", $ctx.args.nextToken))\n    ## $util.qr($request.put(\"filter\", $util.defaultIfNull($args.filter, {})))\n    ## $util.qr($request.filter.put(\"active\", $util.defaultIfNull($request.filter.active, {\"eq\": true})))\n    #if(!$util.isNull($ctx.stash.request))\n        #set ($ctx.stash.prevRequest = $ctx.stash.request)\n    #end\n    $util.qr($ctx.stash.put(\"request\", $request))\n    #return({})\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [${request.operation}] on [${request.itemType}]\", \"Unauthorized\")\n#end",
         "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
         "FunctionVersion": "2018-05-29"
       }
