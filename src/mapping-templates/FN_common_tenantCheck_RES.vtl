@@ -1,7 +1,7 @@
 #if($ctx.result.owner == $ctx.stash.identity.callerId)
     #set($isRecordOwner = true)
 #end
-#if($ctx.stash.identity.isAdmin == true || $ctx.result.type == "PLANTYPE" || $ctx.result.type == "INTEGRATIONTYPE")
+#if($ctx.stash.identity.isAdmin == true || $ctx.result.itemType == "PLANTYPE" || $ctx.result.itemType == "INTEGRATIONTYPE")
     #set($isAllowed = true)
 #elseif (($ctx.result.accountId == $ctx.stash.identity.tenantId) && $ctx.stash.identity.isAccountAdmin == true)
     #set($isAllowed = true)
@@ -9,7 +9,7 @@
     #set($isAllowed = $isRecordOwner == true)
 #end
 
-$util.qr($ctx.stash.put("recordType", $ctx.result.type))
+$util.qr($ctx.stash.put("recordType", $ctx.result.itemType))
 $util.qr($ctx.stash.put("isRecordOwner", $isRecordOwner))
 $util.qr($ctx.stash.put("authResult", $isAllowed))
 

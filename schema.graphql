@@ -61,8 +61,8 @@ type AppData @model {
 
 type FormEntry @model {
     id: ID!
-    type: ID!
-    meta: String!
+    formId: ID!
+    data: AWSJSON!
     createdAt: AWSDateTime!
 }
 

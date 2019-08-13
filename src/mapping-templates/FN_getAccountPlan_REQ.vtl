@@ -1,11 +1,11 @@
 #set($ids = [])
 #set($account = {})
 $util.qr($account.put("id", $util.dynamodb.toString($ctx.stash.accountId)))
-$util.qr($account.put("type", "ACCOUNT"))
+$util.qr($account.put("itemType", "ACCOUNT"))
 $util.qr($ids.add($account))
 #set($planType = {})
-$util.qr($account.put("id", $util.dynamodb.toString($ctx.stash.planTypeId)))
-$util.qr($account.put("type", "PLANTYPE"))
+$util.qr($planType.put("id", $util.dynamodb.toString($ctx.stash.planTypeId)))
+$util.qr($planType.put("itemType", "PLANTYPE"))
 $util.qr($ids.add($planType))
 {
     "version" : "2018-05-29",

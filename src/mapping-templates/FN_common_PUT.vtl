@@ -8,7 +8,7 @@
     "operation": "PutItem",
     "key": {
         "id"  : $util.dynamodb.toDynamoDBJson($id),
-        "type": {"S" : "${attribs.itemType}"}
+        "itemType": {"S" : "${attribs.itemType}"}
     },
     "attributeValues": $util.toJson($util.dynamodb.toMapValues($attribs)),
     "condition": {

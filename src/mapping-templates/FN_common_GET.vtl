@@ -3,6 +3,6 @@
     "operation" : "GetItem",
     "key": {
         "id"  : {"S": "${ctx.stash.request.id}"},
-        "type": {"S": "${ctx.stash.request.itemType}"}
+        "itemType": {"S": "${ctx.stash.request.itemType}"}
     }
 }

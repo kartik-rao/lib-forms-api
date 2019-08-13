@@ -3,7 +3,7 @@ import { ApiHelper } from "./api.utils";
 import { AuthUtils } from "./auth.utils";
 import * as AWS from 'aws-sdk';
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;
 const config = require("../outputs/stack.dev.json");
 
 Auth.configure(ApiHelper.apiConfig().Auth);
@@ -30,7 +30,7 @@ describe("PlanType", () => {
         let client = new AWS.DynamoDB.DocumentClient();
         try {
             console.log(`DELETING [${planTypeId}]`)
-            await client.delete({TableName : config["FormEntriesTable"], Key: {id: planTypeId, type: "PLANTYPE"}}).promise();
+            await client.delete({TableName : config["AppDataTable"], Key: {id: planTypeId, itemType: "PLANTYPE"}}).promise();
             await Auth.signOut();
             done();
         } catch (error) {

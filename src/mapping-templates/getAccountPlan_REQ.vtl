@@ -2,15 +2,15 @@
 {
     "version"  : "2018-05-29",
     "operation": "Query",
-    "index"    : "${index_appdata_gsi}",
+    "index"    : "${index_appdata_gsi_meta}",
     "query"    : {
-        "expression" : "#type = :type AND begins_with(#meta, :meta)",
+        "expression" : "#itemType = :itemType AND begins_with(#meta, :meta)",
         "expressionNames" : {
-            "#type" : "type",
+            "#itemType" : "itemType",
             "#meta" : "meta"
         },
         "expressionValues": {
-            ":type" : {"S" : "PLAN"},
+            ":itemType" : {"S" : "PLAN"},
             ":meta" : {"S" : "${context.source.id}#true"}
         }
     },

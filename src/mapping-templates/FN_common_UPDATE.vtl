@@ -4,7 +4,7 @@
     "operation" : "UpdateItem",
     "key" : {
         "id"  : { "S": "${attribs.id}" },
-        "type": { "S": "${attribs.itemType}"}
+        "itemType": { "S": "${attribs.itemType}"}
     },
 
     ## Set up some space to keep track of things you're updating **

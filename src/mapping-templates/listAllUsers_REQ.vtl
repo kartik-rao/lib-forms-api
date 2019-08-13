@@ -13,14 +13,14 @@
 {
     "version"   : "2018-05-29",
     "operation" : "Query",
-    "index"     : "${index_appdata_gsi}",
+    "index"     : "${index_appdata_gsi_meta}",
     "query"     : {
-      "expression": "#type = :objectType",
+      "expression": "#itemType = :itemType",
       "expressionNames" : {
-            "#type" : "type"
+            "#itemType" : "itemType"
         },
       "expressionValues" : {
-        ":objectType" : { "S": "USER" }
+        ":itemType" : { "S": "USER" }
       }
   },
   "limit": $util.defaultIfNull(${ctx.args.limit}, 20),

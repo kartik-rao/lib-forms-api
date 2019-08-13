@@ -2,16 +2,16 @@
 {
     "version"  : "2018-05-29",
     "operation": "Query",
-    "index"    : "${index_appdata_gsi}",
+    "index"    : "${index_appdata_gsi_meta}",
     "scanIndexForward" : false,
     "query"    : {
-        "expression" : "#type = :type AND begins_with(#meta, :meta)",
+        "expression" : "#itemType = :itemType AND begins_with(#meta, :meta)",
         "expressionNames" : {
-            "#type" : "type",
+            "#itemType" : "itemType",
             "#meta" : "meta"
         },
         "expressionValues": {
-            ":type" : {"S" : "FORMVERSION"},
+            ":itemType" : {"S" : "FORMVERSION"},
             ":meta" : {"S" : "${context.source.id}"}
         }
     },

@@ -12,7 +12,6 @@ $util.qr($ctx.stash.put("accountId", $context.identity.claims["custom:tenantId"]
 #set($timeNow = $util.time.nowISO8601())
 #set($form = {})
 $util.qr($form.put("id", $formId))
-$util.qr($form.put("type", "FORM"))
 $util.qr($form.put("itemType", "FORM"))
 $util.qr($form.put("meta", "${accountId}#${userId}"))
 $util.qr($form.put("owner", $context.identity.sub))
@@ -32,7 +31,6 @@ $util.qr($form.put("isPaused", $util.defaultIfNull($context.arguments.form.isPau
 
 #set($history = {})
 $util.qr($history.put("id", $historyId))
-$util.qr($history.put("type", "FORMVERSION"))
 $util.qr($history.put("itemType", "FORMVERSION"))
 $util.qr($history.put("owner", $context.identity.sub))
 $util.qr($history.put("createdAt", $timeNow))

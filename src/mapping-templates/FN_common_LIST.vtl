@@ -3,28 +3,28 @@
 {
     "version"   : "2018-05-29",
     "operation" : "Query",
-    "index"    : "${index_appdata_gsi}",
+    "index"    : "${index_appdata_gsi_meta}",
 #if($identity.isAdmin == true)
     "query"     : {
-        "expression": "#type = :objectType",
+        "expression": "#itemType = :itemType",
         "expressionNames" : {
-            "#type" : "type"
+            "#itemType": "itemType"
         },
         "expressionValues" : {
-            ":objectType" : { "S": "${request.itemType}" }
+            ":itemType": { "S": "${request.itemType}" }
         }
     }
 #else
     "query": {
         "expression" : "#type = :type AND begins_with(#meta, :meta) AND #isDeleted = :isDeleted",
         "expressionNames" : {
-            "#type" : "type",
-            "#meta" : "meta"
+            "#itemType": "itemType",
+            "#meta": "meta"
         },
         "expressionValues": {
-            ":type" : {"S" : "${request.itemType}"},
-            ":meta" : {"S" : "${identity.tenantId}"},
-            ":isDeleted" : {"BOOL": false}
+            ":itemType": {"S" : "${request.itemType}"},
+            ":meta": {"S" : "${identity.tenantId}"},
+            ":isDeleted": {"BOOL": false}
         }
     }
 #end

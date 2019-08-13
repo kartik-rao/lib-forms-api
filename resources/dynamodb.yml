@@ -8,24 +8,50 @@ Resources:
           AttributeDefinitions:
               - AttributeName: id
                 AttributeType: S
-              - AttributeName: type
+              - AttributeName: itemType
                 AttributeType: S
               - AttributeName: meta
+                AttributeType: S
+              - AttributeName: createdAt
+                AttributeType: S
+              - AttributeName: owner
                 AttributeType: S
           KeySchema:
               - AttributeName: id
                 KeyType: HASH
-              - AttributeName: type
+              - AttributeName: itemType
                 KeyType: RANGE
           ProvisionedThroughput:
               ReadCapacityUnits: 1
               WriteCapacityUnits: 1
           GlobalSecondaryIndexes:
-              - IndexName: ${self:provider.environment.table_app_data}_gsi
+              - IndexName: ${self:provider.environment.table_app_data}_gsi_meta
                 KeySchema:
-                  - AttributeName: type
+                  - AttributeName: itemType
                     KeyType: HASH
                   - AttributeName: meta
+                    KeyType: RANGE
+                Projection:
+                  ProjectionType: ALL
+                ProvisionedThroughput:
+                  ReadCapacityUnits: 5
+                  WriteCapacityUnits: 5
+              - IndexName: ${self:provider.environment.table_app_data}_gsi_created
+                KeySchema:
+                  - AttributeName: itemType
+                    KeyType: HASH
+                  - AttributeName: createdAt
+                    KeyType: RANGE
+                Projection:
+                  ProjectionType: ALL
+                ProvisionedThroughput:
+                  ReadCapacityUnits: 5
+                  WriteCapacityUnits: 5
+              - IndexName: ${self:provider.environment.table_app_data}_gsi_owner
+                KeySchema:
+                  - AttributeName: itemType
+                    KeyType: HASH
+                  - AttributeName: owner
                     KeyType: RANGE
                 Projection:
                   ProjectionType: ALL
@@ -41,24 +67,24 @@ Resources:
           AttributeDefinitions:
               - AttributeName: id
                 AttributeType: S
-              - AttributeName: type
+              - AttributeName: formId
                 AttributeType: S
-              - AttributeName: meta
+              - AttributeName: createdAt
                 AttributeType: S
           KeySchema:
               - AttributeName: id
                 KeyType: HASH
-              - AttributeName: type
+              - AttributeName: formId
                 KeyType: RANGE
           ProvisionedThroughput:
               ReadCapacityUnits: 5
               WriteCapacityUnits: 5
           GlobalSecondaryIndexes:
-              - IndexName: ${self:provider.environment.table_form_entries}_gsi
+              - IndexName: ${self:provider.environment.table_form_entries}_gsi_created
                 KeySchema:
-                  - AttributeName: type
+                  - AttributeName: formId
                     KeyType: HASH
-                  - AttributeName: meta
+                  - AttributeName: createdAt
                     KeyType: RANGE
                 Projection:
                   ProjectionType: ALL

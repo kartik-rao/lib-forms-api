@@ -90,7 +90,7 @@ custom:
         endpoint: "http://localhost:8000"
         region: localhost
   appSync:
-    name:  ai-forms-backend
+    name:  ${self:service}-api
     # apiKey # only required for update-appsync/delete-appsync
     authenticationType: AMAZON_COGNITO_USER_POOLS
     # if AMAZON_COGNITO_USER_POOLS
@@ -122,8 +122,10 @@ custom:
     substitutions:
       # ${exampleVar1} will be replaced with given value in all mapping templates
       # exampleVar1: "${self:service.name}"
-      index_appdata_gsi: "${self:provider.environment.table_app_data}_gsi"
-      index_entries_gsi: "${self:provider.environment.table_form_entries}_gsi"
+      index_appdata_gsi_meta   : "${self:provider.environment.table_app_data}_gsi_meta"
+      index_appdata_gsi_created: "${self:provider.environment.table_app_data}_gsi_created"
+      index_appdata_gsi_owner  : "${self:provider.environment.table_app_data}_gsi_owner"
+      index_entries_gsi_created: "${self:provider.environment.table_form_entries}_gsi_created"
 
 functions:
   postConfirmation:

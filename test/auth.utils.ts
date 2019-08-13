@@ -87,6 +87,7 @@ export class AuthUtils {
                         Value: JSON.stringify(adminUser),
                         Tier: "Standard"}).promise();
                     await UserPool.adminSetUserPassword({UserPoolId: config['UserPoolId'], Username:config['UserPoolAdminUser'], Password: adminPwd, Permanent: true}).promise();
+                    await UserPool.adminAddUserToGroup({UserPoolId: config['UserPoolId'], GroupName: "Admin", Username:config['UserPoolAdminUser']}).promise();
                     AuthUtils.globalAdmin = adminUser as IFormsAppUser;
 
                     // Setup new test tenant and save in SSM

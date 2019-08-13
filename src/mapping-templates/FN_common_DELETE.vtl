@@ -3,7 +3,7 @@
     "operation" : "UpdateItem",
     "key": {
         "id"  : {"S": "${ctx.stash.request.id}"},
-        "type": {"S": "${ctx.stash.request.itemType}"}
+        "itemType": {"S": "${ctx.stash.request.itemType}"}
     },
     "update" : {
         #if(!$util.isNull($ctx.stash.request.active))

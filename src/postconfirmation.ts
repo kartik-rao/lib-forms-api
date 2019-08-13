@@ -43,7 +43,7 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
                 name : tenantName,
                 createdAt : new Date().toISOString(),
                 isDeleted: false,
-                meta: "planType#"
+                meta: "free#"
             }
         }).promise();
 

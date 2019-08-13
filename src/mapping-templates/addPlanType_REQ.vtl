@@ -12,7 +12,6 @@
     #set($request.owner = $identity.callerId)
     #set($request.itemType = "PLANTYPE")
     #set($request.isDeleted = false)
-    #set($request.isDeleted = false)
     #set($request.createdAt = $util.time.nowISO8601())
     #set($request.version = 1)
     #set($request.active = $util.defaultIfNullOrBlank($args.input.active, false))
