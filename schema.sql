@@ -178,4 +178,16 @@ CREATE TABLE  IF NOT EXISTS Form (
     FOREIGN KEY (versionId) REFERENCES FormVersion(id)
 );
 
+DROP TABLE IF EXISTS FormEntry;
+CREATE TABLE  IF NOT EXISTS FormEntry (
+    id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    formId INT UNSIGNED  NOT NULL,
+    data JSON NOT NULL,
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id),
+    UNIQUE INDEX `INDX_FormEntry_id` (`id` ASC),
+    UNIQUE INDEX `INDX_FormEntry_id_created_at` (`id` ASC, `createdAt` DESC),
+    FOREIGN KEY (formId) REFERENCES Form(id)
+);
+
 COMMIT;
