@@ -1,42 +1,45 @@
+SHOW ENGINE INNODB STATUS;
+SET foreign_key_checks=0;
+
 START TRANSACTION;
 
 CREATE TABLE User (
     id INT NOT NULL AUTO_INCREMENT,
     externalId VARCHAR(255) NOT NULL,
-    owner INT,
+    ownerId INT,
     accountId INT,
     email VARCHAR(255) NOT NULL,
-    group VARCHAR(64) NOT NULL,
+    userGroup VARCHAR(64) NOT NULL,
     given_name VARCHAR(255) NOT NULL,
     family_name VARCHAR(255) NOT NULL,
     phone_number VARCHAR(64),
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    isDeleted BOOLEAN DEFAULT(FALSE),
+    isDeleted BOOLEAN DEFAULT 0,
+    UNIQUE INDEX `INDX_User_id` (`id` ASC),
     PRIMARY KEY (id),
-    FOREIGN KEY (accountId) REFERENCES Account(id),
-    FOREIGN KEY (owner) REFERENCES User(id)
+    FOREIGN KEY (accountId) REFERENCES Account(id)
 );
 
 CREATE TABLE PlanType (
     id INT NOT NULL AUTO_INCREMENT,
-    owner INT NOT NULL,
+    ownerId INT NOT NULL,
     name VARCHAR(255) NOT NULL,
     cost FLOAT(9),
-    active BOOLEAN,
     billingTerm VARCHAR(64),
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    isDeleted BOOLEAN DEFAULT(FALSE),
-    active BOOLEAN DEFAULT(FALSE),
+    isDeleted BOOLEAN DEFAULT 0,
+    active BOOLEAN DEFAULT 0,
+    UNIQUE INDEX `INDX_PlanType_id` (`id` ASC),
     PRIMARY KEY (id),
-    FOREIGN KEY (owner) REFERENCES User(id)
+    FOREIGN KEY (ownerId) REFERENCES User(id)
 );
 
 CREATE TABLE Plan (
     id INT NOT NULL AUTO_INCREMENT,
     accountId INT,
-    owner INT NOT NULL,
+    ownerId INT NOT NULL,
     planTypeId INT NOT NULL,
     startDate DEFAULT CURRENT_TIMESTAMP NOT NULL,
     endDate TIMESTAMP,
@@ -44,10 +47,11 @@ CREATE TABLE Plan (
     lastBillDate TIMESTAMP,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    isDeleted BOOLEAN DEFAULT(FALSE),
+    isDeleted BOOLEAN DEFAULT 0,
+    UNIQUE INDEX `INDX_Plan_id` (`id` ASC),
     PRIMARY KEY (id),
     FOREIGN KEY (planTypeId) REFERENCES PlanType(id),
-    FOREIGN KEY (owner) REFERENCES User(id)
+    FOREIGN KEY (ownerId) REFERENCES User(id)
 )
 
 CREATE TABLE Address (
@@ -62,6 +66,7 @@ CREATE TABLE Address (
     city VARCHAR(255),
     state VARCHAR(255),
     country VARCHAR(255),
+    UNIQUE INDEX `INDX_Address_id` (`id` ASC),
     PRIMARY KEY (id),
     FOREIGN KEY (accountId) REFERENCES Account(id)
 )
@@ -71,36 +76,38 @@ CREATE TABLE Account (
     name VARCHAR(255) NOT NULL,
     website VARCHAR(255),
     taxId VARCHAR(255)
-    owner INT NOT NULL,
+    ownerId INT NOT NULL,
     planId INT,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    active BOOLEAN DEFAULT(TRUE),
+    active BOOLEAN DEFAULT 1,
+    UNIQUE INDEX `INDX_Account_id` (`id` ASC),
     PRIMARY KEY (id),
-    FOREIGN KEY (owner) REFERENCES User(id),
+    FOREIGN KEY (ownerId) REFERENCES User(id),
     FOREIGN KEY (planId) REFERENCES Plan(id)
 );
 
 CREATE TABLE IntegrationType (
     id INT NOT NULL AUTO_INCREMENT,
-    owner INT NOT NULL,
+    ownerId INT NOT NULL,
     planTypeId INT NOT NULL,
     name VARCHAR(255) NOT NULL,
-    active BOOLEAN DEFAULT(FALSE),
+    active BOOLEAN DEFAULT 0,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    UNIQUE INDEX `INDX_IntegrationType_id` (`id` ASC),
     PRIMARY KEY (id),
     FOREIGN KEY (planTypeId) REFERENCES PlanType(id),
-    FOREIGN KEY (owner) REFERENCES User(id)
-)
+    FOREIGN KEY (ownerId) REFERENCES User(id)
+);
 
  CREATE TABLE Integration (
     id INT NOT NULL AUTO_INCREMENT,
     integrationTypeId INT NOT NULL,
-    owner INT NOT NULL,
+    ownerId INT NOT NULL,
     accountId INT NOT NULL,
     formId INT NOT NULL,
-    active BOOLEAN DEFAULT(FALSE),
+    active BOOLEAN DEFAULT 0,
     authType VARCHAR(255),
     auth VARCHAR(1024),
     target VARCHAR(255),
@@ -110,26 +117,28 @@ CREATE TABLE IntegrationType (
     lastExecutionResultMessage VARCHAR(1024),
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    isDeleted BOOLEAN DEFAULT(FALSE),
+    isDeleted BOOLEAN DEFAULT 0,
+    UNIQUE INDEX `INDX_Integration_id` (`id` ASC),
     PRIMARY KEY (id),
+    FOREIGN KEY (integrationTypeId) REFERENCES IntegrationType(id),
     FOREIGN KEY (accountId) REFERENCES Account(id),
     FOREIGN KEY (formId) REFERENCES Form(id),
-    FOREIGN KEY (owner) REFERENCES User(id)
-)
+    FOREIGN KEY (ownerId) REFERENCES User(id)
+);
 
 CREATE TABLE FormVersion (
     id INT NOT NULL AUTO_INCREMENT,
-    owner INT NOT NULL,
+    ownerId INT NOT NULL,
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     notes varchar(255) NOT NULL,
     formData JSON,
     PRIMARY KEY (id),
-    FOREIGN KEY (owner) REFERENCES User(id)
-)
+    FOREIGN KEY (ownerId) REFERENCES User(id)
+);
 
 CREATE TABLE Form (
     id INT NOT NULL AUTO_INCREMENT,
-    owner INT NOT NULL,
+    ownerId INT NOT NULL,
     versionId INT NOT NULL,
     accountId INT NOT NULL,
     name varchar(256),
@@ -138,11 +147,11 @@ CREATE TABLE Form (
     updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     startsAt TIMESTAMP,
     endsAt TIMESTAMP,
-    isPaused BOOLEAN DEFAULT(TRUE),
+    isPaused BOOLEAN DEFAULT 1,
     PRIMARY KEY (id),
     FOREIGN KEY (accountId) REFERENCES Account(id),
-    FOREIGN KEY (owner) REFERENCES User(id),
+    FOREIGN KEY (ownerId) REFERENCES User(id),
     FOREIGN KEY (versionId) REFERENCES FormVersion(id),
-)
+);
 
 commit;
