@@ -52,6 +52,7 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
                 ]
             }
 
+            let hasPhone = !!userAttributes["phone_number"];
             const addUserSQL:AWS.RDSDataService.ExecuteStatementRequest = {
                 ...rdsCommonParams,
                 transactionId: transactionId,
@@ -63,24 +64,25 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
                     {name: "userGroup", value: {stringValue: group}},
                     {name: "accountId", value: {stringValue: accountId}},
                     {name: "email", value: {stringValue: userAttributes["email"]}},
-                    {name: "phone_number", value: {stringValue: userAttributes["phone_number"]}},
+                    {name: "phone_number", value: hasPhone ? {stringValue: userAttributes["phone_number"]}: {isNull: true}},
                     {name: "given_name", value: {stringValue: userAttributes["given_name"]}},
                     {name: "family_name", value: {stringValue: userAttributes["family_name"]}}
                 ]
             }
+            console.log(`${ServiceName} - New Account Flow - RDS Init transaction ${transactionId}`);
             await rds.executeStatement({
                 ...rdsCommonParams,
                 sql: "SET foreign_key_checks=0"
             }).promise();
-            console.log(`${ServiceName} - New Account Flow - RDS.Insert Account`);
-            await rds.executeStatement(addAccountSQL).promise();
             console.log(`${ServiceName} - New Account Flow - RDS.Insert User`);
             await rds.executeStatement(addUserSQL).promise();
+            console.log(`${ServiceName} - New Account Flow - RDS.Insert Account`);
+            await rds.executeStatement(addAccountSQL).promise();
             await rds.commitTransaction({transactionId: transactionId, ...rdsCommonParams}).promise();
         } catch (error) {
             // TODO: We should send an SNS notification or capture this error somewhere
             console.error(`${ServiceName} - AccountAdmin initiated flow - RDS Error [${userId}]`, error);
-            await rds.rollbackTransaction({transactionId: transactionId, ...rdsCommonParams}).promise();
+            await rds.rollbackTransaction({transactionId: transactionId, resourceArn: DBClusterARN, secretArn: DBSecretARN}).promise();
             callback(error);
         }
 

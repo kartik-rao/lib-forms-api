@@ -138,8 +138,8 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
                     {name: "userGroup", value: {stringValue: group}},
                     {name: "accountId", value: {stringValue: accountId}},
                     {name: "email", value: {stringValue: payload["email"]}},
-                    {name: "phone_number", value: {stringValue: payload["phone_number"]}},
-                    {name: "given_name", value: {stringValue: payload["given_name"]}},
+                    {name: "phone_number", value: payload.phone_number ? {stringValue: payload["phone_number"]}: {isNull: true}},
+                    {name: "given_name", value: {stringValue: payload["given_name"] || null}},
                     {name: "family_name", value: {stringValue: payload["family_name"]}}
                 ]
             };
