@@ -1,14 +1,27 @@
+$util.qr($ctx.stash.paths.add("FN_passthrough_RES.vtl"))
+#set($operation=$ctx.stash.operation)
+#set($request=$ctx.stash.request)
+#set($results=$ctx.stash.results)
+#set($itemType=$request.itemType)
+
 #if($ctx.error)
     $util.qr($ctx.stash.put("error", $ctx.error))
     $util.error($ctx.error.message, $ctx.error.type)
-#else
-    #if($util.isNull($ctx.stash.results))
-        $util.qr($ctx.stash.put("results", {}))
-    #end
-    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))
-    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')
-        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])
+#end
+
+#if($results)
+    #if($operation == 'get')
+        #if(!$results[$itemType] || $results[$itemType].size() == 0)
+            $util.error("Item ${request.itemType} [${request.id}] does not exist", 'NotFound')
+        #end
+        $util.toJson($results[$itemType][0])
+    #elseif($operation == 'put')
+        $util.toJson($results[$itemType][1])
+    #elseif($operation == 'delete')
+        $util.toJson({})
     #else
-        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])
+        $util.toJson($results[$itemType])
     #end
+#else
+    #return({})
 #end

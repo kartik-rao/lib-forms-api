@@ -8,9 +8,11 @@ const uuid = require('uuid/v4');
 import * as AWS from 'aws-sdk';
 import { AdminAddUserToGroupRequest, AdminCreateUserRequest, AdminCreateUserResponse } from "aws-sdk/clients/cognitoidentityserviceprovider";
 
-
-const ServiceName = process.env.serviceName || 'dev-formsgraphql-invite';
 const DDB_TABLE : string = process.env.table_app_data || 'formsgraphql_dev_masterdata';
+
+const DBClusterARN = process.env.dbClusterArn;
+const DBSecretARN = process.env.dbClusterSecretArn;
+const ServiceName  = process.env.serviceName;
 
 const CORS_HEADERS = {
     "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
@@ -42,6 +44,7 @@ const CORS_HEADERS = {
 */
 
 export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLambda.APIGatewayEventRequestContext, callback : any) => {
+    const rds = new AWS.RDSDataService();
     console.log(`${ServiceName} - invite.handle - initialize`, JSON.stringify(event.requestContext));
     if (!event.requestContext.authorizer || !event.requestContext.authorizer.claims) {
         console.error(new Error("NoAuth"));
@@ -127,24 +130,25 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
                 Username  : createUserResponse.User.Username
             };
             await userPool.adminAddUserToGroup(cognitoSetGroupParams).promise();
-            const ddbClient = DBClient.getInstance({convertEmptyValues: true});
-            await ddbClient.put({
-                TableName: DDB_TABLE,
-                Item: {
-                    id   : createUserResponse.User.Username,
-                    type : "USER",
-                    meta : `${accountId}#${group}`,
-                    itemType : "USER",
-                    owner: ownerId,
-                    group: group,
-                    accountId: accountId,
-                    email: payload["email"],
-                    phone_number: payload["phone_number"],
-                    given_name: payload["given_name"],
-                    family_name: payload["family_name"],
-                    createdAt : new Date().toISOString()
-                }
-            }).promise();
+            console.log(`${ServiceName} - invite.handle - RDS.Insert User`);
+            const addUserSQL:AWS.RDSDataService.ExecuteStatementRequest = {
+                database: ServiceName,
+                resourceArn: DBClusterARN,
+                secretArn: DBSecretARN,
+                sql: `INSERT INTO User(id, ownerId, group, accountId, email, phone_number, given_name, family_name)
+                    VALUES(:id, :ownerId, :group, :accountId, :email, :phone_number, :given_name, :family_name)`,
+                parameters: [
+                    {name: "id", value: {stringValue: createUserResponse.User.Username}},
+                    {name: "ownerId", value: {stringValue: ownerId}},
+                    {name: "userGroup", value: {stringValue: group}},
+                    {name: "accountId", value: {stringValue: accountId}},
+                    {name: "email", value: {stringValue: payload["email"]}},
+                    {name: "phone_number", value: {stringValue: payload["phone_number"]}},
+                    {name: "given_name", value: {stringValue: payload["given_name"]}},
+                    {name: "family_name", value: {stringValue: payload["family_name"]}}
+                ]
+            };
+            await rds.executeStatement(addUserSQL).promise();
             callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify(createUserResponse)});
         } catch (error) {
             console.log(`${ServiceName} - invite.handle - cognito-idp RES`, error.message);

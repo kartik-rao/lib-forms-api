@@ -1,0 +1,12 @@
+$util.qr($ctx.stash.paths.add("FN_checkFN_RES.vtl"))
+$util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))
+#if($ctx.error)
+    $util.qr($ctx.stash.put("error", $ctx.error))
+    $util.error($ctx.error.message, $ctx.error.type)
+#end
+
+#if($ctx.result)
+    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $util.rds.toJsonObject($ctx.result)[0]))
+#end
+#return({})
+

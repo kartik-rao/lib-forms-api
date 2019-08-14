@@ -17,8 +17,8 @@ provider:
     region: ${self:provider.region}
     environment: ${self:provider.stage}
     serviceName: ${self:service}
-    table_form_entries: ${self:service}_table_form_entries
-    table_app_data: ${self:service}_table_appdata
+    dbClusterArn: "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-${self:provider.stage}"
+    dbClusterSecretArn: ${ssm:/app/formsli/dev/db/credentialsArn}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -111,9 +111,9 @@ custom:
         description: RDS source for formsli
         config:
           # The identifier for RDSCluster. Where RDSCluster is the cluster defined in Resources
-          dbClusterIdentifier: "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-${self:provider.stage}"
+          dbClusterIdentifier: ${self:provider.environment.dbClusterArn}
           # The RDSClusterSecret ARN. Where RDSClusterSecret is the cluster secret defined in Resources
-          awsSecretStoreArn: ${ssm:/app/formsli/dev/db/credentialsArn}
+          awsSecretStoreArn: ${self:provider.environment.dbClusterSecretArn}
           databaseName: ${self:service}
           serviceRoleArn: { Fn::GetAtt: [AppSyncRDSRole, Arn] }
           region: ${self:provider.region}
@@ -122,10 +122,7 @@ custom:
     functionConfigurations: ${file(serverless.appsync-functions.yml)}
     ## Add substitutions here to replace all hardcoded table/index names in mapping templates
     substitutions:
-      # ${exampleVar1} will be replaced with given value in all mapping templates
-      # exampleVar1: "${self:service.name}"
-      index_appdata_gsi: "${self:provider.environment.table_app_data}_gsi"
-      index_entries_gsi: "${self:provider.environment.table_form_entries}_gsi"
+
 
 functions:
   postConfirmation:

@@ -1,11 +1,11 @@
 #set($request=$ctx.stash.request)
-#set($columnList=[])
-#set($variableList=[])
-#set($variableMap={})
+#set($columnList=["id"])
+#set($variableList=[":id"])
+#set($variableMap={":id": "'${util.autoId()}'"})
 
 ## Iterate through each argument, skipping "id" and "expectedVersion" **
 #foreach( $entry in $request.entrySet() )
-    #if( $entry.key != "id" && $entry.key != "itemType")
+    #if($entry.key != "id" && $entry.key != "itemType")
         #if( (!$entry.value) && ("$!{entry.value}" == "") )
             ## If the argument is set to "null", then remove that attribute from the item in DynamoDB **
             #set( $discard = ${expRemove.add("#${entry.key}")} )
@@ -13,7 +13,7 @@
         #else
             $columns.add("${entry.key}")
             $variables.add(":${entry.key}")
-            $!{variableMap.put(":${entry.key}", "${entry.value}" )}
+            $!{variableMap.put(":${entry.key}", "'${entry.value}'" )}
         #end
     #end
 #end

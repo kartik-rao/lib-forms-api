@@ -3,99 +3,99 @@
   type: Query
   name: FN_common_GET
   request: FN_common_GET.vtl
-  response: FN_passthrough_RES.vtl
+  response: FN_checkFN_RES.vtl
 - dataSource: AppData
   type: Mutation
   name: FN_common_UPDATE
   request: FN_common_UPDATE.vtl
-  response: FN_passthrough_RES.vtl
+  response: FN_checkFN_RES.vtl
 - dataSource: AppData
   type: Mutation
   name: FN_common_PUT
   request: FN_common_PUT.vtl
-  response: FN_passthrough_RES.vtl
+  response: FN_checkFN_RES.vtl
 - dataSource: AppData
   type: Query
   name: FN_common_LIST
   request: FN_common_LIST.vtl
-  response: FN_passthrough_RES.vtl
+  response: FN_checkFN_RES.vtl
 - dataSource: AppData
   type: Mutation
   name: FN_common_DELETE
   request: FN_common_DELETE.vtl
-  response: FN_passthrough_RES.vtl
+  response: FN_checkFN_RES.vtl
 
 ## Account
 - dataSource: AppData
   type: Query
   name: FN_getAccount
   request: getAccount_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: FN_checkFN_RES.vtl
 
 - dataSource: AppData
   type: Query
   name: FN_listAccounts
   request: listAccounts_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: FN_checkFN_RES.vtl
 
 - dataSource: AppData
   type: Mudation
   name: FN_updateAccount
   request: updateAccount_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: FN_checkFN_RES.vtl
 
 ## User
 - dataSource: AppData
   type: Query
   name: FN_getUser
   request: getUser_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: FN_checkFN_RES.vtl
 
 ## PlanType
 - dataSource: AppData
   type: Mutation
   name: FN_deletePlanType
   request: deletePlanType_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: FN_checkFN_RES.vtl
 - dataSource: AppData
   type: Mutation
   name: FN_updatePlanType
   request: updatePlanType_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: FN_checkFN_RES.vtl
 - dataSource: AppData
   type: Query
   name: FN_addPlanType
   request: addPlanType_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: FN_checkFN_RES.vtl
 - dataSource: AppData
   type: Query
   name: FN_getPlanType
   request: getPlanType_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: FN_checkFN_RES.vtl
 - dataSource: AppData
   type: Query
   name: FN_listPlanTypes
   request: listPlanTypes_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: FN_checkFN_RES.vtl
 
   ## Plan
 - dataSource: AppData
   type: Mutation
   name: FN_createPlan
   request: addPlan_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: FN_checkFN_RES.vtl
 - dataSource: AppData
   type: Mutation
   name: FN_updatePlan
   request: updatePlan_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: FN_checkFN_RES.vtl
 - dataSource: AppData
   type: Mutation
   name: FN_deletePlan
   request: deletePlan_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: FN_checkFN_RES.vtl
 - dataSource: AppData
   type: Query
   name: FN_getPlan
   request: getPlan_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: FN_checkFN_RES.vtl

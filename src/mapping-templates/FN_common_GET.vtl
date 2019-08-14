@@ -1,9 +1,7 @@
+$util.qr($ctx.stash.paths.add("FN_common_GET.vtl"))
 {
     "version": "2018-05-29",
     "statements": [
-        "SELECT * FROM ${ctx.stash.request.itemType} where id=:id"
-    ],
-    "variableMap": {
-        ":id" : "${ctx.stash.request.id}"
-    }
+        "SELECT * FROM ${ctx.stash.request.itemType} where id='$ctx.stash.request.id'"
+    ]
 }

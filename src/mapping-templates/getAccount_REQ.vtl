@@ -1,6 +1,6 @@
+$util.qr($ctx.stash.paths.put("getAccount_REQ.vtl"))
 #set($identity=$ctx.stash.identity)
 #set($args=$ctx.arguments)
-
 #if(!$util.isNull($ctx.stash.request))
     #set ($ctx.stash.prevRequest = $ctx.stash.request)
 #end

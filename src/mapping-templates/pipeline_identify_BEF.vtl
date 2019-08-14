@@ -1,4 +1,7 @@
 ## Store tenantId, group in stash.identity
+$util.qr($ctx.stash.put("paths", []))
+$util.qr($ctx.stash.paths.add("pipeline_identify_BEF.vtl"))
+
 #set ($identity = {})
 $util.qr($identity.put("tenantId", $context.identity.claims.get("custom:tenantId")))
 $util.qr($identity.put("callerId", $ctx.identity.sub))
@@ -21,4 +24,5 @@ $util.qr($identity.put("callerId", $ctx.identity.sub))
     #end
 #end
 $util.qr($ctx.stash.put("identity", $identity))
+$util.qr($ctx.stash.put("results", {}))
 {}
