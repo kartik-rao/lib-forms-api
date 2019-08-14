@@ -38,7 +38,7 @@ describe("Auth", () => {
     let accAdminInbox: Inbox;
     let accAdmin : ISignUpResult;
     let tenantId: string;
-    const tenant = `Forms.li QA`;
+    const tenant = `Dev-Formsli`;
     const password = "P@ssword1";
 
     describe("Global Admin", () => {
@@ -77,7 +77,9 @@ describe("Auth", () => {
                     username: accAdminInbox.emailAddress,
                     password: password,
                     attributes : {
-                        "custom:tenantName": tenant
+                        "custom:tenantName" : tenant,
+                        "given_name" : "AccountAdmin",
+                        "family_name": tenant
                     }
                 });
                 expect(accAdmin).toBeDefined();
@@ -128,10 +130,10 @@ describe("Auth", () => {
                 attributes.forEach((attr) => {
                     attrs[attr["Name"]] = attr["Value"];
                 });
-                expect(attrs['custom:environment']).toBe('dev');
-                expect(attrs['custom:group']).toBe('AccountAdmin');
+                expect(attrs['custom:environment']).toBe('dev', "custom:environment should be 'dev'");
+                expect(attrs['custom:group']).toBe('AccountAdmin', "custom:group should be 'AccountAdmin'");
                 expect(attrs['custom:tenantName']).toEqual(tenant);
-                expect(attrs['custom:tenantId']).toBeDefined();
+                expect(attrs['custom:tenantId']).toBeDefined("custom:tenantId should be set");
                 expect(attrs['email_verified']).toBeTruthy();
                 tenantId = attrs['custom:tenantId'];
                 done();
@@ -173,6 +175,12 @@ describe("Auth", () => {
                     },
                     body: JSON.stringify(invitePayload)
                 });
+
+                if(inviteResponse.status != 200) {
+                    done.fail(inviteResponse.statusText);
+                    done();
+                    return;
+                }
 
                 let res: AdminCreateUserResponse = await inviteResponse.json();
                 expect(res).toBeDefined();
@@ -220,7 +228,7 @@ describe("Auth", () => {
                     }).promise();
                     done();
                 } catch (error) {
-                    fail(error)
+                    done.fail(error);
                 }
             } else {
                 done();
