@@ -221,7 +221,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1565770631879-2019-08-14T08:17:11.879Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1565773746883-2019-08-14T09:09:06.883Z/formsli.zip"
               },
               "FunctionName": "formsli-postconfirmation",
               "Handler": "src/postconfirmation.handle",
@@ -254,14 +254,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "PostConfirmationLambdaVersionQ6ZS9sZroJ94v0ZW9WuWVdYGveI0ljPERXeDRJAY8Dc": {
+          "PostConfirmationLambdaVersionQS2RYrrB7Pqu1V4FPUtg6STL3qqweyRqg0Gw9xI7rTs": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "PostConfirmationLambdaFunction"
               },
-              "CodeSha256": "g2b43Z9RFdmDa7QgKQ41bijzjBtJivUFKWH0ui+3BnM="
+              "CodeSha256": "7fVGymJBjSbI+x4Fe2mnBBRbEj6Mdg7blJw5vpG/tlc="
             }
           },
           "SignupLambdaFunction": {
@@ -271,7 +271,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1565770631879-2019-08-14T08:17:11.879Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1565773746883-2019-08-14T09:09:06.883Z/formsli.zip"
               },
               "FunctionName": "formsli-invite",
               "Handler": "src/invite.handle",
@@ -304,14 +304,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "SignupLambdaVersionlKCDHAS5skgt9u5hImk6TkymRHmOYswOU7n1cJXBwek": {
+          "SignupLambdaVersioniVjMP2CJZpsCbBANpG2toGxMbwEbtwaszIz1ZYoGA": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SignupLambdaFunction"
               },
-              "CodeSha256": "g2b43Z9RFdmDa7QgKQ41bijzjBtJivUFKWH0ui+3BnM="
+              "CodeSha256": "7fVGymJBjSbI+x4Fe2mnBBRbEj6Mdg7blJw5vpG/tlc="
             }
           },
           "ApiGatewayRestApi": {
@@ -538,7 +538,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1565770611278": {
+          "ApiGatewayDeployment1565773723523": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -2571,13 +2571,13 @@
           "PostConfirmationLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "PostConfirmationLambdaVersionQ6ZS9sZroJ94v0ZW9WuWVdYGveI0ljPERXeDRJAY8Dc"
+              "Ref": "PostConfirmationLambdaVersionQS2RYrrB7Pqu1V4FPUtg6STL3qqweyRqg0Gw9xI7rTs"
             }
           },
           "SignupLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SignupLambdaVersionlKCDHAS5skgt9u5hImk6TkymRHmOYswOU7n1cJXBwek"
+              "Ref": "SignupLambdaVersioniVjMP2CJZpsCbBANpG2toGxMbwEbtwaszIz1ZYoGA"
             }
           },
           "ServiceEndpoint": {
@@ -3910,7 +3910,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli/dev/1565770631879-2019-08-14T08:17:11.879Z",
+    "artifactDirectoryName": "serverless/formsli/dev/1565773746883-2019-08-14T09:09:06.883Z",
     "artifact": ""
   }
 }
