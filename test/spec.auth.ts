@@ -12,6 +12,14 @@ jasmine.DEFAULT_TIMEOUT_INTERVAL = 120000;
 import * as AWS from 'aws-sdk';
 import { AdminDisableUserRequest, AdminDeleteUserRequest, AdminCreateUserResponse } from "aws-sdk/clients/cognitoidentityserviceprovider";
 
+const SSM = {
+    State : "/App/formsli/dev/tenantState",
+    GlobalAdmin : "/App/formsli/dev/globalAdmin",
+    AccountAdmin : "/App/formsli/dev/tenantAccountAdmin",
+    AccountEditor : "/App/formsli/dev/tenantAccountEditor",
+    AccountViewer : "/App/formsli/dev/tenantAccountViewer",
+}
+
 var credentials = new AWS.SharedIniFileCredentials({profile: 'fl-infrastructure-dev'});
 AWS.config.credentials = credentials;
 AWS.config.region = config['Region'];
@@ -36,10 +44,11 @@ describe("Auth", () => {
     describe("Global Admin", () => {
         it("can sign in", async (done) => {
             try {
-                const user = await Auth.signIn(config["UserPoolAdminUser"], "Pd8Ohek..");
+                const user = await Auth.signIn(config["UserPoolAdminUser"], "LmgIBf:3");
                 expect(user).toBeDefined();
                 done();
             } catch (error) {
+                console.error(error);
                 fail(error);
             }
         });
@@ -57,6 +66,7 @@ describe("Auth", () => {
                 accAdminInbox = await mailSlurp.createInbox();
                 done();
             } catch (error) {
+                console.error(error);
                 fail(error);
             }
         });
@@ -73,6 +83,7 @@ describe("Auth", () => {
                 expect(accAdmin).toBeDefined();
                 done();
             } catch (error) {
+                console.error(error);
                 fail(error)
             }
         });
@@ -89,6 +100,7 @@ describe("Auth", () => {
                 verificationCode = email.body;
                 done();
             } catch (error) {
+                console.error(error);
                 fail(error);
             }
         });
@@ -108,6 +120,7 @@ describe("Auth", () => {
 
             user.getUserAttributes((err, attributes=[]) => {
                 if(err) {
+                    console.error(err);
                     fail(err);
                     return;
                 }
@@ -175,6 +188,7 @@ describe("Auth", () => {
                 done();
 
             } catch (error) {
+                console.error(error);
                 fail(error);
             }
         });

@@ -99,6 +99,17 @@
                 {
                   "Effect": "Allow",
                   "Action": [
+                    "secretsmanager:GetSecretValue"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:/app/formsli/dev/db/*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
                     "rds-data:InsertItems",
                     "rds-data:GetItems",
                     "rds-data:UpdateItems",
@@ -167,7 +178,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1565763844089-2019-08-14T06:24:04.089Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1565768462768-2019-08-14T07:41:02.768Z/formsli.zip"
         },
         "FunctionName": "formsli-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -188,8 +199,10 @@
             "region": "ap-northeast-1",
             "environment": "dev",
             "serviceName": "formsli",
-            "table_form_entries": "formsli_table_form_entries",
-            "table_app_data": "formsli_table_appdata"
+            "dbClusterArn": {
+              "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:formsli-dev"
+            },
+            "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:644527192227:secret:/app/formsli/dev/db/credentials-obdDgQ"
           }
         }
       },
@@ -198,14 +211,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "PostConfirmationLambdaVersionYXNxnm7aqzQDGlQdVS76IDVwGRG8ZroYM35doQ71Y": {
+    "PostConfirmationLambdaVersionLUytewDdsJn1JS1p3lzW4MpnYYo0UgwC0ncJKm9hM": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "PostConfirmationLambdaFunction"
         },
-        "CodeSha256": "E2rsQxqd8xSBsiw7eTuzm3XWhRVyxzHfvp8Qa3i4qh8="
+        "CodeSha256": "SnOLTp4RlE7zAidfGL7sj44HPNneH/VsArvbvk3ysU8="
       }
     },
     "SignupLambdaFunction": {
@@ -215,7 +228,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1565763844089-2019-08-14T06:24:04.089Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1565768462768-2019-08-14T07:41:02.768Z/formsli.zip"
         },
         "FunctionName": "formsli-invite",
         "Handler": "src/invite.handle",
@@ -236,8 +249,10 @@
             "region": "ap-northeast-1",
             "environment": "dev",
             "serviceName": "formsli",
-            "table_form_entries": "formsli_table_form_entries",
-            "table_app_data": "formsli_table_appdata"
+            "dbClusterArn": {
+              "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:formsli-dev"
+            },
+            "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:644527192227:secret:/app/formsli/dev/db/credentials-obdDgQ"
           }
         }
       },
@@ -246,14 +261,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "SignupLambdaVersionjQg9BJl6jPnNEE47D8CcwqbzyZsQ9YOtnR1yXwtfk": {
+    "SignupLambdaVersionITWpAjtUSyBizsGTWv7cF0UpH4d1SDZcUDeFEVKPtI8": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "SignupLambdaFunction"
         },
-        "CodeSha256": "E2rsQxqd8xSBsiw7eTuzm3XWhRVyxzHfvp8Qa3i4qh8="
+        "CodeSha256": "SnOLTp4RlE7zAidfGL7sj44HPNneH/VsArvbvk3ysU8="
       }
     },
     "ApiGatewayRestApi": {
@@ -480,7 +495,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1565763817659": {
+    "ApiGatewayDeployment1565768439921": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -1375,23 +1390,7 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": {
-          "Fn::Join": [
-            "",
-            [
-              "{\n    \"version\"   : \"2018-05-29\",\n    \"operation\" : \"Query\",\n    \"index\"    : \"",
-              {
-                "Fn::Sub": [
-                  "${index_appdata_gsi}",
-                  {
-                    "index_appdata_gsi": "formsli_table_appdata_gsi"
-                  }
-                ]
-              },
-              "\",\n#if($ctx.stash.identity.isAdmin == true)\n    \"query\"     : {\n        \"expression\": \"#type = :objectType\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\"\n        },\n        \"expressionValues\" : {\n            \":objectType\" : { \"S\": \"${ctx.stash.request.itemType}\" }\n        }\n    }\n#else\n    \"query\": {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta) AND #isDeleted = :isDeleted\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"${ctx.stash.request.itemType}\"},\n            \":meta\" : {\"S\" : \"${ctx.stash.identity.tenantId}\"},\n            \":isDeleted\" : {\"BOOL\": false}\n        }\n    }\n#end\n    ,\"scanIndexForward\":   #if( $context.stash.request.sortDirection )\n        #if( $context.stash.request.sortDirection == \"ASC\" )\n            true\n        #else\n            false\n        #end\n    #else\n        true\n    #end,\n    ## \"filter\": #if(!$util.isNull($context.stash.request.filter))\n    ##     $util.transform.toDynamoDBFilterExpression($context.stash.request.filter)\n    ## #else\n    ##     null\n    ## #end,\n  \"limit\": $util.defaultIfNull(${ctx.stash.request.limit}, 20),\n  \"nextToken\": $util.toJson($util.defaultIfNullOrBlank(${ctx.stash.request.nextToken}, null))\n}"
-            ]
-          ]
-        },
+        "RequestMappingTemplate": "{\n    \"version\"   : \"2018-05-29\",\n    \"operation\" : \"Query\",\n    \"index\"    : \"${index_appdata_gsi}\",\n#if($ctx.stash.identity.isAdmin == true)\n    \"query\"     : {\n        \"expression\": \"#type = :objectType\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\"\n        },\n        \"expressionValues\" : {\n            \":objectType\" : { \"S\": \"${ctx.stash.request.itemType}\" }\n        }\n    }\n#else\n    \"query\": {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta) AND #isDeleted = :isDeleted\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"${ctx.stash.request.itemType}\"},\n            \":meta\" : {\"S\" : \"${ctx.stash.identity.tenantId}\"},\n            \":isDeleted\" : {\"BOOL\": false}\n        }\n    }\n#end\n    ,\"scanIndexForward\":   #if( $context.stash.request.sortDirection )\n        #if( $context.stash.request.sortDirection == \"ASC\" )\n            true\n        #else\n            false\n        #end\n    #else\n        true\n    #end,\n    ## \"filter\": #if(!$util.isNull($context.stash.request.filter))\n    ##     $util.transform.toDynamoDBFilterExpression($context.stash.request.filter)\n    ## #else\n    ##     null\n    ## #end,\n  \"limit\": $util.defaultIfNull(${ctx.stash.request.limit}, 20),\n  \"nextToken\": $util.toJson($util.defaultIfNullOrBlank(${ctx.stash.request.nextToken}, null))\n}",
         "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_checkFN_RES.vtl\"))\n$util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($ctx.result)\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $util.rds.toJsonObject($ctx.result)[0]))\n#end\n#return({})\n\n",
         "FunctionVersion": "2018-05-29"
       }
@@ -1433,7 +1432,7 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n$util.qr($ctx.stash.paths.put(\"getAccount_REQ.vtl\"))\n#if(!$util.isNull($ctx.stash.request))\n    #set ($ctx.stash.prevRequest = $ctx.stash.request)\n#end\n\n\n#set($isAllowed = false)\n#if($ctx.stash.identity.tenantId == $ctx.arguments.accountId || $ctx.stash.identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"operation\", 'get'))\n    #set ($request = {})\n\n    $util.qr($request.put(\"id\", $ctx.arguments.accountId))\n    $util.qr($request.put(\"itemType\", 'Account'))\n    $util.qr($ctx.stash.put(\"request\", $request))\n    #return({})\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [${request.operation}] on [${request.id}]\", \"Unauthorized\")\n#end",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.put(\"getAccount_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n#if(!$util.isNull($ctx.stash.request))\n    #set ($ctx.stash.prevRequest = $ctx.stash.request)\n#end\n\n\n#set($isAllowed = false)\n#if($ctx.stash.identity.tenantId == $ctx.arguments.accountId || $ctx.stash.identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"operation\", 'get'))\n    #set ($request = {})\n\n    $util.qr($request.put(\"id\", $ctx.arguments.accountId))\n    $util.qr($request.put(\"itemType\", 'Account'))\n    $util.qr($ctx.stash.put(\"request\", $request))\n    #return({})\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [${request.operation}] on [${request.id}]\", \"Unauthorized\")\n#end",
         "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_checkFN_RES.vtl\"))\n$util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($ctx.result)\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $util.rds.toJsonObject($ctx.result)[0]))\n#end\n#return({})\n\n",
         "FunctionVersion": "2018-05-29"
       }
@@ -1735,23 +1734,7 @@
         },
         "TypeName": "Query",
         "FieldName": "listUsers",
-        "RequestMappingTemplate": {
-          "Fn::Join": [
-            "",
-            [
-              "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n#end\n## Only Admins allowed\n#if (!$isAdmin == true)\n    $utils.unauthorized()\n#end\n#set($attribs = $context.arguments)\n{\n    \"version\"   : \"2018-05-29\",\n    \"operation\" : \"Query\",\n    \"index\"     : \"",
-              {
-                "Fn::Sub": [
-                  "${index_appdata_gsi}",
-                  {
-                    "index_appdata_gsi": "formsli_table_appdata_gsi"
-                  }
-                ]
-              },
-              "\",\n    \"query\"     : {\n      \"expression\": \"#type = :objectType\",\n      \"expressionNames\" : {\n            \"#type\" : \"type\"\n        },\n      \"expressionValues\" : {\n        \":objectType\" : { \"S\": \"USER\" }\n      }\n  },\n  \"limit\": $util.defaultIfNull(${ctx.args.limit}, 20),\n  \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))\n}"
-            ]
-          ]
-        },
+        "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n#end\n## Only Admins allowed\n#if (!$isAdmin == true)\n    $utils.unauthorized()\n#end\n#set($attribs = $context.arguments)\n{\n    \"version\"   : \"2018-05-29\",\n    \"operation\" : \"Query\",\n    \"index\"     : \"${index_appdata_gsi}\",\n    \"query\"     : {\n      \"expression\": \"#type = :objectType\",\n      \"expressionNames\" : {\n            \"#type\" : \"type\"\n        },\n      \"expressionValues\" : {\n        \":objectType\" : { \"S\": \"USER\" }\n      }\n  },\n  \"limit\": $util.defaultIfNull(${ctx.args.limit}, 20),\n  \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))\n}",
         "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
         "DataSourceName": {
           "Fn::GetAtt": [
@@ -1774,7 +1757,7 @@
         "TypeName": "Query",
         "FieldName": "getPlan",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"pipeline_identify_BEF.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
-        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n\n#set($itemType=$ctx.stash.request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}]\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}] does not exist\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -1807,7 +1790,7 @@
         "TypeName": "Mutation",
         "FieldName": "deletePlan",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"pipeline_identify_BEF.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
-        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n\n#set($itemType=$ctx.stash.request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}]\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}] does not exist\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -1852,7 +1835,7 @@
         "TypeName": "Mutation",
         "FieldName": "addPlan",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"pipeline_identify_BEF.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
-        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n\n#set($itemType=$ctx.stash.request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}]\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}] does not exist\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -1885,7 +1868,7 @@
         "TypeName": "Mutation",
         "FieldName": "updatePlan",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"pipeline_identify_BEF.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
-        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n\n#set($itemType=$ctx.stash.request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}]\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}] does not exist\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -1918,7 +1901,7 @@
         "TypeName": "Query",
         "FieldName": "getAccount",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"pipeline_identify_BEF.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
-        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n\n#set($itemType=$ctx.stash.request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}]\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}] does not exist\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -1951,7 +1934,7 @@
         "TypeName": "Mutation",
         "FieldName": "updateAccount",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"pipeline_identify_BEF.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
-        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n\n#set($itemType=$ctx.stash.request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}]\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}] does not exist\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -1995,23 +1978,7 @@
         },
         "TypeName": "Account",
         "FieldName": "plan",
-        "RequestMappingTemplate": {
-          "Fn::Join": [
-            "",
-            [
-              "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2018-05-29\",\n    \"operation\": \"Query\",\n    \"index\"    : \"",
-              {
-                "Fn::Sub": [
-                  "${index_appdata_gsi}",
-                  {
-                    "index_appdata_gsi": "formsli_table_appdata_gsi"
-                  }
-                ]
-              },
-              "\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"PLAN\"},\n            \":meta\" : {\"S\" : \"${context.source.id}#true\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\"\n}"
-            ]
-          ]
-        },
+        "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2018-05-29\",\n    \"operation\": \"Query\",\n    \"index\"    : \"${index_appdata_gsi}\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"PLAN\"},\n            \":meta\" : {\"S\" : \"${context.source.id}#true\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\"\n}",
         "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n#if($ctx.result && $ctx.result.items && $ctx.result.items.size() > 0)\n    $util.toJson($ctx.result.items[0])\n#else\n    #return\n#end",
         "DataSourceName": {
           "Fn::GetAtt": [
@@ -2077,23 +2044,7 @@
         },
         "TypeName": "Account",
         "FieldName": "forms",
-        "RequestMappingTemplate": {
-          "Fn::Join": [
-            "",
-            [
-              "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2018-05-29\",\n    \"operation\": \"Query\",\n    \"index\"    : \"",
-              {
-                "Fn::Sub": [
-                  "${index_appdata_gsi}",
-                  {
-                    "index_appdata_gsi": "formsli_table_appdata_gsi"
-                  }
-                ]
-              },
-              "\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"FORM\"},\n            \":meta\" : {\"S\" : \"${context.source.id}\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\",\n    \"limit\": $util.defaultIfNull(${ctx.args.limit}, 20),\n    \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))\n}"
-            ]
-          ]
-        },
+        "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2018-05-29\",\n    \"operation\": \"Query\",\n    \"index\"    : \"${index_appdata_gsi}\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"FORM\"},\n            \":meta\" : {\"S\" : \"${context.source.id}\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\",\n    \"limit\": $util.defaultIfNull(${ctx.args.limit}, 20),\n    \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))\n}",
         "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
         "DataSourceName": {
           "Fn::GetAtt": [
@@ -2115,23 +2066,7 @@
         },
         "TypeName": "Account",
         "FieldName": "users",
-        "RequestMappingTemplate": {
-          "Fn::Join": [
-            "",
-            [
-              "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2018-05-29\",\n    \"operation\": \"Query\",\n    \"index\"    : \"",
-              {
-                "Fn::Sub": [
-                  "${index_appdata_gsi}",
-                  {
-                    "index_appdata_gsi": "formsli_table_appdata_gsi"
-                  }
-                ]
-              },
-              "\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"USER\"},\n            \":meta\" : {\"S\" : \"${context.source.id}\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\",\n    \"limit\": $util.defaultIfNull(${ctx.args.limit}, 20),\n    \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))\n}"
-            ]
-          ]
-        },
+        "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2018-05-29\",\n    \"operation\": \"Query\",\n    \"index\"    : \"${index_appdata_gsi}\",\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"USER\"},\n            \":meta\" : {\"S\" : \"${context.source.id}\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\",\n    \"limit\": $util.defaultIfNull(${ctx.args.limit}, 20),\n    \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))\n}",
         "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
         "DataSourceName": {
           "Fn::GetAtt": [
@@ -2241,23 +2176,7 @@
         },
         "TypeName": "Form",
         "FieldName": "versions",
-        "RequestMappingTemplate": {
-          "Fn::Join": [
-            "",
-            [
-              "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2018-05-29\",\n    \"operation\": \"Query\",\n    \"index\"    : \"",
-              {
-                "Fn::Sub": [
-                  "${index_appdata_gsi}",
-                  {
-                    "index_appdata_gsi": "formsli_table_appdata_gsi"
-                  }
-                ]
-              },
-              "\",\n    \"scanIndexForward\" : false,\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"FORMVERSION\"},\n            \":meta\" : {\"S\" : \"${context.source.id}\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\",\n    \"limit\": $util.defaultIfNull(${ctx.args.limit}, 10),\n    \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))\n}"
-            ]
-          ]
-        },
+        "RequestMappingTemplate": "#set($attribs = $context.arguments)\n{\n    \"version\"  : \"2018-05-29\",\n    \"operation\": \"Query\",\n    \"index\"    : \"${index_appdata_gsi}\",\n    \"scanIndexForward\" : false,\n    \"query\"    : {\n        \"expression\" : \"#type = :type AND begins_with(#meta, :meta)\",\n        \"expressionNames\" : {\n            \"#type\" : \"type\",\n            \"#meta\" : \"meta\"\n        },\n        \"expressionValues\": {\n            \":type\" : {\"S\" : \"FORMVERSION\"},\n            \":meta\" : {\"S\" : \"${context.source.id}\"}\n        }\n    },\n    \"select\" : \"ALL_ATTRIBUTES\",\n    \"limit\": $util.defaultIfNull(${ctx.args.limit}, 10),\n    \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))\n}",
         "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
         "DataSourceName": {
           "Fn::GetAtt": [
@@ -2279,23 +2198,7 @@
         },
         "TypeName": "Query",
         "FieldName": "listForms",
-        "RequestMappingTemplate": {
-          "Fn::Join": [
-            "",
-            [
-              "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n#end\n## Only Admins allowed\n#if (!$isAdmin == true)\n    $utils.unauthorized()\n#end\n#set($attribs = $context.arguments)\n{\n    \"version\"   : \"2018-05-29\",\n    \"operation\" : \"Query\",\n    \"index\"    : \"",
-              {
-                "Fn::Sub": [
-                  "${index_appdata_gsi}",
-                  {
-                    "index_appdata_gsi": "formsli_table_appdata_gsi"
-                  }
-                ]
-              },
-              "\",\n    \"query\"     : {\n      \"expression\": \"#type = :objectType\",\n      \"expressionNames\" : {\n            \"#type\" : \"type\"\n        },\n      \"expressionValues\" : {\n        \":objectType\" : { \"S\": \"FORM\" }\n      }\n  },\n  \"limit\": $util.defaultIfNull(${ctx.args.limit}, 20),\n  \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))\n}"
-            ]
-          ]
-        },
+        "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n#end\n## Only Admins allowed\n#if (!$isAdmin == true)\n    $utils.unauthorized()\n#end\n#set($attribs = $context.arguments)\n{\n    \"version\"   : \"2018-05-29\",\n    \"operation\" : \"Query\",\n    \"index\"    : \"${index_appdata_gsi}\",\n    \"query\"     : {\n      \"expression\": \"#type = :objectType\",\n      \"expressionNames\" : {\n            \"#type\" : \"type\"\n        },\n      \"expressionValues\" : {\n        \":objectType\" : { \"S\": \"FORM\" }\n      }\n  },\n  \"limit\": $util.defaultIfNull(${ctx.args.limit}, 20),\n  \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))\n}",
         "ResponseMappingTemplate": "## Raise a GraphQL field error in case of a datasource invocation error\n#if($ctx.error)\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n## Pass back the result from DynamoDB\n{\n    \"items\": $utils.toJson($context.result.items)\n    #if( ${context.result.nextToken} )\n        ,\"nextToken\": \"${context.result.nextToken}\"\n    #end\n}",
         "DataSourceName": {
           "Fn::GetAtt": [
@@ -2340,7 +2243,7 @@
         "TypeName": "Query",
         "FieldName": "listPlanTypes",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"pipeline_identify_BEF.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
-        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n\n#set($itemType=$ctx.stash.request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}]\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}] does not exist\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -2373,7 +2276,7 @@
         "TypeName": "Query",
         "FieldName": "getPlanType",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"pipeline_identify_BEF.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
-        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n\n#set($itemType=$ctx.stash.request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}]\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}] does not exist\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -2406,7 +2309,7 @@
         "TypeName": "Mutation",
         "FieldName": "addPlanType",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"pipeline_identify_BEF.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
-        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n\n#set($itemType=$ctx.stash.request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}]\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}] does not exist\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -2439,7 +2342,7 @@
         "TypeName": "Mutation",
         "FieldName": "updatePlanType",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"pipeline_identify_BEF.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
-        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n\n#set($itemType=$ctx.stash.request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}]\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}] does not exist\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -2484,7 +2387,7 @@
         "TypeName": "Mutation",
         "FieldName": "deletePlanType",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"pipeline_identify_BEF.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
-        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n\n#set($itemType=$ctx.stash.request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}]\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}] does not exist\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -2595,7 +2498,7 @@
         "TypeName": "Query",
         "FieldName": "listAccounts",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"pipeline_identify_BEF.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
-        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n\n#set($itemType=$ctx.stash.request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}]\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#set($operation=$ctx.stash.operation)\n#set($request=$ctx.stash.request)\n#set($results=$ctx.stash.results)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($results)\n    #if($operation == 'get')\n        #if(!$results[$itemType] || $results[$itemType].size() == 0)\n            $util.error(\"Item ${request.itemType} [${request.id}] does not exist\", 'NotFound')\n        #end\n        $util.toJson($results[$itemType][0])\n    #elseif($operation == 'put')\n        $util.toJson($results[$itemType][1])\n    #elseif($operation == 'delete')\n        $util.toJson({})\n    #else\n        $util.toJson($results[$itemType])\n    #end\n#else\n    #return({})\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -2625,13 +2528,13 @@
     "PostConfirmationLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "PostConfirmationLambdaVersionYXNxnm7aqzQDGlQdVS76IDVwGRG8ZroYM35doQ71Y"
+        "Ref": "PostConfirmationLambdaVersionLUytewDdsJn1JS1p3lzW4MpnYYo0UgwC0ncJKm9hM"
       }
     },
     "SignupLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "SignupLambdaVersionjQg9BJl6jPnNEE47D8CcwqbzyZsQ9YOtnR1yXwtfk"
+        "Ref": "SignupLambdaVersionITWpAjtUSyBizsGTWv7cF0UpH4d1SDZcUDeFEVKPtI8"
       }
     },
     "ServiceEndpoint": {
