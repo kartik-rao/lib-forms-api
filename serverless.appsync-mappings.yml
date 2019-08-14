@@ -6,7 +6,6 @@
   kind: PIPELINE
   functions:
     - FN_getUser
-    - FN_common_GET
 
 - dataSource: AppData
   type: Query
@@ -23,7 +22,6 @@
   kind: PIPELINE
   functions:
     - FN_getPlan
-    - FN_common_GET
 
 - dataSource: AppData
   type: Mutation
@@ -172,7 +170,6 @@
   kind: PIPELINE
   functions:
     - FN_getPlanType
-    - FN_common_GET
 
 - dataSource: AppData
   type: Mutation

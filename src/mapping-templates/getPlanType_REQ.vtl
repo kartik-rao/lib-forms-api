@@ -1,23 +1,15 @@
 #set($identity=$ctx.stash.identity)
 #set($args=$ctx.arguments)
-
-#set($isAllowed = false)
-#if($identity.isAdmin == true)
-    #set($isAllowed = true)
-#end
-
-#if($isAllowed == true)
-    #set ($request = {})
-    #set($request.id = $ctx.arguments.planTypeId)
-    #set($request.itemType = "PLANTYPE")
-
-    #if(!$util.isNull($ctx.stash.request))
-        #set ($ctx.stash.prevRequest = $ctx.stash.request)
-    #end
-
-    $util.qr($ctx.stash.put("operation", 'get'))
-    $util.qr($ctx.stash.put("request", $request))
-    #return({})
-#else
-    $util.error("User [${ctx.stash.identity.callerId}] cannot execute [GET] on [PlanType]", "Unauthorized")
-#end
+$util.qr($ctx.stash.put("request", $args))
+$util.qr($ctx.stash.request.put("itemType", 'PlanType'))
+$util.qr($ctx.stash.put("operation", 'get'))
+{
+    "version": "2018-05-29",
+    "statements": [
+        #if(!$identity.isAdmin)
+            "SELECT * FROM PlanType WHERE id='${args.planTypeId}' AND active=1 AND isDeleted=0"
+        #else
+            "SELECT * FROM PlanType WHERE id='${args.planTypeId}'"
+        #end
+    ]
+}

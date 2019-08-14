@@ -7,17 +7,15 @@
 #end
 
 #if($isAllowed == true)
-    #set($id = $util.autoId())
-    #if(!$util.isNull($ctx.stash.request))
-        #set ($ctx.stash.prevRequest = $ctx.stash.request)
-    #end
-    $util.qr($ctx.stash.put("operation", 'put'))
     $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("itemType", 'PlanType'))
+    $util.qr($ctx.stash.put("operation", 'put'))
+    #set($id = $util.autoId())
     {
         "version": "2018-05-29",
         "statements": [
-            "INSERT INTO PlanType(id, name, cost, billingTerm, active, ownerId, isDeleted, createdAt) VALUES(:id, :name, :cost, :billingTerm, :active, :ownerId, :isDeleted, :createdAt)",
-            "SELECT * FROM PlanType WHERE id='${id}'"
+            "INSERT INTO PlanType(id, `name`, cost, billingTerm, active, ownerId, isDeleted, createdAt) VALUES(:id, :name, :cost, :billingTerm, :active, :ownerId, :isDeleted, :createdAt)",
+            "SELECT * FROM PlanType WHERE id = :id"
         ],
         "variableMap": {
             ":id": "${id}",
@@ -31,5 +29,5 @@
         }
     }
 #else
-    $util.error("User [${ctx.stash.identity.callerId}] cannot execute [PUT] on [Plantype]", "Unauthorized")
+    $util.error("User [${identity.callerId}] cannot execute [PUT] on [Plantype]", "Unauthorized")
 #end

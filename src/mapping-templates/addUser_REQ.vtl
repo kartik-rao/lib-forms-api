@@ -1,22 +1,30 @@
-#set($id = $util.autoId())
-#set($attribs = $context.arguments.input)
-#set($attribs.owner = $context.identity.sub)
-#set($attribs.itemType = "USER")
-#set($attribs.meta = "${context.arguments.input.accountId}#${context.arguments.input.group}")
-#set($attribs.isDeleted = false)
-#set($attribs.createdAt = $util.time.nowISO8601())
-{
-    "version": "2018-05-29",
-    "operation": "PutItem",
-    "key": {
-        "id"  : $util.dynamodb.toDynamoDBJson($id),
-        "type": {"S" : "USER"}
-    },
-    "attributeValues": $util.toJson($util.dynamodb.toMapValues($attribs)),
-    "condition": {
-        "expression": "attribute_not_exists(#id)",
-        "expressionNames": {
-            "#id": "id"
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments.input)
+
+#set($isAllowed = false)
+#if($identity.isAdmin == true)
+    #set($isAllowed = true)
+#end
+
+#if($isAllowed == true)
+    #set($id = $util.autoId())
+    #set($now = "${util.time.nowISO8601()}")
+    {
+        "version": "2018-05-29",
+        "statements": [
+            "INSERT INTO User(id, accountId, ownerId, planTypeId, startDate, active, createdAt) VALUES(:id, :accountId, :ownerId, :planTypeId, :startDate, :active, :createdAt)",
+            "SELECT * FROM Plan WHERE id='${id}'"
+        ],
+        "variableMap": {
+            ":id": "${args.id}",
+            ":email": "${args.email}",
+            ":userGroup": "${args.group}",
+            ":accountId": "${args.accountId}",
+            ":given_name": "${args.given_name}",
+            ":family_name": ${args.family_name},
+            ":createdAt": "${now}"
         }
     }
-}
+#else
+    $util.error("User [${ctx.stash.identity.callerId}] cannot execute [PUT] on [Plan]", "Unauthorized")
+#end

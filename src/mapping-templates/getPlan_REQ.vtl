@@ -3,21 +3,23 @@ $util.qr($ctx.stash.paths.add("getPlan_REQ.vtl"))
 #set($args=$ctx.arguments)
 
 #set($isAllowed = false)
-#if($identity.tenantId == $args.accountId || $identity.isAdmin == true)
+#if($identity.isAdmin == true)
     #set($isAllowed = true)
 #end
 
 #if($isAllowed == true)
-    #if(!$util.isNull($ctx.stash.request))
-        #set ($ctx.stash.prevRequest = $ctx.stash.request)
-    #end
+    $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("itemType", 'Plan'))
     $util.qr($ctx.stash.put("operation", 'get'))
-    #set ($request = {})
-    $util.qr($request.put("id", $args.planId))
-    $util.qr($request.put("itemType", 'Plan'))
-    $util.qr($ctx.stash.put("request", $request))
-
-    #return({})
+    {
+        "statements": [
+            #if(!$identity.isAdmin)
+                "SELECT * FROM Plan WHERE id='${args.planId}' AND accountId='${identity.tenantId}'"
+            #else
+                "SELECT * FROM Plan WHERE id='${args.planId}'"
+            #end
+        ]
+    }
 #else
-    $util.error("User [${identity.callerId}] cannot execute [${ctx.stash.operation}] on [Plan ${request.id}]", "Unauthorized")
+    $util.error("User [${identity.callerId}] cannot execute [GET] on Plan[${args.planId}]", "Unauthorized")
 #end

@@ -7,6 +7,9 @@
 #end
 
 #if($isAllowed == true)
+    $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("itemType", 'Plan'))
+    $util.qr($ctx.stash.put("operation", 'put'))
     #set($id = $util.autoId())
     #set($now = "${util.time.nowISO8601()}")
     {

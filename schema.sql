@@ -28,8 +28,8 @@ CREATE TABLE IF NOT EXISTS User (
 DROP TABLE IF EXISTS PlanType;
 CREATE TABLE  IF NOT EXISTS PlanType (
     id VARCHAR(36) NOT NULL,
-    ownerId VARCHAR(36) NOT NULL,
     `name` VARCHAR(255) NOT NULL,
+    ownerId VARCHAR(36) NOT NULL,
     cost FLOAT(9),
     billingTerm VARCHAR(64),
     createdAt VARCHAR(24) NOT NULL,
@@ -38,8 +38,8 @@ CREATE TABLE  IF NOT EXISTS PlanType (
     active BOOLEAN DEFAULT 0,
     UNIQUE INDEX `UNIQ_INDX_PlanType_id` (`id` ASC),
     INDEX `INDX_PlanType_id` (`id` ASC, `active` DESC),
-    PRIMARY KEY (id),
-    FOREIGN KEY (ownerId) REFERENCES User(id)
+    FOREIGN KEY (ownerId) REFERENCES User(id),
+    PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS Plan;
@@ -59,6 +59,7 @@ CREATE TABLE  IF NOT EXISTS Plan (
     INDEX `INDX_Plan_id_active` (`id` ASC, `active` DESC),
     PRIMARY KEY (id),
     FOREIGN KEY (planTypeId) REFERENCES PlanType(id),
+    FOREIGN KEY (accountId) REFERENCES Account(id),
     FOREIGN KEY (ownerId) REFERENCES User(id)
 );
 

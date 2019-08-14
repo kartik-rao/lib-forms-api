@@ -73,10 +73,7 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
                 ]
             }
             console.log(`${ServiceName} - New Account Flow - RDS Init transaction ${transactionId}`);
-            await rds.executeStatement({
-                ...rdsCommonParams,
-                sql: "SET foreign_key_checks=0"
-            }).promise();
+            await rds.executeStatement({...rdsCommonParams, transactionId: transactionId,  sql: "SET foreign_key_checks=0"}).promise();
             console.log(`${ServiceName} - New Account Flow - RDS.Insert User - ${JSON.stringify(addUserSQL)}`);
             await rds.executeStatement(addUserSQL).promise();
             console.log(`${ServiceName} - New Account Flow - RDS.Insert Account - ${JSON.stringify(addAccountSQL)}`);
