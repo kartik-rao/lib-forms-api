@@ -16,7 +16,7 @@
     #set ($request = {})
 
     $util.qr($request.put("id", $ctx.arguments.accountId))
-    $util.qr($request.put("itemType", 'ACCOUNT'))
+    $util.qr($request.put("itemType", 'Account'))
     $util.qr($ctx.stash.put("request", $request))
     #return({})
 #else

@@ -1,9 +1,9 @@
 #set($identity=$ctx.stash.identity)
 #set($args=$ctx.arguments)
 
-$util.qr($ctx.stash.put("operation", 'query'))
+$util.qr($ctx.stash.put("operation", 'get'))
 #set ($request = {})
-$util.qr($request.put("itemType", 'PLANTYPE'))
+$util.qr($request.put("itemType", 'Plantype'))
 $util.qr($request.put("limit", $args.limit))
 $util.qr($request.put("nextToken", $args.nextToken))
 

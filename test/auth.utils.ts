@@ -9,7 +9,7 @@ const mailSlurp = new MailSlurp({ apiKey: "85117a16750ebeb8c6e659c6e9984ac029055
 
 var credentials = new AWS.SharedIniFileCredentials({profile: 'fl-infrastructure-dev'});
 AWS.config.credentials = credentials;
-AWS.config.region = 'ap-southeast-2';
+AWS.config.region = config['Region'];
 let UserPool = new AWS.CognitoIdentityServiceProvider();
 
 interface IFormsAppUser {

@@ -5,11 +5,11 @@ provider:
   name: aws
   runtime: nodejs8.10
   stage: ${opt:stage, 'dev'}
-  region: ${opt:region, 'ap-southeast-2'}
+  region: ${opt:region, 'ap-northeast-1'}
   functions:
     postconfirmation: ${self:service}-postconfirmation
     invite: ${self:service}-invite
-  profile: default
+  profile: fl-infrastructure-${self:provider.stage}
   environment:
     protocol: ${opt:protocol, 'http://'}
     domain: ${opt:domain, 'dev-app.forms.li'}
@@ -20,25 +20,21 @@ provider:
     table_form_entries: ${self:service}_table_form_entries
     table_app_data: ${self:service}_table_appdata
   iamRoleStatements:
-    - Effect: Allow
+    - Effect: "Allow"
       Action:
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:BatchWriteItem
-      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.table_app_data}"
-    - Effect: Allow
-      Action:
-        - ses:SendEmail
-        - ses:SendRawEmail
-      Resource: "arn:aws:ses:us-east-1:*:*"
-    - Effect: Allow
-      Action:
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:BatchWriteItem
-      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.table_form_entries}"
+        - "rds-data:InsertItems"
+        - "rds-data:GetItems"
+        - "rds-data:UpdateItems"
+        - "rds-data:DeleteItems"
+        - "rds-data:ExecuteSql"
+        - "rds-data:BatchExecuteStatement"
+        - "rds-data:BeginTransaction"
+        - "rds-data:CommitTransaction"
+        - "rds-data:ExecuteStatement"
+        - "rds-data:RollbackTransaction"
+      Resource:
+        - "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-${self:provider.stage}"
+        - "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-${self:provider.stage}:*"
     - Effect: Allow
       Action:
         - cognito-idp:AdminAddUserToGroup
@@ -47,6 +43,11 @@ provider:
         - cognito-idp:AdminGetUser
         - cognito-idp:AdminCreateUser
       Resource: "arn:aws:cognito-idp:#{AWS::Region}:#{AWS::AccountId}:userpool/*"
+    - Effect: Allow
+      Action:
+        - ses:SendEmail
+        - ses:SendRawEmail
+      Resource: "arn:aws:ses:us-east-1:*:*"
 
 plugins:
   - serverless-webpack
@@ -60,7 +61,7 @@ plugins:
 
 resources:
   - ${file(resources/iam.yml)}
-  - ${file(resources/dynamodb.yml)}
+  # - ${file(resources/dynamodb.yml)}
   - ${file(resources/s3.yml)}
   - ${file(resources/cognito.userpool.yml)}
   - ${file(resources/cognito.identitypool.yml)}
@@ -90,11 +91,11 @@ custom:
         endpoint: "http://localhost:8000"
         region: localhost
   appSync:
-    name:  ai-forms-backend
+    name:  formsli-api-${self:provider.stage}
     # apiKey # only required for update-appsync/delete-appsync
     authenticationType: AMAZON_COGNITO_USER_POOLS
     # if AMAZON_COGNITO_USER_POOLS
-    serviceRoleArn: { Fn::GetAtt: [AppSyncDynamoDBRole, Arn] }
+    # serviceRoleArn: { Fn::GetAtt: [AppSyncRDSRole, Arn] }
     userPoolConfig:
       awsRegion: ${self:provider.region}
       defaultAction: ALLOW
@@ -105,16 +106,17 @@ custom:
       level: ALL
     schema: schema.graphql
     dataSources:
-      - type: AMAZON_DYNAMODB
+      - type: RELATIONAL_DATABASE
         name: AppData
-        description: App Data Table
+        description: RDS source for formsli
         config:
-          tableName: ${self:provider.environment.table_app_data} # Where AppDataTable is a dynamodb table defined in Resources
-      - type: AMAZON_DYNAMODB
-        name: FormEntries
-        description: FormEntries Table
-        config:
-          tableName: ${self:provider.environment.table_form_entries} # Where AppDataTable is a dynamodb table defined in Resources
+          # The identifier for RDSCluster. Where RDSCluster is the cluster defined in Resources
+          dbClusterIdentifier: "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-${self:provider.stage}"
+          # The RDSClusterSecret ARN. Where RDSClusterSecret is the cluster secret defined in Resources
+          awsSecretStoreArn: ${ssm:/app/formsli/dev/db/credentialsArn}
+          databaseName: ${self:service}
+          serviceRoleArn: { Fn::GetAtt: [AppSyncRDSRole, Arn] }
+          region: ${self:provider.region}
     mappingTemplatesLocation: src/mapping-templates
     mappingTemplates: ${file(serverless.appsync-mappings.yml)}
     functionConfigurations: ${file(serverless.appsync-functions.yml)}

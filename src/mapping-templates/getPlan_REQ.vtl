@@ -14,7 +14,7 @@ $util.qr($ctx.stash.put("operation", 'get'))
 
 #set ($request = {})
 $util.qr($request.put("id", $args.planId))
-$util.qr($request.put("itemType", 'PLAN'))
+$util.qr($request.put("itemType", 'Plan'))
 $util.qr($ctx.stash.put("request", $request))
 
 #if($isAllowed == true)

@@ -1,10 +1,10 @@
 Resources:
-  AppSyncDynamoDBRole:
+  AppSyncRDSRole:
     Type: "AWS::IAM::Role"
     Properties:
       RoleName: "${self:service}-${self:provider.region}-appsync-iam-role"
       ManagedPolicyArns:
-        - Ref: AppSyncDynamoDBPolicy
+        - Ref: AppSyncRDSPolicy
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -15,30 +15,43 @@ Resources:
               Service:
                 - "appsync.amazonaws.com"
     DependsOn:
-      - AppSyncDynamoDBPolicy
-  AppSyncDynamoDBPolicy:
+      - AppSyncRDSPolicy
+  AppSyncRDSPolicy:
     Type: AWS::IAM::ManagedPolicy
     Properties:
-      Description: Allow AWS AppSync to access dynamodb.
-      Path: /deepdish/
+      Description: Allow AWS AppSync to access RDS.
       PolicyDocument:
         Version: "2012-10-17"
         Statement:
-          - Effect: Allow
+          - Effect: "Allow"
             Action:
-              - dynamodb:GetItem
-              - dynamodb:PutItem
-              - dynamodb:DeleteItem
-              - dynamodb:UpdateItem
-              - dynamodb:Query
-              - dynamodb:Scan
-              - dynamodb:BatchGetItem
-              - dynamodb:BatchWriteItem
+              - "rds-data:InsertItems"
+              - "rds-data:GetItems"
+              - "rds-data:UpdateItems"
+              - "rds-data:DeleteItems"
+              - "rds-data:ExecuteSql"
+              - "rds-data:BatchExecuteStatement"
+              - "rds-data:BeginTransaction"
+              - "rds-data:CommitTransaction"
+              - "rds-data:ExecuteStatement"
+              - "rds-data:RollbackTransaction"
+              - "tag:GetResources"
             Resource:
-              - Fn::Join:
-                - ""
-                - - Fn::GetAtt: AppDataTable.Arn
-                  - "*"
+              - "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-${self:provider.stage}"
+              - "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-${self:provider.stage}:*"
+          - Effect: "Allow"
+            Action:
+              - "secretsmanager:GetSecretValue"
+              - "secretsmanager:CreateSecret"
+              - "secretsmanager:ListSecrets"
+              - "secretsmanager:GetRandomPassword"
+            Resource:
+              - "arn:aws:secretsmanager:#{AWS::Region}:#{AWS::AccountId}:secret:/app/formsli/${self:provider.stage}/db/*"
+          - Effect: "Allow"
+            Action:
+              "tag:GetResources"
+            Resource:
+              - "*"
   AppSyncCloudWatchRole:
     Type: "AWS::IAM::Role"
     Properties:
@@ -69,7 +82,6 @@ Resources:
               - logs:CreateLogStream
               - logs:PutLogEvents
             Resource: "*"
-
 Outputs:
   Region:
     Value: ${self:provider.region}

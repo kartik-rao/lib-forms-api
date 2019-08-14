@@ -99,30 +99,25 @@
                 {
                   "Effect": "Allow",
                   "Action": [
-                    "dynamodb:GetItem",
-                    "dynamodb:PutItem",
-                    "dynamodb:UpdateItem",
-                    "dynamodb:BatchWriteItem"
+                    "rds-data:InsertItems",
+                    "rds-data:GetItems",
+                    "rds-data:UpdateItems",
+                    "rds-data:DeleteItems",
+                    "rds-data:ExecuteSql",
+                    "rds-data:BatchExecuteStatement",
+                    "rds-data:BeginTransaction",
+                    "rds-data:CommitTransaction",
+                    "rds-data:ExecuteStatement",
+                    "rds-data:RollbackTransaction"
                   ],
-                  "Resource": "arn:aws:dynamodb:ap-southeast-2:*:table/formsli_table_appdata"
-                },
-                {
-                  "Effect": "Allow",
-                  "Action": [
-                    "ses:SendEmail",
-                    "ses:SendRawEmail"
-                  ],
-                  "Resource": "arn:aws:ses:us-east-1:*:*"
-                },
-                {
-                  "Effect": "Allow",
-                  "Action": [
-                    "dynamodb:GetItem",
-                    "dynamodb:PutItem",
-                    "dynamodb:UpdateItem",
-                    "dynamodb:BatchWriteItem"
-                  ],
-                  "Resource": "arn:aws:dynamodb:ap-southeast-2:*:table/formsli_table_form_entries"
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:formsli-dev"
+                    },
+                    {
+                      "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:formsli-dev:*"
+                    }
+                  ]
                 },
                 {
                   "Effect": "Allow",
@@ -136,6 +131,14 @@
                   "Resource": {
                     "Fn::Sub": "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/*"
                   }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ses:SendEmail",
+                    "ses:SendRawEmail"
+                  ],
+                  "Resource": "arn:aws:ses:us-east-1:*:*"
                 }
               ]
             }
@@ -164,7 +167,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1565568097951-2019-08-12T00:01:37.951Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1565756400697-2019-08-14T04:20:00.697Z/formsli.zip"
         },
         "FunctionName": "formsli-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -182,7 +185,7 @@
             "protocol": "http://",
             "domain": "dev-app.forms.li",
             "urlPrefix": "http://dev-app.forms.li",
-            "region": "ap-southeast-2",
+            "region": "ap-northeast-1",
             "environment": "dev",
             "serviceName": "formsli",
             "table_form_entries": "formsli_table_form_entries",
@@ -195,7 +198,7 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "PostConfirmationLambdaVersionOQQzX6oz8SlWRNAYgOwLjsHXSURNvPnmStTQZufeY": {
+    "PostConfirmationLambdaVersionYXNxnm7aqzQDGlQdVS76IDVwGRG8ZroYM35doQ71Y": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
@@ -212,7 +215,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1565568097951-2019-08-12T00:01:37.951Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1565756400697-2019-08-14T04:20:00.697Z/formsli.zip"
         },
         "FunctionName": "formsli-invite",
         "Handler": "src/invite.handle",
@@ -230,7 +233,7 @@
             "protocol": "http://",
             "domain": "dev-app.forms.li",
             "urlPrefix": "http://dev-app.forms.li",
-            "region": "ap-southeast-2",
+            "region": "ap-northeast-1",
             "environment": "dev",
             "serviceName": "formsli",
             "table_form_entries": "formsli_table_form_entries",
@@ -243,7 +246,7 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "SignupLambdaVersiongoG6XsNRwX01kxI0p6FTRon4GM71EzQNeKKlZDqItg": {
+    "SignupLambdaVersionjQg9BJl6jPnNEE47D8CcwqbzyZsQ9YOtnR1yXwtfk": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
@@ -477,7 +480,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1565568073069": {
+    "ApiGatewayDeployment1565756374346": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -672,13 +675,13 @@
         }
       }
     },
-    "AppSyncDynamoDBRole": {
+    "AppSyncRDSRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
-        "RoleName": "formsli-ap-southeast-2-appsync-iam-role",
+        "RoleName": "formsli-ap-northeast-1-appsync-iam-role",
         "ManagedPolicyArns": [
           {
-            "Ref": "AppSyncDynamoDBPolicy"
+            "Ref": "AppSyncRDSPolicy"
           }
         ],
         "AssumeRolePolicyDocument": {
@@ -699,41 +702,59 @@
         }
       },
       "DependsOn": [
-        "AppSyncDynamoDBPolicy"
+        "AppSyncRDSPolicy"
       ]
     },
-    "AppSyncDynamoDBPolicy": {
+    "AppSyncRDSPolicy": {
       "Type": "AWS::IAM::ManagedPolicy",
       "Properties": {
-        "Description": "Allow AWS AppSync to access dynamodb.",
-        "Path": "/deepdish/",
+        "Description": "Allow AWS AppSync to access RDS.",
         "PolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
             {
               "Effect": "Allow",
               "Action": [
-                "dynamodb:GetItem",
-                "dynamodb:PutItem",
-                "dynamodb:DeleteItem",
-                "dynamodb:UpdateItem",
-                "dynamodb:Query",
-                "dynamodb:Scan",
-                "dynamodb:BatchGetItem",
-                "dynamodb:BatchWriteItem"
+                "rds-data:InsertItems",
+                "rds-data:GetItems",
+                "rds-data:UpdateItems",
+                "rds-data:DeleteItems",
+                "rds-data:ExecuteSql",
+                "rds-data:BatchExecuteStatement",
+                "rds-data:BeginTransaction",
+                "rds-data:CommitTransaction",
+                "rds-data:ExecuteStatement",
+                "rds-data:RollbackTransaction",
+                "tag:GetResources"
               ],
               "Resource": [
                 {
-                  "Fn::Join": [
-                    "",
-                    [
-                      {
-                        "Fn::GetAtt": "AppDataTable.Arn"
-                      },
-                      "*"
-                    ]
-                  ]
+                  "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:formsli-dev"
+                },
+                {
+                  "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:formsli-dev:*"
                 }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:CreateSecret",
+                "secretsmanager:ListSecrets",
+                "secretsmanager:GetRandomPassword"
+              ],
+              "Resource": [
+                {
+                  "Fn::Sub": "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:/app/formsli/dev/db/*"
+                }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": "tag:GetResources",
+              "Resource": [
+                "*"
               ]
             }
           ]
@@ -743,7 +764,7 @@
     "AppSyncCloudWatchRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
-        "RoleName": "formsli-ap-southeast-2-appsync-logging-iam-role",
+        "RoleName": "formsli-ap-northeast-1-appsync-logging-iam-role",
         "ManagedPolicyArns": [
           {
             "Ref": "AppSyncCloudWatchPolicy"
@@ -788,124 +809,6 @@
             }
           ]
         }
-      }
-    },
-    "AppDataTable": {
-      "Type": "AWS::DynamoDB::Table",
-      "Properties": {
-        "TableName": "formsli_table_appdata",
-        "StreamSpecification": {
-          "StreamViewType": "NEW_AND_OLD_IMAGES"
-        },
-        "AttributeDefinitions": [
-          {
-            "AttributeName": "id",
-            "AttributeType": "S"
-          },
-          {
-            "AttributeName": "type",
-            "AttributeType": "S"
-          },
-          {
-            "AttributeName": "meta",
-            "AttributeType": "S"
-          }
-        ],
-        "KeySchema": [
-          {
-            "AttributeName": "id",
-            "KeyType": "HASH"
-          },
-          {
-            "AttributeName": "type",
-            "KeyType": "RANGE"
-          }
-        ],
-        "ProvisionedThroughput": {
-          "ReadCapacityUnits": 1,
-          "WriteCapacityUnits": 1
-        },
-        "GlobalSecondaryIndexes": [
-          {
-            "IndexName": "formsli_table_appdata_gsi",
-            "KeySchema": [
-              {
-                "AttributeName": "type",
-                "KeyType": "HASH"
-              },
-              {
-                "AttributeName": "meta",
-                "KeyType": "RANGE"
-              }
-            ],
-            "Projection": {
-              "ProjectionType": "ALL"
-            },
-            "ProvisionedThroughput": {
-              "ReadCapacityUnits": 5,
-              "WriteCapacityUnits": 5
-            }
-          }
-        ]
-      }
-    },
-    "FormEntriesTable": {
-      "Type": "AWS::DynamoDB::Table",
-      "Properties": {
-        "TableName": "formsli_table_form_entries",
-        "StreamSpecification": {
-          "StreamViewType": "NEW_IMAGE"
-        },
-        "AttributeDefinitions": [
-          {
-            "AttributeName": "id",
-            "AttributeType": "S"
-          },
-          {
-            "AttributeName": "type",
-            "AttributeType": "S"
-          },
-          {
-            "AttributeName": "meta",
-            "AttributeType": "S"
-          }
-        ],
-        "KeySchema": [
-          {
-            "AttributeName": "id",
-            "KeyType": "HASH"
-          },
-          {
-            "AttributeName": "type",
-            "KeyType": "RANGE"
-          }
-        ],
-        "ProvisionedThroughput": {
-          "ReadCapacityUnits": 5,
-          "WriteCapacityUnits": 5
-        },
-        "GlobalSecondaryIndexes": [
-          {
-            "IndexName": "formsli_table_form_entries_gsi",
-            "KeySchema": [
-              {
-                "AttributeName": "type",
-                "KeyType": "HASH"
-              },
-              {
-                "AttributeName": "meta",
-                "KeyType": "RANGE"
-              }
-            ],
-            "Projection": {
-              "ProjectionType": "ALL"
-            },
-            "ProvisionedThroughput": {
-              "ReadCapacityUnits": 5,
-              "WriteCapacityUnits": 5
-            }
-          }
-        ]
       }
     },
     "AttachmentsBucket": {
@@ -1091,7 +994,7 @@
           },
           {
             "Name": "custom:region",
-            "Value": "ap-southeast-2"
+            "Value": "ap-northeast-1"
           },
           {
             "Name": "custom:environment",
@@ -1297,11 +1200,11 @@
     "GraphQlApi": {
       "Type": "AWS::AppSync::GraphQLApi",
       "Properties": {
-        "Name": "ai-forms-backend",
+        "Name": "formsli-api-dev",
         "AuthenticationType": "AMAZON_COGNITO_USER_POOLS",
         "AdditionalAuthenticationProviders": [],
         "UserPoolConfig": {
-          "AwsRegion": "ap-southeast-2",
+          "AwsRegion": "ap-northeast-1",
           "UserPoolId": {
             "Ref": "CognitoUserPoolMyUserPool"
           },
@@ -1349,206 +1252,6 @@
         }
       }
     },
-    "GraphQlDsAppDataRole": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Principal": {
-                "Service": [
-                  "appsync.amazonaws.com"
-                ]
-              },
-              "Action": [
-                "sts:AssumeRole"
-              ]
-            }
-          ]
-        },
-        "Policies": [
-          {
-            "PolicyName": "GraphQlDsAppDataPolicy",
-            "PolicyDocument": {
-              "Version": "2012-10-17",
-              "Statement": [
-                {
-                  "Action": [
-                    "dynamodb:DeleteItem",
-                    "dynamodb:GetItem",
-                    "dynamodb:PutItem",
-                    "dynamodb:Query",
-                    "dynamodb:Scan",
-                    "dynamodb:UpdateItem",
-                    "dynamodb:BatchGetItem",
-                    "dynamodb:BatchWriteItem"
-                  ],
-                  "Effect": "Allow",
-                  "Resource": [
-                    {
-                      "Fn::Join": [
-                        ":",
-                        [
-                          "arn",
-                          "aws",
-                          "dynamodb",
-                          "ap-southeast-2",
-                          {
-                            "Ref": "AWS::AccountId"
-                          },
-                          {
-                            "Fn::Join": [
-                              "/",
-                              [
-                                "table",
-                                "formsli_table_appdata"
-                              ]
-                            ]
-                          }
-                        ]
-                      ]
-                    },
-                    {
-                      "Fn::Join": [
-                        "/",
-                        [
-                          {
-                            "Fn::Join": [
-                              ":",
-                              [
-                                "arn",
-                                "aws",
-                                "dynamodb",
-                                "ap-southeast-2",
-                                {
-                                  "Ref": "AWS::AccountId"
-                                },
-                                {
-                                  "Fn::Join": [
-                                    "/",
-                                    [
-                                      "table",
-                                      "formsli_table_appdata"
-                                    ]
-                                  ]
-                                }
-                              ]
-                            ]
-                          },
-                          "*"
-                        ]
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          }
-        ]
-      }
-    },
-    "GraphQlDsFormEntriesRole": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Effect": "Allow",
-              "Principal": {
-                "Service": [
-                  "appsync.amazonaws.com"
-                ]
-              },
-              "Action": [
-                "sts:AssumeRole"
-              ]
-            }
-          ]
-        },
-        "Policies": [
-          {
-            "PolicyName": "GraphQlDsFormEntriesPolicy",
-            "PolicyDocument": {
-              "Version": "2012-10-17",
-              "Statement": [
-                {
-                  "Action": [
-                    "dynamodb:DeleteItem",
-                    "dynamodb:GetItem",
-                    "dynamodb:PutItem",
-                    "dynamodb:Query",
-                    "dynamodb:Scan",
-                    "dynamodb:UpdateItem",
-                    "dynamodb:BatchGetItem",
-                    "dynamodb:BatchWriteItem"
-                  ],
-                  "Effect": "Allow",
-                  "Resource": [
-                    {
-                      "Fn::Join": [
-                        ":",
-                        [
-                          "arn",
-                          "aws",
-                          "dynamodb",
-                          "ap-southeast-2",
-                          {
-                            "Ref": "AWS::AccountId"
-                          },
-                          {
-                            "Fn::Join": [
-                              "/",
-                              [
-                                "table",
-                                "formsli_table_form_entries"
-                              ]
-                            ]
-                          }
-                        ]
-                      ]
-                    },
-                    {
-                      "Fn::Join": [
-                        "/",
-                        [
-                          {
-                            "Fn::Join": [
-                              ":",
-                              [
-                                "arn",
-                                "aws",
-                                "dynamodb",
-                                "ap-southeast-2",
-                                {
-                                  "Ref": "AWS::AccountId"
-                                },
-                                {
-                                  "Fn::Join": [
-                                    "/",
-                                    [
-                                      "table",
-                                      "formsli_table_form_entries"
-                                    ]
-                                  ]
-                                }
-                              ]
-                            ]
-                          },
-                          "*"
-                        ]
-                      ]
-                    }
-                  ]
-                }
-              ]
-            }
-          }
-        ]
-      }
-    },
     "GraphQlDsAppData": {
       "Type": "AWS::AppSync::DataSource",
       "Properties": {
@@ -1559,43 +1262,37 @@
           ]
         },
         "Name": "AppData",
-        "Description": "App Data Table",
-        "Type": "AMAZON_DYNAMODB",
+        "Description": "RDS source for formsli",
+        "Type": "RELATIONAL_DATABASE",
         "ServiceRoleArn": {
           "Fn::GetAtt": [
-            "GraphQlDsAppDataRole",
+            "AppSyncRDSRole",
             "Arn"
           ]
         },
-        "DynamoDBConfig": {
-          "AwsRegion": "ap-southeast-2",
-          "TableName": "formsli_table_appdata",
-          "UseCallerCredentials": false
-        }
-      }
-    },
-    "GraphQlDsFormEntries": {
-      "Type": "AWS::AppSync::DataSource",
-      "Properties": {
-        "ApiId": {
-          "Fn::GetAtt": [
-            "GraphQlApi",
-            "ApiId"
-          ]
-        },
-        "Name": "FormEntries",
-        "Description": "FormEntries Table",
-        "Type": "AMAZON_DYNAMODB",
-        "ServiceRoleArn": {
-          "Fn::GetAtt": [
-            "GraphQlDsFormEntriesRole",
-            "Arn"
-          ]
-        },
-        "DynamoDBConfig": {
-          "AwsRegion": "ap-southeast-2",
-          "TableName": "formsli_table_form_entries",
-          "UseCallerCredentials": false
+        "RelationalDatabaseConfig": {
+          "RdsHttpEndpointConfig": {
+            "AwsRegion": "ap-northeast-1",
+            "DbClusterIdentifier": {
+              "Fn::Join": [
+                ":",
+                [
+                  "arn",
+                  "aws",
+                  "rds",
+                  "ap-northeast-1",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  "cluster",
+                  "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-dev"
+                ]
+              ]
+            },
+            "DatabaseName": "formsli",
+            "AwsSecretStoreArn": "arn:aws:secretsmanager:ap-northeast-1:644527192227:secret:/app/formsli/dev/db/credentials-obdDgQ"
+          },
+          "RelationalDatabaseSourceType": "RDS_HTTP_ENDPOINT"
         }
       }
     },
@@ -1615,8 +1312,8 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "{\n    \"version\" : \"2018-05-29\",\n    \"operation\" : \"GetItem\",\n    \"key\": {\n        \"id\"  : {\"S\": \"${ctx.stash.request.id}\"},\n        \"type\": {\"S\": \"${ctx.stash.request.itemType}\"}\n    }\n}",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "RequestMappingTemplate": "{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM ${ctx.stash.request.itemType} where id=:id\"\n    ],\n    \"variableMap\": {\n        \":id\" : \"${ctx.stash.request.id}\"\n    }\n}",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "FunctionVersion": "2018-05-29"
       }
     },
@@ -1637,7 +1334,7 @@
           ]
         },
         "RequestMappingTemplate": "#set($attribs = $context.stash.request)\n{\n    \"version\" : \"2018-05-29\",\n    \"operation\" : \"UpdateItem\",\n    \"key\" : {\n        \"id\"  : { \"S\": \"${attribs.id}\" },\n        \"type\": { \"S\": \"${attribs.itemType}\"}\n    },\n\n    ## Set up some space to keep track of things you're updating **\n    #set( $expNames  = {} )\n    #set( $expValues = {} )\n    #set( $expSet = {} )\n    #set( $expAdd = {} )\n    #set( $expRemove = [] )\n\n    ## Increment \"version\" by 1 **\n    $!{expAdd.put(\"version\", \":one\")}\n    $!{expValues.put(\":one\", { \"N\" : 1 })}\n\n    ## Iterate through each argument, skipping \"id\" and \"expectedVersion\" **\n    #foreach( $entry in $attribs.entrySet() )\n        #if( $entry.key != \"id\" && $entry.key != \"expectedVersion\" && $entry.key != \"itemType\")\n            #if( (!$entry.value) && (\"$!{entry.value}\" == \"\") )\n                ## If the argument is set to \"null\", then remove that attribute from the item in DynamoDB **\n                #set( $discard = ${expRemove.add(\"#${entry.key}\")} )\n                $!{expNames.put(\"#${entry.key}\", \"$entry.key\")}\n            #else\n                ## Otherwise set (or update) the attribute on the item in DynamoDB **\n                $!{expSet.put(\"#${entry.key}\", \":${entry.key}\")}\n                $!{expNames.put(\"#${entry.key}\", \"$entry.key\")}\n                $!{expValues.put(\":${entry.key}\", { \"S\" : \"${entry.value}\" })}\n            #end\n        #end\n    #end\n\n    ## Start building the update expression, starting with attributes you're going to SET **\n    #set( $expression = \"\" )\n    #if( !${expSet.isEmpty()} )\n        #set( $expression = \"SET\" )\n        #foreach( $entry in $expSet.entrySet() )\n            #set( $expression = \"${expression} ${entry.key} = ${entry.value}\" )\n            #if ( $foreach.hasNext )\n                #set( $expression = \"${expression},\" )\n            #end\n        #end\n    #end\n\n    ## Continue building the update expression, adding attributes you're going to ADD **\n    #if( !${expAdd.isEmpty()} )\n        #set( $expression = \"${expression} ADD\" )\n        #foreach( $entry in $expAdd.entrySet() )\n            #set( $expression = \"${expression} ${entry.key} ${entry.value}\" )\n            #if ( $foreach.hasNext )\n                #set( $expression = \"${expression},\" )\n            #end\n        #end\n    #end\n\n    ## Continue building the update expression, adding attributes you're going to REMOVE **\n    #if( !${expRemove.isEmpty()} )\n        #set( $expression = \"${expression} REMOVE\" )\n\n        #foreach( $entry in $expRemove )\n            #set( $expression = \"${expression} ${entry}\" )\n            #if ( $foreach.hasNext )\n                #set( $expression = \"${expression},\" )\n            #end\n        #end\n    #end\n\n    ## Finally, write the update expression into the document, along with any expressionNames and expressionValues **\n    \"update\" : {\n        \"expression\" : \"${expression}\"\n        #if( !${expNames.isEmpty()} )\n            ,\"expressionNames\" : $utils.toJson($expNames)\n        #end\n        #if( !${expValues.isEmpty()} )\n            ,\"expressionValues\" : $utils.toJson($expValues)\n        #end\n    },\n    \"condition\" : {\n        \"expression\"       : \"version = :expectedVersion\",\n        \"expressionValues\" : {\n            \":expectedVersion\" : { \"N\" : ${attribs.expectedVersion} }\n        }\n    }\n}",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "FunctionVersion": "2018-05-29"
       }
     },
@@ -1657,8 +1354,8 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "#set($id = $util.autoId())\n#set($attribs = $ctx.stash.request)\n#set($attribs.version = 1)\n#set($attribs.owner = $context.stash.identity.callerId)\n#set($attribs.createdAt = $util.defaultIfNullOrBlank($attribs.createdAt, $util.time.nowISO8601()))\n{\n    \"version\": \"2018-05-29\",\n    \"operation\": \"PutItem\",\n    \"key\": {\n        \"id\"  : $util.dynamodb.toDynamoDBJson($id),\n        \"type\": {\"S\" : \"${attribs.itemType}\"}\n    },\n    \"attributeValues\": $util.toJson($util.dynamodb.toMapValues($attribs)),\n    \"condition\": {\n        \"expression\": \"attribute_not_exists(#id)\",\n        \"expressionNames\": {\n            \"#id\": \"id\"\n        }\n    }\n}",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "RequestMappingTemplate": "#set($request=$ctx.stash.request)\n#set($columnList=[])\n#set($variableList=[])\n#set($variableMap={})\n\n## Iterate through each argument, skipping \"id\" and \"expectedVersion\" **\n#foreach( $entry in $request.entrySet() )\n    #if( $entry.key != \"id\" && $entry.key != \"itemType\")\n        #if( (!$entry.value) && (\"$!{entry.value}\" == \"\") )\n            ## If the argument is set to \"null\", then remove that attribute from the item in DynamoDB **\n            #set( $discard = ${expRemove.add(\"#${entry.key}\")} )\n            $!{expNames.put(\"#${entry.key}\", \"$entry.key\")}\n        #else\n            $columns.add(\"${entry.key}\")\n            $variables.add(\":${entry.key}\")\n            $!{variableMap.put(\":${entry.key}\", \"${entry.value}\" )}\n        #end\n    #end\n#end\n\n#set($columns=\"\")\n#foreach($col in $columnList)\n    #if(!$columnList.hasNext)\n        $set($columns=\"${columns}${col},\")\n    #else\n        $set($columns=\"${columns}${col}\")\n    #end\n#end\n\n#set($variables=\"\")\n#foreach($var in $variableList)\n    #if(!$variableList.hasNext)\n        $set($variables=\"${variables}${var},\")\n    #else\n        $set($variables=\"${variables}${var}\")\n    #end\n#end\n\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"INSERT INTO ${ctx.stash.request.itemType}(${columns}) VALUES(${variables});\"\n    ],\n    \"variableMap\": $util.toJSON($variableMap)\n}",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "FunctionVersion": "2018-05-29"
       }
     },
@@ -1695,7 +1392,7 @@
             ]
           ]
         },
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "FunctionVersion": "2018-05-29"
       }
     },
@@ -1716,7 +1413,7 @@
           ]
         },
         "RequestMappingTemplate": "{\n    \"version\" : \"2018-05-29\",\n    \"operation\" : \"UpdateItem\",\n    \"key\": {\n        \"id\"  : {\"S\": \"${ctx.stash.request.id}\"},\n        \"type\": {\"S\": \"${ctx.stash.request.itemType}\"}\n    },\n    \"update\" : {\n        #if(!$util.isNull($ctx.stash.request.active))\n            \"expression\" : \"SET updatedAt = :updatedAt, isDeleted = :isDeleted, active = :active\",\n        #else\n            \"expression\" : \"SET updatedAt = :updatedAt, isDeleted = :isDeleted\",\n        #end\n        \"expressionValues\": {\n            \":isDeleted\" : {\"BOOL\" :true},\n            #if(!$util.isNull($ctx.stash.request.active))\n            \":active\" : {\"BOOL\": $ctx.stash.request.active},\n            #end\n            \":updatedAt\" : {\"S\" : \"$util.time.nowISO8601()\"}\n        }\n    }\n}",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "FunctionVersion": "2018-05-29"
       }
     },
@@ -1736,8 +1433,8 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#if(!$util.isNull($ctx.stash.request))\n    #set ($ctx.stash.prevRequest = $ctx.stash.request)\n#end\n\n\n#set($isAllowed = false)\n#if($ctx.stash.identity.tenantId == $ctx.arguments.accountId || $ctx.stash.identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"operation\", 'get'))\n    #set ($request = {})\n\n    $util.qr($request.put(\"id\", $ctx.arguments.accountId))\n    $util.qr($request.put(\"itemType\", 'ACCOUNT'))\n    $util.qr($ctx.stash.put(\"request\", $request))\n    #return({})\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [${request.operation}] on [${request.id}]\", \"Unauthorized\")\n#end\n",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#if(!$util.isNull($ctx.stash.request))\n    #set ($ctx.stash.prevRequest = $ctx.stash.request)\n#end\n\n\n#set($isAllowed = false)\n#if($ctx.stash.identity.tenantId == $ctx.arguments.accountId || $ctx.stash.identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"operation\", 'get'))\n    #set ($request = {})\n\n    $util.qr($request.put(\"id\", $ctx.arguments.accountId))\n    $util.qr($request.put(\"itemType\", 'Account'))\n    $util.qr($ctx.stash.put(\"request\", $request))\n    #return({})\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [${request.operation}] on [${request.id}]\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "FunctionVersion": "2018-05-29"
       }
     },
@@ -1757,8 +1454,8 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#if($identity.isAdmin == true)\n    $util.qr($ctx.stash.put(\"operation\", 'query'))\n    #set ($request = {})\n    $util.qr($request.put(\"itemType\", 'ACCOUNT'))\n    $util.qr($request.put(\"limit\", $ctx.args.limit))\n    $util.qr($request.put(\"nextToken\", $ctx.args.nextToken))\n    $util.qr($request.put(\"filter\", $util.defaultIfNull($args.filter, {})))\n    $util.qr($request.filter.put(\"active\", $util.defaultIfNull($request.filter, {\"eq\": true})))\n    #if(!$util.isNull($ctx.stash.request))\n        #set ($ctx.stash.prevRequest = $ctx.stash.request)\n    #end\n    $util.qr($ctx.stash.put(\"request\", $request))\n    #return({})\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [${request.operation}] on [${request.itemType}]\", \"Unauthorized\")\n#end",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#if($identity.isAdmin == true)\n    $util.qr($ctx.stash.put(\"operation\", 'get'))\n    #set ($request = {})\n    $util.qr($request.put(\"itemType\", 'Account'))\n    $util.qr($request.put(\"limit\", $ctx.args.limit))\n    $util.qr($request.put(\"nextToken\", $ctx.args.nextToken))\n    $util.qr($request.put(\"filter\", $util.defaultIfNull($args.filter, {})))\n    $util.qr($request.filter.put(\"active\", $util.defaultIfNull($request.filter, {\"eq\": true})))\n    #if(!$util.isNull($ctx.stash.request))\n        #set ($ctx.stash.prevRequest = $ctx.stash.request)\n    #end\n    $util.qr($ctx.stash.put(\"request\", $request))\n    #return({})\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [${request.operation}] on [${request.itemType}]\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "FunctionVersion": "2018-05-29"
       }
     },
@@ -1778,8 +1475,8 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "## Only allow admin and account admin to update account\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n#set($isAllowed = $identity.isAdmin == true || ($identity.isAccountAdmin == true && $args.accountId == $identity.tenantId))\n#set($results=$ctx.stash.results)\n\n#if($util.isNull($results) || $util.isNull($results.ACCOUNT))\n    $util.error(\"Out of order invocation, no ACCOUNT\", \"InvocationOrderException\")\n#end\n\n#if($isAllowed == true)\n    #if(!$util.isNull($ctx.stash.request))\n        #set ($ctx.stash.prevRequest = $ctx.stash.request)\n    #end\n\n    #set($request = $args)\n    $util.qr($request.put(\"expectedVersion\", $results.ACCOUNT.version))\n    $util.qr($request.put(\"itemType\", 'ACCOUNT'))\n    $util.qr($ctx.stash.put(\"request\", $request))\n    $util.qr($ctx.stash.put(\"operation\", 'update'))\n    #return({})\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [${request.operation}] on [${args.accountId}]\", \"Unauthorized\")\n#end\n",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "RequestMappingTemplate": "## Only allow admin and account admin to update account\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n#set($isAllowed = $identity.isAdmin == true || ($identity.isAccountAdmin == true && $args.accountId == $identity.tenantId))\n#set($results=$ctx.stash.results)\n\n#if($util.isNull($results) || $util.isNull($results.ACCOUNT))\n    $util.error(\"Out of order invocation, no ACCOUNT\", \"InvocationOrderException\")\n#end\n\n#if($isAllowed == true)\n    #if(!$util.isNull($ctx.stash.request))\n        #set ($ctx.stash.prevRequest = $ctx.stash.request)\n    #end\n\n    #set($request = $args)\n    $util.qr($request.put(\"itemType\", 'Account'))\n    $util.qr($ctx.stash.put(\"request\", $request))\n    $util.qr($ctx.stash.put(\"operation\", 'update'))\n    #return({})\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [${request.operation}] on [${args.accountId}]\", \"Unauthorized\")\n#end\n",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "FunctionVersion": "2018-05-29"
       }
     },
@@ -1799,8 +1496,8 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "#if(!$util.isNull($ctx.stash.request))\n    #set ($ctx.stash.prevRequest = $ctx.stash.request)\n#end\n\n$util.qr($ctx.stash.put(\"operation\", 'get'))\n\n#set ($request = {})\n$util.qr($request.put(\"id\", $ctx.arguments.id))\n$util.qr($request.put(\"itemType\", 'USER'))\n$util.qr($ctx.stash.put(\"request\", $request))\n\n## Only allow admin and account admin to get other users\n#set($isAllowed = $ctx.stash.identity.isAdmin == true || $ctx.stash.identity.isAccountAdmin == true || $ctx.arguments.id == $ctx.stash.identity.callerId)\n\n#if($isAllowed == true)\n    #return({})\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [${request.operation}] on [${request.id}]\", \"Unauthorized\")\n#end\n",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "RequestMappingTemplate": "#if(!$util.isNull($ctx.stash.request))\n    #set ($ctx.stash.prevRequest = $ctx.stash.request)\n#end\n\n$util.qr($ctx.stash.put(\"operation\", 'get'))\n\n#set ($request = {})\n$util.qr($request.put(\"id\", $ctx.arguments.id))\n$util.qr($request.put(\"itemType\", 'User'))\n$util.qr($ctx.stash.put(\"request\", $request))\n\n## Only allow admin and account admin to get other users\n#set($isAllowed = $ctx.stash.identity.isAdmin == true || $ctx.stash.identity.isAccountAdmin == true || $ctx.arguments.id == $ctx.stash.identity.callerId)\n\n#if($isAllowed == true)\n    #return({})\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [${request.operation}] on [${request.id}]\", \"Unauthorized\")\n#end\n",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "FunctionVersion": "2018-05-29"
       }
     },
@@ -1821,7 +1518,7 @@
           ]
         },
         "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($results=$ctx.stash.results)\n#set($args=$ctx.arguments)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    #set($request = {})\n    #set($request.meta = false)\n    #set($request.expectedVersion = $results.PLANTYPE.version)\n    #set($request.id = $args.planTypeId)\n    #set($request.itemType = \"PLANTYPE\")\n    #set($request.isDeleted = true)\n    #set($request.updatedAt = $util.time.nowISO8601())\n    #set($request.active = false)\n\n    #if(!$util.isNull($ctx.stash.request))\n        #set ($ctx.stash.prevRequest = $ctx.stash.request)\n    #end\n\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    $util.qr($ctx.stash.put(\"request\", $request))\n    #return({})\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [PUT] on [PlanType]\", \"Unauthorized\")\n#end",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "FunctionVersion": "2018-05-29"
       }
     },
@@ -1842,7 +1539,7 @@
           ]
         },
         "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    #set($request = $args.input)\n\n    #if(!$util.isNull($ctx.stash.request))\n        #set ($ctx.stash.prevRequest = $ctx.stash.request)\n    #end\n    #set($request.expectedVersion = $results.PLANTYPE.version)\n    #set($request.itemType = \"PLANTYPE\")\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    $util.qr($ctx.stash.put(\"request\", $request))\n    #return({})\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [PUT] on [PlanType]\", \"Unauthorized\")\n#end",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "FunctionVersion": "2018-05-29"
       }
     },
@@ -1863,7 +1560,7 @@
           ]
         },
         "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    #set($request = $args.input)\n    #set($request.id = $util.autoId())\n    #set($request.owner = $identity.callerId)\n    #set($request.itemType = \"PLANTYPE\")\n    #set($request.isDeleted = false)\n    #set($request.isDeleted = false)\n    #set($request.createdAt = $util.time.nowISO8601())\n    #set($request.version = 1)\n    #set($request.active = $util.defaultIfNullOrBlank($args.input.active, false))\n    #set($request.meta = \"${request.active}\")\n\n    #if(!$util.isNull($ctx.stash.request))\n        #set ($ctx.stash.prevRequest = $ctx.stash.request)\n    #end\n\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    $util.qr($ctx.stash.put(\"request\", $request))\n    #return({})\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [PUT] on [PlanType]\", \"Unauthorized\")\n#end",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "FunctionVersion": "2018-05-29"
       }
     },
@@ -1884,7 +1581,7 @@
           ]
         },
         "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    #set ($request = {})\n    #set($request.id = $ctx.arguments.planTypeId)\n    #set($request.itemType = \"PLANTYPE\")\n\n    #if(!$util.isNull($ctx.stash.request))\n        #set ($ctx.stash.prevRequest = $ctx.stash.request)\n    #end\n\n    $util.qr($ctx.stash.put(\"operation\", 'get'))\n    $util.qr($ctx.stash.put(\"request\", $request))\n    #return({})\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [GET] on [PlanType]\", \"Unauthorized\")\n#end",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "FunctionVersion": "2018-05-29"
       }
     },
@@ -1904,8 +1601,8 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n$util.qr($ctx.stash.put(\"operation\", 'query'))\n#set ($request = {})\n$util.qr($request.put(\"itemType\", 'PLANTYPE'))\n$util.qr($request.put(\"limit\", $args.limit))\n$util.qr($request.put(\"nextToken\", $args.nextToken))\n\n$util.qr($request.put(\"filter\", $util.defaultIfNull($args.filter, {})))\n#if($identity.isAdmin == true)\n  $util.qr($request.filter.put(\"active\", $util.defaultIfNull($request.filter, {\"eq\": true})))\n#else\n  $util.qr($request.filter.put(\"active\", {\"eq\": true}))\n#end\n\n#if(!$util.isNull($ctx.stash.request))\n    #set ($ctx.stash.prevRequest = $ctx.stash.request)\n#end\n$util.qr($ctx.stash.put(\"request\", $request))\n\n#return({})",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n$util.qr($ctx.stash.put(\"operation\", 'get'))\n#set ($request = {})\n$util.qr($request.put(\"itemType\", 'Plantype'))\n$util.qr($request.put(\"limit\", $args.limit))\n$util.qr($request.put(\"nextToken\", $args.nextToken))\n\n$util.qr($request.put(\"filter\", $util.defaultIfNull($args.filter, {})))\n#if($identity.isAdmin == true)\n  $util.qr($request.filter.put(\"active\", $util.defaultIfNull($request.filter, {\"eq\": true})))\n#else\n  $util.qr($request.filter.put(\"active\", {\"eq\": true}))\n#end\n\n#if(!$util.isNull($ctx.stash.request))\n    #set ($ctx.stash.prevRequest = $ctx.stash.request)\n#end\n$util.qr($ctx.stash.put(\"request\", $request))\n\n#return({})",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "FunctionVersion": "2018-05-29"
       }
     },
@@ -1926,7 +1623,28 @@
           ]
         },
         "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#set($isAllowed = false)\n#if(($identity.isAccountAdmin == true && $identity.callerId == $args.input.accountId) || $identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    #set($attribs = $args.input)\n    #set($attribs.meta = \"${args.input.accountId}#true\")\n    #set($attribs.planTypeId = $args.input.planTypeId)\n    #set($attribs.itemType = \"PLAN\")\n    #set($attribs.isDeleted = false)\n    #set($attribs.createdAt = $util.time.nowISO8601())\n    #set($attribs.startDate = $attribs.createdAt)\n    #set($attribs.active = $util.defaultIfNullOrBlank($args.input.active, false))\n\n    #if(!$util.isNull($ctx.stash.request))\n        #set ($ctx.stash.prevRequest = $ctx.stash.request)\n    #end\n\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    #set ($request = {})\n    $util.qr($ctx.stash.put(\"request\", $attribs))\n    #return({})\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [PUT] on [Plan]\", \"Unauthorized\")\n#end",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNupdatePlan": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNupdatePlan",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n#set($results=$ctx.stash.results)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($util.isNull($results) || $util.isNull($results.PLAN))\n    $util.error(\"Out of order invocation, no PLAN\", \"InvocationOrderException\")\n#end\n\n#if($isAllowed == true)\n    #if(!$util.isNull($ctx.stash.request))\n        #set ($ctx.stash.prevRequest = $ctx.stash.request)\n    #end\n    #set($request = $args.input)\n    #set($request.expectedVersion = $results.PLAN.version)\n    #set($request.itemType = \"PLAN\")\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    $util.qr($ctx.stash.put(\"request\", $request))\n    #return({})\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on [Plan]\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "FunctionVersion": "2018-05-29"
       }
     },
@@ -1947,7 +1665,7 @@
           ]
         },
         "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n#set($results=$ctx.stash.results)\n\n#if($util.isNull($results) || $util.isNull($results.PLAN))\n    $util.error(\"Out of order invocation, no PLAN\", \"InvocationOrderException\")\n#end\n\n\n#set($isAllowed = false)\n#if($identity.isAdmin || ($identity.isAccountAdmin == true && $identity.tenantId == $args.accountId))\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    #set($request = {})\n    #set($request.id = $results.PLAN.id)\n    #set($request.itemType = \"PLAN\")\n    #set($request.active = false)\n    #set($request.meta = \"${args.accountId}#false\")\n    #set($request.endDate = $util.time.nowISO8601())\n    #set($request.isDeleted = true)\n    #set($request.expectedVersion = $results.PLAN.version)\n    #if(!$util.isNull($ctx.stash.request))\n        #set ($ctx.stash.prevRequest = $ctx.stash.request)\n    #end\n\n    $util.qr($ctx.stash.put(\"operation\", \"update\"))\n    $util.qr($ctx.stash.put(\"request\", $request))\n    #return({})\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [DELETE] on [Plan ${request.id}]\", \"Unauthorized\")\n#end",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "FunctionVersion": "2018-05-29"
       }
     },
@@ -1967,8 +1685,8 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#set($isAllowed = false)\n#if($identity.tenantId == $args.accountId || $identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if(!$util.isNull($ctx.stash.request))\n    #set ($ctx.stash.prevRequest = $ctx.stash.request)\n#end\n\n$util.qr($ctx.stash.put(\"operation\", 'get'))\n\n#set ($request = {})\n$util.qr($request.put(\"id\", $args.planId))\n$util.qr($request.put(\"itemType\", 'PLAN'))\n$util.qr($ctx.stash.put(\"request\", $request))\n\n#if($isAllowed == true)\n    #return({})\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [${ctx.stash.operation}] on [Plan ${request.id}]\", \"Unauthorized\")\n#end\n",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#set($isAllowed = false)\n#if($identity.tenantId == $args.accountId || $identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if(!$util.isNull($ctx.stash.request))\n    #set ($ctx.stash.prevRequest = $ctx.stash.request)\n#end\n\n$util.qr($ctx.stash.put(\"operation\", 'get'))\n\n#set ($request = {})\n$util.qr($request.put(\"id\", $args.planId))\n$util.qr($request.put(\"itemType\", 'Plan'))\n$util.qr($ctx.stash.put(\"request\", $request))\n\n#if($isAllowed == true)\n    #return({})\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [${ctx.stash.operation}] on [Plan ${request.id}]\", \"Unauthorized\")\n#end\n",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "FunctionVersion": "2018-05-29"
       }
     },
@@ -2056,7 +1774,7 @@
         "TypeName": "Query",
         "FieldName": "getPlan",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n{}",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -2089,7 +1807,7 @@
         "TypeName": "Mutation",
         "FieldName": "deletePlan",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n{}",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -2134,7 +1852,7 @@
         "TypeName": "Mutation",
         "FieldName": "addPlan",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n{}",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -2147,6 +1865,39 @@
             {
               "Fn::GetAtt": [
                 "GraphQlFunctionConfigurationFNcommonPUT",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverMutationupdatePlan": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Mutation",
+        "FieldName": "updatePlan",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n{}",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNupdatePlan",
+                "FunctionId"
+              ]
+            },
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNcommonUPDATE",
                 "FunctionId"
               ]
             }
@@ -2167,7 +1918,7 @@
         "TypeName": "Query",
         "FieldName": "getAccount",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n{}",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -2200,7 +1951,7 @@
         "TypeName": "Mutation",
         "FieldName": "updateAccount",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n{}",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -2589,7 +2340,7 @@
         "TypeName": "Query",
         "FieldName": "listPlanTypes",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n{}",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -2622,7 +2373,7 @@
         "TypeName": "Query",
         "FieldName": "getPlanType",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n{}",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -2655,7 +2406,7 @@
         "TypeName": "Mutation",
         "FieldName": "addPlanType",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n{}",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -2688,7 +2439,7 @@
         "TypeName": "Mutation",
         "FieldName": "updatePlanType",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n{}",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -2733,7 +2484,7 @@
         "TypeName": "Mutation",
         "FieldName": "deletePlanType",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n{}",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -2844,7 +2595,7 @@
         "TypeName": "Query",
         "FieldName": "listAccounts",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n{}",
-        "ResponseMappingTemplate": "#if( $context.result && $context.result.error )\n    $util.qr($ctx.stash.put(\"error\", $context.result.error))\n    $utils.error($context.result.error)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    $util.toJson($ctx.result)\n#end",
+        "ResponseMappingTemplate": "#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#else\n    #if($util.isNull($ctx.stash.results))\n        $util.qr($ctx.stash.put(\"results\", {}))\n    #end\n    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))\n    #if($ctx.stash.operation == 'get' || $ctx.stash.operation == 'delete')\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n    #else\n        $utils.toJson($utils.rds.toJsonObject($ctx.result)[1][0])\n    #end\n#end",
         "Kind": "PIPELINE",
         "PipelineConfig": {
           "Functions": [
@@ -2874,13 +2625,13 @@
     "PostConfirmationLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "PostConfirmationLambdaVersionOQQzX6oz8SlWRNAYgOwLjsHXSURNvPnmStTQZufeY"
+        "Ref": "PostConfirmationLambdaVersionYXNxnm7aqzQDGlQdVS76IDVwGRG8ZroYM35doQ71Y"
       }
     },
     "SignupLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "SignupLambdaVersiongoG6XsNRwX01kxI0p6FTRon4GM71EzQNeKKlZDqItg"
+        "Ref": "SignupLambdaVersionjQg9BJl6jPnNEE47D8CcwqbzyZsQ9YOtnR1yXwtfk"
       }
     },
     "ServiceEndpoint": {
@@ -2907,29 +2658,13 @@
       }
     },
     "Region": {
-      "Value": "ap-southeast-2"
+      "Value": "ap-northeast-1"
     },
     "Stage": {
       "Value": "dev"
     },
     "Service": {
       "Value": "formsli"
-    },
-    "FormEntriesTable": {
-      "Value": {
-        "Ref": "FormEntriesTable"
-      }
-    },
-    "FormEntriesGSI": {
-      "Value": "formsli_table_form_entries_gsi"
-    },
-    "AppDataTable": {
-      "Value": {
-        "Ref": "AppDataTable"
-      }
-    },
-    "AppDataGSI": {
-      "Value": "formsli_table_appdata_gsi"
     },
     "AttachmentsBucketName": {
       "Value": {

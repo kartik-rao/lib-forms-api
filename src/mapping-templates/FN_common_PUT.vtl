@@ -1,20 +1,45 @@
-#set($id = $util.autoId())
-#set($attribs = $ctx.stash.request)
-#set($attribs.version = 1)
-#set($attribs.owner = $context.stash.identity.callerId)
-#set($attribs.createdAt = $util.defaultIfNullOrBlank($attribs.createdAt, $util.time.nowISO8601()))
+#set($request=$ctx.stash.request)
+#set($columnList=[])
+#set($variableList=[])
+#set($variableMap={})
+
+## Iterate through each argument, skipping "id" and "expectedVersion" **
+#foreach( $entry in $request.entrySet() )
+    #if( $entry.key != "id" && $entry.key != "itemType")
+        #if( (!$entry.value) && ("$!{entry.value}" == "") )
+            ## If the argument is set to "null", then remove that attribute from the item in DynamoDB **
+            #set( $discard = ${expRemove.add("#${entry.key}")} )
+            $!{expNames.put("#${entry.key}", "$entry.key")}
+        #else
+            $columns.add("${entry.key}")
+            $variables.add(":${entry.key}")
+            $!{variableMap.put(":${entry.key}", "${entry.value}" )}
+        #end
+    #end
+#end
+
+#set($columns="")
+#foreach($col in $columnList)
+    #if(!$columnList.hasNext)
+        $set($columns="${columns}${col},")
+    #else
+        $set($columns="${columns}${col}")
+    #end
+#end
+
+#set($variables="")
+#foreach($var in $variableList)
+    #if(!$variableList.hasNext)
+        $set($variables="${variables}${var},")
+    #else
+        $set($variables="${variables}${var}")
+    #end
+#end
+
 {
     "version": "2018-05-29",
-    "operation": "PutItem",
-    "key": {
-        "id"  : $util.dynamodb.toDynamoDBJson($id),
-        "type": {"S" : "${attribs.itemType}"}
-    },
-    "attributeValues": $util.toJson($util.dynamodb.toMapValues($attribs)),
-    "condition": {
-        "expression": "attribute_not_exists(#id)",
-        "expressionNames": {
-            "#id": "id"
-        }
-    }
+    "statements": [
+        "INSERT INTO ${ctx.stash.request.itemType}(${columns}) VALUES(${variables});"
+    ],
+    "variableMap": $util.toJSON($variableMap)
 }

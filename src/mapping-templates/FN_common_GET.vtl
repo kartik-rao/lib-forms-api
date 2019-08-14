@@ -1,8 +1,9 @@
 {
-    "version" : "2018-05-29",
-    "operation" : "GetItem",
-    "key": {
-        "id"  : {"S": "${ctx.stash.request.id}"},
-        "type": {"S": "${ctx.stash.request.itemType}"}
+    "version": "2018-05-29",
+    "statements": [
+        "SELECT * FROM ${ctx.stash.request.itemType} where id=:id"
+    ],
+    "variableMap": {
+        ":id" : "${ctx.stash.request.id}"
     }
 }

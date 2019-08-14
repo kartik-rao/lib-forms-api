@@ -2,9 +2,9 @@
 #set($args=$ctx.arguments)
 
 #if($identity.isAdmin == true)
-    $util.qr($ctx.stash.put("operation", 'query'))
+    $util.qr($ctx.stash.put("operation", 'get'))
     #set ($request = {})
-    $util.qr($request.put("itemType", 'ACCOUNT'))
+    $util.qr($request.put("itemType", 'Account'))
     $util.qr($request.put("limit", $ctx.args.limit))
     $util.qr($request.put("nextToken", $ctx.args.nextToken))
     $util.qr($request.put("filter", $util.defaultIfNull($args.filter, {})))

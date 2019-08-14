@@ -45,7 +45,7 @@ export class ApiHelper {
                 userPoolId: config['UserPoolId'],
                 userPoolWebClientId: config["UserPoolClientId"],
                 identityPoolId: config['IdentityPoolId'],
-                region: 'ap-southeast-2',
+                region: config['Region'],
                 mandatorySignIn: true
             }
         }
