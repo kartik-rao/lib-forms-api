@@ -2,13 +2,8 @@
 require('source-map-support').install();
 process.env.TZ = 'UTC';
 
-import * as _ from "lodash";
-import {DBClient} from "./dbclient";
-const uuid = require('uuid/v4');
 import * as AWS from 'aws-sdk';
 import { AdminAddUserToGroupRequest, AdminCreateUserRequest, AdminCreateUserResponse } from "aws-sdk/clients/cognitoidentityserviceprovider";
-
-const DDB_TABLE : string = process.env.table_app_data || 'formsgraphql_dev_masterdata';
 
 const DBClusterARN = process.env.dbClusterArn;
 const DBSecretARN = process.env.dbClusterSecretArn;

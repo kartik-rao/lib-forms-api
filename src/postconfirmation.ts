@@ -2,12 +2,11 @@
 require('source-map-support').install();
 process.env.TZ = 'UTC';
 
-import {CognitoUserPoolTriggerEvent} from 'aws-lambda';
-import * as _ from "lodash";
-
-const uuid = require('uuid/v4');
+import { CognitoUserPoolTriggerEvent } from 'aws-lambda';
 import * as AWS from 'aws-sdk';
 import { AdminGetUserRequest } from "aws-sdk/clients/cognitoidentityserviceprovider";
+
+const uuid = require('uuid/v4');
 
 const DBClusterARN = process.env.dbClusterArn;
 const DBSecretARN = process.env.dbClusterSecretArn;
