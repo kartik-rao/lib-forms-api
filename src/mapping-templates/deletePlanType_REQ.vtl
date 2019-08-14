@@ -1,29 +1,23 @@
 #set($identity=$ctx.stash.identity)
-#set($results=$ctx.stash.results)
 #set($args=$ctx.arguments)
+#set($results=$ctx.stash.results)
 
 #set($isAllowed = false)
-#if($identity.isAdmin == true)
+#if($identity.isAdmin)
     #set($isAllowed = true)
 #end
 
 #if($isAllowed == true)
-    #set($request = {})
-    #set($request.meta = false)
-    #set($request.expectedVersion = $results.PLANTYPE.version)
-    #set($request.id = $args.planTypeId)
-    #set($request.itemType = "PLANTYPE")
-    #set($request.isDeleted = true)
-    #set($request.updatedAt = $util.time.nowISO8601())
-    #set($request.active = false)
-
-    #if(!$util.isNull($ctx.stash.request))
-        #set ($ctx.stash.prevRequest = $ctx.stash.request)
-    #end
-
-    $util.qr($ctx.stash.put("operation", 'put'))
-    $util.qr($ctx.stash.put("request", $request))
-    #return({})
+    $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("itemType", 'PlanType'))
+    $util.qr($ctx.stash.put("operation", 'delete'))
+    $set($now=$util.time.nowISO8601())
+    {
+        "statements": [
+            "SELECT * FROM PlanType WHERE id ='${args.planTypeId}'",
+            "UPDATE PlanType SET isDeleted=1, active=0, updatedAt='${now}' WHERE id='${args.planTypeId}'",
+        ],
+    }
 #else
-    $util.error("User [${ctx.stash.identity.callerId}] cannot execute [PUT] on [PlanType]", "Unauthorized")
+    $util.error("User [${identity.callerId}] cannot execute [DELETE] on PlanType[${args.planTypeId}]", "Unauthorized")
 #end

@@ -1,45 +1,14 @@
-{
-    "version"   : "2018-05-29",
-    "operation" : "Query",
-    "index"    : "${index_appdata_gsi}",
-#if($ctx.stash.identity.isAdmin == true)
-    "query"     : {
-        "expression": "#type = :objectType",
-        "expressionNames" : {
-            "#type" : "type"
-        },
-        "expressionValues" : {
-            ":objectType" : { "S": "${ctx.stash.request.itemType}" }
-        }
-    }
-#else
-    "query": {
-        "expression" : "#type = :type AND begins_with(#meta, :meta) AND #isDeleted = :isDeleted",
-        "expressionNames" : {
-            "#type" : "type",
-            "#meta" : "meta"
-        },
-        "expressionValues": {
-            ":type" : {"S" : "${ctx.stash.request.itemType}"},
-            ":meta" : {"S" : "${ctx.stash.identity.tenantId}"},
-            ":isDeleted" : {"BOOL": false}
-        }
-    }
+$util.qr($ctx.stash.paths.add("FN_common_LIST.vtl"))
+#set($request=$ctx.stash.request)
+#set($itemType=$request.itemType)
+
+#if($ctx.error)
+    $util.qr($ctx.stash.put("error", $ctx.error))
+    $util.error($ctx.error.message, $ctx.error.type)
 #end
-    ,"scanIndexForward":   #if( $context.stash.request.sortDirection )
-        #if( $context.stash.request.sortDirection == "ASC" )
-            true
-        #else
-            false
-        #end
-    #else
-        true
-    #end,
-    ## "filter": #if(!$util.isNull($context.stash.request.filter))
-    ##     $util.transform.toDynamoDBFilterExpression($context.stash.request.filter)
-    ## #else
-    ##     null
-    ## #end,
-  "limit": $util.defaultIfNull(${ctx.stash.request.limit}, 20),
-  "nextToken": $util.toJson($util.defaultIfNullOrBlank(${ctx.stash.request.nextToken}, null))
-}
+
+#if($ctx.result)
+    $util.toJson($util.rds.toJsonObject($ctx.result)[0])
+#else
+    $util.toJson([])
+#end

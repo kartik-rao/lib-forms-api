@@ -2,32 +2,22 @@
 #set($args=$ctx.arguments)
 #set($results=$ctx.stash.results)
 
-#if($util.isNull($results) || $util.isNull($results.PLAN))
-    $util.error("Out of order invocation, no PLAN", "InvocationOrderException")
-#end
-
-
 #set($isAllowed = false)
 #if($identity.isAdmin || ($identity.isAccountAdmin == true && $identity.tenantId == $args.accountId))
     #set($isAllowed = true)
 #end
 
 #if($isAllowed == true)
-    #set($request = {})
-    #set($request.id = $results.PLAN.id)
-    #set($request.itemType = "PLAN")
-    #set($request.active = false)
-    #set($request.meta = "${args.accountId}#false")
-    #set($request.endDate = $util.time.nowISO8601())
-    #set($request.isDeleted = true)
-    #set($request.expectedVersion = $results.PLAN.version)
-    #if(!$util.isNull($ctx.stash.request))
-        #set ($ctx.stash.prevRequest = $ctx.stash.request)
-    #end
-
-    $util.qr($ctx.stash.put("operation", "update"))
-    $util.qr($ctx.stash.put("request", $request))
-    #return({})
+    $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("itemType", 'Plan'))
+    $util.qr($ctx.stash.put("operation", 'delete'))
+    $set($now=$util.time.nowISO8601())
+    {
+        "statements": [
+            "SELECT * FROM Plan WHERE id ='${args.planId}'",
+            "UPDATE Plan SET isDeleted=1, active=0, endDate='${now}', updatedAt='${now}' WHERE id='${args.planId}' AND accountId='${args.accountId}'",
+        ],
+    }
 #else
-    $util.error("User [${identity.callerId}] cannot execute [DELETE] on [Plan ${request.id}]", "Unauthorized")
+    $util.error("User [${identity.callerId}] cannot execute [DELETE] on Plan[${args.planId}]", "Unauthorized")
 #end

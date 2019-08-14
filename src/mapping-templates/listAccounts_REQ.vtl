@@ -2,18 +2,14 @@
 #set($args=$ctx.arguments)
 
 #if($identity.isAdmin == true)
-    $util.qr($ctx.stash.put("operation", 'get'))
-    #set ($request = {})
-    $util.qr($request.put("itemType", 'Account'))
-    $util.qr($request.put("limit", $ctx.args.limit))
-    $util.qr($request.put("nextToken", $ctx.args.nextToken))
-    $util.qr($request.put("filter", $util.defaultIfNull($args.filter, {})))
-    $util.qr($request.filter.put("active", $util.defaultIfNull($request.filter, {"eq": true})))
-    #if(!$util.isNull($ctx.stash.request))
-        #set ($ctx.stash.prevRequest = $ctx.stash.request)
-    #end
-    $util.qr($ctx.stash.put("request", $request))
-    #return({})
+    $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("itemType", 'Account'))
+    $util.qr($ctx.stash.put("operation", 'list'))
+    {
+        "statements": [
+            "SELECT * FROM Account"
+        ]
+    }
 #else
-    $util.error("User [${ctx.stash.identity.callerId}] cannot execute [${request.operation}] on [${request.itemType}]", "Unauthorized")
+    $util.error("User [${identity.callerId}] cannot execute [${LIST}] on Account", "Unauthorized")
 #end

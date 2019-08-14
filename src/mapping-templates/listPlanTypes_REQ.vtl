@@ -1,22 +1,19 @@
 #set($identity=$ctx.stash.identity)
 #set($args=$ctx.arguments)
 
-$util.qr($ctx.stash.put("operation", 'get'))
-#set ($request = {})
-$util.qr($request.put("itemType", 'Plantype'))
-$util.qr($request.put("limit", $args.limit))
-$util.qr($request.put("nextToken", $args.nextToken))
-
-$util.qr($request.put("filter", $util.defaultIfNull($args.filter, {})))
 #if($identity.isAdmin == true)
-  $util.qr($request.filter.put("active", $util.defaultIfNull($request.filter, {"eq": true})))
+    $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("itemType", 'PlanType'))
+    $util.qr($ctx.stash.put("operation", 'list'))
+    {
+        "statements": [
+            #if(!$identity.isAdmin)
+                "SELECT * FROM PlanType active=1"
+            #else
+                "SELECT * FROM PlanType"
+            #end
+        ]
+    }
 #else
-  $util.qr($request.filter.put("active", {"eq": true}))
+    $util.error("User [${identity.callerId}] cannot execute [${LIST}] on PlanType", "Unauthorized")
 #end
-
-#if(!$util.isNull($ctx.stash.request))
-    #set ($ctx.stash.prevRequest = $ctx.stash.request)
-#end
-$util.qr($ctx.stash.put("request", $request))
-
-#return({})
