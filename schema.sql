@@ -189,7 +189,7 @@ CREATE TABLE  IF NOT EXISTS FormEntry (
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE INDEX `INDX_FormEntry_id` (`id` ASC),
-    UNIQUE INDEX `INDX_FormEntry_id_created_at` (`id` ASC, `formId` ASC),
+    UNIQUE INDEX `INDX_FormEntry_id_form_id` (`id` ASC, `formId` ASC),
     UNIQUE INDEX `INDX_FormEntry_id_created_at` (`id` ASC, `createdAt` DESC),
     FOREIGN KEY (formId) REFERENCES Form(id)
 );
