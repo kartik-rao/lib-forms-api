@@ -130,8 +130,8 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
                 database: ServiceName,
                 resourceArn: DBClusterARN,
                 secretArn: DBSecretARN,
-                sql: `INSERT INTO User(id, ownerId, group, accountId, email, phone_number, given_name, family_name)
-                    VALUES(:id, :ownerId, :group, :accountId, :email, :phone_number, :given_name, :family_name)`,
+                sql: `INSERT INTO User(id, ownerId, userGroup, accountId, email, phone_number, given_name, family_name)
+                    VALUES(:id, :ownerId, :userGroup, :accountId, :email, :phone_number, :given_name, :family_name)`,
                 parameters: [
                     {name: "id", value: {stringValue: createUserResponse.User.Username}},
                     {name: "ownerId", value: {stringValue: ownerId}},

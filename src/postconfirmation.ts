@@ -37,7 +37,7 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
         let accountId = uuid();
         let group = 'AccountAdmin';
         console.log(`${ServiceName} - New Account Flow - Init name=[${tenantName}] gen_id=[${accountId}]`);
-
+        console.log(`${ServiceName} - New Account Flow - UserAttributes=[${JSON.stringify(userAttributes)}]`);
         let transaction = await rds.beginTransaction(rdsCommonParams).promise();
         let {transactionId} = transaction;
         try {
@@ -56,8 +56,8 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
             const addUserSQL:AWS.RDSDataService.ExecuteStatementRequest = {
                 ...rdsCommonParams,
                 transactionId: transactionId,
-                sql: `INSERT INTO User(id, ownerId, group, accountId, email, phone_number, given_name, family_name)
-                    VALUES(:id, :ownerId, :group, :accountId, :email, :phone_number, :given_name, :family_name)`,
+                sql: `INSERT INTO User(id, ownerId, userGroup, accountId, email, phone_number, given_name, family_name)
+                    VALUES(:id, :ownerId, :userGroup, :accountId, :email, :phone_number, :given_name, :family_name)`,
                 parameters: [
                     {name: "id", value: {stringValue: userId}},
                     {name: "ownerId", value: {stringValue: userId}},
@@ -74,16 +74,17 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
                 ...rdsCommonParams,
                 sql: "SET foreign_key_checks=0"
             }).promise();
-            console.log(`${ServiceName} - New Account Flow - RDS.Insert User`);
+            console.log(`${ServiceName} - New Account Flow - RDS.Insert User - ${JSON.stringify(addUserSQL)}`);
             await rds.executeStatement(addUserSQL).promise();
-            console.log(`${ServiceName} - New Account Flow - RDS.Insert Account`);
+            console.log(`${ServiceName} - New Account Flow - RDS.Insert Account - ${JSON.stringify(addAccountSQL)}`);
             await rds.executeStatement(addAccountSQL).promise();
-            await rds.commitTransaction({transactionId: transactionId, ...rdsCommonParams}).promise();
+            await rds.commitTransaction({transactionId: transactionId, resourceArn: DBClusterARN, secretArn: DBSecretARN}).promise();
         } catch (error) {
             // TODO: We should send an SNS notification or capture this error somewhere
             console.error(`${ServiceName} - AccountAdmin initiated flow - RDS Error [${userId}]`, error);
             await rds.rollbackTransaction({transactionId: transactionId, resourceArn: DBClusterARN, secretArn: DBSecretARN}).promise();
             callback(error);
+            return;
         }
 
         // 2. Set Cognito Group to Account Admin
@@ -138,8 +139,8 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
                 database: ServiceName,
                 resourceArn: DBClusterARN,
                 secretArn: DBSecretARN,
-                sql: `INSERT INTO User(id, ownerId, group, accountId, email, phone_number, given_name, family_name)
-                    VALUES(:id, :ownerId, :group, :accountId, :email, :phone_number, :given_name, :family_name)`,
+                sql: `INSERT INTO User(id, ownerId, userGroup, accountId, email, phone_number, given_name, family_name)
+                    VALUES(:id, :ownerId, :userGroup, :accountId, :email, :phone_number, :given_name, :family_name)`,
                 parameters: [
                     {name: "id", value: {stringValue: userId}},
                     {name: "ownerId", value: {stringValue: userId}},
