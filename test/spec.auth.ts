@@ -144,9 +144,10 @@ describe("Auth", () => {
         let accViewerInbox: Inbox;
         let accViewerSub: string;
 
-        beforeAll(async () => {
+        beforeAll(async (done) => {
             await Auth.signOut();
             accViewerInbox = await mailSlurp.createInbox();
+            done();
         });
 
         it("Invite User", async (done) => {
@@ -174,6 +175,9 @@ describe("Auth", () => {
                 });
 
                 let res: AdminCreateUserResponse = await inviteResponse.json();
+                expect(res).toBeDefined();
+                expect(res.User).toBeDefined();
+
                 accViewerSub = res.User.Username;
                 let attrs = {}
                 res.User.Attributes.forEach((attr) => {
