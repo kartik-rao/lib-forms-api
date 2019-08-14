@@ -8,7 +8,6 @@ USE formsli;
 DROP TABLE IF EXISTS User;
 CREATE TABLE IF NOT EXISTS User (
     id VARCHAR(36) NOT NULL,
-    externalId VARCHAR(255) NOT NULL,
     ownerId VARCHAR(36),
     accountId VARCHAR(36) NULL,
     email VARCHAR(255) NOT NULL,
