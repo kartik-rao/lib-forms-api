@@ -11,16 +11,19 @@ $util.qr($ctx.stash.paths.add("FN_passthrough_RES.vtl"))
 
 #if($results)
     #if($operation == 'get')
-        #if(!$results[$itemType] || $results[$itemType].size() == 0)
+        #if(!$results[$itemType] || $results[$itemType][0].size() == 0)
             $util.error("Item ${request.itemType} [${request.id}] does not exist", 'NotFound')
         #end
-        $util.toJson($results[$itemType][0])
+        $util.toJson($results[$itemType][0][0])
     #elseif($operation == 'put')
-        $util.toJson($results[$itemType][1])
+        $util.toJson($results[$itemType][1][0])
     #elseif($operation == 'delete')
-        $util.toJson({})
+        #if(!$results[$itemType] || $results[$itemType][0].size() == 0)
+            $util.error("Item ${request.itemType} [${request.id}] does not exist", 'NotFound')
+        #end
+        $util.toJson($results[$itemType][0][0])
     #else
-        $util.toJson($results[$itemType])
+        $util.toJson($results[$itemType][0])
     #end
 #else
     #return({})

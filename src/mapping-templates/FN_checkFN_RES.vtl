@@ -6,7 +6,7 @@ $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))
 #end
 
 #if($ctx.result)
-    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $util.rds.toJsonObject($ctx.result)[0]))
+    $util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $util.rds.toJsonObject($ctx.result)))
 #end
 #return({})
 
