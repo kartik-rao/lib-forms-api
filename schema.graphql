@@ -54,7 +54,7 @@ type AppData @model {
     owner: ID!
     createdAt: AWSDateTime!
     updatedAt: AWSDateTime
-    isDeleted: Boolean
+    isDeleted: Int
     version: Int
     searchField: String
 }
@@ -160,7 +160,7 @@ type User @versioned {
     phone_number: AWSPhone
     createdAt: AWSDateTime
     updatedAt: AWSDateTime
-    isDeleted: Boolean
+    isDeleted: Int
 }
 
 input UserFilterInput {
@@ -293,7 +293,7 @@ type PlanType @versioned {
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   version: Int
-  isDeleted: Boolean
+  isDeleted: Int
 }
 
 input PlanTypeFilterInput {
@@ -339,7 +339,7 @@ type Plan @versioned {
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   planType: PlanType
-  isDeleted: Boolean
+  isDeleted: Int
   version: Int
 }
 
@@ -427,7 +427,7 @@ type Integration @versioned {
   lastExecutionResultMessage: String
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
-  isDeleted: Boolean
+  isDeleted: Int
 }
 
 input IntegrationFilterInput {
