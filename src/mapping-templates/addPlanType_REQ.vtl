@@ -1,5 +1,5 @@
 #set($identity=$ctx.stash.identity)
-#set($args=$ctx.arguments)
+#set($args=$ctx.arguments.input)
 
 #set($isAllowed = false)
 #if($identity.isAdmin == true)
@@ -7,24 +7,29 @@
 #end
 
 #if($isAllowed == true)
-    #set($request = $args.input)
-    #set($request.id = $util.autoId())
-    #set($request.owner = $identity.callerId)
-    #set($request.itemType = "PLANTYPE")
-    #set($request.isDeleted = false)
-    #set($request.isDeleted = false)
-    #set($request.createdAt = $util.time.nowISO8601())
-    #set($request.version = 1)
-    #set($request.active = $util.defaultIfNullOrBlank($args.input.active, false))
-    #set($request.meta = "${request.active}")
-
+    #set($id = $util.autoId())
     #if(!$util.isNull($ctx.stash.request))
         #set ($ctx.stash.prevRequest = $ctx.stash.request)
     #end
-
     $util.qr($ctx.stash.put("operation", 'put'))
-    $util.qr($ctx.stash.put("request", $request))
-    #return({})
+    $util.qr($ctx.stash.put("request", $args))
+    {
+        "version": "2018-05-29",
+        "statements": [
+            "INSERT INTO PlanType(id, name, cost, billingTerm, active, ownerId, isDeleted, createdAt) VALUES(:id, :name, :cost, :billingTerm, :active, :ownerId, :isDeleted, :createdAt)",
+            "SELECT * FROM PlanType WHERE id='${id}'"
+        ],
+        "variableMap": {
+            ":id": "${id}",
+            ":name": "${args.name}",
+            ":cost": "${args.cost}",
+            ":billingTerm": "${args.billingTerm}",
+            ":active": $args.active,
+            ":ownerId": "${identity.callerId}",
+            ":isDeleted": 0,
+            ":createdAt": "${util.time.nowISO8601()}"
+        }
+    }
 #else
-    $util.error("User [${ctx.stash.identity.callerId}] cannot execute [PUT] on [PlanType]", "Unauthorized")
+    $util.error("User [${ctx.stash.identity.callerId}] cannot execute [PUT] on [Plantype]", "Unauthorized")
 #end

@@ -118,6 +118,7 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
         }
 
         try {
+            let timestamp = new Date().toISOString();
             let createUserResponse: AdminCreateUserResponse = await userPool.adminCreateUser(createUserRequest).promise();
             let cognitoSetGroupParams : AdminAddUserToGroupRequest = {
                 GroupName : group,
@@ -130,8 +131,8 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
                 database: ServiceName,
                 resourceArn: DBClusterARN,
                 secretArn: DBSecretARN,
-                sql: `INSERT INTO User(id, ownerId, userGroup, accountId, email, phone_number, given_name, family_name)
-                    VALUES(:id, :ownerId, :userGroup, :accountId, :email, :phone_number, :given_name, :family_name)`,
+                sql: `INSERT INTO User(id, ownerId, userGroup, accountId, email, phone_number, given_name, family_name, createdAt)
+                    VALUES(:id, :ownerId, :userGroup, :accountId, :email, :phone_number, :given_name, :family_name, :createdAt)`,
                 parameters: [
                     {name: "id", value: {stringValue: createUserResponse.User.Username}},
                     {name: "ownerId", value: {stringValue: ownerId}},
@@ -140,7 +141,9 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
                     {name: "email", value: {stringValue: payload["email"]}},
                     {name: "phone_number", value: payload.phone_number ? {stringValue: payload["phone_number"]}: {isNull: true}},
                     {name: "given_name", value: {stringValue: payload["given_name"] || null}},
-                    {name: "family_name", value: {stringValue: payload["family_name"]}}
+                    {name: "family_name", value: {stringValue: payload["family_name"]}},
+                    {name: "createdAt", value: {stringValue: timestamp}}
+
                 ]
             };
             await rds.executeStatement(addUserSQL).promise();

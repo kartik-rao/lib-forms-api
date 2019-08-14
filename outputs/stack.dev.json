@@ -1,8 +1,8 @@
 {
   "Service": "formsli",
-  "SignupLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:644527192227:function:formsli-invite:13",
+  "SignupLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:644527192227:function:formsli-invite:15",
   "ServerlessDeploymentBucketName": "formsli-dev-serverlessdeploymentbucket-14tw08uino6ih",
-  "PostConfirmationLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:644527192227:function:formsli-postconfirmation:13",
+  "PostConfirmationLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:644527192227:function:formsli-postconfirmation:15",
   "AttachmentsBucketName": "formsli-dev-data",
   "UserPoolClientId": "37fdg8vk3iqhkot25nc0l06k1d",
   "GraphQlApiUrl": "https://q5idrkc7enbh7o2cyeudxaxmfu.appsync-api.ap-northeast-1.amazonaws.com/graphql",

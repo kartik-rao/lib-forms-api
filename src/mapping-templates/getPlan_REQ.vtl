@@ -1,3 +1,4 @@
+$util.qr($ctx.stash.paths.add("getPlan_REQ.vtl"))
 #set($identity=$ctx.stash.identity)
 #set($args=$ctx.arguments)
 
@@ -6,18 +7,16 @@
     #set($isAllowed = true)
 #end
 
-#if(!$util.isNull($ctx.stash.request))
-    #set ($ctx.stash.prevRequest = $ctx.stash.request)
-#end
-
-$util.qr($ctx.stash.put("operation", 'get'))
-
-#set ($request = {})
-$util.qr($request.put("id", $args.planId))
-$util.qr($request.put("itemType", 'Plan'))
-$util.qr($ctx.stash.put("request", $request))
-
 #if($isAllowed == true)
+    #if(!$util.isNull($ctx.stash.request))
+        #set ($ctx.stash.prevRequest = $ctx.stash.request)
+    #end
+    $util.qr($ctx.stash.put("operation", 'get'))
+    #set ($request = {})
+    $util.qr($request.put("id", $args.planId))
+    $util.qr($request.put("itemType", 'Plan'))
+    $util.qr($ctx.stash.put("request", $request))
+
     #return({})
 #else
     $util.error("User [${identity.callerId}] cannot execute [${ctx.stash.operation}] on [Plan ${request.id}]", "Unauthorized")

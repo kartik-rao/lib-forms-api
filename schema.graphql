@@ -259,7 +259,7 @@ type Account @versioned {
   planId: ID
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
-  active: Boolean
+  active: Int
   users(limit: Int, nextToken: String): PaginatedUser
   forms(limit: Int, nextToken: String): PaginatedForm
 }
@@ -292,7 +292,7 @@ type PlanType @versioned {
   ownedBy: User!
   name: String!
   cost: Float!
-  active: Boolean!
+  active: Int!
   billingTerm: String!
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
@@ -313,7 +313,7 @@ input AddPlanTypeInput {
   name: String!
   cost: Float!
   billingTerm: String!
-  active: Boolean!
+  active: Int!
 }
 
 input UpdatePlanTypeInput {
@@ -321,7 +321,7 @@ input UpdatePlanTypeInput {
   name: String
   cost: Float
   billingTerm: String
-  active: Boolean
+  active: Int
   expectedVersion: Int!
 }
 
@@ -339,7 +339,7 @@ type Plan @versioned {
   planTypeId: ID!
   startDate: AWSDateTime!
   endDate: AWSDateTime
-  active: Boolean
+  active: Int
   lastBillDate: AWSDateTime
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
@@ -363,13 +363,13 @@ input AddPlanInput {
   accountId: ID!
   planTypeId: ID!
   endDate: AWSDateTime
-  active: Boolean
+  active: Int
 }
 
 input UpdatePlanInput {
   id: ID!
   endDate: AWSDateTime
-  active: Boolean!
+  active: Int!
   expectedVersion: Int!
 }
 
@@ -385,7 +385,7 @@ type IntegrationType {
   planTypeId: ID!
   planType: PlanType
   name: String!
-  active: Boolean!
+  active: Int!
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
 }
@@ -401,13 +401,13 @@ input IntegrationTypeFilterInput {
 
 input AddIntegrationTypeInput {
   name: String!
-  active: Boolean
+  active: Int
 }
 
 input UpdateIntegrationTypeInput {
   id: ID!
   name: String!
-  active: Boolean
+  active: Int
   expectedVersion: Int!
 }
 
@@ -424,7 +424,7 @@ type Integration @versioned {
   accountId: ID!
   formId: ID!
   form: Form!
-  active: Boolean!
+  active: Int!
   authType: String
   auth: AWSJSON
   target: String
@@ -450,7 +450,7 @@ input AddIntegrationInput {
   integrationTypeId: ID!
   accountId: ID!
   formId: ID!
-  active: Boolean
+  active: Int
   authType: String
   auth: AWSJSON
   target: String
@@ -458,7 +458,7 @@ input AddIntegrationInput {
 }
 
 input UpdateIntegrationTypeInputData {
-  active: Boolean
+  active: Int
   authType: String
   auth: AWSJSON
   target: String
@@ -468,7 +468,7 @@ input UpdateIntegrationTypeInputData {
 
 input UpdateIntegrationInput {
   id: ID!
-  active: Boolean
+  active: Int
   authType: String
   auth: AWSJSON
   target: String

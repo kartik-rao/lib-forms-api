@@ -2,7 +2,7 @@
   type: Query
   field: getUser
   request: pipeline_identify_BEF.vtl
-  response: FN_common_tenantCheck_RES.vtl
+  response: FN_passthrough_RES.vtl
   kind: PIPELINE
   functions:
     - FN_getUser
@@ -45,7 +45,6 @@
   kind: PIPELINE
   functions:
     - FN_createPlan
-    - FN_common_PUT
 
 - dataSource: AppData
   type: Mutation
@@ -183,7 +182,6 @@
   kind: PIPELINE
   functions:
     - FN_addPlanType
-    - FN_common_PUT
 
 - dataSource: AppData
   type: Mutation

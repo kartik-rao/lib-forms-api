@@ -1,18 +1,21 @@
+$util.qr($ctx.stash.paths.add("getUser_REQ.vtl"))
 #if(!$util.isNull($ctx.stash.request))
     #set ($ctx.stash.prevRequest = $ctx.stash.request)
 #end
 
-$util.qr($ctx.stash.put("operation", 'get'))
-
-#set ($request = {})
-$util.qr($request.put("id", $ctx.arguments.id))
-$util.qr($request.put("itemType", 'User'))
-$util.qr($ctx.stash.put("request", $request))
-
 ## Only allow admin and account admin to get other users
-#set($isAllowed = $ctx.stash.identity.isAdmin == true || $ctx.stash.identity.isAccountAdmin == true || $ctx.arguments.id == $ctx.stash.identity.callerId)
+#set($isAllowed = $ctx.stash.identity.isAdmin == true
+    || $ctx.stash.identity.isAccountAdmin == true || $ctx.arguments.userId == $ctx.stash.identity.callerId)
 
 #if($isAllowed == true)
+    #if(!$util.isNull($ctx.stash.request))
+        #set ($ctx.stash.prevRequest = $ctx.stash.request)
+    #end
+    $util.qr($ctx.stash.put("operation", 'get'))
+    #set ($request = {})
+    $util.qr($request.put("id", $ctx.arguments.userId))
+    $util.qr($request.put("itemType", 'User'))
+    $util.qr($ctx.stash.put("request", $request))
     #return({})
 #else
     $util.error("User [${ctx.stash.identity.callerId}] cannot execute [${request.operation}] on [${request.id}]", "Unauthorized")

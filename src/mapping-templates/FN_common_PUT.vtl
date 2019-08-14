@@ -1,45 +1,50 @@
-#set($request=$ctx.stash.request)
-#set($columnList=["id"])
-#set($variableList=[":id"])
-#set($variableMap={":id": "'${util.autoId()}'"})
-
-## Iterate through each argument, skipping "id" and "expectedVersion" **
+$util.qr($ctx.stash.paths.add("FN_common_PUT.vtl"))
+#set($request = $ctx.stash.request)
+#set($id = $util.autoId())
+#set($columnList = ["id"])
+#set($variableList = [":id"])
+#set($variableMap = {":id": "${id}"})
+## Iterate through each argument, skipping "id" and "ex\pectedVersion" **
 #foreach( $entry in $request.entrySet() )
     #if($entry.key != "id" && $entry.key != "itemType")
-        #if( (!$entry.value) && ("$!{entry.value}" == "") )
-            ## If the argument is set to "null", then remove that attribute from the item in DynamoDB **
-            #set( $discard = ${expRemove.add("#${entry.key}")} )
-            $!{expNames.put("#${entry.key}", "$entry.key")}
-        #else
-            $columns.add("${entry.key}")
-            $variables.add(":${entry.key}")
-            $!{variableMap.put(":${entry.key}", "'${entry.value}'" )}
+        #if($entry.value)
+            $util.qr($columnList.add("${entry.key}"))
+            $util.qr($variableList.add(":${entry.key}"))
+            $util.qr($variableMap.put(":${entry.key}", $entry.value))
         #end
     #end
 #end
-
+#set($variables="")
 #set($columns="")
 #foreach($col in $columnList)
-    #if(!$columnList.hasNext)
-        $set($columns="${columns}${col},")
+    #if($foreach.hasNext)
+        #set($columns="${columns}${col},")
     #else
-        $set($columns="${columns}${col}")
+        #set($columns="${columns}${col}")
     #end
 #end
-
-#set($variables="")
 #foreach($var in $variableList)
-    #if(!$variableList.hasNext)
-        $set($variables="${variables}${var},")
+    #if($foreach.hasNext)
+        #set($variables="${variables}${var},")
     #else
-        $set($variables="${variables}${var}")
+        #set($variables="${variables}${var}")
     #end
 #end
-
 {
     "version": "2018-05-29",
     "statements": [
-        "INSERT INTO ${ctx.stash.request.itemType}(${columns}) VALUES(${variables});"
+        "INSERT INTO ${ctx.stash.request.itemType}(${columns}) VALUES(${variables})",
+        "SELECT * FROM ${ctx.stash.request.itemType} WHERE id='$id'"
     ],
-    "variableMap": $util.toJSON($variableMap)
+    "variableMap": {
+        ":id":"1bf4b04c-54fd-4cdd-a17f-e411394250e9",
+        ":name":"Free",
+        ":cost":0.0,
+        ":billingTerm":"Monthly",
+        ":active":true,
+        ":ownerId":"2c0a5735-4204-4349-a8b9-d83239437d2b",
+        ":isDeleted":0,
+        ":createdAt":"2019-08-14T11:07:48.989Z"
+    }
+
 }

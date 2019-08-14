@@ -41,14 +41,16 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
         let transaction = await rds.beginTransaction(rdsCommonParams).promise();
         let {transactionId} = transaction;
         try {
+            let timestamp = new Date().toISOString();
             const addAccountSQL:AWS.RDSDataService.ExecuteStatementRequest = {
                 ...rdsCommonParams,
                 transactionId: transactionId,
-                sql: `INSERT INTO Account(id, ownerId, name) VALUES(:id, :ownerId, :name)`,
+                sql: `INSERT INTO Account(id, ownerId, name, createdAt) VALUES(:id, :ownerId, :name, :createdAt)`,
                 parameters: [
                     {name: "id", value: {stringValue: accountId}},
                     {name: "ownerId", value: {stringValue: userId}},
-                    {name: "name", value: {stringValue: tenantName}}
+                    {name: "name", value: {stringValue: tenantName}},
+                    {name: "createdAt", value: {stringValue: timestamp}}
                 ]
             }
 
@@ -56,8 +58,8 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
             const addUserSQL:AWS.RDSDataService.ExecuteStatementRequest = {
                 ...rdsCommonParams,
                 transactionId: transactionId,
-                sql: `INSERT INTO User(id, ownerId, userGroup, accountId, email, phone_number, given_name, family_name)
-                    VALUES(:id, :ownerId, :userGroup, :accountId, :email, :phone_number, :given_name, :family_name)`,
+                sql: `INSERT INTO User(id, ownerId, userGroup, accountId, email, phone_number, given_name, family_name, createdAt)
+                    VALUES(:id, :ownerId, :userGroup, :accountId, :email, :phone_number, :given_name, :family_name, :createdAt)`,
                 parameters: [
                     {name: "id", value: {stringValue: userId}},
                     {name: "ownerId", value: {stringValue: userId}},
@@ -66,7 +68,8 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
                     {name: "email", value: {stringValue: userAttributes["email"]}},
                     {name: "phone_number", value: hasPhone ? {stringValue: userAttributes["phone_number"]}: {isNull: true}},
                     {name: "given_name", value: {stringValue: userAttributes["given_name"]}},
-                    {name: "family_name", value: {stringValue: userAttributes["family_name"]}}
+                    {name: "family_name", value: {stringValue: userAttributes["family_name"]}},
+                    {name: "createdAt", value: {stringValue: timestamp}}
                 ]
             }
             console.log(`${ServiceName} - New Account Flow - RDS Init transaction ${transactionId}`);
