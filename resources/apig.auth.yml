@@ -13,6 +13,14 @@ Resources:
 
 # Print out the Id of the Authorizer
 Outputs:
+  Region:
+    Value: "#{AWS::Region}"
+  AccountId:
+    Value: "#{AWS::AccountId}"
   AuthorizerId:
     Value:
       Ref: MyApiGatewayAuthorizer
+  DBClusterId:
+    Value: ${self:provider.environment.dbClusterId}
+  DBSecretARN:
+    Value: ${self:provider.environment.dbClusterSecretArn}
