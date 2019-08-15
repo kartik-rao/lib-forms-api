@@ -2,7 +2,7 @@ import Auth, { CognitoUser } from '@aws-amplify/auth';
 import { ApiHelper } from "./api.utils";
 import { AuthUtils } from "./auth.utils";
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
 
 Auth.configure(ApiHelper.apiConfig().Auth);
 
@@ -25,7 +25,7 @@ describe("Account", () => {
             console.error("spec.plantypes - beforeAll - ERROR", error);
             done.fail(error);
         }
-    });
+    }, 60000);
 
     afterAll(async (done) => {
         try {
