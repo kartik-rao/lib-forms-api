@@ -70,10 +70,6 @@ input AddFormEntryInput {
   data: AWSJSON!
 }
 
-type PaginatedFormEntries {
-  items: [FormEntry!]
-  nextToken: String
-}
 
 type FormVersion {
   id: ID!
@@ -91,10 +87,6 @@ input AddFormVersionInput {
   formData: AWSJSON!
 }
 
-type PaginatedFormVersion {
-  items: [FormVersion!]
-  nextToken: String
-}
 
 type Form @versioned  {
     id: ID!
@@ -111,9 +103,9 @@ type Form @versioned  {
     startsAt: AWSDateTime
     endsAt: AWSDateTime
     isPaused: Boolean
-    versions(limit: Int, nextToken: String): PaginatedFormVersion
-    integrations(limit: Int, nextToken: String): PaginatedIntegration
-    entries(limit: Int, nextToken: String): PaginatedFormEntries
+    versions(limit: Int): [FormVersion]
+    integrations(limit: Int): [Integration]
+    entries(limit: Int): [FormEntry]
 }
 
 input FormFilterInput {
@@ -141,11 +133,6 @@ input UpdateFormInput  {
   startsAt: AWSDateTime
   endsAt: AWSDateTime
   isPaused: Boolean
-}
-
-type PaginatedForm {
-    items: [Form!]
-    nextToken: String
 }
 
 type User @versioned {
@@ -195,11 +182,6 @@ input AddUserInput {
   phone_number: AWSPhone
 }
 
-type PaginatedUser {
-  items: [User!]
-  nextToken: String
-}
-
 enum AddressType {
   BILLING
   CONTACT
@@ -239,15 +221,10 @@ type AddAddressInput {
   country: String
 }
 
-type PaginatedAddress {
-  items: [Address!]
-  nextToken: String
-}
-
 type Account @versioned {
   id: ID!
   name: String!
-  addresses(limit: Int, nextToken: String): PaginatedAddress
+  addresses(limit: Int): [Address]
   website: String
   taxId: String
   owner: ID!
@@ -257,8 +234,8 @@ type Account @versioned {
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   active: Int
-  users(limit: Int, nextToken: String): PaginatedUser
-  forms(limit: Int, nextToken: String): PaginatedForm
+  users(limit: Int): [User]
+  forms(limit: Int): [Form]
 }
 
 input AccountFilterInput {
@@ -275,11 +252,6 @@ input UpdateAccountInput {
 
 input AddAccountInput {
   name: String!
-}
-
-type PaginatedAccount {
-  items: [Account!]
-  nextToken: String
 }
 
 type PlanType @versioned {
@@ -318,11 +290,6 @@ input UpdatePlanTypeInput {
   cost: Float
   billingTerm: String
   active: Int
-}
-
-type PaginatedPlanType {
-  items: [PlanType!]
-  nextToken: String
 }
 
 type Plan @versioned {
@@ -367,11 +334,6 @@ input UpdatePlanInput {
   active: Int!
 }
 
-type PaginatedPlan {
-  items: [Plan!]
-  nextToken: String
-}
-
 type IntegrationType {
   id: ID!
   owner: ID!
@@ -402,11 +364,6 @@ input UpdateIntegrationTypeInput {
   id: ID!
   name: String!
   active: Int
-}
-
-type PaginatedIntegrationType {
-  items: [IntegrationType!]
-  nextToken: String
 }
 
 type Integration @versioned {
@@ -467,50 +424,45 @@ input UpdateIntegrationInput {
   method: String
 }
 
-type PaginatedIntegration {
-  items: [Integration!]
-  nextToken: String
-}
-
 type Query {
   getAccount(accountId: ID!): Account
   getUser(userId: ID!): User
   getPlan(planId: String!): Plan
-  getActiveAccountPlan(accountId: String!): PaginatedPlan
+  getActiveAccountPlan(accountId: String!): Plan
   getPlanType(planTypeId: String!): PlanType
-  getForm(formId: String!, versionId: ID!) : Form!
+  getForm(formId: String!, versionId: ID!) : Form
   getIntegrationType(integrationTypeId: String!): IntegrationType
   getIntegration(integrationId: String!): Integration
   getFormEntry(formEntryId: String!): FormEntry
 
-  listAccounts(limit: Int, nextToken: String, filter: AccountFilterInput): PaginatedAccount!
-  listUsers(limit: Int, nextToken: String, filter: UserFilterInput) : PaginatedUser!
-#   listAccountUsers(accountId: String!, limit: Int, nextToken: String): PaginatedUser!
-#   listAccountUsersActive(accountId: String!, limit: Int, nextToken: String): PaginatedUser!
-#   listAccountUsersInGroup(accountId: String!, group: String!, limit: Int, nextToken: String): PaginatedUser!
+  listAccounts(limit: Int, filter: AccountFilterInput): [Account]
+  listUsers(limit: Int, filter: UserFilterInput) : [User]
+#   listAccountUsers(accountId: String!, limit: Int): [User]
+#   listAccountUsersActive(accountId: String!, limit: Int): [User]
+#   listAccountUsersInGroup(accountId: String!, group: String!, limit: Int): [User]
 
-  listPlans(limit: Int, nextToken: String, filter: PlanFilterInput): PaginatedPlan!
-#   listAccountPlans(accountId: String!, limit: Int, nextToken: String): PaginatedPlan!
-  listPlanTypes(limit: Int, nextToken: String, filter: PlanTypeFilterInput): PaginatedPlanType!
-#   listActivePlanTypes(limit: Int, nextToken: String): PaginatedPlanType!
+  listPlans(limit: Int, filter: PlanFilterInput): [Plan]
+#   listAccountPlans(accountId: String!, limit: Int): [Plan]
+  listPlanTypes(limit: Int, filter: PlanTypeFilterInput): [PlanType]
+#   listActivePlanTypes(limit: Int): [PlanType]
 
-  listForms(limit: Int, nextToken: String, filter: FormFilterInput) : PaginatedForm!
-#   listAccountForms(accountId: String!, limit: Int, nextToken: String) : PaginatedForm!
-#   listAccountFormsActive(accountId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!
-#   listAccountFormsByUser(accountId: String!, userId: String!, limit: Int, nextToken: String) : PaginatedForm!
-#   listAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int, nextToken: String) : PaginatedForm!
+  listForms(limit: Int, filter: FormFilterInput) : [Form]
+#   listAccountForms(accountId: String!, limit: Int) : [Form]
+#   listAccountFormsActive(accountId: String!, active: String!, limit: Int) : [Form]
+#   listAccountFormsByUser(accountId: String!, userId: String!, limit: Int) : [Form]
+#   listAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int) : [Form]
 
-  listIntegrationTypes(limit: Int, nextToken: String, filter: IntegrationTypeFilterInput): PaginatedIntegrationType!
-#   listIntegrationTypesByPlanType(planTypeId: String!, limit: Int, nextToken: String): PaginatedIntegrationType!
-#   listIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegrationType!
+  listIntegrationTypes(limit: Int, filter: IntegrationTypeFilterInput): [IntegrationType]
+#   listIntegrationTypesByPlanType(planTypeId: String!, limit: Int): [IntegrationType]
+#   listIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int): [IntegrationType]
 
-  listIntegrations(limit: Int, nextToken: String, filter: IntegrationFilterInput): PaginatedIntegration!
-#   listAccountIntegrations(accountId: String!, limit: Int, nextToken: String): PaginatedIntegration!
-#   listAccountFormIntegrations(accountId: String!, formId: String!, limit: Int, nextToken: String): PaginatedIntegration!
-#   listAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int, nextToken: String): PaginatedIntegration!
+  listIntegrations(limit: Int, filter: IntegrationFilterInput): [Integration]
+#   listAccountIntegrations(accountId: String!, limit: Int): [Integration]
+#   listAccountFormIntegrations(accountId: String!, formId: String!, limit: Int): [Integration]
+#   listAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int): [Integration]
 
-  listFormEntries(formId: String!) : PaginatedFormEntries!
-  listFormEntriesByTime(formId: String!, timestampPrefix: String!): PaginatedFormEntries!
+  listFormEntries(formId: String!) : [FormEntry]
+  listFormEntriesByTime(formId: String!, timestampPrefix: String!): [FormEntry]
 }
 
 type Mutation {

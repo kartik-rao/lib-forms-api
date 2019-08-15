@@ -1,30 +1,7 @@
 $util.qr($ctx.stash.paths.add("FN_passthrough_RES.vtl"))
-#set($operation=$ctx.stash.operation)
-#set($request=$ctx.stash.request)
-#set($results=$ctx.stash.results)
-#set($itemType=$request.itemType)
-
 #if($ctx.error)
     $util.qr($ctx.stash.put("error", $ctx.error))
     $util.error($ctx.error.message, $ctx.error.type)
 #end
-
-#if($results)
-    #if($operation == 'get')
-        #if(!$results[$itemType] || $results[$itemType][0].size() == 0)
-            $util.error("Item ${request.itemType} [${request.id}] does not exist", 'NotFound')
-        #end
-        $util.toJson($results[$itemType][0][0])
-    #elseif($operation == 'put')
-        $util.toJson($results[$itemType][1][0])
-    #elseif($operation == 'delete')
-        #if(!$results[$itemType] || $results[$itemType][0].size() == 0)
-            $util.error("Item ${request.itemType} [${request.id}] does not exist", 'NotFound')
-        #end
-        $util.toJson($results[$itemType][0][0])
-    #else
-        $util.toJson($results[$itemType][0])
-    #end
-#else
-    #return({})
-#end
+$util.qr($ctx.stash.put("FINAL", $context.result))
+$util.toJson($context.result)

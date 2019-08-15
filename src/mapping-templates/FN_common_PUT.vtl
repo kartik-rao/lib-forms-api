@@ -7,8 +7,4 @@ $util.qr($ctx.stash.paths.add("FN_common_PUT.vtl"))
     $util.error($ctx.error.message, $ctx.error.type)
 #end
 
-#if($ctx.result)
-    $util.toJson($util.rds.toJsonObject($ctx.result)[1][0])
-#else
-    $util.error("Item ${request.itemType} NULL response from PUT", 'NullPUTResponse')
-#end
+$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])

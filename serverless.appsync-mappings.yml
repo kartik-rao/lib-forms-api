@@ -11,7 +11,7 @@
   type: Query
   field: listUsers
   request: listAllUsers_REQ.vtl
-  response: passthrough-paginated_RES.vtl
+  response: FN_passthrough_RES.vtl
 
 ## Plan
 - dataSource: AppData
@@ -74,50 +74,50 @@
   type: Account
   field: plan
   request: getAccountPlan_REQ.vtl
-  response: getAccountPlan_RES.vtl
+  response: FN_passthrough_RES.vtl
 # Plan.planType
 - dataSource: AppData
   type: Plan
   field: planType
   request: getPlanPlanType_REQ.vtl
-  response: getPlanPlanType_RES.vtl
+  response: FN_passthrough_RES.vtl
 # Account.ownedBy
 - dataSource: AppData
   type: Account
   field: ownedBy
   request: getOwnedBy_REQ.vtl
-  response: getOwnedBy_RES.vtl
+  response: FN_passthrough_RES.vtl
 # Account.forms
 - dataSource: AppData
   type: Account
   field: forms
   request: getAccountForms_REQ.vtl
-  response: getAccountForms_RES.vtl
+  response: FN_passthrough_RES.vtl
 # Account.users
 - dataSource: AppData
   type: Account
   field: users
   request: getAccountUsers_REQ.vtl
-  response: getAccountUsers_RES.vtl
+  response: FN_passthrough_RES.vtl
+
+## Form
 - dataSource: AppData
   type: Query
   field: getForm
   request: getForm_REQ.vtl
   response: FN_passthrough_RES.vtl
-
-## Form
 # Form.ownedBy
 - dataSource: AppData
   type: Form
   field: ownedBy
   request: getOwnedBy_REQ.vtl
-  response: getOwnedBy_RES.vtl
+  response: FN_passthrough_RES.vtl
 # Form.account
 - dataSource: AppData
   type: Form
   field: account
   request: getParentAccount_REQ.vtl
-  response: getParentAccount_RES.vtl
+  response: FN_passthrough_RES.vtl
 # Form.formData
 - dataSource: AppData
   type: Form
@@ -129,13 +129,13 @@
   type: Form
   field: versions
   request: getFormVersions_REQ.vtl
-  response: passthrough-paginated_RES.vtl
+  response: FN_passthrough_RES.vtl
 
 - dataSource: AppData
   type: Query
   field: listForms
   request: listAllForms_REQ.vtl
-  response: passthrough-paginated_RES.vtl
+  response: FN_passthrough_RES.vtl
 
 - dataSource: AppData
   type: Mutation
@@ -178,10 +178,7 @@
   response: FN_passthrough_RES.vtl
   kind: PIPELINE
   functions:
-    - FN_getPlanType
-    - FN_common_GET
     - FN_updatePlanType
-    - FN_common_UPDATE
 
 - dataSource: AppData
   type: Mutation
@@ -190,10 +187,7 @@
   response: FN_passthrough_RES.vtl
   kind: PIPELINE
   functions:
-    - FN_getPlanType
-    - FN_common_GET
     - FN_deletePlanType
-    - FN_common_UPDATE
 
 - dataSource: AppData
   type: Mutation
@@ -205,7 +199,7 @@
   type: Mutation
   field: addForm
   request: addForm_REQ.vtl
-  response: addForm_RES.vtl
+  response: FN_passthrough_RES.vtl
 
 - dataSource: AppData
   type: Mutation

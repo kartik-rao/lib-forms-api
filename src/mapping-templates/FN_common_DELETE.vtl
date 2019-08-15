@@ -7,10 +7,8 @@ $util.qr($ctx.stash.paths.add("FN_common_GET.vtl"))
     $util.error($ctx.error.message, $ctx.error.type)
 #end
 
-#if($ctx.result)
-    $set($result=$util.rds.toJsonObject($ctx.result))
-    #if($result[0].size() == 0)
-        $util.error("Item ${request.itemType} [${request.id}] does not exist", 'NotFound')
-    #end
-    $util.toJson($result[0][0])
+#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)
+    $util.error("${request.itemType} [${request.id}] not found", 'NotFound')
+#else
+    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])
 #end

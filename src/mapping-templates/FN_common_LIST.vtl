@@ -7,8 +7,4 @@ $util.qr($ctx.stash.paths.add("FN_common_LIST.vtl"))
     $util.error($ctx.error.message, $ctx.error.type)
 #end
 
-#if($ctx.result)
-    $util.toJson($util.rds.toJsonObject($ctx.result)[0])
-#else
-    $util.toJson([])
-#end
+$utils.toJson($utils.rds.toJsonObject($ctx.result)[0])

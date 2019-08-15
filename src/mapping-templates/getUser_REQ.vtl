@@ -1,3 +1,4 @@
+$util.qr($ctx.stash.paths.add("getUser_REQ.vtl"))
 #set($identity=$ctx.stash.identity)
 #set($args=$ctx.arguments)
 
@@ -6,6 +7,7 @@
 
 #if($isAllowed == true)
     $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("id", $args.userId))
     $util.qr($ctx.stash.request.put("itemType", 'User'))
     $util.qr($ctx.stash.put("operation", 'get'))
     {
