@@ -77,31 +77,31 @@
   type: Account
   field: plan
   request: getAccountPlan_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: getAccountPlan_RES.vtl
 # Plan.planType
 - dataSource: AppData
   type: Plan
   field: planType
   request: getPlanPlanType_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: getPlanPlanType_RES.vtl
 # Account.ownedBy
 - dataSource: AppData
   type: Account
   field: ownedBy
   request: getOwnedBy_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: getOwnedBy_RES.vtl
 # Account.forms
 - dataSource: AppData
   type: Account
   field: forms
   request: getAccountForms_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: getAccountForms_RES.vtl
 # Account.users
 - dataSource: AppData
   type: Account
   field: users
   request: getAccountUsers_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: getAccountUsers_RES.vtl
 
 ## Form
 - dataSource: AppData
@@ -114,25 +114,25 @@
   type: Form
   field: ownedBy
   request: getOwnedBy_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: getOwnedBy_RES.vtl
 # Form.account
 - dataSource: AppData
   type: Form
   field: account
   request: getParentAccount_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: getParentAccount_RES.vtl
 # Form.formData
 - dataSource: AppData
   type: Form
   field: formData
   request: getFormVersion_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: getFormVersion_RES.vtl
 # Form.versions
 - dataSource: AppData
   type: Form
   field: versions
   request: getFormVersions_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  response: getFormVersions_RES.vtl
 
 - dataSource: AppData
   type: Query
@@ -150,6 +150,12 @@
   kind: PIPELINE
   functions:
     - FN_listPlanTypes
+# PlanType.ownedBy
+- dataSource: AppData
+  type: PlanType
+  field: ownedBy
+  request: getOwnedBy_REQ.vtl
+  response: getOwnedBy_RES.vtl
 
 - dataSource: AppData
   type: Query

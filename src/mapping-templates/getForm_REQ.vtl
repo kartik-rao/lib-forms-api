@@ -1,8 +1,25 @@
-{
-  "version" : "2018-05-29",
-  "operation" : "GetItem",
-  "key": {
-    "id": $util.dynamodb.toDynamoDBJson($context.arguments.formId),
-    "type" : $util.dynamodb.toDynamoDBJson("FORM")
-  }
-}
+$util.qr($ctx.stash.paths.add("getForm_REQ.vtl"))
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments)
+
+#set($isAllowed = false)
+#if($identity.isAdmin == true)
+    #set($isAllowed = true)
+#end
+
+#if($isAllowed == true)
+    $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("itemType", 'Form'))
+    $util.qr($ctx.stash.put("operation", 'get'))
+    {
+        "statements": [
+            #if(!$identity.isAdmin)
+                "SELECT * FROM Form WHERE id='${args.formId}' AND accountId='${identity.tenantId}'"
+            #else
+                "SELECT * FROM Form WHERE id='${args.formId}'"
+            #end
+        ]
+    }
+#else
+    $util.error("User [${identity.callerId}] cannot execute [GET] on Form[${args.formId}]", "Unauthorized")
+#end

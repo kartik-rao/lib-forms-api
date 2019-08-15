@@ -1,9 +1,6 @@
-#set($attribs = $context.arguments)
+$util.qr($ctx.stash.paths.add("getParentAccount_REQ.vtl"))
 {
-    "version" : "2018-05-29",
-    "operation" : "GetItem",
-    "key": {
-        "id"  : {"S": "${context.source.id}"},
-        "type": {"S": "ACCOUNT"}
-    }
+    "statements": [
+        "SELECT * FROM Account WHERE id='${ctx.source.accountId}'"
+    ]
 }
