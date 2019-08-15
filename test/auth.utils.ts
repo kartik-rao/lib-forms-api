@@ -22,11 +22,11 @@ interface IFormsAppUser {
 }
 
 const SSM = {
-    State : "/App/formsli/dev/tenantState",
-    GlobalAdmin : "/App/formsli/dev/globalAdmin",
-    AccountAdmin : "/App/formsli/dev/tenantAccountAdmin",
-    AccountEditor : "/App/formsli/dev/tenantAccountEditor",
-    AccountViewer : "/App/formsli/dev/tenantAccountViewer",
+    State : "/app/formsli/dev/tenantState",
+    GlobalAdmin : "/app/formsli/dev/globalAdmin",
+    AccountAdmin : "/app/formsli/dev/tenantAccountAdmin",
+    AccountEditor : "/app/formsli/dev/tenantAccountEditor",
+    AccountViewer : "/app/formsli/dev/tenantAccountViewer"
 }
 
 export class AuthUtils {
@@ -62,7 +62,7 @@ export class AuthUtils {
             try {
                 console.log("\n   AuthUtils.checking tenant state");
                 // Check if tenant has already been setup on this instance
-                let params = await ssm.getParametersByPath({Path: "/App/formsli/dev/", WithDecryption: true}).promise();
+                let params = await ssm.getParametersByPath({Path: "/app/formsli/dev/", WithDecryption: true}).promise();
                 let state = AuthUtils.findParameter(SSM.State, params.Parameters);
                 if (!state || state != "1") {
                     throw new Error("NotSetup");

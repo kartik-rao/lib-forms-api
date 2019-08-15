@@ -7,17 +7,18 @@ import { Inbox } from 'mailslurp-swagger-sdk-ts';
 const config = require("../outputs/stack.dev.json");
 const mailSlurp = new MailSlurp({ apiKey: "85117a16750ebeb8c6e659c6e9984ac0290557c2dfa90df89d54fc72b170ac8a" })
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 120000;
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;
 
 import * as AWS from 'aws-sdk';
 import { AdminDisableUserRequest, AdminDeleteUserRequest, AdminCreateUserResponse } from "aws-sdk/clients/cognitoidentityserviceprovider";
+import { AuthUtils } from './auth.utils';
 
 const SSM = {
-    State : "/App/formsli/dev/tenantState",
-    GlobalAdmin : "/App/formsli/dev/globalAdmin",
-    AccountAdmin : "/App/formsli/dev/tenantAccountAdmin",
-    AccountEditor : "/App/formsli/dev/tenantAccountEditor",
-    AccountViewer : "/App/formsli/dev/tenantAccountViewer",
+    State : "/app/formsli/dev/tenantState",
+    GlobalAdmin : "/app/formsli/dev/globalAdmin",
+    AccountAdmin : "/app/formsli/dev/tenantAccountAdmin",
+    AccountEditor : "/app/formsli/dev/tenantAccountEditor",
+    AccountViewer : "/app/formsli/dev/tenantAccountViewer",
 }
 
 var credentials = new AWS.SharedIniFileCredentials({profile: 'fl-infrastructure-dev'});
@@ -38,13 +39,18 @@ describe("Auth", () => {
     let accAdminInbox: Inbox;
     let accAdmin : ISignUpResult;
     let tenantId: string;
-    const tenant = `Dev-Formsli`;
-    const password = "P@ssword1";
+    const TestTenantName: string = 'SPECAUTH';
+    const TestTenantPassword: string = "Password@1000";
+
+    beforeAll(async (done) => {
+        await AuthUtils.setup();
+    }, 60000);
 
     describe("Global Admin", () => {
         it("can sign in", async (done) => {
             try {
-                const user = await Auth.signIn(config["UserPoolAdminUser"], "LmgIBf:3");
+                const user = await Auth.signIn(AuthUtils.globalAdmin.username,
+                    AuthUtils.globalAdmin.password);
                 expect(user).toBeDefined();
                 done();
             } catch (error) {
@@ -75,11 +81,11 @@ describe("Auth", () => {
             try {
                 accAdmin = await Auth.signUp({
                     username: accAdminInbox.emailAddress,
-                    password: password,
+                    password: TestTenantPassword,
                     attributes : {
-                        "custom:tenantName" : tenant,
+                        "custom:tenantName" : TestTenantName,
                         "given_name" : "AccountAdmin",
-                        "family_name": tenant
+                        "family_name": TestTenantName
                     }
                 });
                 expect(accAdmin).toBeDefined();
@@ -117,7 +123,7 @@ describe("Auth", () => {
 
         it("Sign In", async (done) => {
 
-            await Auth.signIn(accAdminInbox.emailAddress, password);
+            await Auth.signIn(accAdminInbox.emailAddress, TestTenantPassword);
             let user: CognitoUser = await Auth.currentAuthenticatedUser();
 
             user.getUserAttributes((err, attributes=[]) => {
@@ -132,7 +138,7 @@ describe("Auth", () => {
                 });
                 expect(attrs['custom:environment']).toBe('dev', "custom:environment should be 'dev'");
                 expect(attrs['custom:group']).toBe('AccountAdmin', "custom:group should be 'AccountAdmin'");
-                expect(attrs['custom:tenantName']).toEqual(tenant);
+                expect(attrs['custom:tenantName']).toEqual(TestTenantName);
                 expect(attrs['custom:tenantId']).toBeDefined("custom:tenantId should be set");
                 expect(attrs['email_verified']).toBeTruthy();
                 tenantId = attrs['custom:tenantId'];
@@ -154,7 +160,7 @@ describe("Auth", () => {
 
         it("Invite User", async (done) => {
             try {
-                await Auth.signIn(accAdminInbox.emailAddress, password);
+                await Auth.signIn(accAdminInbox.emailAddress, TestTenantPassword);
                 let admin: CognitoUser = await Auth.currentAuthenticatedUser();
                 let session: CognitoUserSession = await Auth.currentSession();
                 let token = session.getIdToken().getJwtToken();
@@ -162,7 +168,7 @@ describe("Auth", () => {
                 let invitePayload = {
                     "custom:group" : "Viewer",
                     "custom:source": admin.getUsername(), // this is sub not email
-                    family_name: tenant,
+                    family_name: TestTenantName,
                     given_name:"Viewer",
                     email: accViewerInbox.emailAddress
                 }
@@ -196,7 +202,7 @@ describe("Auth", () => {
                 expect(attrs['custom:group']).toBe('Viewer');
                 expect(attrs['custom:tenantId']).toEqual(tenantId);
                 expect(attrs['custom:source']).toEqual(accAdmin.userSub);
-                expect(attrs['custom:tenantName']).toEqual(tenant);
+                expect(attrs['custom:tenantName']).toEqual(TestTenantName);
                 done();
 
             } catch (error) {
@@ -228,6 +234,7 @@ describe("Auth", () => {
                     }).promise();
                     done();
                 } catch (error) {
+                    console.log(error);
                     done.fail(error);
                 }
             } else {
@@ -250,7 +257,8 @@ describe("Auth", () => {
                 }).promise();
                 done();
             } catch (error) {
-                fail(error)
+                console.log(error);
+                done.fail(error);
             }
         } else {
             done();
