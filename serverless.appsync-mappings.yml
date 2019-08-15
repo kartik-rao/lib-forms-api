@@ -10,8 +10,11 @@
 - dataSource: AppData
   type: Query
   field: listUsers
-  request: listAllUsers_REQ.vtl
+  request: pipeline_identify_BEF.vtl
   response: FN_passthrough_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_listUsers
 
 ## Plan
 - dataSource: AppData

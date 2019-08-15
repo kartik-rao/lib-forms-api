@@ -178,7 +178,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1565841377700-2019-08-15T03:56:17.700Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1565842748436-2019-08-15T04:19:08.436Z/formsli.zip"
         },
         "FunctionName": "formsli-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -228,7 +228,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1565841377700-2019-08-15T03:56:17.700Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1565842748436-2019-08-15T04:19:08.436Z/formsli.zip"
         },
         "FunctionName": "formsli-invite",
         "Handler": "src/invite.handle",
@@ -495,7 +495,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1565841354152": {
+    "ApiGatewayDeployment1565842726650": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -1353,6 +1353,27 @@
         "FunctionVersion": "2018-05-29"
       }
     },
+    "GraphQlFunctionConfigurationFNlistUsers": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNlistUsers",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"listAllUsers_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#if($identity.isAdmin == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'User'))\n    $util.qr($ctx.stash.put(\"operation\", 'list'))\n    {\n        \"statements\": [\n            #if(!$identity.isAdmin)\n                \"SELECT * FROM User WHERE active=1 AND accountId='${identity.tenantId}'\"\n            #else\n                \"SELECT * FROM User\"\n            #end\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute LIST on User\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_common_LIST.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$utils.toJson($utils.rds.toJsonObject($ctx.result)[0])",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
     "GraphQlFunctionConfigurationFNupdateAccount": {
       "Type": "AWS::AppSync::FunctionConfiguration",
       "Properties": {
@@ -1623,12 +1644,17 @@
         },
         "TypeName": "Query",
         "FieldName": "listUsers",
-        "RequestMappingTemplate": "#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    $util.qr($ctx.stash.put(\"group\", $group))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($ctx.stash.put(\"isAdmin\", true))\n    #end\n#end\n## Only Admins allowed\n#if (!$isAdmin == true)\n    $utils.unauthorized()\n#end\n#set($attribs = $context.arguments)\n{\n    \"version\"   : \"2018-05-29\",\n    \"operation\" : \"Query\",\n    \"index\"     : \"${index_appdata_gsi}\",\n    \"query\"     : {\n      \"expression\": \"#type = :objectType\",\n      \"expressionNames\" : {\n            \"#type\" : \"type\"\n        },\n      \"expressionValues\" : {\n        \":objectType\" : { \"S\": \"USER\" }\n      }\n  },\n  \"limit\": $util.defaultIfNull(${ctx.args.limit}, 20),\n  \"nextToken\": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))\n}",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"pipeline_identify_BEF.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
         "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_passthrough_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
-        "DataSourceName": {
-          "Fn::GetAtt": [
-            "GraphQlDsAppData",
-            "Name"
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNlistUsers",
+                "FunctionId"
+              ]
+            }
           ]
         }
       }

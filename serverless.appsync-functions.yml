@@ -12,6 +12,12 @@
   response: FN_common_LIST.vtl
 
 - dataSource: AppData
+  type: Query
+  name: FN_listUsers
+  request: listAllUsers_REQ.vtl
+  response: FN_common_LIST.vtl
+
+- dataSource: AppData
   type: Mudation
   name: FN_updateAccount
   request: updateAccount_REQ.vtl

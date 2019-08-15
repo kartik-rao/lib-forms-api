@@ -1,28 +1,20 @@
-#foreach($group in $context.identity.claims.get("cognito:groups"))
-    $util.qr($ctx.stash.put("group", $group))
-    #if($group == "Admin")
-        #set($isAdmin = true)
-        $util.qr($ctx.stash.put("isAdmin", true))
-    #end
+$util.qr($ctx.stash.paths.add("listAllUsers_REQ.vtl"))
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments)
+
+#if($identity.isAdmin == true)
+    $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("itemType", 'User'))
+    $util.qr($ctx.stash.put("operation", 'list'))
+    {
+        "statements": [
+            #if(!$identity.isAdmin)
+                "SELECT * FROM User WHERE active=1 AND accountId='${identity.tenantId}'"
+            #else
+                "SELECT * FROM User"
+            #end
+        ]
+    }
+#else
+    $util.error("User [${identity.callerId}] cannot execute LIST on User", "Unauthorized")
 #end
-## Only Admins allowed
-#if (!$isAdmin == true)
-    $utils.unauthorized()
-#end
-#set($attribs = $context.arguments)
-{
-    "version"   : "2018-05-29",
-    "operation" : "Query",
-    "index"     : "${index_appdata_gsi}",
-    "query"     : {
-      "expression": "#type = :objectType",
-      "expressionNames" : {
-            "#type" : "type"
-        },
-      "expressionValues" : {
-        ":objectType" : { "S": "USER" }
-      }
-  },
-  "limit": $util.defaultIfNull(${ctx.args.limit}, 20),
-  "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))
-}
