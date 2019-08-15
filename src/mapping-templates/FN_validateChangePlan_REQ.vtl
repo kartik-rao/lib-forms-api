@@ -1,9 +1,0 @@
-#if(!$ctx.arguments.accountId || !$ctx.arguments.planTypeId)
-    $util.error("Missing mandatory params", "400")
-#end
-#if($ctx.stash.isAdmin == true || ($ctx.stash.tenantId == $ctx.arguments.accountId && $ctx.stash.isAccountAdmin == true ))
-    #set($result = {})
-    #return($result)
-#else
-    $util.unauthorized()
-#end
