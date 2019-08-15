@@ -11,8 +11,9 @@
     $util.qr($ctx.stash.put("request", $args))
     $util.qr($ctx.stash.request.put("itemType", 'PlanType'))
     $util.qr($ctx.stash.put("operation", 'delete'))
-    $set($now=$util.time.nowISO8601())
+    $set($now="${util.time.nowISO8601()}")
     {
+        "version": "2018-05-29",
         "statements": [
             "SELECT * FROM PlanType WHERE id ='${args.planTypeId}'",
             "UPDATE PlanType SET isDeleted=1, active=0, updatedAt='${now}' WHERE id='${args.planTypeId}'",
