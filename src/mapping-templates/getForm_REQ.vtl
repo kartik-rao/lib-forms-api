@@ -12,6 +12,7 @@ $util.qr($ctx.stash.paths.add("getForm_REQ.vtl"))
     $util.qr($ctx.stash.request.put("itemType", 'Form'))
     $util.qr($ctx.stash.put("operation", 'get'))
     {
+        "version": "2018-05-29",
         "statements": [
             #if(!$identity.isAdmin)
                 "SELECT * FROM Form WHERE id='${args.formId}' AND accountId='${identity.tenantId}'"
