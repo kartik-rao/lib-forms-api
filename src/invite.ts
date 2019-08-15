@@ -5,7 +5,7 @@ process.env.TZ = 'UTC';
 import * as AWS from 'aws-sdk';
 import { AdminAddUserToGroupRequest, AdminCreateUserRequest, AdminCreateUserResponse } from "aws-sdk/clients/cognitoidentityserviceprovider";
 
-const DBClusterARN = process.env.dbClusterArn;
+const DBClusterId = process.env.dbClusterId;
 const DBSecretARN = process.env.dbClusterSecretArn;
 const ServiceName  = process.env.serviceName;
 
@@ -129,7 +129,7 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
             console.log(`${ServiceName} - invite.handle - RDS.Insert User`);
             const addUserSQL:AWS.RDSDataService.ExecuteStatementRequest = {
                 database: ServiceName,
-                resourceArn: DBClusterARN,
+                resourceArn: DBClusterId,
                 secretArn: DBSecretARN,
                 sql: `INSERT INTO User(id, ownerId, userGroup, accountId, email, phone_number, given_name, family_name, createdAt)
                     VALUES(:id, :ownerId, :userGroup, :accountId, :email, :phone_number, :given_name, :family_name, :createdAt)`,

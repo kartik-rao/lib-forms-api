@@ -17,7 +17,8 @@ provider:
     region: ${self:provider.region}
     environment: ${self:provider.stage}
     serviceName: ${self:service}
-    dbClusterArn: "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-${self:provider.stage}"
+    databaseName: ${self:service}
+    dbClusterId: "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-${self:provider.stage}"
     dbClusterSecretArn: ${ssm:/app/formsli/dev/db/credentialsArn}
   iamRoleStatements:
     - Effect: "Allow"
@@ -59,14 +60,12 @@ plugins:
   - serverless-pseudo-parameters
   - serverless-iam-roles-per-function
   - serverless-appsync-plugin
-  - serverless-dynamodb-local
   - '@anttiviljami/serverless-stack-output'
   - serverless-appsync-offline
   - serverless-offline
 
 resources:
   - ${file(resources/iam.yml)}
-  # - ${file(resources/dynamodb.yml)}
   - ${file(resources/s3.yml)}
   - ${file(resources/cognito.userpool.yml)}
   - ${file(resources/cognito.identitypool.yml)}
@@ -85,22 +84,9 @@ custom:
       forceInclude:
         - source-map-support
   bucket: ${self:service}-${self:provider.stage}-data
-  dynamodb:
-    start:
-      port: 8000
-      inMemory: true
-  appsync-offline:
-    port: 62222
-    dynamodb:
-      client:
-        endpoint: "http://localhost:8000"
-        region: localhost
   appSync:
     name:  formsli-api-${self:provider.stage}
-    # apiKey # only required for update-appsync/delete-appsync
     authenticationType: AMAZON_COGNITO_USER_POOLS
-    # if AMAZON_COGNITO_USER_POOLS
-    # serviceRoleArn: { Fn::GetAtt: [AppSyncRDSRole, Arn] }
     userPoolConfig:
       awsRegion: ${self:provider.region}
       defaultAction: ALLOW
@@ -116,7 +102,7 @@ custom:
         description: RDS source for formsli
         config:
           # The identifier for RDSCluster. Where RDSCluster is the cluster defined in Resources
-          dbClusterIdentifier: ${self:provider.environment.dbClusterArn}
+          dbClusterIdentifier: ${self:provider.environment.dbClusterId}
           # The RDSClusterSecret ARN. Where RDSClusterSecret is the cluster secret defined in Resources
           awsSecretStoreArn: ${self:provider.environment.dbClusterSecretArn}
           databaseName: ${self:service}
@@ -127,7 +113,6 @@ custom:
     functionConfigurations: ${file(serverless.appsync-functions.yml)}
     ## Add substitutions here to replace all hardcoded table/index names in mapping templates
     substitutions:
-
 
 functions:
   postConfirmation:
