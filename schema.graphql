@@ -317,9 +317,10 @@ input AddPlanInput {
 }
 
 input UpdatePlanInput {
-  id: ID!
-  endDate: AWSDateTime
+  planId: ID!
+  accountId: ID!
   active: Int!
+  endDate: AWSDateTime
 }
 
 type IntegrationType {
