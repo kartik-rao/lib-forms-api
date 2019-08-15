@@ -1,9 +1,8 @@
 #set($identity=$ctx.stash.identity)
 #set($args=$ctx.arguments)
-#set($results=$ctx.stash.results)
 
 #set($isAllowed = false)
-#if($identity.isAdmin || ($identity.isAccountAdmin == true && $identity.tenantId == $args.accountId))
+#if($identity.isAdmin || $identity.isAccountAdmin == true && $identity.tenantId == $args.accountId)
     #set($isAllowed = true)
 #end
 
@@ -11,12 +10,13 @@
     $util.qr($ctx.stash.put("request", $args))
     $util.qr($ctx.stash.request.put("itemType", 'Plan'))
     $util.qr($ctx.stash.put("operation", 'delete'))
-    $set($now=$util.time.nowISO8601())
+    $set($now="${util.time.nowISO8601()}")
     {
+        "version": "2018-05-29",
         "statements": [
             "SELECT * FROM Plan WHERE id ='${args.planId}'",
             "UPDATE Plan SET isDeleted=1, active=0, endDate='${now}', updatedAt='${now}' WHERE id='${args.planId}' AND accountId='${args.accountId}'",
-        ],
+        ]
     }
 #else
     $util.error("User [${identity.callerId}] cannot execute [DELETE] on Plan[${args.planId}]", "Unauthorized")

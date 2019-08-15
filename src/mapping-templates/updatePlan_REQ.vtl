@@ -11,14 +11,10 @@
     $util.qr($ctx.stash.put("request", $args))
     $util.qr($ctx.stash.request.put("itemType", 'Plan'))
     $util.qr($ctx.stash.put("operation", 'put'))
-    $set($now="${util.time.nowISO8601()}")
     {
         "version": "2018-05-29",
         "statements": [
-            "UPDATE Plan SET updatedAt='${now}'
-                #if($args.endDate) ", endDate='${args.endDate}' " #end
-                #if(!$util.isNull($args.active)) ", active=${args.active} " #end
-                WHERE id='${args.planId}'",
+            "UPDATE Plan SET updatedAt='${util.time.nowISO8601()}' #if($args.endDate) , endDate='${args.endDate}' #end #if(!$util.isNull($args.active)) , active=${args.active} #end WHERE id='${$args.planId}'",
             "SELECT * FROM Plan WHERE id ='${args.planId}'"
         ],
     }

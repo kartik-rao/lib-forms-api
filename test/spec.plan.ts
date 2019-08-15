@@ -11,7 +11,6 @@ Auth.configure(ApiHelper.apiConfig().Auth);
 describe("Plan", () => {
     let token: string;
     let planId: string;
-    let planVersion: number;
     let planTypeId: string;
     let tenantId: string;
 
@@ -27,9 +26,9 @@ describe("Plan", () => {
                     name: "${planName}",
                     billingTerm: "Monthly",
                     cost: 50,
-                    active: true
+                    active: 1
                 })
-                {id, name, billingTerm, cost, version, createdAt, updatedAt}
+                {id, name, billingTerm, cost, createdAt, updatedAt}
                 }
             `};
             let response = await ApiHelper.makeRequest("addPlanType", addPlanType, token);
@@ -78,7 +77,7 @@ describe("Plan", () => {
                 accountId: "${tenantId}",
                 planTypeId: "${planTypeId}"
             })
-            {id, startDate, endDate, active, planTypeId, accountId, createdAt, updatedAt, version}
+            {id, startDate, endDate, active, planTypeId, accountId, createdAt, updatedAt}
             }
         `};
 
@@ -92,7 +91,6 @@ describe("Plan", () => {
 
             expect(parsed).toBeDefined();
             planId = parsed.id;
-            planVersion = parsed.version;
             expect(parsed.accountId).toEqual(tenantId);
             expect(parsed.planTypeId).toEqual(planTypeId);
             expect(parsed).toBeDefined();
@@ -111,7 +109,7 @@ describe("Plan", () => {
 
         const getPlan = {query: `query {
             getPlan (planId: "${planId}")
-            {id, planType {id name cost}, version, createdAt, updatedAt}
+            {id, planType {id name cost}, createdAt, updatedAt}
             }
         `};
 
@@ -138,10 +136,9 @@ describe("Plan", () => {
         const updatePlan = {query: `mutation {
             updatePlan (input: {
                 id: "${planId}",
-                active: false,
-                expectedVersion: ${planVersion}
+                active: 0
             })
-            {id, version, active, updatedAt, version}
+            {id, active, updatedAt}
             }
         `};
 
@@ -154,8 +151,6 @@ describe("Plan", () => {
             hasErrors && done.fail(errors[0].message);
             expect(parsed).toBeDefined("Response.data should exist");
             expect(parsed.active).toBeTruthy();
-            expect(parsed.version).toBeGreaterThan(planVersion);
-            planVersion = parsed.version;
         } catch (error) {
             fail(error);
         }
@@ -170,7 +165,7 @@ describe("Plan", () => {
 
         const deletePlan = {query: `mutation {
             deletePlan (planId: "${planId}", accountId: "${tenantId}")
-            {id, isDeleted, active, updatedAt, version}
+            {id, isDeleted, active, updatedAt}
             }
         `};
 
