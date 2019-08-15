@@ -413,6 +413,11 @@ input UpdateIntegrationInput {
   method: String
 }
 
+input OffsetLimit {
+  offset: Int
+  limit: Int
+}
+
 type Query {
   getAccount(accountId: ID!): Account
   getUser(userId: ID!): User
@@ -424,34 +429,34 @@ type Query {
   getIntegration(integrationId: String!): Integration
   getFormEntry(formEntryId: String!): FormEntry
 
-  listAccounts(limit: Int, filter: AccountFilterInput): [Account]
-  listUsers(limit: Int, filter: UserFilterInput) : [User]
+  listAccounts(offsetLimit: OffsetLimit, filter: AccountFilterInput): [Account]
+  listUsers(offsetLimit: OffsetLimit, filter: UserFilterInput) : [User]
 #   listAccountUsers(accountId: String!, limit: Int): [User]
 #   listAccountUsersActive(accountId: String!, limit: Int): [User]
 #   listAccountUsersInGroup(accountId: String!, group: String!, limit: Int): [User]
 
-  listPlans(limit: Int, filter: PlanFilterInput): [Plan]
+  listPlans(offsetLimit: OffsetLimit, filter: PlanFilterInput): [Plan]
 #   listAccountPlans(accountId: String!, limit: Int): [Plan]
-  listPlanTypes(limit: Int, filter: PlanTypeFilterInput): [PlanType]
+  listPlanTypes(offsetLimit: OffsetLimit, filter: PlanTypeFilterInput): [PlanType]
 #   listActivePlanTypes(limit: Int): [PlanType]
 
-  listForms(limit: Int, filter: FormFilterInput) : [Form]
+  listForms(offsetLimit: OffsetLimit, filter: FormFilterInput) : [Form]
 #   listAccountForms(accountId: String!, limit: Int) : [Form]
 #   listAccountFormsActive(accountId: String!, active: String!, limit: Int) : [Form]
 #   listAccountFormsByUser(accountId: String!, userId: String!, limit: Int) : [Form]
 #   listAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int) : [Form]
 
-  listIntegrationTypes(limit: Int, filter: IntegrationTypeFilterInput): [IntegrationType]
+  listIntegrationTypes(offsetLimit: OffsetLimit, filter: IntegrationTypeFilterInput): [IntegrationType]
 #   listIntegrationTypesByPlanType(planTypeId: String!, limit: Int): [IntegrationType]
 #   listIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int): [IntegrationType]
 
-  listIntegrations(limit: Int, filter: IntegrationFilterInput): [Integration]
+  listIntegrations(offsetLimit: OffsetLimit, filter: IntegrationFilterInput): [Integration]
 #   listAccountIntegrations(accountId: String!, limit: Int): [Integration]
 #   listAccountFormIntegrations(accountId: String!, formId: String!, limit: Int): [Integration]
 #   listAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int): [Integration]
 
-  listFormEntries(formId: String!) : [FormEntry]
-  listFormEntriesByTime(formId: String!, timestampPrefix: String!): [FormEntry]
+  listFormEntries(offsetLimit: OffsetLimit, formId: String!) : [FormEntry]
+  listFormEntriesByTime(offsetLimit: OffsetLimit, formId: String!, timestampPrefix: String!): [FormEntry]
 }
 
 type Mutation {

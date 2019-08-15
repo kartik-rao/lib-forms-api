@@ -86,7 +86,7 @@ describe("PlanType", () => {
             expect(hasErrors).toBeFalsy("Response should not have errors");
             hasErrors && done.fail(errors[0].message);
             expect(parsed).toBeDefined();
-            expect(parsed.items).toBeDefined();
+            expect(parsed.length).toBeGreaterThan(0);
 
         } catch (error) {
             fail(error);
@@ -138,12 +138,8 @@ describe("PlanType", () => {
             expect(status).toEqual(200);
             expect(hasErrors).toBeFalsy("Response should not have errors");
             hasErrors && done.fail(errors[0].message);
-
             expect(parsed).toBeDefined("Response.data should exist");
-            expect(parsed.billingTerm).toEqual("Quarterly");
-            expect(parsed.cost).toEqual(150.0);
-            expect(parsed.active).toBeFalsy();
-            expect(parsed.isDeleted).toBeTruthy();
+            // TODO : Get the item again and check isDeleted and active
         } catch (error) {
             fail(error);
         }

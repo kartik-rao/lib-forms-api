@@ -35,7 +35,7 @@
   type: Mutation
   name: FN_deletePlanType
   request: deletePlanType_REQ.vtl
-  response: FN_common_PUT.vtl
+  response: FN_common_DELETE.vtl
 - dataSource: AppData
   type: Mutation
   name: FN_updatePlanType
