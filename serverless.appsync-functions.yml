@@ -14,7 +14,7 @@
 - dataSource: AppData
   type: Query
   name: FN_listUsers
-  request: listAllUsers_REQ.vtl
+  request: listUsers_REQ.vtl
   response: FN_common_LIST.vtl
 
 - dataSource: AppData
