@@ -1,0 +1,43 @@
+AuroraRotationSecret:
+  Type: AWS::SecretsManager::Secret
+  Properties:
+    Description: Rotating RDS secrets
+    Name: ${self:service}-${self:provider.stage}-aurora-secret
+    GenerateSecretString:
+      SecretStringTemplate: '{"username": "admin"}'
+      GenerateStringKey: 'password'
+      PasswordLength: 16
+      ExcludeCharacters: '"@/\'
+
+AuroraRDSCluster:
+  Type: AWS::RDS::DBCluster
+  Properties:
+    MasterUsername: !Join ['', ['{{resolve:secretsmanager:', !Ref AuroraRotationSecret, ':SecretString:username}}' ]]
+    MasterUserPassword: !Join ['', ['{{resolve:secretsmanager:', !Ref AuroraRotationSecret, ':SecretString:password}}' ]]
+    # TODO: Enable when added to CFN
+    # EnableHttpEndpoint: true
+    DBClusterIdentifier: ${self:provider.environment.dbClusterId}
+    Engine: aurora
+    EngineMode: serverless
+    ScalingConfiguration:
+      AutoPause: true
+      MaxCapacity: 8
+      MinCapacity: 2
+    DatabaseName: ${self:service}
+    BackupRetentionPeriod: 1
+
+SecretAuroraRDSClusterAttachment:
+  Type: AWS::SecretsManager::SecretTargetAttachment
+  Properties:
+    SecretId: !Ref AuroraRotationSecret
+    TargetId: !Ref AuroraRDSCluster
+    TargetType: AWS::RDS::DBCluster
+
+# Print out the DB Cluster ARN and Secret ARN
+Outputs:
+  DBClusterARN:
+    Value:
+      Ref: AuroraRDSCluster
+  DBSecretARN:
+    Value:
+      Ref: AuroraRotationSecret
