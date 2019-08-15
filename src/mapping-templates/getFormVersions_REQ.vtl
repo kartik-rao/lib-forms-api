@@ -1,21 +1,6 @@
-#set($attribs = $context.arguments)
+$util.qr($ctx.stash.paths.add("getFormVersions_REQ.vtl"))
 {
-    "version"  : "2018-05-29",
-    "operation": "Query",
-    "index"    : "${index_appdata_gsi}",
-    "scanIndexForward" : false,
-    "query"    : {
-        "expression" : "#type = :type AND begins_with(#meta, :meta)",
-        "expressionNames" : {
-            "#type" : "type",
-            "#meta" : "meta"
-        },
-        "expressionValues": {
-            ":type" : {"S" : "FORMVERSION"},
-            ":meta" : {"S" : "${context.source.id}"}
-        }
-    },
-    "select" : "ALL_ATTRIBUTES",
-    "limit": $util.defaultIfNull(${ctx.args.limit}, 10),
-    "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))
+    "statements": [
+        "SELECT * FROM FormVersion WHERE formId='${ctx.source.formId}'"
+    ]
 }

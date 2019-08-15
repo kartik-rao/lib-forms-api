@@ -1,10 +1,4 @@
 $util.qr($ctx.stash.paths.add("getAccountUsers_REQ.vtl"))
-#set($identity=$ctx.stash.identity)
-#set($args=$ctx.arguments)
-
-$util.qr($ctx.stash.put("request", $args))
-$util.qr($ctx.stash.request.put("itemType", 'User'))
-$util.qr($ctx.stash.put("operation", 'list'))
 {
     "statements": [
         "SELECT * FROM User WHERE active=1 AND accountId='${ctx.source.id}'"

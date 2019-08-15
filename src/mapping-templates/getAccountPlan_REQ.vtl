@@ -1,19 +1,6 @@
-#set($identity=$ctx.stash.identity)
-#set($args=$ctx.arguments)
-
-## Only allow admin and account admin to get other users
-#set($isAllowed = $identity.isAdmin == true || $identity.tenantId == $ctx.source.id)
-
-#if($isAllowed == true)
-    $util.qr($ctx.stash.put("request", $args))
-    $util.qr($ctx.stash.request.put("itemType", 'Plan'))
-    $util.qr($ctx.stash.put("operation", 'get'))
-    {
-        "version": "2018-05-29",
-        "statements": [
-            "SELECT * FROM Plan WHERE accountId='${ctx.source.id}' and active=1"
-        ]
-    }
-#else
-    $util.error("User [${identity.callerId}] cannot execute [GET] on Account.Plan[${ctx.source.id}]", "Unauthorized")
-#end
+{
+    "version": "2018-05-29",
+    "statements": [
+        "SELECT * FROM Plan WHERE accountId='${ctx.source.id}' and active=1"
+    ]
+}

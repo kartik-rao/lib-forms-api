@@ -140,11 +140,6 @@
   request: listAllForms_REQ.vtl
   response: FN_passthrough_RES.vtl
 
-- dataSource: AppData
-  type: Mutation
-  field: addAccount
-  request: addAccount_REQ.vtl
-  response: FN_passthrough_RES.vtl
 
 ## PlanType
 - dataSource: AppData
@@ -191,12 +186,6 @@
   kind: PIPELINE
   functions:
     - FN_deletePlanType
-
-- dataSource: AppData
-  type: Mutation
-  field: addUser
-  request: addUser_REQ.vtl
-  response: FN_passthrough_RES.vtl
 
 - dataSource: AppData
   type: Mutation

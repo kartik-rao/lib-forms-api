@@ -1,6 +1,4 @@
 $util.qr($ctx.stash.paths.add("getAccountUsers_RES.vtl"))
-#set($request=$ctx.stash.request)
-#set($itemType=$request.itemType)
 
 #if($ctx.error)
     $util.qr($ctx.stash.put("error", $ctx.error))
