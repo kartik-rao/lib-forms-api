@@ -11,7 +11,6 @@ Auth.configure(ApiHelper.apiConfig().Auth);
 describe("PlanType", () => {
     let token: string;
     let planTypeId: string;
-    let planTypeVersion: number;
 
     beforeAll(async (done) => {
         try {
@@ -23,21 +22,21 @@ describe("PlanType", () => {
             console.error("spec.plantypes - beforeAll - ERROR", error);
             done.fail(error);
         }
-    });
+    }, 60000);
 
     afterAll(async (done) => {
         // Hard delete from dynamo
-        let client = new AWS.DynamoDB.DocumentClient();
-        try {
-            console.log(`DELETING [${planTypeId}]`)
-            await client.delete({TableName : config["FormEntriesTable"], Key: {id: planTypeId, type: "PLANTYPE"}}).promise();
-            await Auth.signOut();
-            done();
-        } catch (error) {
-            console.error("spec.plantypes - afterAll - ERROR", error);
-            done.fail(error);
-        }
-    });
+        const rdsCommonParams = {
+            database: config['Service'],
+            resourceArn: config['DBClusterId'],
+            secretArn: config['DBSecretARN']
+        };
+        let client = new AWS.RDSDataService();
+        await client.executeStatement({
+            ...rdsCommonParams, sql : `DELETE FROM PlanType where id='${planTypeId}}'`
+        }).promise();
+        done();
+    }, 10000);
 
     it("Add", async (done) => {
         let planName = `Test Plan - ${Math.random()}`
@@ -46,9 +45,9 @@ describe("PlanType", () => {
                 name: "${planName}",
                 billingTerm: "Monthly",
                 cost: 50,
-                active: false
+                active: 0
             })
-            {id, name, billingTerm, cost, version, createdAt, updatedAt}
+            {id, name, billingTerm, cost, active, createdAt, updatedAt}
             }
         `};
 
@@ -59,11 +58,9 @@ describe("PlanType", () => {
             expect(status).toEqual(200);
             expect(hasErrors).toBeFalsy("Response should not have errors");
             hasErrors && done.fail(errors[0].message);
-
             expect(parsed).toBeDefined();
             planTypeId = parsed.id;
-            planTypeVersion = parsed.version;
-            expect(parsed).toBeDefined();
+            expect(parsed.id).toBeDefined();
             expect(parsed.name).toEqual(planName);
             expect(parsed.billingTerm).toEqual("Monthly");
             expect(parsed.cost).toEqual(50.0);
@@ -78,14 +75,7 @@ describe("PlanType", () => {
     it("List", async(done) => {
         const listPlanTypes = {
             query: `query {
-                listPlanTypes(filter:{active: {eq: true}}) {
-                    items {
-                    id,
-                    name,
-                    cost
-                    },
-                    nextToken
-                }
+                listPlanTypes {id name ownedBy {id}}
             }`}
 
         try {
@@ -110,10 +100,9 @@ describe("PlanType", () => {
                 id: "${planTypeId}",
                 billingTerm: "Quarterly",
                 cost: 150,
-                active: true,
-                expectedVersion: ${planTypeVersion}
+                active:1
             })
-            {id, name, billingTerm, cost, active, updatedAt, version}
+            {id, name, billingTerm, cost, active, updatedAt}
             }
         `};
 
@@ -138,7 +127,7 @@ describe("PlanType", () => {
     it("Delete", async (done) => {
         const deletePlanType = {query: `mutation {
             deletePlanType (planTypeId: "${planTypeId}")
-            {id, name, isDeleted, cost, billingTerm, active, updatedAt, version}
+            {id, name, isDeleted, cost, billingTerm, active, updatedAt}
             }
         `};
 
