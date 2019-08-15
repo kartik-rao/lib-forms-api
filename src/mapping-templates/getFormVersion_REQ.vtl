@@ -1,9 +1,12 @@
-#set($attribs = $context.arguments)
+$util.qr($ctx.stash.paths.add("getFormVersion_REQ.vtl"))
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments)
+
+$util.qr($ctx.stash.put("request", $args))
+$util.qr($ctx.stash.request.put("itemType", 'FormVersion'))
+$util.qr($ctx.stash.put("operation", 'get'))
 {
-    "version" : "2018-05-29",
-    "operation" : "GetItem",
-    "key": {
-        "id"  : {"S": "${context.source.versionId}"},
-        "type": {"S": "FORMVERSION"}
-    }
+    "statements": [
+        "SELECT * FROM FormVersion WHERE id='${ctx.source.versionId}'"
+    ]
 }

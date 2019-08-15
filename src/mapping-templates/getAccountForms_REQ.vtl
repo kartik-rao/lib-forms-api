@@ -1,20 +1,12 @@
-#set($attribs = $context.arguments)
+$util.qr($ctx.stash.paths.add("getAccountForms_REQ.vtl"))
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments)
+
+$util.qr($ctx.stash.put("request", $args))
+$util.qr($ctx.stash.request.put("itemType", 'Form'))
+$util.qr($ctx.stash.put("operation", 'list'))
 {
-    "version"  : "2018-05-29",
-    "operation": "Query",
-    "index"    : "${index_appdata_gsi}",
-    "query"    : {
-        "expression" : "#type = :type AND begins_with(#meta, :meta)",
-        "expressionNames" : {
-            "#type" : "type",
-            "#meta" : "meta"
-        },
-        "expressionValues": {
-            ":type" : {"S" : "FORM"},
-            ":meta" : {"S" : "${context.source.id}"}
-        }
-    },
-    "select" : "ALL_ATTRIBUTES",
-    "limit": $util.defaultIfNull(${ctx.args.limit}, 20),
-    "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))
+    "statements": [
+        "SELECT * FROM Form WHERE accountId='${ctx.source.id}'"
+    ]
 }

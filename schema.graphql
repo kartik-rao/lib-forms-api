@@ -51,7 +51,7 @@ type AppData @model {
     type: ID!
     meta: String!
     itemType: String!
-    owner: ID!
+    ownerId: ID!
     createdAt: AWSDateTime!
     updatedAt: AWSDateTime
     isDeleted: Int
@@ -73,7 +73,8 @@ input AddFormEntryInput {
 
 type FormVersion {
   id: ID!
-  owner: ID!
+  formId: ID!
+  ownerId: ID!
   ownedBy: User!
   createdAt: AWSDateTime
   notes: String
@@ -82,7 +83,7 @@ type FormVersion {
 
 input AddFormVersionInput {
   formId: ID!
-  owner: ID!
+  ownerId: ID!
   notes: String
   formData: AWSJSON!
 }
@@ -90,7 +91,7 @@ input AddFormVersionInput {
 
 type Form @versioned  {
     id: ID!
-    owner: ID!
+    ownerId: ID!
     name: String!
     desc: String!
     versionId: ID!
@@ -137,7 +138,7 @@ input UpdateFormInput  {
 
 type User @versioned {
     id: ID!
-    owner: ID!
+    ownerId: ID!
     accountId: ID!
     account: Account
     email: String!
@@ -171,15 +172,6 @@ input UpdateUserInputData {
 input UpdateUserInput {
   id: ID!
   data: UpdateUserInputData!
-}
-
-input AddUserInput {
-  email: String!
-  group: String!
-  accountId: ID
-  given_name: String!
-  family_name: String!
-  phone_number: AWSPhone
 }
 
 enum AddressType {
@@ -227,7 +219,7 @@ type Account @versioned {
   addresses(limit: Int): [Address]
   website: String
   taxId: String
-  owner: ID!
+  ownerId: ID!
   ownedBy: User!
   plan : Plan
   planId: ID
@@ -250,13 +242,9 @@ input UpdateAccountInput {
   planId: ID
 }
 
-input AddAccountInput {
-  name: String!
-}
-
 type PlanType @versioned {
   id: ID!
-  owner: ID!
+  ownerId: ID!
   ownedBy: User!
   name: String!
   cost: Float!
@@ -296,7 +284,7 @@ type Plan @versioned {
   id: ID!
   accountId: ID!
   account: Account!
-  owner: ID!
+  ownerId: ID!
   ownedBy: User!
   planTypeId: ID!
   startDate: AWSDateTime!
@@ -336,7 +324,7 @@ input UpdatePlanInput {
 
 type IntegrationType {
   id: ID!
-  owner: ID!
+  ownerId: ID!
   ownedBy: User!
   planTypeId: ID!
   planType: PlanType
@@ -370,7 +358,7 @@ type Integration @versioned {
   id: ID!
   integrationTypeId: ID!
   integrationType: IntegrationType
-  owner: ID!
+  ownerId: ID!
   accountId: ID!
   formId: ID!
   form: Form!
@@ -468,8 +456,6 @@ type Query {
 type Mutation {
   addPlanType(input: AddPlanTypeInput): PlanType!
   addPlan(input: AddPlanInput): Plan!
-  addAccount(input: AddAccountInput): Account!
-  addUser(input: AddUserInput): User!
   addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!
   addIntegration(input: AddIntegrationInput): Integration!
   addForm(form: AddFormInput!, notes: String!): Form!

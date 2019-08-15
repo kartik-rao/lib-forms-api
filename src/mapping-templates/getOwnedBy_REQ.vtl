@@ -1,9 +1,12 @@
-#set($attribs = $context.arguments)
+$util.qr($ctx.stash.paths.add("getOwnedBy_REQ.vtl"))
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments)
+
+$util.qr($ctx.stash.put("request", $args))
+$util.qr($ctx.stash.request.put("itemType", 'User'))
+$util.qr($ctx.stash.put("operation", 'get'))
 {
-    "version" : "2018-05-29",
-    "operation" : "GetItem",
-    "key": {
-        "id"  : {"S": "${context.source.owner}"},
-        "type": {"S": "USER"}
-    }
+    "statements": [
+        "SELECT * FROM User WHERE id='${ctx.source.ownerId}'"
+    ]
 }
