@@ -45,20 +45,31 @@ describe("Plan", () => {
             console.error("spec.plan - beforeAll - ERROR", error);
             done.fail(error);
         }
-    });
+    }, 60000);
 
     afterAll(async (done) => {
         // Hard delete from dynamo
         let client = new AWS.DynamoDB.DocumentClient();
         try {
-            await client.delete({TableName : config["FormEntriesTable"], Key: {id: planTypeId, type: "PLANTYPE"}}).promise();
-            await Auth.signOut();
+            const rdsCommonParams = {
+                database: config['Service'],
+                resourceArn: config['DBClusterId'],
+                secretArn: config['DBSecretARN']
+            };
+            let client = new AWS.RDSDataService();
+            await client.executeStatement({
+                ...rdsCommonParams, sql : `DELETE FROM Plan where id='${planId}}'`
+            }).promise();
+            await client.executeStatement({
+                ...rdsCommonParams, sql : `DELETE FROM PlanType where id='${planTypeId}}'`
+            }).promise();
+            done();
             done();
         } catch (error) {
             console.error("spec.plan - afterAll - ERROR", error);
             done.fail(error);
         }
-    });
+    }, 20000);
 
 
     it("Add", async (done) => {
