@@ -46,23 +46,11 @@ input TableStringFilterInput {
     beginsWith: String
 }
 
-type AppData @model {
-    id: ID!
-    type: ID!
-    meta: String!
-    itemType: String!
-    ownerId: ID!
-    createdAt: AWSDateTime!
-    updatedAt: AWSDateTime
-    isDeleted: Int
-    version: Int
-    searchField: String
-}
-
 type FormEntry @model {
     id: ID!
-    type: ID!
-    meta: String!
+    formId: ID!
+    form: Form!
+    data: AWSJSON!
     createdAt: AWSDateTime!
 }
 
@@ -70,8 +58,7 @@ input AddFormEntryInput {
   data: AWSJSON!
 }
 
-
-type FormVersion {
+type FormVersion @model {
   id: ID!
   formId: ID!
   ownerId: ID!
@@ -89,7 +76,7 @@ input AddFormVersionInput {
 }
 
 
-type Form @versioned  {
+type Form @model  {
     id: ID!
     ownerId: ID!
     name: String!
@@ -136,13 +123,13 @@ input UpdateFormInput  {
   isPaused: Boolean
 }
 
-type User @versioned {
+type User @model {
     id: ID!
     ownerId: ID!
     accountId: ID!
     account: Account
     email: String!
-    group: String!
+    userGroup: String!
     given_name: String!
     family_name: String!
     phone_number: AWSPhone
@@ -179,7 +166,7 @@ enum AddressType {
   CONTACT
 }
 
-type Address @versioned {
+type Address @model {
   id: ID!
   name: String!
   addressee: String
@@ -213,7 +200,7 @@ type AddAddressInput {
   country: String
 }
 
-type Account @versioned {
+type Account @model {
   id: ID!
   name: String!
   addresses(limit: Int): [Address]
@@ -242,7 +229,7 @@ input UpdateAccountInput {
   planId: ID
 }
 
-type PlanType @versioned {
+type PlanType @model {
   id: ID!
   ownerId: ID!
   ownedBy: User!
@@ -252,7 +239,6 @@ type PlanType @versioned {
   billingTerm: String!
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
-  version: Int
   isDeleted: Int
 }
 
@@ -280,7 +266,7 @@ input UpdatePlanTypeInput {
   active: Int
 }
 
-type Plan @versioned {
+type Plan @model {
   id: ID!
   accountId: ID!
   account: Account!
@@ -295,7 +281,6 @@ type Plan @versioned {
   updatedAt: AWSDateTime
   planType: PlanType
   isDeleted: Int
-  version: Int
 }
 
 input PlanFilterInput {
@@ -323,7 +308,7 @@ input UpdatePlanInput {
   endDate: AWSDateTime
 }
 
-type IntegrationType {
+type IntegrationType @model {
   id: ID!
   ownerId: ID!
   ownedBy: User!
@@ -355,7 +340,7 @@ input UpdateIntegrationTypeInput {
   active: Int
 }
 
-type Integration @versioned {
+type Integration @model {
   id: ID!
   integrationTypeId: ID!
   integrationType: IntegrationType

@@ -150,7 +150,7 @@ CREATE TABLE  IF NOT EXISTS FormVersion (
     formId VARCHAR(36) NOT NULL,
     ownerId VARCHAR(36) NOT NULL,
     createdAt VARCHAR(24) NOT NULL,
-    notes varchar(255) NOT NULL,
+    notes varchar(512) NOT NULL,
     formData TEXT,
     UNIQUE INDEX `INDX_FormVersion_id` (`id` ASC),
     UNIQUE INDEX `INDX_FormVersion_id_form_id` (`id` ASC, `formId` ASC),
