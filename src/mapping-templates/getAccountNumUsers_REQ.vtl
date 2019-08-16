@@ -1,0 +1,7 @@
+$util.qr($ctx.stash.paths.put("getAccountNumUsers_REQ.vtl"))
+{
+    "version": "2018-05-29",
+    "statements": [
+        "SELECT count(*) as item_count FROM User WHERE accountId='${ctx.source.id}'"
+    ]
+}

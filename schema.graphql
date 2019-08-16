@@ -213,6 +213,8 @@ type Account @model {
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   active: Int
+  numForms: Int
+  numUsers: Int
   users(limit: Int): [User]
   forms(limit: Int): [Form]
 }

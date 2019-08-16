@@ -72,12 +72,25 @@
   functions:
     - FN_updateAccount
 
+# Account.numForms
+- dataSource: AppData
+  type: Account
+  field: numForms
+  request: getAccountNumForms_REQ.vtl
+  response: common_ItemCount_RES.vtl
+# Account.numUsers
+- dataSource: AppData
+  type: Account
+  field: numUsers
+  request: getAccountNumUsers_REQ.vtl
+  response: common_ItemCount_RES.vtl
 # Account.plan
 - dataSource: AppData
   type: Account
   field: plan
   request: getAccountPlan_REQ.vtl
   response: getAccountPlan_RES.vtl
+
 # Plan.planType
 - dataSource: AppData
   type: Plan
