@@ -7,6 +7,13 @@
   functions:
     - FN_getUser
 
+# User.numForms
+- dataSource: AppData
+  type: User
+  field: numForms
+  request: getUserNumForms_REQ.vtl
+  response: common_ItemCount_RES.vtl
+
 - dataSource: AppData
   type: Query
   field: listUsers
@@ -78,6 +85,7 @@
   field: numForms
   request: getAccountNumForms_REQ.vtl
   response: common_ItemCount_RES.vtl
+
 # Account.numUsers
 - dataSource: AppData
   type: Account

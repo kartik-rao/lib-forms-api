@@ -136,6 +136,7 @@ type User @model {
     createdAt: AWSDateTime
     updatedAt: AWSDateTime
     isDeleted: Int
+    numForms: Int
 }
 
 input UserFilterInput {
