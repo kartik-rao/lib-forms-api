@@ -472,7 +472,6 @@ type Mutation {
   deleteForm(formId: ID!): Form!
 
   addFormEntry(input: AddFormEntryInput!): FormEntry!
-
 }
 
 schema {
