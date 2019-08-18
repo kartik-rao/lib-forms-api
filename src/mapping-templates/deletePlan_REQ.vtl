@@ -10,13 +10,15 @@
     $util.qr($ctx.stash.put("request", $args))
     $util.qr($ctx.stash.request.put("itemType", 'Plan'))
     $util.qr($ctx.stash.put("operation", 'delete'))
-    $set($now="${util.time.nowISO8601()}")
     {
         "version": "2018-05-29",
         "statements": [
             "SELECT * FROM Plan WHERE id ='${args.planId}'",
-            "UPDATE Plan SET isDeleted=1, active=0, endDate='${now}', updatedAt='${now}' WHERE id='${args.planId}' AND accountId='${args.accountId}'",
-        ]
+            "UPDATE Plan SET isDeleted=1, active=0, endDate=:isotime, updatedAt=:isotime WHERE id='${args.planId}' AND accountId='${args.accountId}'",
+        ],
+        "variableMap": {
+            ":isotime" : "${util.time.nowISO8601()}"
+        }
     }
 #else
     $util.error("User [${identity.callerId}] cannot execute [DELETE] on Plan[${args.planId}]", "Unauthorized")

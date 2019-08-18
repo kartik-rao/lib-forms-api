@@ -222,7 +222,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1565921121730-2019-08-16T02:05:21.730Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1566008509793-2019-08-17T02:21:49.793Z/formsli.zip"
               },
               "FunctionName": "formsli-postconfirmation",
               "Handler": "src/postconfirmation.handle",
@@ -256,14 +256,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "PostConfirmationLambdaVersionYF1CgyA00HxRln7o71aJo2hiacKo3WzyDb74NZB1xWM": {
+          "PostConfirmationLambdaVersionZD6f3wqQY6XzEbBnDaeG41NLMApQCcWLpwr0tr4NsQ": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "PostConfirmationLambdaFunction"
               },
-              "CodeSha256": "/X8vmKaRCPdl2zIHIsfKlsBgLimjEm+SAu/0rLJOiFs="
+              "CodeSha256": "/OXOMjoHPaI0ypPZIbnNOqEPr9J7dAC25IRnK63NDJI="
             }
           },
           "SignupLambdaFunction": {
@@ -273,7 +273,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1565921121730-2019-08-16T02:05:21.730Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1566008509793-2019-08-17T02:21:49.793Z/formsli.zip"
               },
               "FunctionName": "formsli-invite",
               "Handler": "src/invite.handle",
@@ -307,14 +307,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "SignupLambdaVersionqtIcMRyN6WoGY2PJsbTwsZyOIsfsRadm8YW9tAMkQ": {
+          "SignupLambdaVersionegW9B4j8iDtshFSv8ljxu4VzLt37Hoji2OsGkDg7CU": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SignupLambdaFunction"
               },
-              "CodeSha256": "/X8vmKaRCPdl2zIHIsfKlsBgLimjEm+SAu/0rLJOiFs="
+              "CodeSha256": "/OXOMjoHPaI0ypPZIbnNOqEPr9J7dAC25IRnK63NDJI="
             }
           },
           "ApiGatewayRestApi": {
@@ -541,7 +541,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1565921095019": {
+          "ApiGatewayDeployment1566008486663": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -1583,7 +1583,7 @@
                   "Name"
                 ]
               },
-              "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if(($identity.isAccountAdmin == true && $identity.tenantId == $args.accountId) || $identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Plan'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    #set($id = $util.autoId())\n    #set($now = \"${util.time.nowISO8601()}\")\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"INSERT INTO Plan(id, accountId, ownerId, planTypeId, startDate, active, createdAt) VALUES(:id, :accountId, :ownerId, :planTypeId, :startDate, :active, :createdAt)\",\n            \"SELECT * FROM Plan WHERE id='${id}'\"\n        ],\n        \"variableMap\": {\n            \":id\": \"${id}\",\n            \":accountId\": \"${args.accountId}\",\n            \":ownerId\": \"${identity.callerId}\",\n            \":planTypeId\": \"${args.planTypeId}\",\n            \":startDate\": \"${now}\",\n            \":active\": $args.active,\n            \":createdAt\": \"${now}\"\n        }\n    }\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [PUT] on [Plan]\", \"Unauthorized\")\n#end",
+              "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if(($identity.isAccountAdmin == true && $identity.tenantId == $args.accountId) || $identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Plan'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    #set($id = $util.autoId())\n    #set($now = \"${util.time.nowISO8601()}\")\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"INSERT INTO Plan(id, accountId, ownerId, planTypeId, startDate, active, createdAt) VALUES(:id, :accountId, :ownerId, :planTypeId, :startDate, :active, :createdAt)\",\n            \"SELECT * FROM Plan WHERE id='${id}'\"\n        ],\n        \"variableMap\": {\n            \":id\": \"${id}\",\n            \":accountId\": \"${args.accountId}\",\n            \":ownerId\": \"${identity.callerId}\",\n            \":planTypeId\": \"${args.planTypeId}\",\n            \":startDate\": \"${now}\",\n            \":active\": ${args.active},\n            \":createdAt\": \"${now}\"\n        }\n    }\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [PUT] on [Plan]\", \"Unauthorized\")\n#end",
               "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_common_PUT.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
               "FunctionVersion": "2018-05-29"
             }
@@ -1604,7 +1604,7 @@
                   "Name"
                 ]
               },
-              "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    #set($request = $args)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Plan'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"UPDATE Plan SET updatedAt='${util.time.nowISO8601()}' #if($args.endDate) , endDate='${args.endDate}' #end #if(!$util.isNull($args.active)) , active=${args.active} #end WHERE id='${$args.planId}'\",\n            \"SELECT * FROM Plan WHERE id ='${args.planId}'\"\n        ],\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on [Plan]\", \"Unauthorized\")\n#end",
+              "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    #set($request = $args)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Plan'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"UPDATE Plan SET updatedAt=:isotime #if($args.endDate) , endDate='${args.endDate}' #end #if(!$util.isNull($args.active)) , active=${args.active} #end WHERE id='${$args.planId}' AND accountId= '${args.accountId}'\",\n            \"SELECT * FROM Plan WHERE id ='${args.planId}'\"\n        ],\n        \"variableMap\": {\n            \":isotime\" : \"${util.time.nowISO8601()}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on [Plan]\", \"Unauthorized\")\n#end",
               "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_common_PUT.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
               "FunctionVersion": "2018-05-29"
             }
@@ -1625,7 +1625,7 @@
                   "Name"
                 ]
               },
-              "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#set($isAllowed = false)\n#if($identity.isAdmin || $identity.isAccountAdmin == true && $identity.tenantId == $args.accountId)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Plan'))\n    $util.qr($ctx.stash.put(\"operation\", 'delete'))\n    $set($now=\"${util.time.nowISO8601()}\")\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"SELECT * FROM Plan WHERE id ='${args.planId}'\",\n            \"UPDATE Plan SET isDeleted=1, active=0, endDate='${now}', updatedAt='${now}' WHERE id='${args.planId}' AND accountId='${args.accountId}'\",\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [DELETE] on Plan[${args.planId}]\", \"Unauthorized\")\n#end",
+              "RequestMappingTemplate": "#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin || $identity.isAccountAdmin == true && $identity.tenantId == $args.accountId)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Plan'))\n    $util.qr($ctx.stash.put(\"operation\", 'delete'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"SELECT * FROM Plan WHERE id ='${args.planId}'\",\n            \"UPDATE Plan SET isDeleted=1, active=0, endDate=:isotime, updatedAt=:isotime WHERE id='${args.planId}' AND accountId='${args.accountId}'\",\n        ],\n        \"variableMap\": {\n            \":isotime\" : \"${util.time.nowISO8601()}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [DELETE] on Plan[${args.planId}]\", \"Unauthorized\")\n#end",
               "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FN_common_DELETE.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.error(\"${request.itemType} [${request.id}] not found\", 'NotFound')\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
               "FunctionVersion": "2018-05-29"
             }
@@ -2413,13 +2413,13 @@
           "PostConfirmationLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "PostConfirmationLambdaVersionYF1CgyA00HxRln7o71aJo2hiacKo3WzyDb74NZB1xWM"
+              "Ref": "PostConfirmationLambdaVersionZD6f3wqQY6XzEbBnDaeG41NLMApQCcWLpwr0tr4NsQ"
             }
           },
           "SignupLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SignupLambdaVersionqtIcMRyN6WoGY2PJsbTwsZyOIsfsRadm8YW9tAMkQ"
+              "Ref": "SignupLambdaVersionegW9B4j8iDtshFSv8ljxu4VzLt37Hoji2OsGkDg7CU"
             }
           },
           "ServiceEndpoint": {
@@ -3729,7 +3729,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli/dev/1565921121730-2019-08-16T02:05:21.730Z",
+    "artifactDirectoryName": "serverless/formsli/dev/1566008509793-2019-08-17T02:21:49.793Z",
     "artifact": ""
   }
 }

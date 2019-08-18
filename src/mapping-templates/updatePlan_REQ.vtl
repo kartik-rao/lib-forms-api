@@ -14,9 +14,12 @@
     {
         "version": "2018-05-29",
         "statements": [
-            "UPDATE Plan SET updatedAt='${util.time.nowISO8601()}' #if($args.endDate) , endDate='${args.endDate}' #end #if(!$util.isNull($args.active)) , active=${args.active} #end WHERE id='${$args.planId}' AND accountId= '${args.accountId}'",
+            "UPDATE Plan SET updatedAt=:isotime #if($args.endDate) , endDate='${args.endDate}' #end #if(!$util.isNull($args.active)) , active=${args.active} #end WHERE id='${$args.planId}' AND accountId= '${args.accountId}'",
             "SELECT * FROM Plan WHERE id ='${args.planId}'"
-        ]
+        ],
+        "variableMap": {
+            ":isotime" : "${util.time.nowISO8601()}"
+        }
     }
 #else
     $util.error("User [${identity.callerId}] cannot execute [PUT] on [Plan]", "Unauthorized")
