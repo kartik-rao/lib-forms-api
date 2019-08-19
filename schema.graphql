@@ -1,4 +1,4 @@
-input TableDateFilterInput {
+input DateFilterInput {
     ne: AWSDateTime
     eq: AWSDateTime
     le: AWSDateTime
@@ -8,12 +8,12 @@ input TableDateFilterInput {
     between: [AWSDateTime]
 }
 
-input TableBooleanFilterInput {
+input BooleanFilterInput {
     ne: Boolean
     eq: Boolean
 }
 
-input TableFloatFilterInput {
+input FloatFilterInput {
     ne: Float
     eq: Float
     le: Float
@@ -23,7 +23,7 @@ input TableFloatFilterInput {
     between: [Float]
 }
 
-input TableIntFilterInput {
+input IntFilterInput {
     ne: Int
     eq: Int
     le: Int
@@ -33,7 +33,7 @@ input TableIntFilterInput {
     between: [Int]
 }
 
-input TableStringFilterInput {
+input StringFilterInput {
     ne: String
     eq: String
     le: String
@@ -98,12 +98,12 @@ type Form @model  {
 }
 
 input FormFilterInput {
-    owner: TableIntFilterInput
-    name: TableStringFilterInput
-    createdAt: TableDateFilterInput
-    updatedAt: TableDateFilterInput
-    startsAt: TableDateFilterInput
-    endsAt: TableDateFilterInput
+    owner: IntFilterInput
+    name: StringFilterInput
+    createdAt: DateFilterInput
+    updatedAt: DateFilterInput
+    startsAt: DateFilterInput
+    endsAt: DateFilterInput
 }
 
 input AddFormInput {
@@ -142,14 +142,14 @@ type User @model {
 }
 
 input UserFilterInput {
-    owner: TableIntFilterInput
-    email: TableStringFilterInput
-    given_name: TableStringFilterInput
-    family_name: TableStringFilterInput
-    createdAt: TableDateFilterInput
-    updatedAt: TableDateFilterInput
-    startsAt: TableDateFilterInput
-    endsAt: TableDateFilterInput
+    owner: IntFilterInput
+    email: StringFilterInput
+    given_name: StringFilterInput
+    family_name: StringFilterInput
+    createdAt: DateFilterInput
+    updatedAt: DateFilterInput
+    startsAt: DateFilterInput
+    endsAt: DateFilterInput
 }
 
 input UpdateUserInputData {
@@ -183,12 +183,12 @@ type Address @model {
 }
 
 input AddressFilterInput {
-    owner: TableIntFilterInput
-    name: TableStringFilterInput
-    createdAt: TableDateFilterInput
-    updatedAt: TableDateFilterInput
-    startsAt: TableDateFilterInput
-    endsAt: TableDateFilterInput
+    owner: IntFilterInput
+    name: StringFilterInput
+    createdAt: DateFilterInput
+    updatedAt: DateFilterInput
+    startsAt: DateFilterInput
+    endsAt: DateFilterInput
 }
 
 type AddAddressInput {
@@ -223,9 +223,9 @@ type Account @model {
 }
 
 input AccountFilterInput {
-    name: TableStringFilterInput
-    createdAt: TableDateFilterInput
-    updatedAt: TableDateFilterInput
+    name: StringFilterInput
+    createdAt: DateFilterInput
+    updatedAt: DateFilterInput
 }
 
 input UpdateAccountInput {
@@ -248,12 +248,12 @@ type PlanType @model {
 }
 
 input PlanTypeFilterInput {
-    name: TableStringFilterInput
-    cost: TableFloatFilterInput
-    active: TableBooleanFilterInput
-    billingTerm: TableStringFilterInput
-    createdAt: TableDateFilterInput
-    updatedAt: TableDateFilterInput
+    name: StringFilterInput
+    cost: FloatFilterInput
+    active: BooleanFilterInput
+    billingTerm: StringFilterInput
+    createdAt: DateFilterInput
+    updatedAt: DateFilterInput
 }
 
 input AddPlanTypeInput {
@@ -289,14 +289,14 @@ type Plan @model {
 }
 
 input PlanFilterInput {
-    id: TableIntFilterInput
-    accountId: TableIntFilterInput
-    active: TableBooleanFilterInput
-    startDate: TableDateFilterInput
-    endDate: TableDateFilterInput
-    lastBillDate: TableDateFilterInput
-    createdAt: TableDateFilterInput
-    updatedAt: TableDateFilterInput
+    id: IntFilterInput
+    accountId: IntFilterInput
+    active: BooleanFilterInput
+    startDate: DateFilterInput
+    endDate: DateFilterInput
+    lastBillDate: DateFilterInput
+    createdAt: DateFilterInput
+    updatedAt: DateFilterInput
 }
 
 input AddPlanInput {
@@ -326,12 +326,12 @@ type IntegrationType @model {
 }
 
 input IntegrationTypeFilterInput {
-    id: TableIntFilterInput
-    planTypeId: TableIntFilterInput
-    active: TableBooleanFilterInput
-    name: TableStringFilterInput
-    createdAt: TableDateFilterInput
-    updatedAt: TableDateFilterInput
+    id: IntFilterInput
+    planTypeId: IntFilterInput
+    active: BooleanFilterInput
+    name: StringFilterInput
+    createdAt: DateFilterInput
+    updatedAt: DateFilterInput
 }
 
 input AddIntegrationTypeInput {
@@ -367,12 +367,12 @@ type Integration @model {
 }
 
 input IntegrationFilterInput {
-    id: TableIntFilterInput
-    integrationTypeId: TableIntFilterInput
-    accountId: TableIntFilterInput
-    formId: TableIntFilterInput
-    active: TableBooleanFilterInput
-    lastExecutionResult: TableBooleanFilterInput
+    id: IntFilterInput
+    integrationTypeId: IntFilterInput
+    accountId: IntFilterInput
+    formId: IntFilterInput
+    active: BooleanFilterInput
+    lastExecutionResult: BooleanFilterInput
 }
 
 input AddIntegrationInput {
