@@ -19,13 +19,15 @@
     "PostConfirmationLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/formsli-postconfirmation"
+        "LogGroupName": "/aws/lambda/formsli-postconfirmation",
+        "RetentionInDays": 14
       }
     },
     "SignupLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/formsli-invite"
+        "LogGroupName": "/aws/lambda/formsli-invite",
+        "RetentionInDays": 14
       }
     },
     "IamRoleLambdaExecution": {
@@ -178,19 +180,29 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1566201238472-2019-08-19T07:53:58.472Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1566248265633-2019-08-19T20:57:45.633Z/formsli.zip"
         },
         "FunctionName": "formsli-postconfirmation",
         "Handler": "src/postconfirmation.handle",
-        "MemorySize": 1024,
+        "MemorySize": 2048,
         "Role": {
           "Fn::GetAtt": [
             "IamRoleLambdaExecution",
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
-        "Timeout": 6,
+        "Runtime": "nodejs10.x",
+        "Timeout": 30,
+        "Tags": [
+          {
+            "Key": "service",
+            "Value": "formsli"
+          },
+          {
+            "Key": "region",
+            "Value": "ap-northeast-1"
+          }
+        ],
         "Environment": {
           "Variables": {
             "protocol": "http://",
@@ -212,7 +224,7 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "PostConfirmationLambdaVersionZD6f3wqQY6XzEbBnDaeG41NLMApQCcWLpwr0tr4NsQ": {
+    "PostConfirmationLambdaVersion5QcHTZVvvBo6Ugfv9mvXbdjf5Pls5S6mlw8G1qMjw": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
@@ -229,19 +241,29 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1566201238472-2019-08-19T07:53:58.472Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1566248265633-2019-08-19T20:57:45.633Z/formsli.zip"
         },
         "FunctionName": "formsli-invite",
         "Handler": "src/invite.handle",
-        "MemorySize": 1024,
+        "MemorySize": 2048,
         "Role": {
           "Fn::GetAtt": [
             "IamRoleLambdaExecution",
             "Arn"
           ]
         },
-        "Runtime": "nodejs8.10",
-        "Timeout": 6,
+        "Runtime": "nodejs10.x",
+        "Timeout": 30,
+        "Tags": [
+          {
+            "Key": "service",
+            "Value": "formsli"
+          },
+          {
+            "Key": "region",
+            "Value": "ap-northeast-1"
+          }
+        ],
         "Environment": {
           "Variables": {
             "protocol": "http://",
@@ -263,7 +285,7 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "SignupLambdaVersionegW9B4j8iDtshFSv8ljxu4VzLt37Hoji2OsGkDg7CU": {
+    "SignupLambdaVersionWmb2iH7dKb1vqRN9LDEHPmZEMhtB0smalrpU30gk": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
@@ -497,7 +519,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1566201218921": {
+    "ApiGatewayDeployment1566248245748": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -1254,7 +1276,8 @@
               }
             ]
           ]
-        }
+        },
+        "RetentionInDays": 14
       }
     },
     "GraphQlSchema": {
@@ -1350,7 +1373,7 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Account_list_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#if($identity.isAdmin == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Account'))\n    $util.qr($ctx.stash.put(\"operation\", 'list'))\n    $set($limits = $util.defaultIfNull($args.offsetLimit, {offset:0, limit: 50}))\n    {\n        \"statements\": [\n            \"SELECT * FROM Account LIMIT ${limits.offset}, ${limits.limit}\"\n        ],\n        \"variableMap\": {\n            \":name\" : \"${filters.name}\",\n            \":createdAt\" : \"${filters.createdAt}\",\n            \":updatedAt\" : \"${filters.updatedAt}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute LIST on Account\", \"Unauthorized\")\n#end",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Account_list_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#if($identity.isAdmin == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Account'))\n    $util.qr($ctx.stash.put(\"operation\", 'list'))\n    #set($limits = $util.defaultIfNull($args.offsetLimit, {\"offset\":0,\"limit\":50}))\n    $util.qr($limits.put(\"offset\", $util.defaultIfNull($args.offsetLimit.offset, 0)))\n    $util.qr($limits.put(\"limit\", $util.defaultIfNull($args.offsetLimit.limit, 50)))\n    $util.qr($ctx.stash.put(\"limits\", $limits))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"SELECT * FROM Account LIMIT ${limits.offset}, ${limits.limit}\"\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute LIST on Account\", \"Unauthorized\")\n#end",
         "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_list_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$utils.toJson($utils.rds.toJsonObject($ctx.result)[0])",
         "FunctionVersion": "2018-05-29"
       }
@@ -2495,13 +2518,13 @@
     "PostConfirmationLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "PostConfirmationLambdaVersionZD6f3wqQY6XzEbBnDaeG41NLMApQCcWLpwr0tr4NsQ"
+        "Ref": "PostConfirmationLambdaVersion5QcHTZVvvBo6Ugfv9mvXbdjf5Pls5S6mlw8G1qMjw"
       }
     },
     "SignupLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "SignupLambdaVersionegW9B4j8iDtshFSv8ljxu4VzLt37Hoji2OsGkDg7CU"
+        "Ref": "SignupLambdaVersionWmb2iH7dKb1vqRN9LDEHPmZEMhtB0smalrpU30gk"
       }
     },
     "ServiceEndpoint": {
