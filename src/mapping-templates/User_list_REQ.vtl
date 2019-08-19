@@ -6,12 +6,16 @@ $util.qr($ctx.stash.paths.add("User_list_REQ.vtl"))
     $util.qr($ctx.stash.put("request", $args))
     $util.qr($ctx.stash.request.put("itemType", 'User'))
     $util.qr($ctx.stash.put("operation", 'list'))
+    #set($limits = $util.defaultIfNull($args.offsetLimit, {"offset":0,"limit":50}))
+    $util.qr($limits.put("offset", $util.defaultIfNull($args.offsetLimit.offset, 0)))
+    $util.qr($limits.put("limit", $util.defaultIfNull($args.offsetLimit.limit, 50)))
+    $util.qr($ctx.stash.put("limits", $limits))
     {
         "statements": [
             #if(!$identity.isAdmin)
-                "SELECT * FROM User WHERE active=1 AND accountId='${identity.tenantId}'"
+                "SELECT * FROM User WHERE active=1 AND accountId='${identity.tenantId}' LIMIT ${limits.offset}, ${limits.limit}"
             #else
-                "SELECT * FROM User"
+                "SELECT * FROM User LIMIT ${limits.offset}, ${limits.limit}"
             #end
         ]
     }

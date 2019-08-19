@@ -6,12 +6,16 @@ $util.qr($ctx.stash.paths.add("PlanType_list_REQ.vtl"))
     $util.qr($ctx.stash.put("request", $args))
     $util.qr($ctx.stash.request.put("itemType", 'PlanType'))
     $util.qr($ctx.stash.put("operation", 'list'))
+    #set($limits = $util.defaultIfNull($args.offsetLimit, {"offset":0,"limit":50}))
+    $util.qr($limits.put("offset", $util.defaultIfNull($args.offsetLimit.offset, 0)))
+    $util.qr($limits.put("limit", $util.defaultIfNull($args.offsetLimit.limit, 50)))
+    $util.qr($ctx.stash.put("limits", $limits))
     {
         "statements": [
             #if(!$identity.isAdmin)
-                "SELECT * FROM PlanType active=1"
+                "SELECT * FROM PlanType active=1 LIMIT ${limits.offset}, ${limits.limit}"
             #else
-                "SELECT * FROM PlanType"
+                "SELECT * FROM PlanType LIMIT ${limits.offset}, ${limits.limit}"
             #end
         ]
     }
