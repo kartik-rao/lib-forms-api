@@ -231,7 +231,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1566248265633-2019-08-19T20:57:45.633Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1566250137062-2019-08-19T21:28:57.062Z/formsli.zip"
               },
               "FunctionName": "formsli-postconfirmation",
               "Handler": "src/postconfirmation.handle",
@@ -292,7 +292,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1566248265633-2019-08-19T20:57:45.633Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1566250137062-2019-08-19T21:28:57.062Z/formsli.zip"
               },
               "FunctionName": "formsli-invite",
               "Handler": "src/invite.handle",
@@ -570,7 +570,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1566248245748": {
+          "ApiGatewayDeployment1566250117067": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -1445,7 +1445,7 @@
                   "Name"
                 ]
               },
-              "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"User_list_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#if($identity.isAdmin == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'User'))\n    $util.qr($ctx.stash.put(\"operation\", 'list'))\n    {\n        \"statements\": [\n            #if(!$identity.isAdmin)\n                \"SELECT * FROM User WHERE active=1 AND accountId='${identity.tenantId}'\"\n            #else\n                \"SELECT * FROM User\"\n            #end\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute LIST on User\", \"Unauthorized\")\n#end",
+              "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"User_list_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#if($identity.isAdmin == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'User'))\n    $util.qr($ctx.stash.put(\"operation\", 'list'))\n    #set($limits = $util.defaultIfNull($args.offsetLimit, {\"offset\":0,\"limit\":50}))\n    $util.qr($limits.put(\"offset\", $util.defaultIfNull($args.offsetLimit.offset, 0)))\n    $util.qr($limits.put(\"limit\", $util.defaultIfNull($args.offsetLimit.limit, 50)))\n    $util.qr($ctx.stash.put(\"limits\", $limits))\n    {\n        \"statements\": [\n            #if(!$identity.isAdmin)\n                \"SELECT * FROM User WHERE active=1 AND accountId='${identity.tenantId}' LIMIT ${limits.offset}, ${limits.limit}\"\n            #else\n                \"SELECT * FROM User LIMIT ${limits.offset}, ${limits.limit}\"\n            #end\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute LIST on User\", \"Unauthorized\")\n#end",
               "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_list_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$utils.toJson($utils.rds.toJsonObject($ctx.result)[0])",
               "FunctionVersion": "2018-05-29"
             }
@@ -1592,7 +1592,7 @@
                   "Name"
                 ]
               },
-              "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"PlanType_list_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#if($identity.isAdmin == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'PlanType'))\n    $util.qr($ctx.stash.put(\"operation\", 'list'))\n    {\n        \"statements\": [\n            #if(!$identity.isAdmin)\n                \"SELECT * FROM PlanType active=1\"\n            #else\n                \"SELECT * FROM PlanType\"\n            #end\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [${LIST}] on PlanType\", \"Unauthorized\")\n#end",
+              "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"PlanType_list_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#if($identity.isAdmin == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'PlanType'))\n    $util.qr($ctx.stash.put(\"operation\", 'list'))\n    #set($limits = $util.defaultIfNull($args.offsetLimit, {\"offset\":0,\"limit\":50}))\n    $util.qr($limits.put(\"offset\", $util.defaultIfNull($args.offsetLimit.offset, 0)))\n    $util.qr($limits.put(\"limit\", $util.defaultIfNull($args.offsetLimit.limit, 50)))\n    $util.qr($ctx.stash.put(\"limits\", $limits))\n    {\n        \"statements\": [\n            #if(!$identity.isAdmin)\n                \"SELECT * FROM PlanType active=1 LIMIT ${limits.offset}, ${limits.limit}\"\n            #else\n                \"SELECT * FROM PlanType LIMIT ${limits.offset}, ${limits.limit}\"\n            #end\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [${LIST}] on PlanType\", \"Unauthorized\")\n#end",
               "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_list_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$utils.toJson($utils.rds.toJsonObject($ctx.result)[0])",
               "FunctionVersion": "2018-05-29"
             }
@@ -1718,7 +1718,7 @@
                   "Name"
                 ]
               },
-              "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_list_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n$util.qr($ctx.stash.put(\"request\", $args))\n$util.qr($ctx.stash.request.put(\"itemType\", 'Form'))\n$util.qr($ctx.stash.put(\"operation\", 'list'))\n{\n    \"statements\": [\n        #if(!$identity.isAdmin)\n            \"SELECT * FROM Form WHERE isDeleted=0 AND accountId='${identity.tenantId}'\"\n        #else\n            \"SELECT * FROM Form\"\n        #end\n    ]\n}\n",
+              "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_list_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n$util.qr($ctx.stash.put(\"request\", $args))\n$util.qr($ctx.stash.request.put(\"itemType\", 'Form'))\n$util.qr($ctx.stash.put(\"operation\", 'list'))\n#set($limits = $util.defaultIfNull($args.offsetLimit, {\"offset\":0,\"limit\":50}))\n$util.qr($limits.put(\"offset\", $util.defaultIfNull($args.offsetLimit.offset, 0)))\n$util.qr($limits.put(\"limit\", $util.defaultIfNull($args.offsetLimit.limit, 50)))\n$util.qr($ctx.stash.put(\"limits\", $limits))\n{\n    \"statements\": [\n        #if(!$identity.isAdmin)\n            \"SELECT * FROM Form WHERE isDeleted=0 AND accountId='${identity.tenantId}' LIMIT ${limits.offset}, ${limits.limit}\"\n        #else\n            \"SELECT * FROM Form LIMIT ${limits.offset}, ${limits.limit}\"\n        #end\n    ]\n}\n",
               "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_list_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$utils.toJson($utils.rds.toJsonObject($ctx.result)[0])",
               "FunctionVersion": "2018-05-29"
             }
@@ -3937,7 +3937,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli/dev/1566248265633-2019-08-19T20:57:45.633Z",
+    "artifactDirectoryName": "serverless/formsli/dev/1566250137062-2019-08-19T21:28:57.062Z",
     "artifact": ""
   }
 }
