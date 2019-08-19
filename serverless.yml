@@ -3,9 +3,15 @@ service: formsli
 
 provider:
   name: aws
-  runtime: nodejs8.10
+  runtime: nodejs10.x
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'ap-northeast-1'}
+  memorySize: 2048
+  timeout: 30
+  logRetentionInDays: 14
+  tags:
+    service: ${self:service}
+    region: ${self:provider.region}
   functions:
     postconfirmation: ${self:service}-postconfirmation
     invite: ${self:service}-invite
