@@ -3,105 +3,105 @@
   type: Query
   name: FN_getAccount
   request: Account_get_REQ.vtl
-  response: Common_GET_RES.vtl
+  response: Common_FN_get_RES.vtl
 
 - dataSource: AppData
   type: Query
   name: FN_listAccounts
   request: Account_list_REQ.vtl
-  response: Common_LIST_RES.vtl
+  response: Common_FN_list_RES.vtl
 
 - dataSource: AppData
   type: Query
   name: FN_listUsers
   request: User_list_REQ.vtl
-  response: Common_LIST_RES.vtl
+  response: Common_FN_list_RES.vtl
 
 - dataSource: AppData
   type: Mudation
   name: FN_updateAccount
   request: Account_update_REQ.vtl
-  response: Common_PUT_RES.vtl
+  response: Common_FN_upsert_RES.vtl
 
 ## User
 - dataSource: AppData
   type: Query
   name: FN_getUser
   request: User_get_REQ.vtl
-  response: Common_GET_RES.vtl
+  response: Common_FN_get_RES.vtl
 
 ## PlanType
 - dataSource: AppData
   type: Mutation
   name: FN_deletePlanType
   request: PlanType_delete_REQ.vtl
-  response: Common_DELETE_RES.vtl
+  response: Common_FN_delete_RES.vtl
 - dataSource: AppData
   type: Mutation
   name: FN_updatePlanType
   request: PlanType_update_REQ.vtl
-  response: Common_PUT_RES.vtl
+  response: Common_FN_upsert_RES.vtl
 - dataSource: AppData
   type: Query
   name: FN_addPlanType
   request: PlanType_add_REQ.vtl
-  response: Common_PUT_RES.vtl
+  response: Common_FN_upsert_RES.vtl
 - dataSource: AppData
   type: Query
   name: FN_getPlanType
   request: PlanType_get_REQ.vtl
-  response: Common_GET_RES.vtl
+  response: Common_FN_get_RES.vtl
 - dataSource: AppData
   type: Query
   name: FN_listPlanTypes
   request: PlanType_list_REQ.vtl
-  response: Common_LIST_RES.vtl
+  response: Common_FN_list_RES.vtl
 
   ## Plan
 - dataSource: AppData
   type: Mutation
   name: FN_createPlan
   request: Plan_add_REQ.vtl
-  response: Common_PUT_RES.vtl
+  response: Common_FN_upsert_RES.vtl
 - dataSource: AppData
   type: Mutation
   name: FN_updatePlan
   request: Plan_update_REQ.vtl
-  response: Common_PUT_RES.vtl
+  response: Common_FN_upsert_RES.vtl
 - dataSource: AppData
   type: Mutation
   name: FN_deletePlan
   request: Plan_delete_REQ.vtl
-  response: Common_DELETE_RES.vtl
+  response: Common_FN_delete_RES.vtl
 - dataSource: AppData
   type: Query
   name: FN_getPlan
   request: Plan_get_REQ.vtl
-  response: Common_GET_RES.vtl
+  response: Common_FN_get_RES.vtl
 
   ## Form
 - dataSource: AppData
   type: Query
   name: FN_getForm
   request: Form_get_REQ.vtl
-  response: Common_GET_RES.vtl
+  response: Common_FN_get_RES.vtl
 - dataSource: AppData
   type: Query
   name: FN_listForm
   request: Form_list_REQ.vtl
-  response: Common_LIST_RES.vtl
+  response: Common_FN_list_RES.vtl
 - dataSource: AppData
   type: Mutation
   name: FN_addFormVersion
   request: FormVersion_add_REQ.vtl
-  response: Common_PUT_RES.vtl
+  response: Common_FN_upsert_RES.vtl
 - dataSource: AppData
   type: Mutation
   name: FN_addForm
   request: Form_add_REQ.vtl
-  response: Common_PUT_RES.vtl
+  response: Common_FN_upsert_RES.vtl
 - dataSource: AppData
   type: Mutation
   name: FN_attachFormVersion
   request: FormVersion_attach_REQ.vtl
-  response: Common_PUT_RES.vtl
+  response: Common_FN_upsert_RES.vtl

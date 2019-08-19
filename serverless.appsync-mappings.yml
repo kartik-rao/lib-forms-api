@@ -12,7 +12,7 @@
   type: User
   field: numForms
   request: User_numForms_get_REQ.vtl
-  response: Common_FN_count.vtl
+  response: Common_FN_count_RES.vtl
 
 - dataSource: AppData
   type: Query
@@ -24,6 +24,12 @@
     - FN_listUsers
 
 ## Plan
+# Plan.planType
+- dataSource: AppData
+  type: Plan
+  field: planType
+  request: Plan_planType_get_REQ.vtl
+  response: Plan_planType_get_RES.vtl
 - dataSource: AppData
   type: Query
   field: getPlan
@@ -32,7 +38,6 @@
   kind: PIPELINE
   functions:
     - FN_getPlan
-
 - dataSource: AppData
   type: Mutation
   field: deletePlan
@@ -41,7 +46,6 @@
   kind: PIPELINE
   functions:
     - FN_deletePlan
-
 - dataSource: AppData
   type: Mutation
   field: addPlan
@@ -50,7 +54,6 @@
   kind: PIPELINE
   functions:
     - FN_createPlan
-
 - dataSource: AppData
   type: Mutation
   field: updatePlan
@@ -69,7 +72,14 @@
   kind: PIPELINE
   functions:
     - FN_getAccount
-
+- dataSource: AppData
+  type: Query
+  field: listAccounts
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_listAccounts
 - dataSource: AppData
   type: Mutation
   field: updateAccount
@@ -78,33 +88,24 @@
   kind: PIPELINE
   functions:
     - FN_updateAccount
-
 # Account.numForms
 - dataSource: AppData
   type: Account
   field: numForms
   request: Account_numForms_get_REQ.vtl
-  response: Common_FN_count.vtl
-
+  response: Common_FN_count_RES.vtl
 # Account.numUsers
 - dataSource: AppData
   type: Account
   field: numUsers
   request: Account_numUsers_get_REQ.vtl
-  response: Common_FN_count.vtl
+  response: Common_FN_count_RES.vtl
 # Account.plan
 - dataSource: AppData
   type: Account
   field: plan
   request: Account_plan_get_REQ.vtl
   response: Account_plan_get_RES.vtl
-
-# Plan.planType
-- dataSource: AppData
-  type: Plan
-  field: planType
-  request: Plan_planType_get_REQ.vtl
-  response: Plan_planType_get_RES.vtl
 # Account.ownedBy
 - dataSource: AppData
   type: Account
@@ -115,7 +116,7 @@
 - dataSource: AppData
   type: Account
   field: forms
-  request: Account_forms_lsit_REQ.vtl
+  request: Account_forms_list_REQ.vtl
   response: Account_forms_list_RES.vtl
 # Account.users
 - dataSource: AppData
@@ -133,6 +134,23 @@
   response: Common_RES.vtl
   functions:
     - FN_getForm
+- dataSource: AppData
+  type: Mutation
+  field: addForm
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_addForm
+- dataSource: AppData
+  type: Mutation
+  field: addFormVersion
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_addFormVersion
+    - FN_attachFormVersion
 - dataSource: AppData
   type: Query
   field: listForms
@@ -164,7 +182,7 @@
   type: Form
   field: versions
   request: Form_formVersion_list_REQ.vtl
-  response: Form_formVersion_lsit_RES.vtl
+  response: Form_formVersion_list_RES.vtl
 
 ## PlanType
 - dataSource: AppData
@@ -179,9 +197,8 @@
 - dataSource: AppData
   type: PlanType
   field: ownedBy
-  request: getOwnedBy_REQ.vtl
-  response: getOwnedBy_RES.vtl
-
+  request: Common_Owner_get_REQ.vtl
+  response: Common_Owner_get_RES.vtl
 - dataSource: AppData
   type: Query
   field: getPlanType
@@ -190,7 +207,6 @@
   kind: PIPELINE
   functions:
     - FN_getPlanType
-
 - dataSource: AppData
   type: Mutation
   field: addPlanType
@@ -199,7 +215,6 @@
   kind: PIPELINE
   functions:
     - FN_addPlanType
-
 - dataSource: AppData
   type: Mutation
   field: updatePlanType
@@ -208,7 +223,6 @@
   kind: PIPELINE
   functions:
     - FN_updatePlanType
-
 - dataSource: AppData
   type: Mutation
   field: deletePlanType
@@ -217,31 +231,3 @@
   kind: PIPELINE
   functions:
     - FN_deletePlanType
-
-- dataSource: AppData
-  type: Mutation
-  field: addForm
-  kind: PIPELINE
-  request: Common_REQ.vtl
-  response: Common_RES.vtl
-  functions:
-    - FN_addForm
-
-- dataSource: AppData
-  type: Mutation
-  field: addFormVersion
-  kind: PIPELINE
-  request: Common_REQ.vtl
-  response: Common_RES.vtl
-  functions:
-    - FN_addFormVersion
-    - FN_attachFormVersion
-
-- dataSource: AppData
-  type: Query
-  field: listAccounts
-  request: Common_REQ.vtl
-  response: Common_RES.vtl
-  kind: PIPELINE
-  functions:
-    - FN_listAccounts
