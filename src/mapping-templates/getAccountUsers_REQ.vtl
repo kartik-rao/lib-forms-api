@@ -1,6 +1,0 @@
-$util.qr($ctx.stash.paths.add("getAccountUsers_REQ.vtl"))
-{
-    "statements": [
-        "SELECT * FROM User WHERE active=1 AND accountId='${ctx.source.id}'"
-    ]
-}

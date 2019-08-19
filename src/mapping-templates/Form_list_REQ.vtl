@@ -1,0 +1,16 @@
+$util.qr($ctx.stash.paths.add("Form_list_REQ.vtl"))
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments)
+
+$util.qr($ctx.stash.put("request", $args))
+$util.qr($ctx.stash.request.put("itemType", 'Form'))
+$util.qr($ctx.stash.put("operation", 'list'))
+{
+    "statements": [
+        #if(!$identity.isAdmin)
+            "SELECT * FROM Form WHERE isDeleted=0 AND accountId='${identity.tenantId}'"
+        #else
+            "SELECT * FROM Form"
+        #end
+    ]
+}

@@ -163,7 +163,7 @@ DROP TABLE IF EXISTS Form;
 CREATE TABLE  IF NOT EXISTS Form (
     id VARCHAR(36) NOT NULL,
     ownerId VARCHAR(36) NOT NULL,
-    versionId VARCHAR(36) NOT NULL,
+    versionId VARCHAR(36) NULL,
     accountId VARCHAR(36) NOT NULL,
     `name` varchar(256),
     description varchar(512),
@@ -172,6 +172,7 @@ CREATE TABLE  IF NOT EXISTS Form (
     startsAt VARCHAR(24),
     endsAt VARCHAR(24),
     isPaused TINYINT DEFAULT 1,
+    isDeleted TINYINT DEFAULT 0,
     PRIMARY KEY (id),
     UNIQUE INDEX `INDX_Form_id` (`id` ASC),
     UNIQUE INDEX `INDX_Form_id_account_id` (`id` ASC, `accountId` ASC),

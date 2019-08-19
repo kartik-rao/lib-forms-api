@@ -69,8 +69,8 @@ type FormVersion @model {
 }
 
 input AddFormVersionInput {
+  accountId: ID!
   formId: ID!
-  ownerId: ID!
   notes: String
   formData: AWSJSON!
 }
@@ -91,6 +91,7 @@ type Form @model  {
     startsAt: AWSDateTime
     endsAt: AWSDateTime
     isPaused: Boolean
+    isDeleted: Boolean
     versions(limit: Int): [FormVersion]
     integrations(limit: Int): [Integration]
     entries(limit: Int): [FormEntry]
@@ -106,6 +107,7 @@ input FormFilterInput {
 }
 
 input AddFormInput {
+  accountId: ID!
   name: String!
   desc: String
   startsAt: AWSDateTime

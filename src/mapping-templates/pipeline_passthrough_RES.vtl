@@ -1,5 +1,0 @@
-#if($util.isNull($ctx.stash.results))
-    $util.qr($ctx.stash.put("results", {}))
-#end
-$util.qr($ctx.stash.results.put($ctx.stash.request.itemType, $ctx.result))
-$util.toJson($ctx.result)

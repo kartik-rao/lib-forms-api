@@ -1,0 +1,16 @@
+$util.qr($ctx.stash.paths.put("Account_list_REQ.vtl"))
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments)
+
+#if($identity.isAdmin == true)
+    $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("itemType", 'Account'))
+    $util.qr($ctx.stash.put("operation", 'list'))
+    {
+        "statements": [
+            "SELECT * FROM Account"
+        ]
+    }
+#else
+    $util.error("User [${identity.callerId}] cannot execute LIST on Account", "Unauthorized")
+#end

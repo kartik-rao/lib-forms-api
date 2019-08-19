@@ -1,8 +1,8 @@
 - dataSource: AppData
   type: Query
   field: getUser
-  request: pipeline_identify_BEF.vtl
-  response: FN_passthrough_RES.vtl
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
   kind: PIPELINE
   functions:
     - FN_getUser
@@ -11,14 +11,14 @@
 - dataSource: AppData
   type: User
   field: numForms
-  request: getUserNumForms_REQ.vtl
-  response: common_ItemCount_RES.vtl
+  request: User_numForms_get_REQ.vtl
+  response: Common_FN_count.vtl
 
 - dataSource: AppData
   type: Query
   field: listUsers
-  request: pipeline_identify_BEF.vtl
-  response: FN_passthrough_RES.vtl
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
   kind: PIPELINE
   functions:
     - FN_listUsers
@@ -27,8 +27,8 @@
 - dataSource: AppData
   type: Query
   field: getPlan
-  request: pipeline_identify_BEF.vtl
-  response: FN_passthrough_RES.vtl
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
   kind: PIPELINE
   functions:
     - FN_getPlan
@@ -36,8 +36,8 @@
 - dataSource: AppData
   type: Mutation
   field: deletePlan
-  request: pipeline_identify_BEF.vtl
-  response: FN_passthrough_RES.vtl
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
   kind: PIPELINE
   functions:
     - FN_deletePlan
@@ -45,8 +45,8 @@
 - dataSource: AppData
   type: Mutation
   field: addPlan
-  request: pipeline_identify_BEF.vtl
-  response: FN_passthrough_RES.vtl
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
   kind: PIPELINE
   functions:
     - FN_createPlan
@@ -54,8 +54,8 @@
 - dataSource: AppData
   type: Mutation
   field: updatePlan
-  request: pipeline_identify_BEF.vtl
-  response: FN_passthrough_RES.vtl
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
   kind: PIPELINE
   functions:
     - FN_updatePlan
@@ -64,8 +64,8 @@
 - dataSource: AppData
   type: Query
   field: getAccount
-  request: pipeline_identify_BEF.vtl
-  response: FN_passthrough_RES.vtl
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
   kind: PIPELINE
   functions:
     - FN_getAccount
@@ -73,8 +73,8 @@
 - dataSource: AppData
   type: Mutation
   field: updateAccount
-  request: pipeline_identify_BEF.vtl
-  response: FN_passthrough_RES.vtl
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
   kind: PIPELINE
   functions:
     - FN_updateAccount
@@ -83,91 +83,95 @@
 - dataSource: AppData
   type: Account
   field: numForms
-  request: getAccountNumForms_REQ.vtl
-  response: common_ItemCount_RES.vtl
+  request: Account_numForms_get_REQ.vtl
+  response: Common_FN_count.vtl
 
 # Account.numUsers
 - dataSource: AppData
   type: Account
   field: numUsers
-  request: getAccountNumUsers_REQ.vtl
-  response: common_ItemCount_RES.vtl
+  request: Account_numUsers_get_REQ.vtl
+  response: Common_FN_count.vtl
 # Account.plan
 - dataSource: AppData
   type: Account
   field: plan
-  request: getAccountPlan_REQ.vtl
-  response: getAccountPlan_RES.vtl
+  request: Account_plan_get_REQ.vtl
+  response: Account_plan_get_RES.vtl
 
 # Plan.planType
 - dataSource: AppData
   type: Plan
   field: planType
-  request: getPlanPlanType_REQ.vtl
-  response: getPlanPlanType_RES.vtl
+  request: Plan_planType_get_REQ.vtl
+  response: Plan_planType_get_RES.vtl
 # Account.ownedBy
 - dataSource: AppData
   type: Account
   field: ownedBy
-  request: getOwnedBy_REQ.vtl
-  response: getOwnedBy_RES.vtl
+  request: Common_Owner_get_REQ.vtl
+  response: Common_Owner_get_RES.vtl
 # Account.forms
 - dataSource: AppData
   type: Account
   field: forms
-  request: getAccountForms_REQ.vtl
-  response: getAccountForms_RES.vtl
+  request: Account_forms_lsit_REQ.vtl
+  response: Account_forms_list_RES.vtl
 # Account.users
 - dataSource: AppData
   type: Account
   field: users
-  request: getAccountUsers_REQ.vtl
-  response: getAccountUsers_RES.vtl
+  request: Account_users_list_REQ.vtl
+  response: Account_users_list_RES.vtl
 
 ## Form
 - dataSource: AppData
   type: Query
   field: getForm
-  request: getForm_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  kind: pipeline
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_getForm
+- dataSource: AppData
+  type: Query
+  field: listForms
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_listForm
 # Form.ownedBy
 - dataSource: AppData
   type: Form
   field: ownedBy
-  request: getOwnedBy_REQ.vtl
-  response: getOwnedBy_RES.vtl
+  request: Common_Owner_get_REQ.vtl
+  response: Common_Owner_get_RES.vtl
 # Form.account
 - dataSource: AppData
   type: Form
   field: account
-  request: getParentAccount_REQ.vtl
-  response: getParentAccount_RES.vtl
+  request: Common_Account_get_REQ.vtl
+  response: Common_Account_get_RES.vtl
 # Form.formData
 - dataSource: AppData
   type: Form
   field: formData
-  request: getFormVersion_REQ.vtl
-  response: getFormVersion_RES.vtl
+  request: Form_formVersion_get_REQ.vtl
+  response: Form_formVersion_get_RES.vtl
 # Form.versions
 - dataSource: AppData
   type: Form
   field: versions
-  request: getFormVersions_REQ.vtl
-  response: getFormVersions_RES.vtl
-
-- dataSource: AppData
-  type: Query
-  field: listForms
-  request: listAllForms_REQ.vtl
-  response: FN_passthrough_RES.vtl
-
+  request: Form_formVersion_list_REQ.vtl
+  response: Form_formVersion_lsit_RES.vtl
 
 ## PlanType
 - dataSource: AppData
   type: Query
   field: listPlanTypes
-  request: pipeline_identify_BEF.vtl
-  response: FN_passthrough_RES.vtl
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
   kind: PIPELINE
   functions:
     - FN_listPlanTypes
@@ -181,8 +185,8 @@
 - dataSource: AppData
   type: Query
   field: getPlanType
-  request: pipeline_identify_BEF.vtl
-  response: FN_passthrough_RES.vtl
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
   kind: PIPELINE
   functions:
     - FN_getPlanType
@@ -190,8 +194,8 @@
 - dataSource: AppData
   type: Mutation
   field: addPlanType
-  request: pipeline_identify_BEF.vtl
-  response: FN_passthrough_RES.vtl
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
   kind: PIPELINE
   functions:
     - FN_addPlanType
@@ -199,8 +203,8 @@
 - dataSource: AppData
   type: Mutation
   field: updatePlanType
-  request: pipeline_identify_BEF.vtl
-  response: FN_passthrough_RES.vtl
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
   kind: PIPELINE
   functions:
     - FN_updatePlanType
@@ -208,8 +212,8 @@
 - dataSource: AppData
   type: Mutation
   field: deletePlanType
-  request: pipeline_identify_BEF.vtl
-  response: FN_passthrough_RES.vtl
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
   kind: PIPELINE
   functions:
     - FN_deletePlanType
@@ -217,20 +221,27 @@
 - dataSource: AppData
   type: Mutation
   field: addForm
-  request: addForm_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_addForm
 
 - dataSource: AppData
   type: Mutation
   field: addFormVersion
-  request: addFormVersion_REQ.vtl
-  response: FN_passthrough_RES.vtl
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_addFormVersion
+    - FN_attachFormVersion
 
 - dataSource: AppData
   type: Query
   field: listAccounts
-  request: pipeline_identify_BEF.vtl
-  response: FN_passthrough_RES.vtl
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
   kind: PIPELINE
   functions:
     - FN_listAccounts

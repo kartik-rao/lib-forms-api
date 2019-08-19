@@ -1,0 +1,34 @@
+$util.qr($ctx.stash.paths.add("Plan_add_REQ.vtl"))
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments.input)
+
+#set($isAllowed = false)
+#if(($identity.isAccountAdmin == true && $identity.tenantId == $args.accountId) || $identity.isAdmin == true)
+    #set($isAllowed = true)
+#end
+
+#if($isAllowed == true)
+    $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("itemType", 'Plan'))
+    $util.qr($ctx.stash.put("operation", 'put'))
+    #set($id = $util.autoId())
+    #set($now = "${util.time.nowISO8601()}")
+    {
+        "version": "2018-05-29",
+        "statements": [
+            "INSERT INTO Plan(id, accountId, ownerId, planTypeId, startDate, active, createdAt) VALUES(:id, :accountId, :ownerId, :planTypeId, :startDate, :active, :createdAt)",
+            "SELECT * FROM Plan WHERE id='${id}'"
+        ],
+        "variableMap": {
+            ":id": "${id}",
+            ":accountId": "${args.accountId}",
+            ":ownerId": "${identity.callerId}",
+            ":planTypeId": "${args.planTypeId}",
+            ":startDate": "${now}",
+            ":active": ${args.active},
+            ":createdAt": "${now}"
+        }
+    }
+#else
+    $util.error("User [${ctx.stash.identity.callerId}] cannot execute [PUT] on [Plan]", "Unauthorized")
+#end

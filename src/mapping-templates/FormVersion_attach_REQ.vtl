@@ -1,0 +1,10 @@
+$util.qr($ctx.stash.paths.add("Form_attach_REQ.vtl"))
+#set($args=$ctx.arguments.input)
+#set($now = "${util.time.nowISO8601()}")
+{
+        "version": "2018-05-29",
+        "statements": [
+            "UPDATE Form SET versionId='${ctx.prev.result.id}', updatedAt='${now}' WHERE id='${args.formId}'",
+            "SELECT * Form WHERE id='${args.formId}'"
+        ]
+}

@@ -1,0 +1,27 @@
+$util.qr($ctx.stash.paths.add("Plan_delete_REQ.vtl"))
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments)
+
+#set($isAllowed = false)
+#if($identity.isAdmin || $identity.isAccountAdmin == true && $identity.tenantId == $args.accountId)
+    #set($isAllowed = true)
+#end
+
+#if($isAllowed == true)
+    $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("itemType", 'Plan'))
+    $util.qr($ctx.stash.request.put("id", $args.planId))
+    $util.qr($ctx.stash.put("operation", 'delete'))
+    {
+        "version": "2018-05-29",
+        "statements": [
+            "SELECT * FROM Plan WHERE id ='${args.planId}'",
+            "UPDATE Plan SET isDeleted=1, active=0, endDate=:isotime, updatedAt=:isotime WHERE id='${args.planId}' AND accountId='${args.accountId}'",
+        ],
+        "variableMap": {
+            ":isotime" : "${util.time.nowISO8601()}"
+        }
+    }
+#else
+    $util.error("User [${identity.callerId}] cannot execute [DELETE] on Plan[${args.planId}]", "Unauthorized")
+#end
