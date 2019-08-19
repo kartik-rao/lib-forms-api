@@ -1,57 +1,159 @@
-input DateFilterInput {
-    ne: AWSDateTime
-    eq: AWSDateTime
-    le: AWSDateTime
-    lt: AWSDateTime
-    ge: AWSDateTime
-    gt: AWSDateTime
-    between: [AWSDateTime]
+enum FilterWith {
+  AND
+  OR
 }
 
-input BooleanFilterInput {
-    ne: Boolean
-    eq: Boolean
+enum NumericFilterExpression {
+  in
+  ne
+  eq
+  le
+  lt
+  ge
+  gt
+  between
+  isNull
+  isNotNull
 }
 
-input FloatFilterInput {
-    ne: Float
-    eq: Float
-    le: Float
-    lt: Float
-    ge: Float
-    gt: Float
-    between: [Float]
+enum BooleanFilterExpression {
+  ne
+  eq
 }
 
-input IntFilterInput {
-    ne: Int
-    eq: Int
-    le: Int
-    lt: Int
-    ge: Int
-    gt: Int
-    between: [Int]
+enum StringFilterExpression {
+  ne
+  eq
+  contains
+  notContains
+  startsWith
+  isNull
+  isNotNull
+  in
 }
 
-input StringFilterInput {
-    ne: String
-    eq: String
-    le: String
-    lt: String
-    ge: String
-    gt: String
-    contains: String
-    notContains: String
-    between: [String]
-    beginsWith: String
+input DateFilter {
+  with  : FilterWith
+  column : String!
+  expression: NumericFilterExpression
+  value: [AWSDateTime!]
+}
+
+input BooleanFilter {
+  with  : FilterWith
+  column : String!
+  expression: BooleanFilterExpression
+  value: [Boolean!]
+}
+
+input FloatFilter {
+  with  : FilterWith
+  column : String!
+  expression: NumericFilterExpression
+  value: [Float!]
+}
+
+
+input IntFilter {
+  with  : FilterWith
+  column : String!
+  expression: NumericFilterExpression
+  value: [Int!]
+}
+
+input StringFilter {
+  with  : FilterWith
+  column : String!
+  expression: StringFilterExpression
+  value: [String!]
+}
+
+input AccountFilterInput {
+  name: StringFilter
+  createdAt: DateFilter
+  updatedAt: DateFilter
+  planId: IntFilter
+  active: IntFilter
+  and: [AccountFilterInput]
+}
+
+input UserFilterInput {
+  ownerId: IntFilter
+  email: StringFilter
+  userGroup: StringFilter
+  given_name: StringFilter
+  family_name: StringFilter
+  createdAt: DateFilter
+  updatedAt: DateFilter
+  isDeleted: IntFilter
+  and: [UserFilterInput]
+}
+
+input PlanTypeFilterInput {
+  ownerId: IntFilter
+  cost: FloatFilter
+  billingTerm: StringFilter
+  name: StringFilter
+  createdAt: DateFilter
+  updatedAt: DateFilter
+  isDeleted: IntFilter
+  and: [PlanTypeFilterInput]
+}
+
+input IntegrationTypeFilterInput {
+  ownerId: IntFilter
+  planTypeId: IntFilter
+  name: StringFilter
+  createdAt: DateFilter
+  updatedAt: DateFilter
+  active: IntFilter
+  and: [IntegrationTypeFilterInput]
+}
+
+input IntegrationFilterInput {
+  ownerId: IntFilter
+  accountId: IntFilter
+  formId: IntFilter
+  active: IntFilter
+  isDeleted: IntFilter
+  lastExecuted: DateFilter
+  lastExecutionResult: IntFilter
+  createdAt: DateFilter
+  updatedAt: DateFilter
+  and: [IntegrationFilterInput]
+}
+
+input FormFilterInput {
+  name: StringFilter
+  ownerId: IntFilter
+  accountId: IntFilter
+  createdAt: DateFilter
+  updatedAt: DateFilter
+  startsAt: DateFilter
+  endsAt: DateFilter
+  isPaused: IntFilter
+  isDeleted: IntFilter
+  and: [IntegrationFilterInput]
+}
+
+input PlanFilterInput {
+  accountId: IntFilter
+  ownerId: IntFilter
+  planTypeId: IntFilter
+  lastBillDate: DateFilter
+  createdAt: DateFilter
+  updatedAt: DateFilter
+  startDate: DateFilter
+  endDate: DateFilter
+  and: [PlanFilterInput]
 }
 
 type FormEntry @model {
-    id: ID!
-    formId: ID!
-    form: Form!
-    data: AWSJSON!
-    createdAt: AWSDateTime!
+  id: ID!
+  formId: ID!
+  form: Form!
+  data: AWSJSON!
+  createdAt: AWSDateTime!
 }
 
 input AddFormEntryInput {
@@ -77,34 +179,26 @@ input AddFormVersionInput {
 
 
 type Form @model  {
-    id: ID!
-    ownerId: ID!
-    name: String!
-    desc: String!
-    versionId: ID!
-    formData: FormVersion!
-    ownedBy: User!
-    accountId: ID!
-    account: Account!
-    createdAt: AWSDateTime!
-    updatedAt: AWSDateTime
-    startsAt: AWSDateTime
-    endsAt: AWSDateTime
-    isPaused: Boolean
-    isDeleted: Boolean
-    versions(limit: Int): [FormVersion]
-    integrations(limit: Int): [Integration]
-    entries(limit: Int): [FormEntry]
+  id: ID!
+  ownerId: ID!
+  name: String!
+  desc: String!
+  versionId: ID!
+  formData: FormVersion!
+  ownedBy: User!
+  accountId: ID!
+  account: Account!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime
+  startsAt: AWSDateTime
+  endsAt: AWSDateTime
+  isPaused: Boolean
+  isDeleted: Boolean
+  versions(limit: Int): [FormVersion]
+  integrations(limit: Int): [Integration]
+  entries(limit: Int): [FormEntry]
 }
 
-input FormFilterInput {
-    owner: IntFilterInput
-    name: StringFilterInput
-    createdAt: DateFilterInput
-    updatedAt: DateFilterInput
-    startsAt: DateFilterInput
-    endsAt: DateFilterInput
-}
 
 input AddFormInput {
   accountId: ID!
@@ -126,31 +220,21 @@ input UpdateFormInput  {
 }
 
 type User @model {
-    id: ID!
-    ownerId: ID!
-    accountId: ID!
-    account: Account
-    email: String!
-    userGroup: String!
-    given_name: String!
-    family_name: String!
-    phone_number: AWSPhone
-    createdAt: AWSDateTime
-    updatedAt: AWSDateTime
-    isDeleted: Int
-    numForms: Int
+  id: ID!
+  ownerId: ID!
+  accountId: ID!
+  account: Account
+  email: String!
+  userGroup: String!
+  given_name: String!
+  family_name: String!
+  phone_number: AWSPhone
+  createdAt: AWSDateTime
+  updatedAt: AWSDateTime
+  isDeleted: Int
+  numForms: Int
 }
 
-input UserFilterInput {
-    owner: IntFilterInput
-    email: StringFilterInput
-    given_name: StringFilterInput
-    family_name: StringFilterInput
-    createdAt: DateFilterInput
-    updatedAt: DateFilterInput
-    startsAt: DateFilterInput
-    endsAt: DateFilterInput
-}
 
 input UpdateUserInputData {
   group: String!
@@ -182,14 +266,6 @@ type Address @model {
   country: String
 }
 
-input AddressFilterInput {
-    owner: IntFilterInput
-    name: StringFilterInput
-    createdAt: DateFilterInput
-    updatedAt: DateFilterInput
-    startsAt: DateFilterInput
-    endsAt: DateFilterInput
-}
 
 type AddAddressInput {
   name: String!
@@ -222,11 +298,6 @@ type Account @model {
   forms(limit: Int): [Form]
 }
 
-input AccountFilterInput {
-    name: StringFilterInput
-    createdAt: DateFilterInput
-    updatedAt: DateFilterInput
-}
 
 input UpdateAccountInput {
   id: ID!
@@ -245,15 +316,6 @@ type PlanType @model {
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   isDeleted: Int
-}
-
-input PlanTypeFilterInput {
-    name: StringFilterInput
-    cost: FloatFilterInput
-    active: BooleanFilterInput
-    billingTerm: StringFilterInput
-    createdAt: DateFilterInput
-    updatedAt: DateFilterInput
 }
 
 input AddPlanTypeInput {
@@ -288,17 +350,6 @@ type Plan @model {
   isDeleted: Int
 }
 
-input PlanFilterInput {
-    id: IntFilterInput
-    accountId: IntFilterInput
-    active: BooleanFilterInput
-    startDate: DateFilterInput
-    endDate: DateFilterInput
-    lastBillDate: DateFilterInput
-    createdAt: DateFilterInput
-    updatedAt: DateFilterInput
-}
-
 input AddPlanInput {
   accountId: ID!
   planTypeId: ID!
@@ -325,14 +376,6 @@ type IntegrationType @model {
   updatedAt: AWSDateTime
 }
 
-input IntegrationTypeFilterInput {
-    id: IntFilterInput
-    planTypeId: IntFilterInput
-    active: BooleanFilterInput
-    name: StringFilterInput
-    createdAt: DateFilterInput
-    updatedAt: DateFilterInput
-}
 
 input AddIntegrationTypeInput {
   name: String!
@@ -359,21 +402,13 @@ type Integration @model {
   target: String
   method: String
   lastExecuted: AWSDateTime
-  lastExecutionResult: Boolean
+  lastExecutionResult: Int
   lastExecutionResultMessage: String
   createdAt: AWSDateTime
   updatedAt: AWSDateTime
   isDeleted: Int
 }
 
-input IntegrationFilterInput {
-    id: IntFilterInput
-    integrationTypeId: IntFilterInput
-    accountId: IntFilterInput
-    formId: IntFilterInput
-    active: BooleanFilterInput
-    lastExecutionResult: BooleanFilterInput
-}
 
 input AddIntegrationInput {
   integrationTypeId: ID!
@@ -418,33 +453,13 @@ type Query {
   getIntegrationType(integrationTypeId: String!): IntegrationType
   getIntegration(integrationId: String!): Integration
   getFormEntry(formEntryId: String!): FormEntry
-
   listAccounts(offsetLimit: OffsetLimit, filter: AccountFilterInput): [Account]
   listUsers(offsetLimit: OffsetLimit, filter: UserFilterInput) : [User]
-#   listAccountUsers(accountId: String!, limit: Int): [User]
-#   listAccountUsersActive(accountId: String!, limit: Int): [User]
-#   listAccountUsersInGroup(accountId: String!, group: String!, limit: Int): [User]
-
   listPlans(offsetLimit: OffsetLimit, filter: PlanFilterInput): [Plan]
-#   listAccountPlans(accountId: String!, limit: Int): [Plan]
   listPlanTypes(offsetLimit: OffsetLimit, filter: PlanTypeFilterInput): [PlanType]
-#   listActivePlanTypes(limit: Int): [PlanType]
-
   listForms(offsetLimit: OffsetLimit, filter: FormFilterInput) : [Form]
-#   listAccountForms(accountId: String!, limit: Int) : [Form]
-#   listAccountFormsActive(accountId: String!, active: String!, limit: Int) : [Form]
-#   listAccountFormsByUser(accountId: String!, userId: String!, limit: Int) : [Form]
-#   listAccountFormsByUserActive(accountId: String!, userId: String!, active: String!, limit: Int) : [Form]
-
   listIntegrationTypes(offsetLimit: OffsetLimit, filter: IntegrationTypeFilterInput): [IntegrationType]
-#   listIntegrationTypesByPlanType(planTypeId: String!, limit: Int): [IntegrationType]
-#   listIntegrationTypesByPlanTypeActive(planTypeId: String!, active: String!, limit: Int): [IntegrationType]
-
   listIntegrations(offsetLimit: OffsetLimit, filter: IntegrationFilterInput): [Integration]
-#   listAccountIntegrations(accountId: String!, limit: Int): [Integration]
-#   listAccountFormIntegrations(accountId: String!, formId: String!, limit: Int): [Integration]
-#   listAccountFormIntegrationsActive(accountId: String!, formId: String!, active: String!, limit: Int): [Integration]
-
   listFormEntries(offsetLimit: OffsetLimit, formId: String!) : [FormEntry]
   listFormEntriesByTime(offsetLimit: OffsetLimit, formId: String!, timestampPrefix: String!): [FormEntry]
 }

@@ -6,10 +6,16 @@ $util.qr($ctx.stash.paths.put("Account_list_REQ.vtl"))
     $util.qr($ctx.stash.put("request", $args))
     $util.qr($ctx.stash.request.put("itemType", 'Account'))
     $util.qr($ctx.stash.put("operation", 'list'))
+    $set($limits = $util.defaultIfNull($args.offsetLimit, {offset:0, limit: 50}))
     {
         "statements": [
-            "SELECT * FROM Account"
-        ]
+            "SELECT * FROM Account LIMIT ${limits.offset}, ${limits.limit}"
+        ],
+        "variableMap": {
+            ":name" : "${filters.name}",
+            ":createdAt" : "${filters.createdAt}",
+            ":updatedAt" : "${filters.updatedAt}"
+        }
     }
 #else
     $util.error("User [${identity.callerId}] cannot execute LIST on Account", "Unauthorized")
