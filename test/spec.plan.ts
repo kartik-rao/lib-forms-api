@@ -129,6 +129,16 @@ describe("Plan", () => {
         done();
     });
 
+    it("AttachPlan (as AccountAdmin)", async(done) => {
+        const attachPlan = {
+            query: `
+            mutation {
+                attachPlan(accountId: "${tenantId}",  planId: "${planId}") {}
+            }`
+        }
+        done();
+    }, 10000);
+
     it("Update", async (done) => {
         if(!planId) {
             fail("No planId");
