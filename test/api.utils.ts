@@ -21,7 +21,7 @@ export class ApiHelper {
             'aws_appsync_authenticationType': 'AMAZON_COGNITO_USER_POOLS',
             oauth: {
                 // Domain name
-                domain : 'dev-forms-li.auth.ap-southeast-2.amazoncognito.com',
+                domain : 'dev-auth-formsli.auth.ap-southeast-2.amazoncognito.com',
                 // Authorized scopes
                 scope : ['phone', 'email', 'profile', 'openid'],
                 // Callback URL
