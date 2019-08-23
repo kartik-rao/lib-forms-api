@@ -1,24 +1,21 @@
 ## Only allow admin and account admin to update account
-$util.qr($ctx.stash.paths.put("Account_update_REQ.vtl"))
+$util.qr($ctx.stash.paths.add("Account_update_REQ.vtl"))
 #set($identity=$ctx.stash.identity)
-#set($args=$ctx.arguments)
+#set($args=$ctx.arguments.input)
+
 #set($isAllowed = $identity.isAdmin == true || ($identity.isAccountAdmin == true && $args.accountId == $identity.tenantId))
-#set($results=$ctx.stash.results)
-
-#if($util.isNull($results) || $util.isNull($results.ACCOUNT))
-    $util.error("Out of order invocation, no ACCOUNT", "InvocationOrderException")
-#end
-
 #if($isAllowed == true)
-    #if(!$util.isNull($ctx.stash.request))
-        #set ($ctx.stash.prevRequest = $ctx.stash.request)
-    #end
-
     #set($request = $args)
-    $util.qr($request.put("itemType", 'Account'))
-    $util.qr($ctx.stash.put("request", $request))
-    $util.qr($ctx.stash.put("operation", 'update'))
-    #return({})
+    $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("itemType", 'Account'))
+    $util.qr($ctx.stash.put("operation", 'put'))
+    {
+        "version": "2018-05-29",
+        "statements": [
+            "UPDATE Account SET updatedAt='${util.time.nowISO8601()}' #if($args.name) , `name`='${args.name}' #end WHERE id='${args.id}'",
+            "SELECT * FROM Account WHERE id ='${args.id}'"
+        ]
+    }
 #else
-    $util.error("User [${identity.callerId}] cannot execute [${request.operation}] on [${args.accountId}]", "Unauthorized")
+    $util.error("User [${ctx.stash.identity.callerId}] cannot execute [PUT] on [Account]", "Unauthorized")
 #end
