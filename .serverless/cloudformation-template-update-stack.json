@@ -176,7 +176,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1566548917845-2019-08-23T08:28:37.845Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1566550751162-2019-08-23T08:59:11.162Z/formsli.zip"
         },
         "FunctionName": "formsli-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -241,7 +241,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1566548917845-2019-08-23T08:28:37.845Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1566550751162-2019-08-23T08:59:11.162Z/formsli.zip"
         },
         "FunctionName": "formsli-invite",
         "Handler": "src/invite.handle",
@@ -523,7 +523,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1566548893568": {
+    "ApiGatewayDeployment1566550726636": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -2231,6 +2231,15 @@
     },
     "DBSecretARN": {
       "Value": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX"
+    },
+    "UserPoolId": {
+      "Value": "ap-northeast-1_Q798Nsl33"
+    },
+    "IdentityPoolId": {
+      "Value": "ap-northeast-1:5be23074-d96a-4e55-be17-3fe13545156a"
+    },
+    "UserPoolClientId": {
+      "Value": "7pvdgcaflsg9juob60mosafi9d"
     },
     "UserPoolAdminUser": {
       "Value": {

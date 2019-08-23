@@ -6,10 +6,13 @@
   "SignupLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-invite:2",
   "ServerlessDeploymentBucketName": "formsli-dev-serverlessdeploymentbucket-1sfdeqccn2e5c",
   "PostConfirmationLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-postconfirmation:2",
+  "UserPoolClientId": "7pvdgcaflsg9juob60mosafi9d",
   "GraphQlApiUrl": "https://wlzwvve4nfhkfpmnr3ywtgzy7u.appsync-api.ap-northeast-1.amazonaws.com/graphql",
+  "UserPoolId": "ap-northeast-1_Q798Nsl33",
   "UserPoolAdminUser": "infrastructure.dev@forms.li",
   "AuthorizerId": "wcku6x",
   "Region": "ap-northeast-1",
   "Stage": "dev",
+  "IdentityPoolId": "ap-northeast-1:5be23074-d96a-4e55-be17-3fe13545156a",
   "ServiceEndpoint": "https://gj42edvov3.execute-api.ap-northeast-1.amazonaws.com/dev"
 }
