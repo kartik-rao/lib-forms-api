@@ -10,6 +10,14 @@ Resources:
       Type: COGNITO_USER_POOLS
       ProviderARNs:
         - "${self:provider.environment.userPoolArn}"
+  PostConfirmationTriggerInvokePermission:
+    Type: AWS::Lambda::Permission
+    DependsOn: PostConfirmationLambdaFunction
+    Properties:
+      Action: lambda:InvokeFunction
+      Principal: cognito-idp.amazonaws.com
+      SourceArn: ${self:provider.environment.userPoolArn}
+      FunctionName: ${self:provider.functions.postconfirmation}
   # Create the admin user for the pool
   CognitoUserPoolAdminUser:
     Type : AWS::Cognito::UserPoolUser

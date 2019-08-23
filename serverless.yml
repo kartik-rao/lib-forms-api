@@ -13,8 +13,8 @@ provider:
     service: ${self:service}
     region: ${self:provider.region}
   functions:
-    postconfirmation: ${self:service}-postconfirmation
-    invite: ${self:service}-invite
+    postconfirmation: ${self:service}-${self:provider.stage}-postconfirmation
+    invite: ${self:service}-${self:provider.stage}-invite
   profile: fl-infrastructure
   environment:
     region        : ${self:provider.region}
@@ -129,8 +129,9 @@ functions:
           method: post
           cors: true
       - cognitoUserPool:
-          pool: MyUserPool
+          pool: fl-${self:provider.stage}-userpool
           trigger: PostConfirmation
+          existing: true
   signup:
     name: ${self:provider.functions.invite}
     handler: src/invite.handle

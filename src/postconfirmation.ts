@@ -8,7 +8,7 @@ import { AdminGetUserRequest } from "aws-sdk/clients/cognitoidentityserviceprovi
 
 const uuid = require('uuid/v4');
 
-const DBClusterId = process.env.dbClusterId;
+const DBClusterArn = process.env.dbClusterArn;
 const DBSecretARN = process.env.dbClusterSecretArn;
 const ServiceName  = process.env.serviceName;
 
@@ -26,7 +26,7 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
     let userPool = new AWS.CognitoIdentityServiceProvider();
     const rdsCommonParams = {
         database: ServiceName,
-        resourceArn: DBClusterId,
+        resourceArn: DBClusterArn,
         secretArn: DBSecretARN
     };
 
@@ -78,11 +78,11 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
             await rds.executeStatement(addUserSQL).promise();
             console.log(`${ServiceName} - New Account Flow - RDS.Insert Account - ${JSON.stringify(addAccountSQL)}`);
             await rds.executeStatement(addAccountSQL).promise();
-            await rds.commitTransaction({transactionId: transactionId, resourceArn: DBClusterId, secretArn: DBSecretARN}).promise();
+            await rds.commitTransaction({transactionId: transactionId, resourceArn: DBClusterArn, secretArn: DBSecretARN}).promise();
         } catch (error) {
             // TODO: We should send an SNS notification or capture this error somewhere
             console.error(`${ServiceName} - AccountAdmin initiated flow - RDS Error [${userId}]`, error);
-            await rds.rollbackTransaction({transactionId: transactionId, resourceArn: DBClusterId, secretArn: DBSecretARN}).promise();
+            await rds.rollbackTransaction({transactionId: transactionId, resourceArn: DBClusterArn, secretArn: DBSecretARN}).promise();
             callback(error);
             return;
         }
@@ -137,7 +137,7 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
             console.log(`${ServiceName} - AccountAdmin initiated flow - RDS.Insert user=[${userId}] tenant=[${accountId}] group=[${group}]`);
             const addUserSQL:AWS.RDSDataService.ExecuteStatementRequest = {
                 database: ServiceName,
-                resourceArn: DBClusterId,
+                resourceArn: DBClusterArn,
                 secretArn: DBSecretARN,
                 sql: `INSERT INTO User(id, ownerId, userGroup, accountId, email, phone_number, given_name, family_name)
                     VALUES(:id, :ownerId, :userGroup, :accountId, :email, :phone_number, :given_name, :family_name)`,

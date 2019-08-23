@@ -5,7 +5,7 @@ process.env.TZ = 'UTC';
 import * as AWS from 'aws-sdk';
 import { AdminAddUserToGroupRequest, AdminCreateUserRequest, AdminCreateUserResponse } from "aws-sdk/clients/cognitoidentityserviceprovider";
 
-const DBClusterId = process.env.dbClusterId;
+const DBClusterId = process.env.dbClusterArn;
 const DBSecretARN = process.env.dbClusterSecretArn;
 const ServiceName  = process.env.serviceName;
 

@@ -22,11 +22,11 @@ interface IFormsAppUser {
 }
 
 const SSM = {
-    State : "/app/formsli/dev/tenantState",
-    GlobalAdmin : "/app/formsli/dev/globalAdmin",
-    AccountAdmin : "/app/formsli/dev/tenantAccountAdmin",
-    AccountEditor : "/app/formsli/dev/tenantAccountEditor",
-    AccountViewer : "/app/formsli/dev/tenantAccountViewer"
+    State : "/dev/formsli/app/qa/tenantState",
+    GlobalAdmin : "/dev/formsli/app/qa/globalAdmin",
+    AccountAdmin : "/dev/formsli/app/qa/tenantAccountAdmin",
+    AccountEditor : "/dev/formsli/app/qa/tenantAccountEditor",
+    AccountViewer : "/dev/formsli/app/qa/tenantAccountViewer"
 }
 
 export class AuthUtils {
@@ -62,7 +62,7 @@ export class AuthUtils {
             try {
                 console.log("\n   AuthUtils.checking tenant state");
                 // Check if tenant has already been setup on this instance
-                let params = await ssm.getParametersByPath({Path: "/app/formsli/dev/", WithDecryption: true}).promise();
+                let params = await ssm.getParametersByPath({Path: "/dev/formsli/app/qa/", WithDecryption: true}).promise();
                 let state = AuthUtils.findParameter(SSM.State, params.Parameters);
                 if (!state || state != "1") {
                     throw new Error("NotSetup");
@@ -88,33 +88,41 @@ export class AuthUtils {
                         Tier: "Standard"}).promise();
                     await UserPool.adminSetUserPassword({UserPoolId: config['UserPoolId'], Username:config['UserPoolAdminUser'], Password: adminPwd, Permanent: true}).promise();
                     AuthUtils.globalAdmin = adminUser as IFormsAppUser;
-
+                    console.log("\n   AuthUtils.checking tenant state - Global Admin OK");
                     // Setup new test tenant and save in SSM
                     const tenantId = new Date().toISOString();
                     AuthUtils.accountAdmin = await AuthUtils.setupTenant("P@ssword1", `lib-forms-api ${config['Stage']} ${tenantId}`);
+                    console.log("\n   AuthUtils.checking tenant state - AccountAdmin OK");
                     let {username, password} = AuthUtils.accountAdmin;
                     await ssm.putParameter({
                         Name: SSM.AccountAdmin,
                         Type: 'String',
+                        Overwrite: true,
                         Value: JSON.stringify(AuthUtils.accountAdmin),
                         Tier: "Standard"}).promise();
                     AuthUtils.accountEditor = await AuthUtils.inviteUser(username, password, 'Editor');
+                    console.log("\n   AuthUtils.checking tenant state - AccountEditor OK");
                     await ssm.putParameter({
                         Name: SSM.AccountEditor,
+                        Overwrite: true,
                         Type: 'String',
                         Value: JSON.stringify(AuthUtils.accountEditor),
                         Tier: "Standard"}).promise();
                     AuthUtils.accountViewer = await AuthUtils.inviteUser(username, password, 'Viewer');
+                    console.log("\n   AuthUtils.checking tenant state - AccountViewer OK");
                     await ssm.putParameter({
                         Name: SSM.AccountViewer,
+                        Overwrite: true,
                         Type: 'String',
                         Value: JSON.stringify(AuthUtils.accountViewer),
                         Tier: "Standard"}).promise();
                     await ssm.putParameter({
                         Name: SSM.State,
+                        Overwrite: true,
                         Type: 'String',
                         Value: "1",
                         Tier: "Standard"}).promise();
+                        console.log("\n   AuthUtils.checking tenant state - New Tenant Setup DONE");
                     AuthUtils.initialized = true;
                     resolve();
                 } catch (error) {
@@ -151,7 +159,7 @@ export class AuthUtils {
     static async setupTenant(password: string, tenantName: string) : Promise<IFormsAppUser> {
         return new Promise(async (resolve, reject) => {
             try {
-                let inbox = await mailSlurp.createInbox();
+                let inbox = await mailSlurp.createNewEmailAddress();
                 let signupResult = await Auth.signUp({
                     username: inbox.emailAddress,
                     password: password,
@@ -161,12 +169,14 @@ export class AuthUtils {
                         "custom:tenantName": tenantName
                     }
                 });
-                const emails = await mailSlurp.getEmails(inbox.id, { minCount: 1 })
-                let email = await mailSlurp.getEmail(emails[0].id);
+
+                let email = await mailSlurp.fetchLatestEmail(inbox.emailAddress);
                 let verificationCode = email.body;
+
                 await Auth.confirmSignUp(inbox.emailAddress, verificationCode, {
                     forceAliasCreation: true
                 });
+
                 let user = await UserPool.adminGetUser({UserPoolId:config["UserPoolId"], Username: signupResult.userSub} as AdminGetUserRequest).promise();
                 let attributes = AuthUtils.attributeListToMap(user.UserAttributes);
                 resolve({
@@ -187,7 +197,7 @@ export class AuthUtils {
         // https://stackoverflow.com/questions/40287012/how-to-change-user-status-force-change-password
         return new Promise(async (resolve, reject) => {
             try {
-                let inbox = await mailSlurp.createInbox();
+                let inbox = await mailSlurp.createNewEmailAddress();
                 await Auth.signIn(adminEmail, adminPassword);
                 let admin: CognitoUser = await Auth.currentAuthenticatedUser();
                 let session: CognitoUserSession = await Auth.currentSession();
@@ -211,9 +221,7 @@ export class AuthUtils {
                 });
 
                 let res: AdminCreateUserResponse = await inviteResponse.json();
-
-                const emails = await mailSlurp.getEmails(inbox.id, { minCount: 1 });
-                let email = await mailSlurp.getEmail(emails[0].id);
+                let email = await mailSlurp.fetchLatestEmail(inbox.emailAddress);
                 let attributes = AuthUtils.attributeListToMap(res.User.Attributes);
 
                 resolve({

@@ -18,8 +18,8 @@
         "region": "ap-northeast-1"
       },
       "functions": {
-        "postconfirmation": "formsli-postconfirmation",
-        "invite": "formsli-invite"
+        "postconfirmation": "formsli-dev-postconfirmation",
+        "invite": "formsli-dev-invite"
       },
       "profile": "fl-infrastructure",
       "environment": {
@@ -113,14 +113,14 @@
           "PostConfirmationLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/formsli-postconfirmation",
+              "LogGroupName": "/aws/lambda/formsli-dev-postconfirmation",
               "RetentionInDays": 14
             }
           },
           "SignupLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
-              "LogGroupName": "/aws/lambda/formsli-invite",
+              "LogGroupName": "/aws/lambda/formsli-dev-invite",
               "RetentionInDays": 14
             }
           },
@@ -166,12 +166,6 @@
                         "Resource": [
                           {
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsli-dev*:*"
-                          },
-                          {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsli-postconfirmation:*"
-                          },
-                          {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsli-invite:*"
                           }
                         ]
                       },
@@ -183,12 +177,6 @@
                         "Resource": [
                           {
                             "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsli-dev*:*:*"
-                          },
-                          {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsli-postconfirmation:*:*"
-                          },
-                          {
-                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsli-invite:*:*"
                           }
                         ]
                       },
@@ -231,9 +219,9 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1566550751162-2019-08-23T08:59:11.162Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1566568966680-2019-08-23T14:02:46.680Z/formsli.zip"
               },
-              "FunctionName": "formsli-postconfirmation",
+              "FunctionName": "formsli-dev-postconfirmation",
               "Handler": "src/postconfirmation.handle",
               "MemorySize": 2048,
               "Role": {
@@ -279,14 +267,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "PostConfirmationLambdaVersionAshvt6cTAXkh7tYrdGYmZ2tqnGkSnYVMqzYiwRQ": {
+          "PostConfirmationLambdaVersionQuBrN0C6e4uoueHWhdmbeCOOmaZ3BeuZIQvIv30vX0": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "PostConfirmationLambdaFunction"
               },
-              "CodeSha256": "/OXOMjoHPaI0ypPZIbnNOqEPr9J7dAC25IRnK63NDJI="
+              "CodeSha256": "ANxRkeieC0ba5nNvCEAoholH/Q66vG2V/iQ9LXdnK04="
             }
           },
           "SignupLambdaFunction": {
@@ -296,9 +284,9 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1566550751162-2019-08-23T08:59:11.162Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1566568966680-2019-08-23T14:02:46.680Z/formsli.zip"
               },
-              "FunctionName": "formsli-invite",
+              "FunctionName": "formsli-dev-invite",
               "Handler": "src/invite.handle",
               "MemorySize": 2048,
               "Role": {
@@ -344,14 +332,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "SignupLambdaVersion0xLrzfnz35CchtXsLMBOZn08mF2tOsJcGHqwMdr6U": {
+          "SignupLambdaVersionVNLumwBXrODuiK1FwhOEqinjN8agaGIvjKW17jjGI": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SignupLambdaFunction"
               },
-              "CodeSha256": "/OXOMjoHPaI0ypPZIbnNOqEPr9J7dAC25IRnK63NDJI="
+              "CodeSha256": "ANxRkeieC0ba5nNvCEAoholH/Q66vG2V/iQ9LXdnK04="
             }
           },
           "ApiGatewayRestApi": {
@@ -578,7 +566,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1566550726636": {
+          "ApiGatewayDeployment1566568940448": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -667,40 +655,109 @@
               }
             }
           },
-          "CognitoUserPoolMyUserPool": {
-            "Type": "AWS::Cognito::UserPool",
-            "Properties": {
-              "UserPoolName": "MyUserPool",
-              "LambdaConfig": {
-                "PostConfirmation": {
-                  "Fn::GetAtt": [
-                    "PostConfirmationLambdaFunction",
-                    "Arn"
-                  ]
-                }
-              }
-            },
+          "PostConfirmationCustomCognitoUserPool1": {
+            "Type": "Custom::CognitoUserPool",
+            "Version": 1,
             "DependsOn": [
-              "PostConfirmationLambdaFunction"
-            ]
-          },
-          "PostConfirmationLambdaPermissionCognitoUserPoolMyUserPoolTriggerSourcePostConfirmation": {
-            "Type": "AWS::Lambda::Permission",
+              "PostConfirmationLambdaFunction",
+              "CustomDashresourceDashexistingDashcupLambdaFunction"
+            ],
             "Properties": {
-              "FunctionName": {
+              "ServiceToken": {
                 "Fn::GetAtt": [
-                  "PostConfirmationLambdaFunction",
+                  "CustomDashresourceDashexistingDashcupLambdaFunction",
                   "Arn"
                 ]
               },
-              "Action": "lambda:InvokeFunction",
-              "Principal": "cognito-idp.amazonaws.com",
-              "SourceArn": {
+              "FunctionName": "formsli-dev-postconfirmation",
+              "UserPoolName": "fl-dev-userpool",
+              "UserPoolConfigs": [
+                {
+                  "Trigger": "PostConfirmation"
+                }
+              ]
+            }
+          },
+          "CustomDashresourceDashexistingDashcupLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/formsli/dev/1566568966680-2019-08-23T14:02:46.680Z/custom-resources.zip"
+              },
+              "FunctionName": "formsli-dev-custom-resource-existing-cup",
+              "Handler": "cognitoUserPool/handler.handler",
+              "MemorySize": 1024,
+              "Role": {
                 "Fn::GetAtt": [
-                  "CognitoUserPoolMyUserPool",
+                  "IamRoleCustomResourcesLambdaExecution",
                   "Arn"
                 ]
-              }
+              },
+              "Runtime": "nodejs10.x",
+              "Timeout": 180
+            },
+            "DependsOn": [
+              "IamRoleCustomResourcesLambdaExecution"
+            ]
+          },
+          "IamRoleCustomResourcesLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "dev",
+                        "formsli",
+                        "custom-resources-lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Resource": "*",
+                        "Action": [
+                          "cognito-idp:ListUserPools",
+                          "cognito-idp:DescribeUserPool",
+                          "cognito-idp:UpdateUserPool"
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Resource": "arn:aws:lambda:*:*:function:formsli-dev-postconfirmation",
+                        "Action": [
+                          "lambda:AddPermission",
+                          "lambda:RemovePermission"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
             }
           },
           "AppSyncRDSRole": {
@@ -852,6 +909,16 @@
               "ProviderARNs": [
                 "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33"
               ]
+            }
+          },
+          "PostConfirmationTriggerInvokePermission": {
+            "Type": "AWS::Lambda::Permission",
+            "DependsOn": "PostConfirmationLambdaFunction",
+            "Properties": {
+              "Action": "lambda:InvokeFunction",
+              "Principal": "cognito-idp.amazonaws.com",
+              "SourceArn": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33",
+              "FunctionName": "formsli-dev-postconfirmation"
             }
           },
           "CognitoUserPoolAdminUser": {
@@ -2228,13 +2295,13 @@
           "PostConfirmationLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "PostConfirmationLambdaVersionAshvt6cTAXkh7tYrdGYmZ2tqnGkSnYVMqzYiwRQ"
+              "Ref": "PostConfirmationLambdaVersionQuBrN0C6e4uoueHWhdmbeCOOmaZ3BeuZIQvIv30vX0"
             }
           },
           "SignupLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SignupLambdaVersion0xLrzfnz35CchtXsLMBOZn08mF2tOsJcGHqwMdr6U"
+              "Ref": "SignupLambdaVersionVNLumwBXrODuiK1FwhOEqinjN8agaGIvjKW17jjGI"
             }
           },
           "ServiceEndpoint": {
@@ -2847,7 +2914,7 @@
     "pluginsData": {},
     "functions": {
       "postConfirmation": {
-        "name": "formsli-postconfirmation",
+        "name": "formsli-dev-postconfirmation",
         "handler": "src/postconfirmation.handle",
         "events": [
           {
@@ -2878,8 +2945,9 @@
           },
           {
             "cognitoUserPool": {
-              "pool": "MyUserPool",
-              "trigger": "PostConfirmation"
+              "pool": "fl-dev-userpool",
+              "trigger": "PostConfirmation",
+              "existing": true
             }
           }
         ],
@@ -2892,7 +2960,7 @@
         "vpc": {}
       },
       "signup": {
-        "name": "formsli-invite",
+        "name": "formsli-dev-invite",
         "handler": "src/invite.handle",
         "events": [
           {
@@ -3092,6 +3160,16 @@
             ]
           }
         },
+        "PostConfirmationTriggerInvokePermission": {
+          "Type": "AWS::Lambda::Permission",
+          "DependsOn": "PostConfirmationLambdaFunction",
+          "Properties": {
+            "Action": "lambda:InvokeFunction",
+            "Principal": "cognito-idp.amazonaws.com",
+            "SourceArn": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33",
+            "FunctionName": "formsli-dev-postconfirmation"
+          }
+        },
         "CognitoUserPoolAdminUser": {
           "Type": "AWS::Cognito::UserPoolUser",
           "Properties": {
@@ -3177,7 +3255,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli/dev/1566550751162-2019-08-23T08:59:11.162Z",
+    "artifactDirectoryName": "serverless/formsli/dev/1566568966680-2019-08-23T14:02:46.680Z",
     "artifact": ""
   }
 }

@@ -2,7 +2,9 @@ import Auth, { CognitoUser } from '@aws-amplify/auth';
 import { ApiHelper } from "./api.utils";
 import { AuthUtils } from "./auth.utils";
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
+const TWO_MINS = 120000;
+const TEN_SECONDS = 10000;
+jasmine.DEFAULT_TIMEOUT_INTERVAL = TEN_SECONDS;
 
 Auth.configure(ApiHelper.apiConfig().Auth);
 
@@ -22,10 +24,10 @@ describe("Account", () => {
             tenantName = userAttributes['custom:tenantName'];
             done();
         } catch (error) {
-            console.error("spec.plantypes - beforeAll - ERROR", error);
+            console.error("spec.account - beforeAll - ERROR", error);
             done.fail(error);
         }
-    }, 60000);
+    }, TWO_MINS);
 
     afterAll(async (done) => {
         try {
@@ -35,7 +37,7 @@ describe("Account", () => {
             console.error("spec.account - afterAll - ERROR", error);
             done.fail(error);
         }
-    }, 10000);
+    }, TEN_SECONDS);
 
     it("Get", async (done) => {
         const getAccount = {query: `query {
@@ -108,7 +110,5 @@ describe("Account", () => {
             fail(error);
         }
         done();
-    }, 10000);
-
-
+    });
 });
