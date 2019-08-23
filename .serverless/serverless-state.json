@@ -231,7 +231,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1566540892822-2019-08-23T06:14:52.822Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1566541520236-2019-08-23T06:25:20.236Z/formsli.zip"
               },
               "FunctionName": "formsli-postconfirmation",
               "Handler": "src/postconfirmation.handle",
@@ -296,7 +296,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1566540892822-2019-08-23T06:14:52.822Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1566541520236-2019-08-23T06:25:20.236Z/formsli.zip"
               },
               "FunctionName": "formsli-invite",
               "Handler": "src/invite.handle",
@@ -578,7 +578,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1566540869964": {
+          "ApiGatewayDeployment1566541497332": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -3086,7 +3086,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli/dev/1566540892822-2019-08-23T06:14:52.822Z",
+    "artifactDirectoryName": "serverless/formsli/dev/1566541520236-2019-08-23T06:25:20.236Z",
     "artifact": ""
   }
 }
