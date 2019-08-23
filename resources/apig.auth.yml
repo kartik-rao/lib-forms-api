@@ -46,6 +46,12 @@ Outputs:
     Value: ${self:provider.environment.dbClusterId}
   DBSecretARN:
     Value: ${self:provider.environment.dbClusterSecretArn}
+  UserPoolId:
+    Value: ${self:provider.environment.userPoolId}
+  IdentityPoolId:
+    Value: ${ssm:/dev/formsli/cognito/identitypool/id}
+  UserPoolClientId:
+    Value: ${ssm:/dev/formsli/cognito/userpool/clientId}
   UserPoolAdminUser:
     Value:
       Ref: CognitoUserPoolAdminUser
