@@ -35,12 +35,12 @@ describe("Account", () => {
             console.error("spec.account - afterAll - ERROR", error);
             done.fail(error);
         }
-    });
+    }, 10000);
 
     it("Get", async (done) => {
         const getAccount = {query: `query {
             getAccount (accountId: "${tenantId}")
-            {id, name}
+            {id, name, ownedBy {given_name, family_name}, numForms, numUsers}
             }
         `};
 
@@ -51,9 +51,12 @@ describe("Account", () => {
             expect(status).toEqual(200);
             expect(hasErrors).toBeFalsy("Response should not have errors");
             hasErrors && done.fail(errors[0].message);
-
             expect(parsed).toBeDefined();
+            expect(parsed.id).toEqual(tenantId);
             expect(parsed.name).toEqual(tenantName);
+            expect(parsed.ownedBy).toBeDefined("Must include subfield ownedBy")
+            expect(parsed.numForms).toBeDefined("Must include subfield numForms")
+            expect(parsed.numUsers).toBeDefined("Must include subfield numUsers")
         } catch (error) {
             console.error(error);
             fail(error);
@@ -62,50 +65,50 @@ describe("Account", () => {
     });
 
     it("List (as AccountAdmin)", async(done) => {
-        const listAllAccounts = {
+        const listAccounts = {
             query: `query {
-                listAccounts {
-                    items { id, name },
-                    nextToken
-                }
+                listAccounts { id, name }
             }`}
 
         try {
-            let response = await ApiHelper.makeRequest("listAccounts", listAllAccounts, token);
+            let response = await ApiHelper.makeRequest("listAccounts", listAccounts, token);
             let {status, parsed, hasErrors, errors} = response;
-
             expect(status).toEqual(200);
             expect(hasErrors).toBeTruthy("Should not succeed");
+            expect(errors[0]['errorType']).toEqual("Unauthorized")
             expect(parsed == null).toBeTruthy();
         } catch (error) {
             fail(error);
+        } finally {
+            await Auth.signOut();
         }
         done();
     });
 
     it("List (as Admin)", async(done) => {
-        const listAllAccounts = {
+        const listAccounts = {
             query: `query {
-                listAccounts {
-                    items { id, name },
-                    nextToken
-                }
+                listAccounts { id, name }
             }`}
 
         try {
             const user: CognitoUser = await Auth.signIn(AuthUtils.globalAdmin);
             token = (await Auth.currentSession()).getIdToken().getJwtToken();
-            let response = await ApiHelper.makeRequest("listAccounts", listAllAccounts, token);
+            let response = await ApiHelper.makeRequest("listAccounts", listAccounts, token);
             let {status, parsed, hasErrors, errors} = response;
 
             expect(status).toEqual(200);
             expect(hasErrors).toBeFalsy("Response should not have errors");
+            hasErrors && done.fail(errors[0].message);
             expect(parsed).toBeDefined();
-            expect(parsed.items).toBeDefined();
-            expect(parsed.items.length).toBeGreaterThan(0);
+            expect(parsed).toBeDefined();
+            expect(parsed.length).toBeGreaterThan(0);
         } catch (error) {
+            console.error(error);
             fail(error);
         }
         done();
-    });
+    }, 10000);
+
+
 });
