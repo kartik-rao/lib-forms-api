@@ -21,17 +21,21 @@
         "postconfirmation": "formsli-postconfirmation",
         "invite": "formsli-invite"
       },
-      "profile": "fl-infrastructure-dev",
+      "profile": "fl-infrastructure",
       "environment": {
-        "protocol": "http://",
-        "domain": "dev-app.forms.li",
-        "urlPrefix": "http://dev-app.forms.li",
         "region": "ap-northeast-1",
+        "domain": "dev-app.forms.li",
+        "protocol": "http://",
+        "urlPrefix": "http://dev-app.forms.li",
         "environment": "dev",
         "serviceName": "formsli",
         "databaseName": "formsli",
-        "dbClusterId": "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-dev",
-        "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:644527192227:secret:/app/formsli/dev/db/credentials-obdDgQ"
+        "userPoolId": "ap-northeast-1_Q798Nsl33",
+        "userPoolArn": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33",
+        "dbClusterId": "fl-rds-cluster-dev",
+        "dbClusterArn": "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:fl-rds-cluster-dev",
+        "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX",
+        "s3_user_bucket": "fl-dev-userdata"
       },
       "iamRoleStatements": [
         {
@@ -40,9 +44,7 @@
             "secretsmanager:GetSecretValue"
           ],
           "Resource": [
-            {
-              "Fn::Sub": "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:/app/formsli/dev/db/*"
-            }
+            "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/*"
           ]
         },
         {
@@ -61,10 +63,10 @@
           ],
           "Resource": [
             {
-              "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:formsli-dev"
+              "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
             },
             {
-              "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:formsli-dev:*"
+              "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev:*"
             }
           ]
         },
@@ -77,9 +79,7 @@
             "cognito-idp:AdminGetUser",
             "cognito-idp:AdminCreateUser"
           ],
-          "Resource": {
-            "Fn::Sub": "arn:aws:cognito-idp:${AWS::Region}:${AWS::AccountId}:userpool/*"
-          }
+          "Resource": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33"
         },
         {
           "Effect": "Allow",
@@ -231,7 +231,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1566250137062-2019-08-19T21:28:57.062Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1566540892822-2019-08-23T06:14:52.822Z/formsli.zip"
               },
               "FunctionName": "formsli-postconfirmation",
               "Handler": "src/postconfirmation.handle",
@@ -256,17 +256,21 @@
               ],
               "Environment": {
                 "Variables": {
-                  "protocol": "http://",
-                  "domain": "dev-app.forms.li",
-                  "urlPrefix": "http://dev-app.forms.li",
                   "region": "ap-northeast-1",
+                  "domain": "dev-app.forms.li",
+                  "protocol": "http://",
+                  "urlPrefix": "http://dev-app.forms.li",
                   "environment": "dev",
                   "serviceName": "formsli",
                   "databaseName": "formsli",
-                  "dbClusterId": {
-                    "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:formsli-dev"
+                  "userPoolId": "ap-northeast-1_Q798Nsl33",
+                  "userPoolArn": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33",
+                  "dbClusterId": "fl-rds-cluster-dev",
+                  "dbClusterArn": {
+                    "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
                   },
-                  "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:644527192227:secret:/app/formsli/dev/db/credentials-obdDgQ"
+                  "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX",
+                  "s3_user_bucket": "fl-dev-userdata"
                 }
               }
             },
@@ -275,7 +279,7 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "PostConfirmationLambdaVersion5QcHTZVvvBo6Ugfv9mvXbdjf5Pls5S6mlw8G1qMjw": {
+          "PostConfirmationLambdaVersionAshvt6cTAXkh7tYrdGYmZ2tqnGkSnYVMqzYiwRQ": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
@@ -292,7 +296,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1566250137062-2019-08-19T21:28:57.062Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1566540892822-2019-08-23T06:14:52.822Z/formsli.zip"
               },
               "FunctionName": "formsli-invite",
               "Handler": "src/invite.handle",
@@ -317,17 +321,21 @@
               ],
               "Environment": {
                 "Variables": {
-                  "protocol": "http://",
-                  "domain": "dev-app.forms.li",
-                  "urlPrefix": "http://dev-app.forms.li",
                   "region": "ap-northeast-1",
+                  "domain": "dev-app.forms.li",
+                  "protocol": "http://",
+                  "urlPrefix": "http://dev-app.forms.li",
                   "environment": "dev",
                   "serviceName": "formsli",
                   "databaseName": "formsli",
-                  "dbClusterId": {
-                    "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:formsli-dev"
+                  "userPoolId": "ap-northeast-1_Q798Nsl33",
+                  "userPoolArn": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33",
+                  "dbClusterId": "fl-rds-cluster-dev",
+                  "dbClusterArn": {
+                    "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
                   },
-                  "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:644527192227:secret:/app/formsli/dev/db/credentials-obdDgQ"
+                  "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX",
+                  "s3_user_bucket": "fl-dev-userdata"
                 }
               }
             },
@@ -336,7 +344,7 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "SignupLambdaVersionWmb2iH7dKb1vqRN9LDEHPmZEMhtB0smalrpU30gk": {
+          "SignupLambdaVersion0xLrzfnz35CchtXsLMBOZn08mF2tOsJcGHqwMdr6U": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
@@ -570,7 +578,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1566250117067": {
+          "ApiGatewayDeployment1566540869964": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -662,7 +670,7 @@
           "CognitoUserPoolMyUserPool": {
             "Type": "AWS::Cognito::UserPool",
             "Properties": {
-              "UserPoolName": "dev-formsli",
+              "UserPoolName": "MyUserPool",
               "LambdaConfig": {
                 "PostConfirmation": {
                   "Fn::GetAtt": [
@@ -670,77 +678,7 @@
                     "Arn"
                   ]
                 }
-              },
-              "UsernameAttributes": [
-                "email"
-              ],
-              "AutoVerifiedAttributes": [
-                "email"
-              ],
-              "EmailVerificationSubject": "Your Forms.li verification code",
-              "EmailVerificationMessage": "{####}",
-              "EmailConfiguration": {
-                "SourceArn": {
-                  "Fn::Sub": "arn:aws:ses:us-east-1:${AWS::AccountId}:identity/no-reply@forms.li"
-                }
-              },
-              "AdminCreateUserConfig": {
-                "InviteMessageTemplate": {
-                  "EmailSubject": "Welcome to Forms.li",
-                  "EmailMessage": "Your username is {username} and temporary password is {####}"
-                }
-              },
-              "Schema": [
-                {
-                  "AttributeDataType": "String",
-                  "DeveloperOnlyAttribute": false,
-                  "Mutable": true,
-                  "Name": "tenantId",
-                  "Required": false
-                },
-                {
-                  "AttributeDataType": "String",
-                  "DeveloperOnlyAttribute": false,
-                  "Mutable": true,
-                  "Name": "tenantName",
-                  "Required": false
-                },
-                {
-                  "AttributeDataType": "String",
-                  "DeveloperOnlyAttribute": false,
-                  "Mutable": true,
-                  "Name": "source",
-                  "Required": false
-                },
-                {
-                  "AttributeDataType": "String",
-                  "DeveloperOnlyAttribute": false,
-                  "Mutable": true,
-                  "Name": "group",
-                  "Required": false
-                },
-                {
-                  "AttributeDataType": "String",
-                  "DeveloperOnlyAttribute": false,
-                  "Mutable": true,
-                  "Name": "environment",
-                  "Required": false
-                },
-                {
-                  "AttributeDataType": "String",
-                  "DeveloperOnlyAttribute": false,
-                  "Mutable": true,
-                  "Name": "stack",
-                  "Required": false
-                },
-                {
-                  "AttributeDataType": "String",
-                  "DeveloperOnlyAttribute": false,
-                  "Mutable": true,
-                  "Name": "region",
-                  "Required": false
-                }
-              ]
+              }
             },
             "DependsOn": [
               "PostConfirmationLambdaFunction"
@@ -819,10 +757,10 @@
                     ],
                     "Resource": [
                       {
-                        "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:formsli-dev"
+                        "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
                       },
                       {
-                        "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:formsli-dev:*"
+                        "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev:*"
                       }
                     ]
                   },
@@ -836,7 +774,7 @@
                     ],
                     "Resource": [
                       {
-                        "Fn::Sub": "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:/app/formsli/dev/db/*"
+                        "Fn::Sub": "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:/dev/formsli/rds/*"
                       }
                     ]
                   },
@@ -901,163 +839,26 @@
               }
             }
           },
-          "AttachmentsBucket": {
-            "Type": "AWS::S3::Bucket",
+          "MyApiGatewayAuthorizer": {
+            "Type": "AWS::ApiGateway::Authorizer",
             "Properties": {
-              "BucketName": "formsli-dev-data",
-              "CorsConfiguration": {
-                "CorsRules": [
-                  {
-                    "AllowedOrigins": [
-                      "*"
-                    ],
-                    "AllowedHeaders": [
-                      "*"
-                    ],
-                    "AllowedMethods": [
-                      "GET",
-                      "PUT",
-                      "POST",
-                      "DELETE",
-                      "HEAD"
-                    ],
-                    "MaxAge": 3000
-                  }
-                ]
-              }
-            }
-          },
-          "CognitoUserPoolClient": {
-            "Type": "AWS::Cognito::UserPoolClient",
-            "Properties": {
-              "ClientName": "formsli-userpoolclient",
-              "UserPoolId": {
-                "Ref": "CognitoUserPoolMyUserPool"
+              "AuthorizerResultTtlInSeconds": 10,
+              "IdentitySource": "method.request.header.Authorization",
+              "Name": "MyCognitoAuthorizer",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
               },
-              "ExplicitAuthFlows": [
-                "USER_PASSWORD_AUTH"
-              ],
-              "GenerateSecret": false,
-              "ReadAttributes": [
-                "email",
-                "given_name",
-                "family_name",
-                "website",
-                "email_verified",
-                "email",
-                "profile",
-                "phone_number",
-                "phone_number_verified",
-                "custom:tenantId",
-                "custom:tenantName",
-                "custom:source",
-                "custom:environment",
-                "custom:stack",
-                "custom:region",
-                "custom:group"
-              ],
-              "WriteAttributes": [
-                "email",
-                "given_name",
-                "family_name",
-                "phone_number",
-                "address",
-                "website",
-                "profile",
-                "locale",
-                "custom:group",
-                "custom:tenantName",
-                "custom:source"
+              "Type": "COGNITO_USER_POOLS",
+              "ProviderARNs": [
+                "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33"
               ]
-            }
-          },
-          "CognitoUserPoolAdminClient": {
-            "Type": "AWS::Cognito::UserPoolClient",
-            "Properties": {
-              "ClientName": "formsli-userpooladminclient",
-              "UserPoolId": {
-                "Ref": "CognitoUserPoolMyUserPool"
-              },
-              "ExplicitAuthFlows": [
-                "ADMIN_NO_SRP_AUTH"
-              ],
-              "GenerateSecret": false,
-              "ReadAttributes": [
-                "email",
-                "given_name",
-                "family_name",
-                "website",
-                "email_verified",
-                "email",
-                "profile",
-                "phone_number",
-                "phone_number_verified",
-                "custom:tenantId",
-                "custom:tenantName",
-                "custom:source",
-                "custom:group",
-                "custom:environment",
-                "custom:stack",
-                "custom:region"
-              ],
-              "WriteAttributes": [
-                "custom:tenantId",
-                "custom:tenantName",
-                "custom:source",
-                "custom:environment",
-                "custom:stack",
-                "custom:region",
-                "custom:group"
-              ]
-            }
-          },
-          "CognitoAppAdminGroup": {
-            "Type": "AWS::Cognito::UserPoolGroup",
-            "Properties": {
-              "Description": "Application Admin",
-              "GroupName": "Admin",
-              "UserPoolId": {
-                "Ref": "CognitoUserPoolMyUserPool"
-              }
-            }
-          },
-          "CognitoAccountAdminGroup": {
-            "Type": "AWS::Cognito::UserPoolGroup",
-            "Properties": {
-              "Description": "Account admin",
-              "GroupName": "AccountAdmin",
-              "UserPoolId": {
-                "Ref": "CognitoUserPoolMyUserPool"
-              }
-            }
-          },
-          "CognitoAccountEditorGroup": {
-            "Type": "AWS::Cognito::UserPoolGroup",
-            "Properties": {
-              "Description": "Account editor user",
-              "GroupName": "Editor",
-              "UserPoolId": {
-                "Ref": "CognitoUserPoolMyUserPool"
-              }
-            }
-          },
-          "CognitoAccountViewerGroup": {
-            "Type": "AWS::Cognito::UserPoolGroup",
-            "Properties": {
-              "Description": "Account read only user",
-              "GroupName": "Viewer",
-              "UserPoolId": {
-                "Ref": "CognitoUserPoolMyUserPool"
-              }
             }
           },
           "CognitoUserPoolAdminUser": {
             "Type": "AWS::Cognito::UserPoolUser",
             "Properties": {
               "Username": "infrastructure.dev@forms.li",
-              "UserPoolId": {
-                "Ref": "CognitoUserPoolMyUserPool"
-              },
+              "UserPoolId": "ap-northeast-1_Q798Nsl33",
               "DesiredDeliveryMediums": [
                 "EMAIL"
               ],
@@ -1093,200 +894,6 @@
               ]
             }
           },
-          "CognitoIdentityPoolMyIdentityPool": {
-            "Type": "AWS::Cognito::IdentityPool",
-            "Properties": {
-              "IdentityPoolName": "formsgraphqlidentitypool",
-              "AllowUnauthenticatedIdentities": false,
-              "CognitoIdentityProviders": [
-                {
-                  "ClientId": {
-                    "Ref": "CognitoUserPoolClient"
-                  },
-                  "ProviderName": {
-                    "Fn::GetAtt": [
-                      "CognitoUserPoolMyUserPool",
-                      "ProviderName"
-                    ]
-                  }
-                }
-              ]
-            }
-          },
-          "CognitoIdentityPoolRoles": {
-            "Type": "AWS::Cognito::IdentityPoolRoleAttachment",
-            "Properties": {
-              "IdentityPoolId": {
-                "Ref": "CognitoIdentityPoolMyIdentityPool"
-              },
-              "Roles": {
-                "authenticated": {
-                  "Fn::GetAtt": [
-                    "CognitoAuthRole",
-                    "Arn"
-                  ]
-                },
-                "unauthenticated": {
-                  "Fn::GetAtt": [
-                    "CognitoUnAuthorizedRole",
-                    "Arn"
-                  ]
-                }
-              }
-            }
-          },
-          "CognitoUnAuthorizedRole": {
-            "Type": "AWS::IAM::Role",
-            "Properties": {
-              "AssumeRolePolicyDocument": {
-                "Version": "2012-10-17",
-                "Statement": [
-                  {
-                    "Effect": "Allow",
-                    "Principal": {
-                      "Federated": "cognito-identity.amazonaws.com"
-                    },
-                    "Action": [
-                      "sts:AssumeRoleWithWebIdentity"
-                    ],
-                    "Condition": {
-                      "StringEquals": {
-                        "cognito-identity.amazonaws.com:aud": {
-                          "Ref": "CognitoIdentityPoolMyIdentityPool"
-                        }
-                      },
-                      "ForAnyValue:StringLike": {
-                        "cognito-identity.amazonaws.com:amr": "unauthenticated"
-                      }
-                    }
-                  }
-                ]
-              },
-              "Policies": [
-                {
-                  "PolicyName": "CognitoUnauthorizedPolicy",
-                  "PolicyDocument": {
-                    "Version": "2012-10-17",
-                    "Statement": [
-                      {
-                        "Effect": "Allow",
-                        "Action": [
-                          "mobileanalytics:PutEvents",
-                          "cognito-sync:*"
-                        ],
-                        "Resource": "*"
-                      }
-                    ]
-                  }
-                }
-              ]
-            }
-          },
-          "CognitoAuthRole": {
-            "Type": "AWS::IAM::Role",
-            "Properties": {
-              "AssumeRolePolicyDocument": {
-                "Version": "2012-10-17",
-                "Statement": [
-                  {
-                    "Effect": "Allow",
-                    "Principal": {
-                      "Federated": "cognito-identity.amazonaws.com"
-                    },
-                    "Action": [
-                      "sts:AssumeRoleWithWebIdentity"
-                    ],
-                    "Condition": {
-                      "StringEquals": {
-                        "cognito-identity.amazonaws.com:aud": {
-                          "Ref": "CognitoIdentityPoolMyIdentityPool"
-                        }
-                      },
-                      "ForAnyValue:StringLike": {
-                        "cognito-identity.amazonaws.com:amr": "authenticated"
-                      }
-                    }
-                  }
-                ]
-              },
-              "Policies": [
-                {
-                  "PolicyName": "formsli-authorized",
-                  "PolicyDocument": {
-                    "Version": "2012-10-17",
-                    "Statement": [
-                      {
-                        "Effect": "Allow",
-                        "Action": [
-                          "mobileanalytics:PutEvents",
-                          "cognito-sync:*",
-                          "cognito-identity:*"
-                        ],
-                        "Resource": "*"
-                      },
-                      {
-                        "Effect": "Allow",
-                        "Action": [
-                          "s3:*"
-                        ],
-                        "Resource": [
-                          {
-                            "Fn::Join": [
-                              "",
-                              [
-                                {
-                                  "Fn::GetAtt": [
-                                    "AttachmentsBucket",
-                                    "Arn"
-                                  ]
-                                },
-                                "/private/",
-                                "$",
-                                "{cognito-identity.amazonaws.com:sub}/*"
-                              ]
-                            ]
-                          }
-                        ]
-                      }
-                    ]
-                  }
-                }
-              ]
-            }
-          },
-          "MyApiGatewayAuthorizer": {
-            "Type": "AWS::ApiGateway::Authorizer",
-            "Properties": {
-              "AuthorizerResultTtlInSeconds": 10,
-              "IdentitySource": "method.request.header.Authorization",
-              "Name": "MyCognitoAuthorizer",
-              "RestApiId": {
-                "Ref": "ApiGatewayRestApi"
-              },
-              "Type": "COGNITO_USER_POOLS",
-              "ProviderARNs": [
-                {
-                  "Fn::Join": [
-                    "",
-                    [
-                      "arn:aws:cognito-idp:",
-                      {
-                        "Fn::Sub": "${AWS::Region}"
-                      },
-                      ":",
-                      {
-                        "Fn::Sub": "${AWS::AccountId}"
-                      },
-                      ":userpool/",
-                      {
-                        "Ref": "CognitoUserPoolMyUserPool"
-                      }
-                    ]
-                  ]
-                }
-              ]
-            }
-          },
           "GraphQlApi": {
             "Type": "AWS::AppSync::GraphQLApi",
             "Properties": {
@@ -1295,9 +902,7 @@
               "AdditionalAuthenticationProviders": [],
               "UserPoolConfig": {
                 "AwsRegion": "ap-northeast-1",
-                "UserPoolId": {
-                  "Ref": "CognitoUserPoolMyUserPool"
-                },
+                "UserPoolId": "ap-northeast-1_Q798Nsl33",
                 "DefaultAction": "ALLOW"
               },
               "LogConfig": {
@@ -1376,12 +981,12 @@
                           "Ref": "AWS::AccountId"
                         },
                         "cluster",
-                        "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-dev"
+                        "fl-rds-cluster-dev"
                       ]
                     ]
                   },
                   "DatabaseName": "formsli",
-                  "AwsSecretStoreArn": "arn:aws:secretsmanager:ap-northeast-1:644527192227:secret:/app/formsli/dev/db/credentials-obdDgQ"
+                  "AwsSecretStoreArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX"
                 },
                 "RelationalDatabaseSourceType": "RDS_HTTP_ENDPOINT"
               }
@@ -2569,13 +2174,13 @@
           "PostConfirmationLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "PostConfirmationLambdaVersion5QcHTZVvvBo6Ugfv9mvXbdjf5Pls5S6mlw8G1qMjw"
+              "Ref": "PostConfirmationLambdaVersionAshvt6cTAXkh7tYrdGYmZ2tqnGkSnYVMqzYiwRQ"
             }
           },
           "SignupLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SignupLambdaVersionWmb2iH7dKb1vqRN9LDEHPmZEMhtB0smalrpU30gk"
+              "Ref": "SignupLambdaVersion0xLrzfnz35CchtXsLMBOZn08mF2tOsJcGHqwMdr6U"
             }
           },
           "ServiceEndpoint": {
@@ -2612,36 +2217,6 @@
           "Service": {
             "Value": "formsli"
           },
-          "AttachmentsBucketName": {
-            "Value": {
-              "Ref": "AttachmentsBucket"
-            }
-          },
-          "UserPoolId": {
-            "Value": {
-              "Ref": "CognitoUserPoolMyUserPool"
-            }
-          },
-          "UserPoolClientId": {
-            "Value": {
-              "Ref": "CognitoUserPoolClient"
-            }
-          },
-          "AdminUserPoolClientId": {
-            "Value": {
-              "Ref": "CognitoUserPoolAdminClient"
-            }
-          },
-          "UserPoolAdminUser": {
-            "Value": {
-              "Ref": "CognitoUserPoolAdminUser"
-            }
-          },
-          "IdentityPoolId": {
-            "Value": {
-              "Ref": "CognitoIdentityPoolMyIdentityPool"
-            }
-          },
           "AccountId": {
             "Value": {
               "Fn::Sub": "${AWS::AccountId}"
@@ -2653,12 +2228,15 @@
             }
           },
           "DBClusterId": {
-            "Value": {
-              "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:formsli-dev"
-            }
+            "Value": "fl-rds-cluster-dev"
           },
           "DBSecretARN": {
-            "Value": "arn:aws:secretsmanager:ap-northeast-1:644527192227:secret:/app/formsli/dev/db/credentials-obdDgQ"
+            "Value": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX"
+          },
+          "UserPoolAdminUser": {
+            "Value": {
+              "Ref": "CognitoUserPoolAdminUser"
+            }
           },
           "GraphQlApiUrl": {
             "Value": {
@@ -2713,16 +2291,13 @@
           ]
         }
       },
-      "bucket": "formsli-dev-data",
       "appSync": {
         "name": "formsli-api-dev",
         "authenticationType": "AMAZON_COGNITO_USER_POOLS",
         "userPoolConfig": {
           "awsRegion": "ap-northeast-1",
           "defaultAction": "ALLOW",
-          "userPoolId": {
-            "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GraphQlApi\"][\"Properties\"][\"UserPoolConfig\"][\"UserPoolId\"]"
-          }
+          "userPoolId": "ap-northeast-1_Q798Nsl33"
         },
         "logConfig": {
           "loggingRoleArn": {
@@ -2737,8 +2312,8 @@
             "name": "AppData",
             "description": "RDS source for formsli",
             "config": {
-              "dbClusterIdentifier": "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-dev",
-              "awsSecretStoreArn": "arn:aws:secretsmanager:ap-northeast-1:644527192227:secret:/app/formsli/dev/db/credentials-obdDgQ",
+              "dbClusterIdentifier": "fl-rds-cluster-dev",
+              "awsSecretStoreArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX",
               "databaseName": "formsli",
               "serviceRoleArn": {
                 "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GraphQlDsAppData\"][\"Properties\"][\"ServiceRoleArn\"]"
@@ -3343,8 +2918,8 @@
                     "tag:GetResources"
                   ],
                   "Resource": [
-                    "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-dev",
-                    "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-dev:*"
+                    "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:fl-rds-cluster-dev",
+                    "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:fl-rds-cluster-dev:*"
                   ]
                 },
                 {
@@ -3356,7 +2931,7 @@
                     "secretsmanager:GetRandomPassword"
                   ],
                   "Resource": [
-                    "arn:aws:secretsmanager:#{AWS::Region}:#{AWS::AccountId}:secret:/app/formsli/dev/db/*"
+                    "arn:aws:secretsmanager:#{AWS::Region}:#{AWS::AccountId}:secret:/dev/formsli/rds/*"
                   ]
                 },
                 {
@@ -3420,237 +2995,26 @@
             }
           }
         },
-        "AttachmentsBucket": {
-          "Type": "AWS::S3::Bucket",
+        "MyApiGatewayAuthorizer": {
+          "Type": "AWS::ApiGateway::Authorizer",
           "Properties": {
-            "BucketName": "formsli-dev-data",
-            "CorsConfiguration": {
-              "CorsRules": [
-                {
-                  "AllowedOrigins": [
-                    "*"
-                  ],
-                  "AllowedHeaders": [
-                    "*"
-                  ],
-                  "AllowedMethods": [
-                    "GET",
-                    "PUT",
-                    "POST",
-                    "DELETE",
-                    "HEAD"
-                  ],
-                  "MaxAge": 3000
-                }
-              ]
-            }
-          }
-        },
-        "CognitoUserPoolMyUserPool": {
-          "Type": "AWS::Cognito::UserPool",
-          "Properties": {
-            "UserPoolName": "dev-formsli",
-            "UsernameAttributes": [
-              "email"
-            ],
-            "AutoVerifiedAttributes": [
-              "email"
-            ],
-            "EmailVerificationSubject": "Your Forms.li verification code",
-            "EmailVerificationMessage": "{####}",
-            "EmailConfiguration": {
-              "SourceArn": "arn:aws:ses:us-east-1:#{AWS::AccountId}:identity/no-reply@forms.li"
+            "AuthorizerResultTtlInSeconds": 10,
+            "IdentitySource": "method.request.header.Authorization",
+            "Name": "MyCognitoAuthorizer",
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
             },
-            "AdminCreateUserConfig": {
-              "InviteMessageTemplate": {
-                "EmailSubject": "Welcome to Forms.li",
-                "EmailMessage": "Your username is {username} and temporary password is {####}"
-              }
-            },
-            "Schema": [
-              {
-                "AttributeDataType": "String",
-                "DeveloperOnlyAttribute": false,
-                "Mutable": true,
-                "Name": "tenantId",
-                "Required": false
-              },
-              {
-                "AttributeDataType": "String",
-                "DeveloperOnlyAttribute": false,
-                "Mutable": true,
-                "Name": "tenantName",
-                "Required": false
-              },
-              {
-                "AttributeDataType": "String",
-                "DeveloperOnlyAttribute": false,
-                "Mutable": true,
-                "Name": "source",
-                "Required": false
-              },
-              {
-                "AttributeDataType": "String",
-                "DeveloperOnlyAttribute": false,
-                "Mutable": true,
-                "Name": "group",
-                "Required": false
-              },
-              {
-                "AttributeDataType": "String",
-                "DeveloperOnlyAttribute": false,
-                "Mutable": true,
-                "Name": "environment",
-                "Required": false
-              },
-              {
-                "AttributeDataType": "String",
-                "DeveloperOnlyAttribute": false,
-                "Mutable": true,
-                "Name": "stack",
-                "Required": false
-              },
-              {
-                "AttributeDataType": "String",
-                "DeveloperOnlyAttribute": false,
-                "Mutable": true,
-                "Name": "region",
-                "Required": false
-              }
+            "Type": "COGNITO_USER_POOLS",
+            "ProviderARNs": [
+              "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33"
             ]
-          }
-        },
-        "CognitoUserPoolClient": {
-          "Type": "AWS::Cognito::UserPoolClient",
-          "Properties": {
-            "ClientName": "formsli-userpoolclient",
-            "UserPoolId": {
-              "Ref": "CognitoUserPoolMyUserPool"
-            },
-            "ExplicitAuthFlows": [
-              "USER_PASSWORD_AUTH"
-            ],
-            "GenerateSecret": false,
-            "ReadAttributes": [
-              "email",
-              "given_name",
-              "family_name",
-              "website",
-              "email_verified",
-              "email",
-              "profile",
-              "phone_number",
-              "phone_number_verified",
-              "custom:tenantId",
-              "custom:tenantName",
-              "custom:source",
-              "custom:environment",
-              "custom:stack",
-              "custom:region",
-              "custom:group"
-            ],
-            "WriteAttributes": [
-              "email",
-              "given_name",
-              "family_name",
-              "phone_number",
-              "address",
-              "website",
-              "profile",
-              "locale",
-              "custom:group",
-              "custom:tenantName",
-              "custom:source"
-            ]
-          }
-        },
-        "CognitoUserPoolAdminClient": {
-          "Type": "AWS::Cognito::UserPoolClient",
-          "Properties": {
-            "ClientName": "formsli-userpooladminclient",
-            "UserPoolId": {
-              "Ref": "CognitoUserPoolMyUserPool"
-            },
-            "ExplicitAuthFlows": [
-              "ADMIN_NO_SRP_AUTH"
-            ],
-            "GenerateSecret": false,
-            "ReadAttributes": [
-              "email",
-              "given_name",
-              "family_name",
-              "website",
-              "email_verified",
-              "email",
-              "profile",
-              "phone_number",
-              "phone_number_verified",
-              "custom:tenantId",
-              "custom:tenantName",
-              "custom:source",
-              "custom:group",
-              "custom:environment",
-              "custom:stack",
-              "custom:region"
-            ],
-            "WriteAttributes": [
-              "custom:tenantId",
-              "custom:tenantName",
-              "custom:source",
-              "custom:environment",
-              "custom:stack",
-              "custom:region",
-              "custom:group"
-            ]
-          }
-        },
-        "CognitoAppAdminGroup": {
-          "Type": "AWS::Cognito::UserPoolGroup",
-          "Properties": {
-            "Description": "Application Admin",
-            "GroupName": "Admin",
-            "UserPoolId": {
-              "Ref": "CognitoUserPoolMyUserPool"
-            }
-          }
-        },
-        "CognitoAccountAdminGroup": {
-          "Type": "AWS::Cognito::UserPoolGroup",
-          "Properties": {
-            "Description": "Account admin",
-            "GroupName": "AccountAdmin",
-            "UserPoolId": {
-              "Ref": "CognitoUserPoolMyUserPool"
-            }
-          }
-        },
-        "CognitoAccountEditorGroup": {
-          "Type": "AWS::Cognito::UserPoolGroup",
-          "Properties": {
-            "Description": "Account editor user",
-            "GroupName": "Editor",
-            "UserPoolId": {
-              "Ref": "CognitoUserPoolMyUserPool"
-            }
-          }
-        },
-        "CognitoAccountViewerGroup": {
-          "Type": "AWS::Cognito::UserPoolGroup",
-          "Properties": {
-            "Description": "Account read only user",
-            "GroupName": "Viewer",
-            "UserPoolId": {
-              "Ref": "CognitoUserPoolMyUserPool"
-            }
           }
         },
         "CognitoUserPoolAdminUser": {
           "Type": "AWS::Cognito::UserPoolUser",
           "Properties": {
             "Username": "infrastructure.dev@forms.li",
-            "UserPoolId": {
-              "Ref": "CognitoUserPoolMyUserPool"
-            },
+            "UserPoolId": "ap-northeast-1_Q798Nsl33",
             "DesiredDeliveryMediums": [
               "EMAIL"
             ],
@@ -3685,196 +3049,6 @@
               }
             ]
           }
-        },
-        "CognitoIdentityPoolMyIdentityPool": {
-          "Type": "AWS::Cognito::IdentityPool",
-          "Properties": {
-            "IdentityPoolName": "formsgraphqlidentitypool",
-            "AllowUnauthenticatedIdentities": false,
-            "CognitoIdentityProviders": [
-              {
-                "ClientId": {
-                  "Ref": "CognitoUserPoolClient"
-                },
-                "ProviderName": {
-                  "Fn::GetAtt": [
-                    "CognitoUserPoolMyUserPool",
-                    "ProviderName"
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        "CognitoIdentityPoolRoles": {
-          "Type": "AWS::Cognito::IdentityPoolRoleAttachment",
-          "Properties": {
-            "IdentityPoolId": {
-              "Ref": "CognitoIdentityPoolMyIdentityPool"
-            },
-            "Roles": {
-              "authenticated": {
-                "Fn::GetAtt": [
-                  "CognitoAuthRole",
-                  "Arn"
-                ]
-              },
-              "unauthenticated": {
-                "Fn::GetAtt": [
-                  "CognitoUnAuthorizedRole",
-                  "Arn"
-                ]
-              }
-            }
-          }
-        },
-        "CognitoUnAuthorizedRole": {
-          "Type": "AWS::IAM::Role",
-          "Properties": {
-            "AssumeRolePolicyDocument": {
-              "Version": "2012-10-17",
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Principal": {
-                    "Federated": "cognito-identity.amazonaws.com"
-                  },
-                  "Action": [
-                    "sts:AssumeRoleWithWebIdentity"
-                  ],
-                  "Condition": {
-                    "StringEquals": {
-                      "cognito-identity.amazonaws.com:aud": {
-                        "Ref": "CognitoIdentityPoolMyIdentityPool"
-                      }
-                    },
-                    "ForAnyValue:StringLike": {
-                      "cognito-identity.amazonaws.com:amr": "unauthenticated"
-                    }
-                  }
-                }
-              ]
-            },
-            "Policies": [
-              {
-                "PolicyName": "CognitoUnauthorizedPolicy",
-                "PolicyDocument": {
-                  "Version": "2012-10-17",
-                  "Statement": [
-                    {
-                      "Effect": "Allow",
-                      "Action": [
-                        "mobileanalytics:PutEvents",
-                        "cognito-sync:*"
-                      ],
-                      "Resource": "*"
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        "CognitoAuthRole": {
-          "Type": "AWS::IAM::Role",
-          "Properties": {
-            "AssumeRolePolicyDocument": {
-              "Version": "2012-10-17",
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Principal": {
-                    "Federated": "cognito-identity.amazonaws.com"
-                  },
-                  "Action": [
-                    "sts:AssumeRoleWithWebIdentity"
-                  ],
-                  "Condition": {
-                    "StringEquals": {
-                      "cognito-identity.amazonaws.com:aud": {
-                        "Ref": "CognitoIdentityPoolMyIdentityPool"
-                      }
-                    },
-                    "ForAnyValue:StringLike": {
-                      "cognito-identity.amazonaws.com:amr": "authenticated"
-                    }
-                  }
-                }
-              ]
-            },
-            "Policies": [
-              {
-                "PolicyName": "formsli-authorized",
-                "PolicyDocument": {
-                  "Version": "2012-10-17",
-                  "Statement": [
-                    {
-                      "Effect": "Allow",
-                      "Action": [
-                        "mobileanalytics:PutEvents",
-                        "cognito-sync:*",
-                        "cognito-identity:*"
-                      ],
-                      "Resource": "*"
-                    },
-                    {
-                      "Effect": "Allow",
-                      "Action": [
-                        "s3:*"
-                      ],
-                      "Resource": [
-                        {
-                          "Fn::Join": [
-                            "",
-                            [
-                              {
-                                "Fn::GetAtt": [
-                                  "AttachmentsBucket",
-                                  "Arn"
-                                ]
-                              },
-                              "/private/",
-                              "$",
-                              "{cognito-identity.amazonaws.com:sub}/*"
-                            ]
-                          ]
-                        }
-                      ]
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        "MyApiGatewayAuthorizer": {
-          "Type": "AWS::ApiGateway::Authorizer",
-          "Properties": {
-            "AuthorizerResultTtlInSeconds": 10,
-            "IdentitySource": "method.request.header.Authorization",
-            "Name": "MyCognitoAuthorizer",
-            "RestApiId": {
-              "Ref": "ApiGatewayRestApi"
-            },
-            "Type": "COGNITO_USER_POOLS",
-            "ProviderARNs": [
-              {
-                "Fn::Join": [
-                  "",
-                  [
-                    "arn:aws:cognito-idp:",
-                    "#{AWS::Region}",
-                    ":",
-                    "#{AWS::AccountId}",
-                    ":userpool/",
-                    {
-                      "Ref": "CognitoUserPoolMyUserPool"
-                    }
-                  ]
-                ]
-              }
-            ]
-          }
         }
       },
       "Outputs": {
@@ -3887,36 +3061,6 @@
         "Service": {
           "Value": "formsli"
         },
-        "AttachmentsBucketName": {
-          "Value": {
-            "Ref": "AttachmentsBucket"
-          }
-        },
-        "UserPoolId": {
-          "Value": {
-            "Ref": "CognitoUserPoolMyUserPool"
-          }
-        },
-        "UserPoolClientId": {
-          "Value": {
-            "Ref": "CognitoUserPoolClient"
-          }
-        },
-        "AdminUserPoolClientId": {
-          "Value": {
-            "Ref": "CognitoUserPoolAdminClient"
-          }
-        },
-        "UserPoolAdminUser": {
-          "Value": {
-            "Ref": "CognitoUserPoolAdminUser"
-          }
-        },
-        "IdentityPoolId": {
-          "Value": {
-            "Ref": "CognitoIdentityPoolMyIdentityPool"
-          }
-        },
         "AccountId": {
           "Value": "#{AWS::AccountId}"
         },
@@ -3926,10 +3070,15 @@
           }
         },
         "DBClusterId": {
-          "Value": "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-dev"
+          "Value": "fl-rds-cluster-dev"
         },
         "DBSecretARN": {
-          "Value": "arn:aws:secretsmanager:ap-northeast-1:644527192227:secret:/app/formsli/dev/db/credentials-obdDgQ"
+          "Value": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX"
+        },
+        "UserPoolAdminUser": {
+          "Value": {
+            "Ref": "CognitoUserPoolAdminUser"
+          }
         }
       }
     },
@@ -3937,7 +3086,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli/dev/1566250137062-2019-08-19T21:28:57.062Z",
+    "artifactDirectoryName": "serverless/formsli/dev/1566540892822-2019-08-23T06:14:52.822Z",
     "artifact": ""
   }
 }

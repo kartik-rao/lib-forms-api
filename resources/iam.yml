@@ -37,8 +37,8 @@ Resources:
               - "rds-data:RollbackTransaction"
               - "tag:GetResources"
             Resource:
-              - "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-${self:provider.stage}"
-              - "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-${self:provider.stage}:*"
+              - "${self:provider.environment.dbClusterArn}"
+              - "${self:provider.environment.dbClusterArn}:*"
           - Effect: "Allow"
             Action:
               - "secretsmanager:GetSecretValue"
@@ -46,7 +46,7 @@ Resources:
               - "secretsmanager:ListSecrets"
               - "secretsmanager:GetRandomPassword"
             Resource:
-              - "arn:aws:secretsmanager:#{AWS::Region}:#{AWS::AccountId}:secret:/app/formsli/${self:provider.stage}/db/*"
+              - "arn:aws:secretsmanager:#{AWS::Region}:#{AWS::AccountId}:secret:/${self:provider.stage}/formsli/rds/*"
           - Effect: "Allow"
             Action:
               "tag:GetResources"

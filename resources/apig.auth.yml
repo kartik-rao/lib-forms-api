@@ -9,8 +9,30 @@ Resources:
         Ref: ApiGatewayRestApi
       Type: COGNITO_USER_POOLS
       ProviderARNs:
-        - {"Fn::Join": ["", ["arn:aws:cognito-idp:", "#{AWS::Region}", ":", "#{AWS::AccountId}", ":userpool/", Ref: CognitoUserPoolMyUserPool]]}
-
+        - "${self:provider.environment.userPoolArn}"
+  # Create the admin user for the pool
+  CognitoUserPoolAdminUser:
+    Type : AWS::Cognito::UserPoolUser
+    Properties:
+      Username: infrastructure.${self:provider.stage}@forms.li
+      UserPoolId: "${self:provider.environment.userPoolId}"
+      DesiredDeliveryMediums:
+        - EMAIL
+      UserAttributes:
+        - Name: email
+          Value: infrastructure.${self:provider.stage}@forms.li
+        - Name: given_name
+          Value: ${self:provider.stage} Infrastructure
+        - Name: family_name
+          Value: Admin
+        - Name: email_verified
+          Value: True
+        - Name: "custom:group"
+          Value: Admin
+        - Name: "custom:region"
+          Value: ${self:provider.region}
+        - Name: "custom:environment"
+          Value: ${self:provider.stage}
 # Print out the Id of the Authorizer
 Outputs:
   Region:
@@ -24,3 +46,6 @@ Outputs:
     Value: ${self:provider.environment.dbClusterId}
   DBSecretARN:
     Value: ${self:provider.environment.dbClusterSecretArn}
+  UserPoolAdminUser:
+    Value:
+      Ref: CognitoUserPoolAdminUser

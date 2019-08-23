@@ -15,23 +15,27 @@ provider:
   functions:
     postconfirmation: ${self:service}-postconfirmation
     invite: ${self:service}-invite
-  profile: fl-infrastructure-${self:provider.stage}
+  profile: fl-infrastructure
   environment:
-    protocol: ${opt:protocol, 'http://'}
-    domain: ${opt:domain, 'dev-app.forms.li'}
-    urlPrefix: ${opt:urlPrefix, '${self:provider.environment.protocol}${self:provider.environment.domain}'}
-    region: ${self:provider.region}
-    environment: ${self:provider.stage}
-    serviceName: ${self:service}
-    databaseName: ${self:service}
-    dbClusterId: "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-${self:provider.stage}"
-    dbClusterSecretArn: ${ssm:/app/formsli/dev/db/credentialsArn}
+    region        : ${self:provider.region}
+    domain        : ${opt:domain, 'dev-app.forms.li'}
+    protocol      : ${opt:protocol, 'http://'}
+    urlPrefix     : ${opt:urlPrefix, '${self:provider.environment.protocol}${self:provider.environment.domain}'}
+    environment   : ${self:provider.stage}
+    serviceName   : ${self:service}
+    databaseName  : ${self:service}
+    userPoolId    : ${ssm:/${self:provider.stage}/formsli/cognito/userpool/id}
+    userPoolArn   : ${ssm:/${self:provider.stage}/formsli/cognito/userpool/arn}
+    dbClusterId   : ${ssm:/${self:provider.stage}/formsli/rds/id}
+    dbClusterArn  : "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:${self:provider.environment.dbClusterId}"
+    dbClusterSecretArn: ${ssm:/${self:provider.stage}/formsli/rds/password/secret}
+    s3_user_bucket: ${ssm:/${self:provider.stage}/formsli/s3/bucket/name}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
         - "secretsmanager:GetSecretValue"
       Resource:
-        - "arn:aws:secretsmanager:#{AWS::Region}:#{AWS::AccountId}:secret:/app/formsli/${self:provider.stage}/db/*"
+        - "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/${self:provider.stage}/formsli/rds/*"
     - Effect: "Allow"
       Action:
         - "rds-data:InsertItems"
@@ -45,8 +49,8 @@ provider:
         - "rds-data:ExecuteStatement"
         - "rds-data:RollbackTransaction"
       Resource:
-        - "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-${self:provider.stage}"
-        - "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:formsli-${self:provider.stage}:*"
+        - "${self:provider.environment.dbClusterArn}"
+        - "${self:provider.environment.dbClusterArn}:*"
     - Effect: Allow
       Action:
         - cognito-idp:AdminAddUserToGroup
@@ -54,7 +58,7 @@ provider:
         - cognito-idp:AdminRemoveUserFromGroup
         - cognito-idp:AdminGetUser
         - cognito-idp:AdminCreateUser
-      Resource: "arn:aws:cognito-idp:#{AWS::Region}:#{AWS::AccountId}:userpool/*"
+      Resource: "${self:provider.environment.userPoolArn}"
     - Effect: Allow
       Action:
         - ses:SendEmail
@@ -72,9 +76,6 @@ plugins:
 
 resources:
   - ${file(resources/iam.yml)}
-  - ${file(resources/s3.yml)}
-  - ${file(resources/cognito.userpool.yml)}
-  - ${file(resources/cognito.identitypool.yml)}
   - ${file(resources/apig.auth.yml)}
 
 custom:
@@ -89,15 +90,13 @@ custom:
     includeModules:
       forceInclude:
         - source-map-support
-  bucket: ${self:service}-${self:provider.stage}-data
   appSync:
     name:  formsli-api-${self:provider.stage}
     authenticationType: AMAZON_COGNITO_USER_POOLS
     userPoolConfig:
       awsRegion: ${self:provider.region}
       defaultAction: ALLOW
-      userPoolId:
-        Ref: CognitoUserPoolMyUserPool
+      userPoolId: "${self:provider.environment.userPoolId}"
     logConfig:
       loggingRoleArn: { Fn::GetAtt: [AppSyncCloudWatchRole, Arn] } # Where AppSyncLoggingServiceRole is a role with CloudWatch Logs write access
       level: ALL

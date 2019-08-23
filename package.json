@@ -1,15 +1,15 @@
 {
   "name": "lib-forms-api",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "GraphQL API for forms app data",
   "main": "index.js",
   "scripts": {
-    "info": "cross-env NODE_ENV=development sls info --stage dev --region ap-northeast-1 --aws-profile fl-infrastructure-dev",
-    "compile": "cross-env \"SLS_DEBUG=*\" NODE_ENV=development sls package --stage dev --region ap-northeast-1 --aws-profile fl-infrastructure-dev",
-    "deploy": "NODE_ENV=development sls deploy -v --stage dev --region ap-northeast-1 --aws-profile fl-infrastructure-dev",
-    "deploy:debug": "cross-env \"SLS_DEBUG=*\" NODE_ENV=development sls deploy -v --stage dev --region ap-northeast-1 --aws-profile fl-infrastructure-dev",
-    "remove": "cross-env NODE_ENV=development sls remove -v --stage dev --region ap-northeast-1 --aws-profile fl-infrastructure-dev",
-    "deploy-prod": "cross-env NODE_ENV=production sls deploy -v --stage prod --region ap-northeast-1 --aws-profile fl-infrastructure-prod",
+    "info": "cross-env NODE_ENV=development sls info --stage dev --region ap-northeast-1 --aws-profile fl-infrastructure",
+    "compile": "cross-env \"SLS_DEBUG=*\" NODE_ENV=development sls package --stage dev --region ap-northeast-1 --aws-profile fl-infrastructure",
+    "deploy": "NODE_ENV=development sls deploy -v --stage dev --region ap-northeast-1 --aws-profile fl-infrastructure",
+    "deploy:debug": "cross-env \"SLS_DEBUG=*\" NODE_ENV=development sls deploy -v --stage dev --region ap-northeast-1 --aws-profile fl-infrastructure",
+    "remove": "cross-env NODE_ENV=development sls remove -v --stage dev --region ap-northeast-1 --aws-profile fl-infrastructure",
+    "deploy-prod": "cross-env NODE_ENV=production sls deploy -v --stage prod --region ap-northeast-1 --aws-profile fl-infrastructure",
     "test": "ts-node -T --project ./tsconfig.test.json node_modules/jasmine/bin/jasmine --config=./jasmine.json",
     "karma": "karma start"
   },
