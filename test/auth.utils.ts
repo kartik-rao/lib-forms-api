@@ -100,7 +100,7 @@ export class AuthUtils {
                         Overwrite: true,
                         Value: JSON.stringify(AuthUtils.accountAdmin),
                         Tier: "Standard"}).promise();
-                    AuthUtils.accountEditor = await AuthUtils.inviteUser(username, password, 'Editor');
+                    AuthUtils.accountEditor = await AuthUtils.inviteUser(username, password, 'AccountEditor');
                     console.log("\n   AuthUtils.checking tenant state - AccountEditor OK");
                     await ssm.putParameter({
                         Name: SSM.AccountEditor,
@@ -108,7 +108,7 @@ export class AuthUtils {
                         Type: 'String',
                         Value: JSON.stringify(AuthUtils.accountEditor),
                         Tier: "Standard"}).promise();
-                    AuthUtils.accountViewer = await AuthUtils.inviteUser(username, password, 'Viewer');
+                    AuthUtils.accountViewer = await AuthUtils.inviteUser(username, password, 'AccountViewer');
                     console.log("\n   AuthUtils.checking tenant state - AccountViewer OK");
                     await ssm.putParameter({
                         Name: SSM.AccountViewer,
@@ -221,6 +221,9 @@ export class AuthUtils {
                 });
 
                 let res: AdminCreateUserResponse = await inviteResponse.json();
+                if(!res) {
+                    throw new Error("UserInviteError");
+                }
                 let email = await mailSlurp.fetchLatestEmail(inbox.emailAddress);
                 let attributes = AuthUtils.attributeListToMap(res.User.Attributes);
 
