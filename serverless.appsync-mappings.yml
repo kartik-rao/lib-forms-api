@@ -88,6 +88,16 @@
   kind: PIPELINE
   functions:
     - FN_updateAccount
+- dataSource: AppData
+  type: Mutation
+  field: updateAccountPlan
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_createPlan
+    - FN_updateAccountPlan
+
 # Account.numForms
 - dataSource: AppData
   type: Account

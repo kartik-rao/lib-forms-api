@@ -23,6 +23,12 @@
   request: Account_update_REQ.vtl
   response: Common_FN_upsert_RES.vtl
 
+- dataSource: AppData
+  type: Mudation
+  name: FN_updateAccountPlan
+  request: Account_plan_update_REQ.vtl
+  response: Common_FN_get_RES.vtl
+
 ## User
 - dataSource: AppData
   type: Query

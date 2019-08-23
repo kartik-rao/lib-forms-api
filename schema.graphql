@@ -298,13 +298,10 @@ type Account @model {
   forms(limit: Int): [Form]
 }
 
-
 input UpdateAccountInput {
   id: ID!
   name: String
-  planId: ID
 }
-
 type PlanType @model {
   id: ID!
   ownerId: ID!
@@ -475,6 +472,7 @@ type Mutation {
   updatePlanType(input: UpdatePlanTypeInput): PlanType!
   updatePlan(input: UpdatePlanInput): Plan!
   updateAccount(input: UpdateAccountInput): Account!
+  updateAccountPlan(input: AddPlanInput): Account!
   updateUser(input: UpdateUserInput): User!
   updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!
   updateIntegration(input: UpdateIntegrationInput): Integration!
