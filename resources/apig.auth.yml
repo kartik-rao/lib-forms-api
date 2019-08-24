@@ -52,6 +52,8 @@ Outputs:
       Ref: MyApiGatewayAuthorizer
   DBClusterId:
     Value: ${self:provider.environment.dbClusterId}
+  DBClusterArn:
+    Value: "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:${self:provider.environment.dbClusterId}"
   DBSecretARN:
     Value: ${self:provider.environment.dbClusterSecretArn}
   UserPoolId:
