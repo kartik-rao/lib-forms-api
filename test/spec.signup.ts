@@ -1,4 +1,4 @@
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+jasmine.DEFAULT_TIMEOUT_INTERVAL = 5000;
 
 import Auth, { CognitoUser } from '@aws-amplify/auth';
 import { CognitoUserSession } from 'amazon-cognito-identity-js';
@@ -27,10 +27,6 @@ let UserPool = new AWS.CognitoIdentityServiceProvider();
 Auth.configure(ApiHelper.apiConfig().Auth);
 
 describe("Onboarding", () => {
-    beforeAll(() => {
-
-    });
-
     describe("signup", () => {
         const tenantName = "lib-forms-api";
         let inbox: Inbox;
@@ -43,6 +39,7 @@ describe("Onboarding", () => {
         beforeAll(async(done) => {
             try {
                 inbox = await mailSlurp.createNewEmailAddress();
+                done();
             } catch (error) {
                 signupSuccess = false;
             }
@@ -54,14 +51,15 @@ describe("Onboarding", () => {
                     username: inbox.emailAddress,
                     password: password,
                     attributes : {
-                        given_name: "Signup",
-                        family_name: "Spec",
+                        given_name: "signup",
+                        family_name: "libformsapispec",
                         "custom:tenantName": tenantName
                     }
                 });
                 expect(signupResult).toBeDefined();
                 expect(signupResult.user).toBeDefined();
                 accountAdminUserId = signupResult.userSub;
+                done();
             } catch (error) {
                 signupSuccess = false;
             }
@@ -71,17 +69,19 @@ describe("Onboarding", () => {
             try {
                 let email = await mailSlurp.fetchLatestEmail(inbox.emailAddress);
                 verificationCode = email.body;
+                done();
             } catch (error) {
                 signupSuccess = false;
                 done.fail("Email Verification Failed");
                 console.log(`spec.signup.emailVerification ERROR - ${error.toString()}`);
             }
-        });
+        }, 30000);
 
         it("signup.confirmSignUp", async(done) => {
             try {
                 expect(verificationCode).toBeDefined("Must have verification code");
                 await Auth.confirmSignUp(inbox.emailAddress, verificationCode, {forceAliasCreation: true});
+                done();
             } catch (error) {
                 signupSuccess = false;
                 done.fail("Confirm Sign Up Failed");
@@ -99,6 +99,7 @@ describe("Onboarding", () => {
                 tenantId = attributes["custom:tenantId"];
                 expect(attributes["custom:group"]).toEqual("AccountAdmin", "User must be AccountAdmin");
                 expect(attributes["custom:tenantName"]).toEqual(tenantName, "User must have tenantName");
+                done();
             } catch (error) {
                 signupSuccess = false;
             }
@@ -111,6 +112,7 @@ describe("Onboarding", () => {
                 beforeAll(async (done) => {
                     try {
                         inboxEditor = await mailSlurp.createNewEmailAddress();
+                        done();
                     } catch (error) {
                         console.log(`spec.signup.invite MailSlurp ERROR - ${error.toString()}`);
                     }
@@ -125,8 +127,8 @@ describe("Onboarding", () => {
                     let invitePayload = {
                         "custom:group" : "AccountEditor",
                         "custom:source": accountAdmin.getUsername(), // this is sub not email
-                        family_name: "Invite",
-                        given_name: "Spec",
+                        family_name: "libformsapispec",
+                        given_name: "invite",
                         email: inboxEditor.emailAddress
                     }
                     let inviteResponse = await fetch(`${config.ServiceEndpoint}/invite`, {
@@ -148,7 +150,8 @@ describe("Onboarding", () => {
                     expect(attributes["custom:tenantId"]).toEqual(tenantId);
                     expect(attributes["custom:tenantName"]).toEqual(tenantName);
                     expect(attributes["email"]).toEqual(inboxEditor.emailAddress);
-                });
+                    done();
+                }, 15000);
 
                 it("invite.passwordEmail", async (done) => {
                     try {
@@ -157,74 +160,78 @@ describe("Onboarding", () => {
                         expect(email).toBeDefined();
                         expect(email.body).toBeDefined();
                         expect(email.body.indexOf("temporary password")).toBeGreaterThan(-1);
+                        done();
                     } catch (error) {
                         console.log(`spec.signup.invite.passwordEmail MailSlurp ERROR - ${error.toString()}`);
                         done.fail("")
                     }
-                });
+                }, 30000);
 
                 afterAll(async (done) => {
-                    UserPool.adminDisableUser({UserPoolId: config["UserPoolId"], Username: user.Username}).promise();
-                    UserPool.adminDeleteUser({UserPoolId: config["UserPoolId"], Username: user.Username}).promise();
-                    const rds = new AWS.RDSDataService();
-                    let transaction = await rds.beginTransaction(RdsCommonParams).promise();
-                    let {transactionId} = transaction;
-                    await rds.executeStatement({
-                        transactionId: transactionId,
-                        ...RdsCommonParams,
-                        sql: "SET foreign_key_checks=0"}).promise();
+                    try {
+                        UserPool.adminDisableUser({UserPoolId: config["UserPoolId"], Username: user.Username}).promise();
+                        UserPool.adminDeleteUser({UserPoolId: config["UserPoolId"], Username: user.Username}).promise();
+                        const rds = new AWS.RDSDataService();
+                        let transaction = await rds.beginTransaction(RdsCommonParams).promise();
+                        let {transactionId} = transaction;
+                        await rds.executeStatement({
+                            transactionId: transactionId,
+                            ...RdsCommonParams,
+                            sql: "SET foreign_key_checks=0"}).promise();
 
-                    const deleteUserSQL:AWS.RDSDataService.ExecuteStatementRequest = {
-                        ...RdsCommonParams,
-                        transactionId: transactionId,
-                        sql: `DELETE FROM User where id=:userid`,
-                        parameters: [
-                            {name: "userid", value: {stringValue: accountAdminUserId}}
-                        ]
-                    };
+                        const deleteUserSQL:AWS.RDSDataService.ExecuteStatementRequest = {
+                            ...RdsCommonParams,
+                            transactionId: transactionId,
+                            sql: `DELETE FROM User WHERE lower(family_name) = 'libformsapispec'`,
+                            parameters: [
+                                {name: "userid", value: {stringValue: accountAdminUserId}}
+                            ]
+                        };
 
-                    await rds.executeStatement(deleteUserSQL).promise();
-                    await rds.commitTransaction({
-                        transactionId: transactionId,
-                        resourceArn: RdsCommonParams.resourceArn,
-                        secretArn: RdsCommonParams.secretArn}).promise();
-                });
+                        await rds.executeStatement(deleteUserSQL).promise();
+                        await rds.commitTransaction({
+                            transactionId: transactionId,
+                            resourceArn: RdsCommonParams.resourceArn,
+                            secretArn: RdsCommonParams.secretArn}).promise();
+                        done();
+                    } catch (error) {
+                        console.log("spec.signup.invite.afterAll ERROR", error);
+                    }
+                }, 60000);
             });
         }
 
         afterAll(async (done) => {
-            UserPool.adminDisableUser({UserPoolId: config["UserPoolId"], Username: accountAdminUserId}).promise();
-            UserPool.adminDeleteUser({UserPoolId: config["UserPoolId"], Username: accountAdminUserId}).promise();
+            try {
+                UserPool.adminDisableUser({UserPoolId: config["UserPoolId"], Username: accountAdminUserId}).promise();
+                UserPool.adminDeleteUser({UserPoolId: config["UserPoolId"], Username: accountAdminUserId}).promise();
 
-            const rds = new AWS.RDSDataService();
-            let transaction = await rds.beginTransaction(RdsCommonParams).promise();
-            let {transactionId} = transaction;
-            await rds.executeStatement({
-                transactionId: transactionId,
-                ...RdsCommonParams,
-                sql: "SET foreign_key_checks=0"}).promise();
-            const deleteUserSQL:AWS.RDSDataService.ExecuteStatementRequest = {
-                ...RdsCommonParams,
-                transactionId: transactionId,
-                sql: `DELETE FROM User where id=:userid`,
-                parameters: [
-                    {name: "userid", value: {stringValue: accountAdminUserId}}
-                ]
-            };
-            const deleteAccountSQL:AWS.RDSDataService.ExecuteStatementRequest = {
-                ...RdsCommonParams,
-                transactionId: transactionId,
-                sql: `DELETE FROM Account where id=:accountid`,
-                parameters: [
-                    {name: "accountid", value: {stringValue: tenantId}}
-                ]
-            };
-            await rds.executeStatement(deleteAccountSQL).promise();
-            await rds.executeStatement(deleteUserSQL).promise();
-            await rds.commitTransaction({
-                transactionId: transactionId,
-                resourceArn: RdsCommonParams.resourceArn,
-                secretArn: RdsCommonParams.secretArn}).promise();
+                const rds = new AWS.RDSDataService();
+                let transaction = await rds.beginTransaction(RdsCommonParams).promise();
+                let {transactionId} = transaction;
+                await rds.executeStatement({
+                    transactionId: transactionId,
+                    ...RdsCommonParams,
+                    sql: "SET foreign_key_checks=0"}).promise();
+                const deleteUserSQL:AWS.RDSDataService.ExecuteStatementRequest = {
+                    ...RdsCommonParams,
+                    transactionId: transactionId,
+                    sql: `DELETE FROM User WHERE lower(family_name) = 'libformsapispec'`
+                };
+                const deleteAccountSQL:AWS.RDSDataService.ExecuteStatementRequest = {
+                    ...RdsCommonParams,
+                    transactionId: transactionId,
+                    sql: `DELETE FROM Account where ownerId IN (SELECT id FROM User WHERE lower(family_name) = 'libformsapispec')`
+                };
+                await rds.executeStatement(deleteAccountSQL).promise();
+                await rds.executeStatement(deleteUserSQL).promise();
+                await rds.commitTransaction({
+                    transactionId: transactionId,
+                    resourceArn: RdsCommonParams.resourceArn,
+                    secretArn: RdsCommonParams.secretArn}).promise();
+            } catch (error) {
+                console.log("spec.signup.afterAll ERROR", error);
+            }
         }, 60000);
 
     });
