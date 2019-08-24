@@ -1,13 +1,13 @@
 import Auth from '@aws-amplify/auth';
 import { CognitoUser, CognitoUserSession, CognitoUserAttribute } from 'amazon-cognito-identity-js';
-import { AdminCreateUserResponse, AdminDisableUserRequest, AdminDeleteUserRequest, AdminGetUserRequest, AttributeType } from 'aws-sdk/clients/cognitoidentityserviceprovider';
+import { AdminCreateUserResponse, AdminDisableUserRequest, AdminDeleteUserRequest, AdminGetUserRequest, AttributeType, AdminConfirmSignUpRequest, AdminSetUserPasswordRequest } from 'aws-sdk/clients/cognitoidentityserviceprovider';
 import { MailSlurp } from "mailslurp-client";
 const pwdGenerator = require('generate-password');
 import * as AWS from 'aws-sdk';
 const config = require("../outputs/stack.dev.json");
 const mailSlurp = new MailSlurp({ apiKey: "85117a16750ebeb8c6e659c6e9984ac0290557c2dfa90df89d54fc72b170ac8a" })
 
-var credentials = new AWS.SharedIniFileCredentials({profile: 'fl-infrastructure-dev'});
+var credentials = new AWS.SharedIniFileCredentials({profile: 'fl-infrastructure'});
 AWS.config.credentials = credentials;
 AWS.config.region = config['Region'];
 let UserPool = new AWS.CognitoIdentityServiceProvider();
@@ -83,7 +83,6 @@ export class AuthUtils {
                     await ssm.putParameter({
                         Name: SSM.GlobalAdmin,
                         Type: 'String',
-                        Overwrite: true,
                         Value: JSON.stringify(adminUser),
                         Tier: "Standard"}).promise();
                     await UserPool.adminSetUserPassword({UserPoolId: config['UserPoolId'], Username:config['UserPoolAdminUser'], Password: adminPwd, Permanent: true}).promise();
@@ -97,14 +96,12 @@ export class AuthUtils {
                     await ssm.putParameter({
                         Name: SSM.AccountAdmin,
                         Type: 'String',
-                        Overwrite: true,
                         Value: JSON.stringify(AuthUtils.accountAdmin),
                         Tier: "Standard"}).promise();
                     AuthUtils.accountEditor = await AuthUtils.inviteUser(username, password, 'AccountEditor');
                     console.log("\n   AuthUtils.checking tenant state - AccountEditor OK");
                     await ssm.putParameter({
                         Name: SSM.AccountEditor,
-                        Overwrite: true,
                         Type: 'String',
                         Value: JSON.stringify(AuthUtils.accountEditor),
                         Tier: "Standard"}).promise();
@@ -112,13 +109,11 @@ export class AuthUtils {
                     console.log("\n   AuthUtils.checking tenant state - AccountViewer OK");
                     await ssm.putParameter({
                         Name: SSM.AccountViewer,
-                        Overwrite: true,
                         Type: 'String',
                         Value: JSON.stringify(AuthUtils.accountViewer),
                         Tier: "Standard"}).promise();
                     await ssm.putParameter({
                         Name: SSM.State,
-                        Overwrite: true,
                         Type: 'String',
                         Value: "1",
                         Tier: "Standard"}).promise();
@@ -170,12 +165,10 @@ export class AuthUtils {
                     }
                 });
 
-                let email = await mailSlurp.fetchLatestEmail(inbox.emailAddress);
-                let verificationCode = email.body;
-
-                await Auth.confirmSignUp(inbox.emailAddress, verificationCode, {
-                    forceAliasCreation: true
-                });
+                await UserPool.adminConfirmSignUp(<AdminConfirmSignUpRequest>{
+                    Username: signupResult.userSub,
+                    UserPoolId: config["UserPoolId"]
+                }).promise();
 
                 let user = await UserPool.adminGetUser({UserPoolId:config["UserPoolId"], Username: signupResult.userSub} as AdminGetUserRequest).promise();
                 let attributes = AuthUtils.attributeListToMap(user.UserAttributes);
@@ -224,13 +217,21 @@ export class AuthUtils {
                 if(!res) {
                     throw new Error("UserInviteError");
                 }
-                let email = await mailSlurp.fetchLatestEmail(inbox.emailAddress);
+
+                let password = pwdGenerator.generate({length:8, numbers: true, symbols: true, uppercase: true, strict: true});
+                await UserPool.adminSetUserPassword(<AdminSetUserPasswordRequest>{
+                    Username: res.User.Username,
+                    UserPoolId: config["UserPoolId"],
+                    Password: password,
+                    Permanent: true
+                }).promise();
+
                 let attributes = AuthUtils.attributeListToMap(res.User.Attributes);
 
                 resolve({
                     username: attributes['email'],
                     usersub: res.User.Username,
-                    password: email.body.split("temporary password is")[1],
+                    password: password,
                     group: group,
                     tenantName: attributes['custom:tenantName'],
                     attributes: attributes
