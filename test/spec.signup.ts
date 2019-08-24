@@ -226,6 +226,7 @@ describe("Onboarding", () => {
                     transactionId: transactionId,
                     resourceArn: RdsCommonParams.resourceArn,
                     secretArn: RdsCommonParams.secretArn}).promise();
+                done();
             } catch (error) {
                 console.log("spec.signup.afterAll ERROR", error);
             }
