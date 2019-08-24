@@ -27,7 +27,7 @@ let UserPool = new AWS.CognitoIdentityServiceProvider();
 Auth.configure(ApiHelper.apiConfig().Auth);
 
 describe("Onboarding", () => {
-    describe("signup", () => {
+    describe("Signup", () => {
         const tenantName = "lib-forms-api";
         let inbox: Inbox;
         let password : string = pwdGenerator.generate({length:8, numbers: true, symbols: true, uppercase: true, strict: true});
@@ -45,7 +45,7 @@ describe("Onboarding", () => {
             }
         });
 
-        it("cognito.signUp", async (done) => {
+        it("signup.congnitoSignUp", async (done) => {
             try {
                 let signupResult = await Auth.signUp({
                     username: inbox.emailAddress,
@@ -182,10 +182,7 @@ describe("Onboarding", () => {
                         const deleteUserSQL:AWS.RDSDataService.ExecuteStatementRequest = {
                             ...RdsCommonParams,
                             transactionId: transactionId,
-                            sql: `DELETE FROM User WHERE lower(family_name) = 'libformsapispec'`,
-                            parameters: [
-                                {name: "userid", value: {stringValue: accountAdminUserId}}
-                            ]
+                            sql: `DELETE FROM User WHERE lower(family_name) = 'libformsapispec'`
                         };
 
                         await rds.executeStatement(deleteUserSQL).promise();
