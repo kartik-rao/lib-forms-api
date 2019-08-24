@@ -54,7 +54,7 @@ Outputs:
     Value: ${self:provider.environment.dbClusterId}
   DBClusterArn:
     Value: "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:${self:provider.environment.dbClusterId}"
-  DBSecretARN:
+  DBSecretArn:
     Value: ${self:provider.environment.dbClusterSecretArn}
   UserPoolId:
     Value: ${self:provider.environment.userPoolId}
