@@ -1,6 +1,6 @@
 {
   "AccountId": "286358943194",
-  "DBSecretARN": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX",
+  "DBSecretArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX",
   "DBClusterId": "fl-rds-cluster-dev",
   "DBClusterArn": "arn:aws:rds:ap-northeast-1:286358943194:cluster:fl-rds-cluster-dev",
   "Service": "formsli",
