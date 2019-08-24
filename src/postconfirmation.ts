@@ -19,8 +19,6 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
     const {userAttributes} = cognitoReq;
     const rds = new AWS.RDSDataService();
 
-    // const ddbClient = DBClient.getInstance({convertEmptyValues: true});
-
     let source = userAttributes["custom:source"];
     let userId = userAttributes.sub;
     let userPool = new AWS.CognitoIdentityServiceProvider();
