@@ -164,7 +164,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1566568966680-2019-08-23T14:02:46.680Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1566730819929-2019-08-25T11:00:19.929Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -212,14 +212,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "PostConfirmationLambdaVersionQuBrN0C6e4uoueHWhdmbeCOOmaZ3BeuZIQvIv30vX0": {
+    "PostConfirmationLambdaVersion1CmDbaP6qynvXo1AJmyEXki5ssx50saTGKGKIXLawY": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "PostConfirmationLambdaFunction"
         },
-        "CodeSha256": "ANxRkeieC0ba5nNvCEAoholH/Q66vG2V/iQ9LXdnK04="
+        "CodeSha256": "y841zcqoEJukZMe0Lxr4bDyacagw76BlmmNj6uHkNTM="
       }
     },
     "SignupLambdaFunction": {
@@ -229,7 +229,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1566568966680-2019-08-23T14:02:46.680Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1566730819929-2019-08-25T11:00:19.929Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-invite",
         "Handler": "src/invite.handle",
@@ -277,14 +277,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "SignupLambdaVersionVNLumwBXrODuiK1FwhOEqinjN8agaGIvjKW17jjGI": {
+    "SignupLambdaVersionNuRXA0b0zohav8zwPbusx4mPVnkZUx60JX4Ys1CI64": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "SignupLambdaFunction"
         },
-        "CodeSha256": "ANxRkeieC0ba5nNvCEAoholH/Q66vG2V/iQ9LXdnK04="
+        "CodeSha256": "y841zcqoEJukZMe0Lxr4bDyacagw76BlmmNj6uHkNTM="
       }
     },
     "ApiGatewayRestApi": {
@@ -511,7 +511,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1566568940448": {
+    "ApiGatewayDeployment1566730798931": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -630,7 +630,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1566568966680-2019-08-23T14:02:46.680Z/custom-resources.zip"
+          "S3Key": "serverless/formsli/dev/1566730819929-2019-08-25T11:00:19.929Z/custom-resources.zip"
         },
         "FunctionName": "formsli-dev-custom-resource-existing-cup",
         "Handler": "cognitoUserPool/handler.handler",
@@ -2240,13 +2240,13 @@
     "PostConfirmationLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "PostConfirmationLambdaVersionQuBrN0C6e4uoueHWhdmbeCOOmaZ3BeuZIQvIv30vX0"
+        "Ref": "PostConfirmationLambdaVersion1CmDbaP6qynvXo1AJmyEXki5ssx50saTGKGKIXLawY"
       }
     },
     "SignupLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "SignupLambdaVersionVNLumwBXrODuiK1FwhOEqinjN8agaGIvjKW17jjGI"
+        "Ref": "SignupLambdaVersionNuRXA0b0zohav8zwPbusx4mPVnkZUx60JX4Ys1CI64"
       }
     },
     "ServiceEndpoint": {
@@ -2296,7 +2296,12 @@
     "DBClusterId": {
       "Value": "fl-rds-cluster-dev"
     },
-    "DBSecretARN": {
+    "DBClusterArn": {
+      "Value": {
+        "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
+      }
+    },
+    "DBSecretArn": {
       "Value": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX"
     },
     "UserPoolId": {
