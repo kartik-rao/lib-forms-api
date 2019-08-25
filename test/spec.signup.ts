@@ -41,6 +41,7 @@ describe("Onboarding", () => {
                 inbox = await mailSlurp.createNewEmailAddress();
                 done();
             } catch (error) {
+                console.log(`spec.signup.beforeAll ERROR - ${error.toString()}`);
                 signupSuccess = false;
             }
         });
@@ -61,6 +62,7 @@ describe("Onboarding", () => {
                 accountAdminUserId = signupResult.userSub;
                 done();
             } catch (error) {
+                console.log(`spec.signup.congnitoSignUp ERROR - ${error.toString()}`);
                 signupSuccess = false;
             }
         });
@@ -101,6 +103,7 @@ describe("Onboarding", () => {
                 expect(attributes["custom:tenantName"]).toEqual(tenantName, "User must have tenantName");
                 done();
             } catch (error) {
+                console.log(`spec.signup.attributes ERROR - ${error.toString()}`);
                 signupSuccess = false;
             }
         });
@@ -150,20 +153,21 @@ describe("Onboarding", () => {
                     expect(attributes["custom:tenantId"]).toEqual(tenantId);
                     expect(attributes["custom:tenantName"]).toEqual(tenantName);
                     expect(attributes["email"]).toEqual(inboxEditor.emailAddress);
+                    expect(attributes['email_verified']).toEqual('True');
                     done();
                 }, 15000);
 
                 it("invite.passwordEmail", async (done) => {
                     try {
-                        expect(user).toBeDefined();
-                        let email = await mailSlurp.fetchLatestEmail(inbox.emailAddress);
+                        expect(user).toBeDefined("User must be created");
+                        let email = await mailSlurp.fetchLatestEmail(inboxEditor.emailAddress);
                         expect(email).toBeDefined();
                         expect(email.body).toBeDefined();
                         expect(email.body.indexOf("temporary password")).toBeGreaterThan(-1);
                         done();
                     } catch (error) {
-                        console.log(`spec.signup.invite.passwordEmail MailSlurp ERROR - ${error.toString()}`);
-                        done.fail("")
+                        console.log(`spec.signup.invite.passwordEmail MailSlurp ERROR`, error);
+                        done.fail();
                     }
                 }, 30000);
 
