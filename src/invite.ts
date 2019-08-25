@@ -4,6 +4,7 @@ process.env.TZ = 'UTC';
 
 import * as AWS from 'aws-sdk';
 import { AdminAddUserToGroupRequest, AdminCreateUserRequest, AdminCreateUserResponse } from "aws-sdk/clients/cognitoidentityserviceprovider";
+import { ExecuteStatementResponse } from 'aws-sdk/clients/rdsdataservice';
 
 const DBClusterId = process.env.dbClusterArn;
 const DBSecretARN = process.env.dbClusterSecretArn;
@@ -59,7 +60,7 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
     let poolId: string;
     let region: string = claims["custom:region"];
     let matches = claims.iss.match(new RegExp(`\/(${region}.*)`));
-
+    // TODO: Match iss with userPoolId in process.env
     if (matches && matches.length > 0) {
         poolId = matches[1];
     } else {
@@ -95,6 +96,23 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
         console.error(new Error("InvalidPayload"));
         callback(null, {statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({"message": "Invalid payload"})});
     } else {
+        const checkUserEmailSQL:AWS.RDSDataService.ExecuteStatementRequest = {
+            database: ServiceName,
+            resourceArn: DBClusterId,
+            secretArn: DBSecretARN,
+            sql: `SELECT COUNT(*) AS num_existing FROM User WHERE email=:email`,
+            parameters: [
+                {name: "email", value: {stringValue: payload["email"]}}
+            ]
+        };
+        console.log(`${ServiceName} - invite.handle - rds-checkEmailInUse REQ`);
+        let countResponse: ExecuteStatementResponse = await rds.executeStatement(checkUserEmailSQL).promise();
+        console.log(`${ServiceName} - invite.handle - rds-checkEmailInUse RES`, JSON.stringify(countResponse.records));
+        if(countResponse.records[0][0]['longValue'] > 0) {
+            console.error(new Error("EmailAlreadyExists"));
+            callback(null, {statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({"message": "EmailAlreadyExists"})});
+            return;
+        }
         let userPool = new AWS.CognitoIdentityServiceProvider();
         let createUserRequest: AdminCreateUserRequest = {
             UserPoolId: poolId,
@@ -106,20 +124,28 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
                 {Name: "custom:region", Value: process.env.region},
                 {Name: "custom:tenantName",  Value: claims["custom:tenantName"] },
                 {Name: "custom:environment", Value: process.env.environment},
-                {Name: "custom:tenantId", Value: accountId}
+                {Name: "custom:tenantId", Value: accountId},
+                {Name: "email", Value: payload.email},
+                {Name: "email_verified", Value: "True"}
             ],
+            DesiredDeliveryMediums: ["EMAIL"],
             Username : payload.email
         }
-
-        console.log(`${ServiceName} - invite.handle - cognito-idp REQ`, createUserRequest);
 
         if (payload.phone_number) {
             createUserRequest.UserAttributes.push({Name: "phone_number", Value: payload.phone_number})
         }
 
+        if (event.queryStringParameters && event.queryStringParameters["resend"] == "1") {
+            createUserRequest.MessageAction = "RESEND"
+        }
+
+        console.log(`${ServiceName} - invite.handle - cognito-idp REQ`, createUserRequest);
+
         try {
             let timestamp = new Date().toISOString();
             let createUserResponse: AdminCreateUserResponse = await userPool.adminCreateUser(createUserRequest).promise();
+            console.log(`${ServiceName} - invite.handle - cognito-idp RES`, createUserResponse);
             let cognitoSetGroupParams : AdminAddUserToGroupRequest = {
                 GroupName : group,
                 UserPoolId: poolId,
