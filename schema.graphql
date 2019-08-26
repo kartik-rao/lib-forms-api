@@ -184,15 +184,15 @@ type Form @model  {
   name: String!
   description: String!
   versionId: ID!
-  formData: FormVersion!
+  formData: FormVersion
   ownedBy: User!
   accountId: ID!
   account: Account!
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime
-  startsAt: AWSDateTime
-  endsAt: AWSDateTime
-  isPaused: Boolean
+  startDate: AWSDateTime
+  endDate  : AWSDateTime
+  isPaused : Boolean
   isDeleted: Boolean
   versions(limit: Int): [FormVersion]
   integrations(limit: Int): [Integration]
@@ -472,7 +472,7 @@ type Mutation {
   addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!
   addIntegration(input: AddIntegrationInput): Integration!
   addForm(input: AddFormInput!): Form!
-  addFormVersion(input: AddFormVersionInput): FormVersion!
+  addFormVersion(input: AddFormVersionInput): Form!
 
   updatePlanType(input: UpdatePlanTypeInput): PlanType!
   updatePlan(input: UpdatePlanInput): Plan!
