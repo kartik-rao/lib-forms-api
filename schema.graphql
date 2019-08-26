@@ -203,13 +203,13 @@ type Form @model  {
 input AddFormInput {
   accountId: ID!
   name: String!
-  desc: String
+  desc: String!
   startsAt: AWSDateTime
   endsAt: AWSDateTime
   isPaused: Boolean
 }
 
-input UpdateFormInput  {
+input UpdateFormInput {
   id: ID!
   currentVersionId: ID
   name: String
@@ -217,6 +217,11 @@ input UpdateFormInput  {
   startsAt: AWSDateTime
   endsAt: AWSDateTime
   isPaused: Boolean
+}
+
+input DeleteFormInput {
+  id: ID!
+  accountId: ID!
 }
 
 type User @model {
@@ -446,7 +451,7 @@ type Query {
   getPlan(planId: String!): Plan
   getActiveAccountPlan(accountId: String!): Plan
   getPlanType(planTypeId: String!): PlanType
-  getForm(formId: String!, versionId: ID!) : Form
+  getForm(formId: String!) : Form
   getIntegrationType(integrationTypeId: String!): IntegrationType
   getIntegration(integrationId: String!): Integration
   getFormEntry(formEntryId: String!): FormEntry
@@ -466,8 +471,8 @@ type Mutation {
   addPlan(input: AddPlanInput): Plan!
   addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!
   addIntegration(input: AddIntegrationInput): Integration!
-  addForm(form: AddFormInput!, notes: String!): Form!
-  addFormVersion(version: AddFormVersionInput): FormVersion!
+  addForm(input: AddFormInput!): Form!
+  addFormVersion(input: AddFormVersionInput): FormVersion!
 
   updatePlanType(input: UpdatePlanTypeInput): PlanType!
   updatePlan(input: UpdatePlanInput): Plan!
@@ -478,13 +483,13 @@ type Mutation {
   updateIntegration(input: UpdateIntegrationInput): Integration!
   updateForm(input: UpdateFormInput): Form!
 
+  deleteForm(input: DeleteFormInput): Form!
   deletePlanType(planTypeId: ID!): PlanType!
   deletePlan(accountId: ID!, planId: ID!): Plan!
   deleteAccount(accountId: ID!): Account!
   deleteUser(userId: ID!): User!
   deleteIntegrationType(integrationTypeId: ID!): IntegrationType!
   deleteIntegration(integrationId: ID!): Integration!
-  deleteForm(formId: ID!): Form!
 
   addFormEntry(input: AddFormEntryInput!): FormEntry!
 }

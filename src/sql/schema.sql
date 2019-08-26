@@ -156,7 +156,8 @@ CREATE TABLE  IF NOT EXISTS FormVersion (
     UNIQUE INDEX `INDX_FormVersion_id_form_id` (`id` ASC, `formId` ASC),
     UNIQUE INDEX `INDX_FormVersion_id_created_at` (`id` ASC, `createdAt` DESC),
     PRIMARY KEY (id),
-    FOREIGN KEY (ownerId) REFERENCES User(id)
+    FOREIGN KEY (ownerId) REFERENCES User(id),
+    FOREIGN KEY (formId) REFERENCES Form(id) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS Form;
@@ -169,8 +170,8 @@ CREATE TABLE  IF NOT EXISTS Form (
     description varchar(512),
     createdAt VARCHAR(24) NOT NULL,
     updatedAt VARCHAR(24),
-    startsAt VARCHAR(24),
-    endsAt VARCHAR(24),
+    startDate VARCHAR(24),
+    endDate VARCHAR(24),
     isPaused TINYINT DEFAULT 1,
     isDeleted TINYINT DEFAULT 0,
     PRIMARY KEY (id),
@@ -178,8 +179,7 @@ CREATE TABLE  IF NOT EXISTS Form (
     UNIQUE INDEX `INDX_Form_id_account_id` (`id` ASC, `accountId` ASC),
     UNIQUE INDEX `INDX_Form_id_version_id` (`id` ASC, `versionId` ASC),
     FOREIGN KEY (accountId) REFERENCES Account(id),
-    FOREIGN KEY (ownerId) REFERENCES User(id),
-    FOREIGN KEY (versionId) REFERENCES FormVersion(id)
+    FOREIGN KEY (ownerId) REFERENCES User(id)
 );
 
 DROP TABLE IF EXISTS FormEntry;

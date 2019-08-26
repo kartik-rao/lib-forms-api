@@ -17,7 +17,7 @@ $util.qr($ctx.stash.paths.add("Form_add_REQ.vtl"))
     {
         "version": "2018-05-29",
         "statements": [
-            "INSERT INTO Form(id, ownerId, accountId, `name`, description, createdAt) VALUES(:id, :ownerId, :accountId, :name, :description, :createdAt)",
+            "INSERT INTO Form(id, ownerId, accountId, `name`, desc, createdAt) VALUES(:id, :ownerId, :accountId, :name, :desc, :createdAt)",
             "SELECT * FROM Form WHERE id='${formId}'"
         ],
         "variableMap": {
@@ -25,7 +25,7 @@ $util.qr($ctx.stash.paths.add("Form_add_REQ.vtl"))
             ":ownerId": "${identity.callerId}",
             ":accountId": "${args.accountId}",
             ":name": "${args.name}",
-            ":description": "${args.description}",
+            ":desc": "${args.desc}",
             ":createdAt": "${now}"
         }
     }

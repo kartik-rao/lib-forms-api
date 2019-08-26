@@ -1,0 +1,27 @@
+$util.qr($ctx.stash.paths.add("Form_update_REQ.vtl"))
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments.input)
+
+#set($isAllowed = false)
+#if($identity.isAdmin == true || $identity.isAccountAdmin == true || $identity.isAccountEditor == true)
+    #set($isAllowed = true)
+#end
+
+#if($isAllowed == true)
+    #set($request = $args)
+    $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("itemType", 'Form'))
+    $util.qr($ctx.stash.put("operation", 'put'))
+    {
+        "version": "2018-05-29",
+        "statements": [
+            "UPDATE Form SET updatedAt=:isotime #if($args.startDate) , startDate='${args.startDate}' #end #if($args.endDate) , endsAt='${args.endDate}' #end #if(!$util.isNull($args.name)) , name=${args.name} #end #if(!$util.isNull($args.desc)) , desc=${args.desc} #end #if(!$util.isNull($args.isPaused)) , isPaused=${args.isPaused} #end  WHERE id='${$args.id}'",
+            "SELECT * FROM Form WHERE id ='${args.id}'"
+        ],
+        "variableMap": {
+            ":isotime" : "${util.time.nowISO8601()}"
+        }
+    }
+#else
+    $util.error("User [${identity.callerId}] cannot execute [PUT] on [Plan]", "Unauthorized")
+#end

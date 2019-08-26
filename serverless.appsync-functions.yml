@@ -98,9 +98,9 @@
   response: Common_FN_list_RES.vtl
 - dataSource: AppData
   type: Mutation
-  name: FN_addFormVersion
-  request: FormVersion_add_REQ.vtl
-  response: Common_FN_upsert_RES.vtl
+  name: FN_updateForm
+  request: Form_update_REQ.vtl
+  response: Common_FN_list_RES.vtl
 - dataSource: AppData
   type: Mutation
   name: FN_addForm
@@ -110,4 +110,15 @@
   type: Mutation
   name: FN_attachFormVersion
   request: FormVersion_attach_REQ.vtl
+  response: Common_FN_upsert_RES.vtl
+- dataSource: AppData
+  type: Mutation
+  name: FN_deleteForm
+  request: Form_delete_REQ.vtl
+  response: Common_FN_delete_RES.vtl
+ ## FormVersion
+- dataSource: AppData
+  type: Mutation
+  name: FN_addFormVersion
+  request: FormVersion_add_REQ.vtl
   response: Common_FN_upsert_RES.vtl

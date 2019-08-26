@@ -28,8 +28,8 @@ describe("PlanType", () => {
         // Hard delete from dynamo
         const rdsCommonParams = {
             database: config['Service'],
-            resourceArn: config['DBClusterId'],
-            secretArn: config['DBSecretARN']
+            resourceArn: config['DBClusterArn'],
+            secretArn: config['DBSecretArn']
         };
         let client = new AWS.RDSDataService();
         await client.executeStatement({

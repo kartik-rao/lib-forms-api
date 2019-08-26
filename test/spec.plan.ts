@@ -47,13 +47,11 @@ describe("Plan", () => {
     }, 60000);
 
     afterAll(async (done) => {
-        // Hard delete from dynamo
-        let client = new AWS.DynamoDB.DocumentClient();
         try {
             const rdsCommonParams = {
                 database: config['Service'],
-                resourceArn: config['DBClusterId'],
-                secretArn: config['DBSecretARN']
+                resourceArn: config['DBClusterArn'],
+                secretArn: config['DBSecretArn']
             };
             let client = new AWS.RDSDataService();
             await client.executeStatement({

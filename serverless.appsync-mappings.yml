@@ -146,12 +146,28 @@
     - FN_getForm
 - dataSource: AppData
   type: Mutation
+  field: updateForm
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_updateForm
+- dataSource: AppData
+  type: Mutation
   field: addForm
   kind: PIPELINE
   request: Common_REQ.vtl
   response: Common_RES.vtl
   functions:
     - FN_addForm
+- dataSource: AppData
+  type: Mutation
+  field: deleteForm
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_deleteForm
 - dataSource: AppData
   type: Mutation
   field: addFormVersion
