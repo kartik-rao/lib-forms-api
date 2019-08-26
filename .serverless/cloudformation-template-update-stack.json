@@ -164,7 +164,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1566806047415-2019-08-26T07:54:07.415Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1566812378279-2019-08-26T09:39:38.279Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -229,7 +229,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1566806047415-2019-08-26T07:54:07.415Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1566812378279-2019-08-26T09:39:38.279Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-invite",
         "Handler": "src/invite.handle",
@@ -511,7 +511,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1566806022446": {
+    "ApiGatewayDeployment1566812355932": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -630,7 +630,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1566806047415-2019-08-26T07:54:07.415Z/custom-resources.zip"
+          "S3Key": "serverless/formsli/dev/1566812378279-2019-08-26T09:39:38.279Z/custom-resources.zip"
         },
         "FunctionName": "formsli-dev-custom-resource-existing-cup",
         "Handler": "cognitoUserPool/handler.handler",
@@ -1020,7 +1020,7 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Account_get_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n\n#set($isAllowed = false)\n#if($identity.tenantId == $args.accountId || $identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Account'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"SELECT * FROM Account WHERE id='${args.accountId}'\"\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [GET] on Account[${args.accountId}]\", \"Unauthorized\")\n#end",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Account_get_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n\n#set($isAllowed = false)\n#if($identity.tenantId == $args.accountId || $identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Account'))\n    $util.qr($ctx.stash.put(\"operation\", 'get'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"SELECT * FROM Account WHERE id='${args.accountId}'\"\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [GET] on Account[${args.accountId}]\", \"Unauthorized\")\n#end",
         "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_GET.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.error(\"${request.itemType} [${request.id}] not found\", 'NotFound')\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
         "FunctionVersion": "2018-05-29"
       }
@@ -1335,7 +1335,7 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_get_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Form'))\n    $util.qr($ctx.stash.put(\"operation\", 'get'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            #if(!$identity.isAdmin)\n                \"SELECT * FROM Form WHERE id='${args.formId}' AND accountId='${identity.tenantId}'\"\n            #else\n                \"SELECT * FROM Form WHERE id='${args.formId}'\"\n            #end\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [GET] on Form[${args.formId}]\", \"Unauthorized\")\n#end\n",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_get_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#set($isAllowed = false)\n#if($identity.tenantId == $args.accountId || $identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Form'))\n    $util.qr($ctx.stash.put(\"operation\", 'get'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            #if($identity.isAdmin != true)\n                \"SELECT * FROM Form WHERE id='${args.formId}' AND accountId='${identity.tenantId}'\"\n            #else\n                \"SELECT * FROM Form WHERE id='${args.formId}'\"\n            #end\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [GET] on Form[${args.formId}]\", \"Unauthorized\")\n#end\n",
         "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_GET.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.error(\"${request.itemType} [${request.id}] not found\", 'NotFound')\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
         "FunctionVersion": "2018-05-29"
       }
@@ -1461,7 +1461,7 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_add_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))\n    #set($isAllowed = true)\n#end\n\n#if($allowed)\n    #set($versionId = $util.autoId())\n    #set($now = \"${util.time.nowISO8601()}\")\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $versionId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n            \"version\": \"2018-05-29\",\n            \"statements\": [\n                \"INSERT INTO FormVersion(id, formId, ownerId, notes, formData, createdAt) VALUES(:id, :formId, :ownerId, :notes, :formData, :createdAt)\",\n                \"SELECT * FROM FormVersion WHERE id='${versionId}'\"\n            ],\n            \"variableMap\": {\n                \":id\": \"${versionId}\",\n                \":formId\": \"${args.formId}\",\n                \":ownerId\": \"${identity.callerId}\",\n                \":notes\": \"${args.notes}\",\n                \":formData\": \"${args.formData}\",\n                \":createdAt\": \"${now}\"\n            }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on [FormVersion]\", \"Unauthorized\")\n#end",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_add_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))\n    #set($isAllowed = true)\n#end\n\n#if($allowed)\n    #set($versionId = $util.autoId())\n    #set($now = \"${util.time.nowISO8601()}\")\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $versionId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"INSERT INTO FormVersion(id, formId, ownerId, notes, formData, createdAt) VALUES(:id, :formId, :ownerId, :notes, :formData, :createdAt)\",\n            \"SELECT * FROM FormVersion WHERE id='${versionId}'\"\n        ],\n        \"variableMap\": {\n            \":id\": \"${versionId}\",\n            \":formId\": \"${args.formId}\",\n            \":ownerId\": \"${identity.callerId}\",\n            \":notes\": \"${args.notes}\",\n            \":formData\": \"${args.formData}\",\n            \":createdAt\": \"${now}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on [FormVersion]\", \"Unauthorized\")\n#end",
         "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_upsert_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
         "FunctionVersion": "2018-05-29"
       }
@@ -1932,10 +1932,15 @@
         "FieldName": "getForm",
         "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
         "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
-        "DataSourceName": {
-          "Fn::GetAtt": [
-            "GraphQlDsAppData",
-            "Name"
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNgetForm",
+                "FunctionId"
+              ]
+            }
           ]
         }
       }
