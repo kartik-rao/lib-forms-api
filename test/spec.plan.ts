@@ -20,7 +20,7 @@ describe("Plan", () => {
             const user: CognitoUser = await Auth.signIn(AuthUtils.globalAdmin);
             token = (await Auth.currentSession()).getIdToken().getJwtToken();
             tenantId = AuthUtils.accountAdmin.attributes["custom:tenantId"];
-            let planName = `Test PlanType - ${Math.random()}`
+            let planName = `spec.plan`
             const addPlanType = {query: `mutation {
                 addPlanType (input: {
                     name: "${planName}",
@@ -55,10 +55,10 @@ describe("Plan", () => {
             };
             let client = new AWS.RDSDataService();
             await client.executeStatement({
-                ...rdsCommonParams, sql : `DELETE FROM Plan where id='${planId}}'`
+                ...rdsCommonParams, sql : `DELETE FROM Plan WHERE planTypeId='${planTypeId}'`
             }).promise();
             await client.executeStatement({
-                ...rdsCommonParams, sql : `DELETE FROM PlanType where id='${planTypeId}}'`
+                ...rdsCommonParams, sql : "DELETE FROM PlanType WHERE `name` ='spec.plan'"
             }).promise();
             done();
             done();

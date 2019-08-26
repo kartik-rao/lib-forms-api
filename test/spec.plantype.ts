@@ -33,13 +33,13 @@ describe("PlanType", () => {
         };
         let client = new AWS.RDSDataService();
         await client.executeStatement({
-            ...rdsCommonParams, sql : `DELETE FROM PlanType where id='${planTypeId}}'`
+            ...rdsCommonParams, sql : `DELETE FROM PlanType where name = 'spec.plantype'`
         }).promise();
         done();
     }, 10000);
 
     it("Add", async (done) => {
-        let planName = `Test Plan - ${Math.random()}`
+        let planName = `spec.plantype`
         const addPlanType = {query: `mutation {
             addPlanType (input: {
                 name: "${planName}",

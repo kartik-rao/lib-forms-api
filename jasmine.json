@@ -1,6 +1,6 @@
 {
     "spec_dir": "test",
-    "spec_files": ["**/spec.form.ts"],
+    "spec_files": ["**/spec.plan.ts"],
     "helpers": [
       "helpers/**/*.ts"
     ],
