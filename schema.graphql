@@ -182,7 +182,7 @@ type Form @model  {
   id: ID!
   ownerId: ID!
   name: String!
-  desc: String!
+  description: String!
   versionId: ID!
   formData: FormVersion!
   ownedBy: User!
@@ -203,7 +203,7 @@ type Form @model  {
 input AddFormInput {
   accountId: ID!
   name: String!
-  desc: String!
+  description: String!
   startsAt: AWSDateTime
   endsAt: AWSDateTime
   isPaused: Boolean
@@ -213,7 +213,7 @@ input UpdateFormInput {
   id: ID!
   currentVersionId: ID
   name: String
-  desc: String
+  description: String
   startsAt: AWSDateTime
   endsAt: AWSDateTime
   isPaused: Boolean

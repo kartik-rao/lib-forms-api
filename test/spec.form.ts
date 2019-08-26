@@ -37,13 +37,13 @@ describe("Form", () => {
                 };
                 let client = new AWS.RDSDataService();
                 await client.executeStatement({
-                    ...rdsCommonParams, sql : `UPDATE Form set versionId=NULL where id='${formId}'`
+                    ...rdsCommonParams, sql : `UPDATE Form set versionId=NULL WHERE description='spec.form'`
                 }).promise();
                 await client.executeStatement({
-                    ...rdsCommonParams, sql : `DELETE FROM FormVersion where id='${formVersionId}}'`
+                    ...rdsCommonParams, sql : `DELETE FROM FormVersion WHERE id='${formVersionId}}'`
                 }).promise();
                 await client.executeStatement({
-                    ...rdsCommonParams, sql : `DELETE FROM Form where id='${formId}}'`
+                    ...rdsCommonParams, sql : `DELETE FROM Form WHERE description='spec.form'`
                 }).promise();
             }
             done();
@@ -59,9 +59,9 @@ describe("Form", () => {
             addForm (input: {
                 accountId: "${tenantId}",
                 name: "lib-forms-api",
-                desc: "spec.form"
+                description: "spec.form"
             })
-            {id, name, createdAt}
+            {id, name, accountId, createdAt, description}
             }
         `};
 
