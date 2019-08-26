@@ -11,7 +11,7 @@ $util.qr($ctx.stash.paths.put("Account_get_REQ.vtl"))
 #if($isAllowed == true)
     $util.qr($ctx.stash.put("request", $args))
     $util.qr($ctx.stash.request.put("itemType", 'Account'))
-    $util.qr($ctx.stash.put("operation", 'put'))
+    $util.qr($ctx.stash.put("operation", 'get'))
     {
         "version": "2018-05-29",
         "statements": [
