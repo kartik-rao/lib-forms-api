@@ -90,20 +90,48 @@ describe("Form", () => {
             done();
         }
 
-        const getPlan = {query: `query {
+        const getForm = {query: `query {
             getForm (formId: "${formId}")
             {id, formData {id createdAt notes}, createdAt, updatedAt}
             }
         `};
 
         try {
-            let response = await ApiHelper.makeRequest("getPlan", getPlan, token);
+            let response = await ApiHelper.makeRequest("getForm", getForm, token);
             let {status, parsed, hasErrors, errors} = response;
 
             expect(status).toEqual(200);
             expect(hasErrors).toBeFalsy("Response should not have errors");
             hasErrors && done.fail(errors[0].message);
             expect(parsed).toBeDefined();
+        } catch (error) {
+            console.error(error);
+            fail(error);
+        }
+        done();
+    });
+
+    it("Update", async (done) => {
+        if(!formId) {
+            fail("No formId");
+            done();
+        }
+
+        const updateForm = {query: `mutation {
+            updateForm (input: {id: "${formId}", name: "lib-forms-api-updated"})
+            {id, name, createdAt, updatedAt}
+            }
+        `};
+
+        try {
+            let response = await ApiHelper.makeRequest("updateForm", updateForm, token);
+            let {status, parsed, hasErrors, errors} = response;
+
+            expect(status).toEqual(200);
+            expect(hasErrors).toBeFalsy("Response should not have errors");
+            hasErrors && done.fail(errors[0].message);
+            expect(parsed).toBeDefined();
+            expect(parsed.name).toEqual("lib-forms-api-updated");
         } catch (error) {
             console.error(error);
             fail(error);
@@ -119,11 +147,11 @@ describe("Form", () => {
         const addFormVersion = {query: `mutation {
             addFormVersion (input: {
                 accountId: "${tenantId}",
-                formId: "${tenantId}",
+                formId: "${formId}",
                 notes: "Test Form Version",
                 formData: "{}"
             })
-            {id, formId, updatedAt}
+            {id, createdAt, versionId, formData {id, notes, formId, createdAt}}
             }
         `};
 
@@ -135,7 +163,6 @@ describe("Form", () => {
             expect(hasErrors).toBeFalsy("Response should not have errors");
             hasErrors && done.fail(errors[0].message);
             expect(parsed).toBeDefined("Response.data should exist");
-            expect(parsed.active).toBeTruthy();
         } catch (error) {
             fail(error);
         }
