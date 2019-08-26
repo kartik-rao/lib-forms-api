@@ -7,7 +7,7 @@ $util.qr($ctx.stash.paths.add("Form_add_REQ.vtl"))
     #set($isAllowed = true)
 #end
 
-#if($allowed)
+#if($isAllowed == true)
     #set($formId = $util.autoId())
     #set($now = "${util.time.nowISO8601()}")
     $util.qr($ctx.stash.put("request", $args))
@@ -18,7 +18,7 @@ $util.qr($ctx.stash.paths.add("Form_add_REQ.vtl"))
         "version": "2018-05-29",
         "statements": [
             "INSERT INTO Form(id, ownerId, accountId, `name`, desc, createdAt) VALUES(:id, :ownerId, :accountId, :name, :desc, :createdAt)",
-            "SELECT * FROM Form WHERE id='${formId}'"
+            "SELECT * FROM Form WHERE id=:id"
         ],
         "variableMap": {
             ":id": "${formId}",
