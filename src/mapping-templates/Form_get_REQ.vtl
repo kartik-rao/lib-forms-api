@@ -3,18 +3,19 @@ $util.qr($ctx.stash.paths.add("Form_get_REQ.vtl"))
 #set($args=$ctx.arguments)
 
 #set($isAllowed = false)
-#if($identity.isAdmin == true)
+#if($identity.tenantId == $args.accountId || $identity.isAdmin == true)
     #set($isAllowed = true)
 #end
 
 #if($isAllowed == true)
     $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("id", $args.formId))
     $util.qr($ctx.stash.request.put("itemType", 'Form'))
     $util.qr($ctx.stash.put("operation", 'get'))
     {
         "version": "2018-05-29",
         "statements": [
-            #if(!$identity.isAdmin)
+            #if($identity.isAdmin != true)
                 "SELECT * FROM Form WHERE id='${args.formId}' AND accountId='${identity.tenantId}'"
             #else
                 "SELECT * FROM Form WHERE id='${args.formId}'"

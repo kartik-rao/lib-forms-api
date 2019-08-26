@@ -139,7 +139,7 @@
 - dataSource: AppData
   type: Query
   field: getForm
-  kind: pipeline
+  kind: PIPELINE
   request: Common_REQ.vtl
   response: Common_RES.vtl
   functions:
