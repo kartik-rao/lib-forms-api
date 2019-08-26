@@ -7,7 +7,7 @@ $util.qr($ctx.stash.paths.add("FormVersion_add_REQ.vtl"))
     #set($isAllowed = true)
 #end
 
-#if($allowed)
+#if($isAllowed)
     #set($versionId = $util.autoId())
     #set($now = "${util.time.nowISO8601()}")
     $util.qr($ctx.stash.put("request", $args))
