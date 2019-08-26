@@ -100,7 +100,7 @@
   type: Mutation
   name: FN_updateForm
   request: Form_update_REQ.vtl
-  response: Common_FN_list_RES.vtl
+  response: Common_FN_upsert_RES.vtl
 - dataSource: AppData
   type: Mutation
   name: FN_addForm
