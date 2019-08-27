@@ -164,7 +164,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1566819444953-2019-08-26T11:37:24.953Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1566864504709-2019-08-27T00:08:24.709Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -212,14 +212,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "PostConfirmationLambdaVersionbgUAmfituzFt10ngZ9UN5bh8gAzMX09msIveTdA": {
+    "PostConfirmationLambdaVersionbJNqr0TUg1iVBqbllOkTkwH3CE9glUOQcRszZ15N4": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "PostConfirmationLambdaFunction"
         },
-        "CodeSha256": "fEqi6iXCUgCe767crcdB5NYsRKWXR+D5HjmwnhjkhBg="
+        "CodeSha256": "ytrndJEHhsnPzWpX/QoHve0FAdD17q9Q3W0FXvx0AcM="
       }
     },
     "SignupLambdaFunction": {
@@ -229,7 +229,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1566819444953-2019-08-26T11:37:24.953Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1566864504709-2019-08-27T00:08:24.709Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-invite",
         "Handler": "src/invite.handle",
@@ -277,14 +277,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "SignupLambdaVersionA8YC5EQ3wR04lLPZkcfDnyTM5WLvLVDasPjhHGT6o": {
+    "SignupLambdaVersioniXTx8ECU7PjGVJwvAIrBRUf55bmxrQ1gi3m8n7o": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "SignupLambdaFunction"
         },
-        "CodeSha256": "fEqi6iXCUgCe767crcdB5NYsRKWXR+D5HjmwnhjkhBg="
+        "CodeSha256": "ytrndJEHhsnPzWpX/QoHve0FAdD17q9Q3W0FXvx0AcM="
       }
     },
     "ApiGatewayRestApi": {
@@ -511,7 +511,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1566819424225": {
+    "ApiGatewayDeployment1566864475459": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -630,7 +630,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1566819444953-2019-08-26T11:37:24.953Z/custom-resources.zip"
+          "S3Key": "serverless/formsli/dev/1566864504709-2019-08-27T00:08:24.709Z/custom-resources.zip"
         },
         "FunctionName": "formsli-dev-custom-resource-existing-cup",
         "Handler": "cognitoUserPool/handler.handler",
@@ -1272,7 +1272,7 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Plan_update_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    #set($request = $args)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Plan'))\n    $util.qr($ctx.stash.request.put(\"id\", $args.planId))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"UPDATE Plan SET updatedAt=:isotime #if($args.endDate) , endDate=:endDate #end #if(!$util.isNull($args.active)) , active=:active #end WHERE id=:id AND accountId= :accountId\",\n            \"SELECT * FROM Plan WHERE id=:id'\"\n        ],\n        \"variableMap\": {\n            \":id\"       : \"${args.planId}\",\n            \":endDate\"  : \"${args.endDate}\",\n            \":accountId\": \"${args.accountId}\",\n            \":active\"   : $args.active,\n            \":isotime\"  : \"${util.time.nowISO8601()}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on Plan[${ctx.stash.request.id}]\", \"Unauthorized\")\n#end",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Plan_update_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    #set($request = $args)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Plan'))\n    $util.qr($ctx.stash.request.put(\"id\", $args.planId))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"UPDATE Plan SET updatedAt=:isotime #if($args.endDate) , endDate=:endDate #end #if(!$util.isNull($args.active)) , active=:active #end WHERE id=:id AND accountId= :accountId\",\n            \"SELECT * FROM Plan WHERE id=:id\"\n        ],\n        \"variableMap\": {\n            \":id\"       : \"${args.planId}\",\n            \":endDate\"  : \"${args.endDate}\",\n            \":accountId\": \"${args.accountId}\",\n            \":active\"   : $args.active,\n            \":isotime\"  : \"${util.time.nowISO8601()}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on Plan[${ctx.stash.request.id}]\", \"Unauthorized\")\n#end",
         "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_upsert_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
         "FunctionVersion": "2018-05-29"
       }
@@ -2341,13 +2341,13 @@
     "PostConfirmationLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "PostConfirmationLambdaVersionbgUAmfituzFt10ngZ9UN5bh8gAzMX09msIveTdA"
+        "Ref": "PostConfirmationLambdaVersionbJNqr0TUg1iVBqbllOkTkwH3CE9glUOQcRszZ15N4"
       }
     },
     "SignupLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "SignupLambdaVersionA8YC5EQ3wR04lLPZkcfDnyTM5WLvLVDasPjhHGT6o"
+        "Ref": "SignupLambdaVersioniXTx8ECU7PjGVJwvAIrBRUf55bmxrQ1gi3m8n7o"
       }
     },
     "ServiceEndpoint": {
