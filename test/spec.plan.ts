@@ -160,7 +160,7 @@ describe("Plan", () => {
             expect(hasErrors).toBeFalsy("Response should not have errors");
             hasErrors && done.fail(errors[0].message);
             expect(parsed).toBeDefined("Response.data should exist");
-            expect(parsed.active).toBeTruthy();
+            expect(parsed.active).toBeFalsy();
         } catch (error) {
             fail(error);
         }
