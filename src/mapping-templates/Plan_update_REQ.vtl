@@ -17,7 +17,7 @@ $util.qr($ctx.stash.paths.add("Plan_update_REQ.vtl"))
         "version": "2018-05-29",
         "statements": [
             "UPDATE Plan SET updatedAt=:isotime #if($args.endDate) , endDate=:endDate #end #if(!$util.isNull($args.active)) , active=:active #end WHERE id=:id AND accountId= :accountId",
-            "SELECT * FROM Plan WHERE id=:id'"
+            "SELECT * FROM Plan WHERE id=:id"
         ],
         "variableMap": {
             ":id"       : "${args.planId}",
