@@ -2,6 +2,15 @@ $util.qr($ctx.stash.paths.put("Account_list_REQ.vtl"))
 #set($identity=$ctx.stash.identity)
 #set($args=$ctx.arguments)
 
+#set($expmap = {
+  "ne" : "!=",
+  "eq" : "=",
+  "le" : "<=",
+  "lt" : "<",
+  "ge" : ">=",
+  "gt" : ">"
+})
+
 #if($identity.isAdmin == true)
     $util.qr($ctx.stash.put("request", $args))
     $util.qr($ctx.stash.request.put("itemType", 'Account'))
@@ -10,10 +19,11 @@ $util.qr($ctx.stash.paths.put("Account_list_REQ.vtl"))
     $util.qr($limits.put("offset", $util.defaultIfNull($args.offsetLimit.offset, 0)))
     $util.qr($limits.put("limit", $util.defaultIfNull($args.offsetLimit.limit, 50)))
     $util.qr($ctx.stash.put("limits", $limits))
+    #set($filter = $util.defaultIfNull($ctx.stash.filterExpression, ""))
     {
         "version": "2018-05-29",
         "statements": [
-            "SELECT * FROM Account LIMIT ${limits.offset}, ${limits.limit}"
+            "SELECT * FROM Account ${filter} LIMIT ${limits.offset}, ${limits.limit}"
         ]
     }
 #else

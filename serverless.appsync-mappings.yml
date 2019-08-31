@@ -21,6 +21,7 @@
   response: Common_RES.vtl
   kind: PIPELINE
   functions:
+    - FN_parseFilter
     - FN_listUsers
 
 ## Plan
@@ -79,6 +80,7 @@
   response: Common_RES.vtl
   kind: PIPELINE
   functions:
+    - FN_parseFilter
     - FN_listAccounts
 - dataSource: AppData
   type: Mutation
@@ -184,6 +186,7 @@
   request: Common_REQ.vtl
   response: Common_RES.vtl
   functions:
+    - FN_parseFilter
     - FN_listForm
 # Form.ownedBy
 - dataSource: AppData

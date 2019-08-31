@@ -1,3 +1,10 @@
+## Filtering
+- dataSource: AppData
+  type: Query
+  name: FN_parseFilter
+  request: Common_FN_parseFilter_REQ.vtl
+  response: Common_FN_parseFilter_RES.vtl
+
 ## Account
 - dataSource: AppData
   type: Query
