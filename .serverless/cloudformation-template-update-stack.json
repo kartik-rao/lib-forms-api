@@ -164,7 +164,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1567334850733-2019-09-01T10:47:30.733Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1567338551494-2019-09-01T11:49:11.494Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -229,7 +229,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1567334850733-2019-09-01T10:47:30.733Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1567338551494-2019-09-01T11:49:11.494Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-invite",
         "Handler": "src/invite.handle",
@@ -511,7 +511,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1567334826864": {
+    "ApiGatewayDeployment1567338527783": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -630,7 +630,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1567334850733-2019-09-01T10:47:30.733Z/custom-resources.zip"
+          "S3Key": "serverless/formsli/dev/1567338551494-2019-09-01T11:49:11.494Z/custom-resources.zip"
         },
         "FunctionName": "formsli-dev-custom-resource-existing-cup",
         "Handler": "cognitoUserPool/handler.handler",
@@ -1020,7 +1020,7 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Common_FN_parseFilter_REQ.vtl\"))\n#set($args=$ctx.arguments)\n#set($identity=$ctx.stash.identity)\n#set($expmap = {\n  \"ne\" : \"!=\",\n  \"eq\" : \"=\",\n  \"le\" : \"<=\",\n  \"lt\" : \"<\",\n  \"ge\" : \">=\",\n  \"gt\" : \">\"\n})\n\n#if($args.filter && $args.filter.criteria)\n    #set($filter = \"\")\n    #foreach($criteria in $args.filter.criteria)\n        #foreach($col in $criteria.keySet())\n            #set($entry=$criteria[$col])\n            #set($values=$entry.value)\n            #if($col == \"accountId\" && !$identity.isAdmin)\n                $values.set(0, $identity.tenantId)\n            #end\n            #set($with=\"\")\n            #set($clause=\"\")\n            #if($foreach.hasNext)\n                #set($with=$entry.with)\n            #end\n            #if($entry.expression == 'contains')\n                #set($clause=\"${col} LIKE '%${values[0]}%' ${with}\")\n            #elseif($entry.expression == 'notContains')\n                #set($clause=\"${col} NOT LIKE '%${values[0]}%' ${with}\")\n            #elseif($entry.expression == 'startsWith')\n                #set($clause=\"${col} LIKE '${values[0]}%' ${with}\")\n            #elseif($entry.expression == 'between')\n                #set($clause=\"${col} BETWEEN ${values[0]} AND ${values[1]} ${with}\")\n            #elseif($entry.expression == 'notBetween')\n                #set($clause=\"${col} NOT BETWEEN ${values[0]} AND ${values[1]} ${with}\")\n            #elseif($entry.expression == 'isNull')\n                #set($clause=\"${col} IS NULL ${with}\")\n            #elseif($entry.expression == 'isNotNull')\n                #set($clause=\"${col} IS NOT NULL ${with}\")\n            #elseif($entry.expression == 'in')\n                #set($clause=\"${col} IN (${values[0]}) ${with}\")\n            #else\n                #set($exp=$expmap.get($entry.expression))\n                #set($clause=\"${col} ${exp} ${values[0]} ${with}\")\n            #end\n            #set($filter=\"${filter} ${clause}\")\n        #end\n    #end\n    #set($filter = \"WHERE ${filter}\")\n#end\n$util.qr($ctx.stash.put(\"filterExpression\", $filter))\n#return",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Common_FN_parseFilter_REQ.vtl\"))\n#set($args=$ctx.arguments)\n#set($identity=$ctx.stash.identity)\n#set($expmap = {\n  \"ne\" : \"!=\",\n  \"eq\" : \"=\",\n  \"le\" : \"<=\",\n  \"lt\" : \"<\",\n  \"ge\" : \">=\",\n  \"gt\" : \">\"\n})\n\n#if($args.filter && $args.filter.criteria)\n    #set($filter = \"\")\n    #foreach($criteria in $args.filter.criteria)\n        #foreach($col in $criteria.keySet())\n            #set($entry=$criteria[$col])\n            #set($values=$entry.value)\n            #if($col == \"accountId\" && !$identity.isAdmin)\n                $values.set(0, $identity.tenantId)\n            #end\n            #set($with=\"\")\n            #set($clause=\"\")\n            #if($foreach.hasNext)\n                #set($with=$entry.with)\n            #end\n            #if($entry.expression == 'contains')\n                #set($clause=\"${col} LIKE '%${values[0]}%' ${with}\")\n            #elseif($entry.expression == 'notContains')\n                #set($clause=\"${col} NOT LIKE '%${values[0]}%' ${with}\")\n            #elseif($entry.expression == 'startsWith')\n                #set($clause=\"${col} LIKE '${values[0]}%' ${with}\")\n            #elseif($entry.expression == 'between')\n                #set($clause=\"${col} BETWEEN ${values[0]} AND ${values[1]} ${with}\")\n            #elseif($entry.expression == 'notBetween')\n                #set($clause=\"${col} NOT BETWEEN ${values[0]} AND ${values[1]} ${with}\")\n            #elseif($entry.expression == 'isNull')\n                #set($clause=\"${col} IS NULL ${with}\")\n            #elseif($entry.expression == 'isNotNull')\n                #set($clause=\"${col} IS NOT NULL ${with}\")\n            #elseif($entry.expression == 'in')\n                #set($clause=\"${col} IN (${values[0]}) ${with}\")\n            #else\n                #set($exp=$expmap.get($entry.expression))\n                #set($clause=\"${col} ${exp} '${values[0]}' ${with}\")\n            #end\n            #set($filter=\"${filter} ${clause}\")\n        #end\n    #end\n    #set($filter = \"WHERE ${filter}\")\n#end\n$util.qr($ctx.stash.put(\"filterExpression\", $filter))\n#return",
         "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Common_FN_parseFilter_RES.vtl\"))\n#return",
         "FunctionVersion": "2018-05-29"
       }

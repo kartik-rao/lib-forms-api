@@ -42,7 +42,7 @@ $util.qr($ctx.stash.paths.put("Common_FN_parseFilter_REQ.vtl"))
                 #set($clause="${col} IN (${values[0]}) ${with}")
             #else
                 #set($exp=$expmap.get($entry.expression))
-                #set($clause="${col} ${exp} ${values[0]} ${with}")
+                #set($clause="${col} ${exp} '${values[0]}' ${with}")
             #end
             #set($filter="${filter} ${clause}")
         #end
