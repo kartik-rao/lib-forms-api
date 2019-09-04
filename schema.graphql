@@ -180,7 +180,7 @@ type Form @model  {
   ownerId: ID!
   name: String!
   description: String!
-  versionId: ID!
+  versionId: ID
   formData: FormVersion
   ownedBy: User!
   accountId: ID!
