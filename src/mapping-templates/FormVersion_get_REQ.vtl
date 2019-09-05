@@ -1,0 +1,27 @@
+$util.qr($ctx.stash.paths.add("FormVersion_get_REQ.vtl"))
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments)
+
+#set($isAllowed = false)
+#if($identity.tenantId == $args.accountId || $identity.isAdmin == true)
+    #set($isAllowed = true)
+#end
+
+#if($isAllowed == true)
+    $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("id", $args.versionId))
+    $util.qr($ctx.stash.request.put("itemType", 'FormVersion'))
+    $util.qr($ctx.stash.put("operation", 'get'))
+    {
+        "version": "2018-05-29",
+        "statements": [
+            #if($identity.isAdmin != true)
+                "SELECT * FROM FormVersion WHERE id='${args.versionId}' AND accountId='${identity.tenantId}'"
+            #else
+                "SELECT * FROM FormVersion WHERE id='${args.versionId}'"
+            #end
+        ]
+    }
+#else
+    $util.error("User [${identity.callerId}] cannot execute [GET] on FormVersion[${args.versionId}]", "Unauthorized")
+#end

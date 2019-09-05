@@ -167,7 +167,7 @@ CREATE TABLE  IF NOT EXISTS Form (
     versionId VARCHAR(36) NULL,
     accountId VARCHAR(36) NOT NULL,
     `name` varchar(256),
-    description varchar(512),
+    `description` varchar(512),
     createdAt VARCHAR(24) NOT NULL,
     updatedAt VARCHAR(24),
     startDate VARCHAR(24),
