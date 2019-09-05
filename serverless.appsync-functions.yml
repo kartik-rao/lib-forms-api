@@ -129,3 +129,8 @@
   name: FN_addFormVersion
   request: FormVersion_add_REQ.vtl
   response: Common_FN_upsert_RES.vtl
+- dataSource: AppData
+  type: Query
+  name: FN_getFormVersion
+  request: FormVersion_get_REQ.vtl
+  response: Common_FN_get_RES.vtl

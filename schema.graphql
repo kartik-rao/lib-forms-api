@@ -159,6 +159,7 @@ input AddFormEntryInput {
 
 type FormVersion @model {
   id: ID!
+  accountId: ID!
   formId: ID!
   ownerId: ID!
   ownedBy: User!
@@ -181,7 +182,7 @@ type Form @model  {
   name: String!
   description: String!
   versionId: ID
-  formData: FormVersion
+  version: FormVersion
   ownedBy: User!
   accountId: ID!
   account: Account!
@@ -449,6 +450,7 @@ type Query {
   getActiveAccountPlan(accountId: String!): Plan
   getPlanType(planTypeId: String!): PlanType
   getForm(formId: String!) : Form
+  getFormVersion(versionId: String!) : FormVersion
   getIntegrationType(integrationTypeId: String!): IntegrationType
   getIntegration(integrationId: String!): Integration
   getFormEntry(formEntryId: String!): FormEntry

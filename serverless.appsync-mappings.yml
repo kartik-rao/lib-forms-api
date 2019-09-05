@@ -200,10 +200,10 @@
   field: account
   request: Common_Account_get_REQ.vtl
   response: Common_Account_get_RES.vtl
-# Form.formData
+# Form.version
 - dataSource: AppData
   type: Form
-  field: formData
+  field: version
   request: Form_formVersion_get_REQ.vtl
   response: Form_formVersion_get_RES.vtl
 # Form.versions
@@ -212,6 +212,16 @@
   field: versions
   request: Form_formVersion_list_REQ.vtl
   response: Form_formVersion_list_RES.vtl
+
+## FormVersion
+- dataSource: AppData
+  type: Query
+  field: getFormVersion
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_getFormVersion
 
 ## PlanType
 - dataSource: AppData
