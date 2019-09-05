@@ -165,7 +165,7 @@ type FormVersion @model {
   ownedBy: User!
   createdAt: AWSDateTime
   notes: String
-  formData: AWSJSON
+  formData: AWSJSON!
 }
 
 input AddFormVersionInput {
@@ -174,7 +174,6 @@ input AddFormVersionInput {
   notes: String
   formData: AWSJSON!
 }
-
 
 type Form @model  {
   id: ID!
@@ -268,7 +267,6 @@ type Address @model {
   state: String
   country: String
 }
-
 
 type AddAddressInput {
   name: String!

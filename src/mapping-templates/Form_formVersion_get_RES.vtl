@@ -7,5 +7,11 @@ $util.qr($ctx.stash.paths.add("Form_formVersion_get_RES.vtl"))
 #if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)
     $util.toJson(null)
 #else
-    $util.toJson($utils.rds.toJsonObject($ctx.result)[0][0])
+    #set($result=$utils.rds.toJsonObject($ctx.result)[0][0])
+    #if($result.formData)
+        $util.qr($result.put("formData"), $util.parseJson($result.formData))
+        $util.toJson($result)
+    #else
+        $util.toJson($result)
+    #end
 #end
