@@ -164,7 +164,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1567667541652-2019-09-05T07:12:21.652Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1567692557932-2019-09-05T14:09:17.932Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -212,14 +212,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "PostConfirmationLambdaVersionbJNqr0TUg1iVBqbllOkTkwH3CE9glUOQcRszZ15N4": {
+    "PostConfirmationLambdaVersionbgUAmfituzFt10ngZ9UN5bh8gAzMX09msIveTdA": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "PostConfirmationLambdaFunction"
         },
-        "CodeSha256": "ytrndJEHhsnPzWpX/QoHve0FAdD17q9Q3W0FXvx0AcM="
+        "CodeSha256": "fEqi6iXCUgCe767crcdB5NYsRKWXR+D5HjmwnhjkhBg="
       }
     },
     "SignupLambdaFunction": {
@@ -229,7 +229,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1567667541652-2019-09-05T07:12:21.652Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1567692557932-2019-09-05T14:09:17.932Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-invite",
         "Handler": "src/invite.handle",
@@ -277,14 +277,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "SignupLambdaVersioniXTx8ECU7PjGVJwvAIrBRUf55bmxrQ1gi3m8n7o": {
+    "SignupLambdaVersionA8YC5EQ3wR04lLPZkcfDnyTM5WLvLVDasPjhHGT6o": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "SignupLambdaFunction"
         },
-        "CodeSha256": "ytrndJEHhsnPzWpX/QoHve0FAdD17q9Q3W0FXvx0AcM="
+        "CodeSha256": "fEqi6iXCUgCe767crcdB5NYsRKWXR+D5HjmwnhjkhBg="
       }
     },
     "ApiGatewayRestApi": {
@@ -511,7 +511,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1567667513367": {
+    "ApiGatewayDeployment1567692534143": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -630,7 +630,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1567667541652-2019-09-05T07:12:21.652Z/custom-resources.zip"
+          "S3Key": "serverless/formsli/dev/1567692557932-2019-09-05T14:09:17.932Z/custom-resources.zip"
         },
         "FunctionName": "formsli-dev-custom-resource-existing-cup",
         "Handler": "cognitoUserPool/handler.handler",
@@ -1482,7 +1482,7 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_add_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed)\n    #set($versionId = $util.autoId())\n    #set($now = \"${util.time.nowISO8601()}\")\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $versionId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    ## $util.qr($ctx.stash.put(\"payloadIsMap\", $util.isMap($args.formData)))\n    ## $util.qr($ctx.stash.put(\"payloadJSON\", $util.toJson($args.formData)))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"INSERT INTO FormVersion(id, formId, ownerId, notes, createdAt, formData) VALUES(:id, :formId, :ownerId, :notes, :createdAt, '${util.toJson($args.formData)}')\",\n            \"SELECT * FROM FormVersion WHERE id='${versionId}'\"\n        ],\n        \"variableMap\": {\n            \":id\": \"${versionId}\",\n            \":accountId\" : \"${args.accountId}\",\n            \":formId\": \"${args.formId}\",\n            \":ownerId\": \"${identity.callerId}\",\n            \":notes\": \"${args.notes}\",\n            \":createdAt\": \"${now}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on [FormVersion]\", \"Unauthorized\")\n#end",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_add_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed)\n    #set($versionId = $util.autoId())\n    #set($now = \"${util.time.nowISO8601()}\")\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $versionId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"INSERT INTO FormVersion(id, formId, ownerId, notes, createdAt, formData) VALUES(:id, :formId, :ownerId, :notes, :createdAt, :formData)\",\n            \"SELECT * FROM FormVersion WHERE id='${versionId}'\"\n        ],\n        \"variableMap\": {\n            \":id\": \"${versionId}\",\n            \":accountId\" : \"${args.accountId}\",\n            \":formId\": \"${args.formId}\",\n            \":ownerId\": \"${identity.callerId}\",\n            \":notes\": \"${args.notes}\",\n            \":createdAt\": \"${now}\",\n            \":formData\": \"${util.escapeJavaScript($util.toJson($args.formData))}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on [FormVersion]\", \"Unauthorized\")\n#end",
         "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_upsert_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
         "FunctionVersion": "2018-05-29"
       }
@@ -1504,7 +1504,7 @@
           ]
         },
         "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_get_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#set($isAllowed = false)\n#if($identity.tenantId == $args.accountId || $identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $args.versionId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n    $util.qr($ctx.stash.put(\"operation\", 'get'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            #if($identity.isAdmin != true)\n                \"SELECT * FROM FormVersion WHERE id='${args.versionId}' AND accountId='${identity.tenantId}'\"\n            #else\n                \"SELECT * FROM FormVersion WHERE id='${args.versionId}'\"\n            #end\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [GET] on FormVersion[${args.versionId}]\", \"Unauthorized\")\n#end\n",
-        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_GET.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.error(\"${request.itemType} [${request.id}] not found\", 'NotFound')\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_formVersion_get_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.toJson(null)\n#else\n    #set($result=$utils.rds.toJsonObject($ctx.result)[0][0])\n    #if($result.formData)\n        $util.qr($result.put(\"formData\", $util.parseJson($result.formData)))\n    #end\n    $util.toJson($result)\n#end",
         "FunctionVersion": "2018-05-29"
       }
     },
@@ -2203,7 +2203,7 @@
         "TypeName": "Form",
         "FieldName": "version",
         "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_formVersion_get_REQ.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM FormVersion WHERE id='${ctx.source.versionId}'\"\n    ]\n}",
-        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_formVersion_get_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.toJson(null)\n#else\n    #set($result=$utils.rds.toJsonObject($ctx.result)[0][0])\n    #if($result.formData)\n        $util.qr($result.put(\"formData\"), $util.parseJson($result.formData))\n        $util.toJson($result)\n    #else\n        $util.toJson($result)\n    #end\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_formVersion_get_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.toJson(null)\n#else\n    #set($result=$utils.rds.toJsonObject($ctx.result)[0][0])\n    #if($result.formData)\n        $util.qr($result.put(\"formData\", $util.parseJson($result.formData)))\n    #end\n    $util.toJson($result)\n#end",
         "DataSourceName": {
           "Fn::GetAtt": [
             "GraphQlDsAppData",
@@ -2428,13 +2428,13 @@
     "PostConfirmationLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "PostConfirmationLambdaVersionbJNqr0TUg1iVBqbllOkTkwH3CE9glUOQcRszZ15N4"
+        "Ref": "PostConfirmationLambdaVersionbgUAmfituzFt10ngZ9UN5bh8gAzMX09msIveTdA"
       }
     },
     "SignupLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "SignupLambdaVersioniXTx8ECU7PjGVJwvAIrBRUf55bmxrQ1gi3m8n7o"
+        "Ref": "SignupLambdaVersionA8YC5EQ3wR04lLPZkcfDnyTM5WLvLVDasPjhHGT6o"
       }
     },
     "ServiceEndpoint": {

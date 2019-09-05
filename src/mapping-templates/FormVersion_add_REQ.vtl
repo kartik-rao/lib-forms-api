@@ -14,12 +14,10 @@ $util.qr($ctx.stash.paths.add("FormVersion_add_REQ.vtl"))
     $util.qr($ctx.stash.request.put("id", $versionId))
     $util.qr($ctx.stash.request.put("itemType", 'FormVersion'))
     $util.qr($ctx.stash.put("operation", 'put'))
-    ## $util.qr($ctx.stash.put("payloadIsMap", $util.isMap($args.formData)))
-    ## $util.qr($ctx.stash.put("payloadJSON", $util.toJson($args.formData)))
     {
         "version": "2018-05-29",
         "statements": [
-            "INSERT INTO FormVersion(id, formId, ownerId, notes, createdAt, formData) VALUES(:id, :formId, :ownerId, :notes, :createdAt, '${util.toJson($args.formData)}')",
+            "INSERT INTO FormVersion(id, formId, ownerId, notes, createdAt, formData) VALUES(:id, :formId, :ownerId, :notes, :createdAt, :formData)",
             "SELECT * FROM FormVersion WHERE id='${versionId}'"
         ],
         "variableMap": {
@@ -28,7 +26,8 @@ $util.qr($ctx.stash.paths.add("FormVersion_add_REQ.vtl"))
             ":formId": "${args.formId}",
             ":ownerId": "${identity.callerId}",
             ":notes": "${args.notes}",
-            ":createdAt": "${now}"
+            ":createdAt": "${now}",
+            ":formData": "${util.escapeJavaScript($util.toJson($args.formData))}"
         }
     }
 #else

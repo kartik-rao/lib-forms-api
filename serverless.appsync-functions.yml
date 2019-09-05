@@ -133,4 +133,4 @@
   type: Query
   name: FN_getFormVersion
   request: FormVersion_get_REQ.vtl
-  response: Common_FN_get_RES.vtl
+  response: FormVersion_get_RES.vtl
