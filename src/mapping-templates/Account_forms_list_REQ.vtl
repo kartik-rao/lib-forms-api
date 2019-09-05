@@ -1,6 +1,7 @@
 $util.qr($ctx.stash.paths.add("Account_forms_list_REQ.vtl"))
 {
+    "version": "2018-05-29",
     "statements": [
-        "SELECT * FROM Form WHERE accountId='${ctx.source.id}'"
+        "SELECT * FROM Form WHERE accountId='${ctx.source.id}' ORDER BY createdAt DESC, updatedAt DESC"
     ]
 }

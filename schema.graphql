@@ -12,6 +12,7 @@ enum NumericFilterExpression {
   ge
   gt
   between
+  notBetween
   isNull
   isNotNull
 }
@@ -34,37 +35,32 @@ enum StringFilterExpression {
 
 input DateFilter {
   with  : FilterWith
-  column : String!
-  expression: NumericFilterExpression
+  expression: NumericFilterExpression!
   value: [AWSDateTime!]
 }
 
 input BooleanFilter {
   with  : FilterWith
-  column : String!
-  expression: BooleanFilterExpression
+  expression: BooleanFilterExpression!
   value: [Boolean!]
 }
 
 input FloatFilter {
   with  : FilterWith
-  column : String!
-  expression: NumericFilterExpression
+  expression: NumericFilterExpression!
   value: [Float!]
 }
 
 
 input IntFilter {
   with  : FilterWith
-  column : String!
-  expression: NumericFilterExpression
+  expression: NumericFilterExpression!
   value: [Int!]
 }
 
 input StringFilter {
   with  : FilterWith
-  column : String!
-  expression: StringFilterExpression
+  expression: StringFilterExpression!
   value: [String!]
 }
 
@@ -74,10 +70,11 @@ input AccountFilterInput {
   updatedAt: DateFilter
   planId: IntFilter
   active: IntFilter
-  and: [AccountFilterInput]
+  criteria: [AccountFilterInput!]
 }
 
 input UserFilterInput {
+  accountId: StringFilter
   ownerId: IntFilter
   email: StringFilter
   userGroup: StringFilter
@@ -86,7 +83,7 @@ input UserFilterInput {
   createdAt: DateFilter
   updatedAt: DateFilter
   isDeleted: IntFilter
-  and: [UserFilterInput]
+  criteria: [UserFilterInput!]
 }
 
 input PlanTypeFilterInput {
@@ -97,7 +94,7 @@ input PlanTypeFilterInput {
   createdAt: DateFilter
   updatedAt: DateFilter
   isDeleted: IntFilter
-  and: [PlanTypeFilterInput]
+  criteria: [PlanTypeFilterInput!]
 }
 
 input IntegrationTypeFilterInput {
@@ -107,7 +104,7 @@ input IntegrationTypeFilterInput {
   createdAt: DateFilter
   updatedAt: DateFilter
   active: IntFilter
-  and: [IntegrationTypeFilterInput]
+  criteria: [IntegrationTypeFilterInput!]
 }
 
 input IntegrationFilterInput {
@@ -120,7 +117,7 @@ input IntegrationFilterInput {
   lastExecutionResult: IntFilter
   createdAt: DateFilter
   updatedAt: DateFilter
-  and: [IntegrationFilterInput]
+  criteria: [IntegrationFilterInput!]
 }
 
 input FormFilterInput {
@@ -133,7 +130,7 @@ input FormFilterInput {
   endsAt: DateFilter
   isPaused: IntFilter
   isDeleted: IntFilter
-  and: [IntegrationFilterInput]
+  criteria: [FormFilterInput!]
 }
 
 input PlanFilterInput {
@@ -145,7 +142,7 @@ input PlanFilterInput {
   updatedAt: DateFilter
   startDate: DateFilter
   endDate: DateFilter
-  and: [PlanFilterInput]
+  criteria: [PlanFilterInput!]
 }
 
 type FormEntry @model {
@@ -184,7 +181,7 @@ type Form @model  {
   ownerId: ID!
   name: String!
   description: String!
-  versionId: ID!
+  versionId: ID
   version: FormVersion
   ownedBy: User!
   accountId: ID!
@@ -227,8 +224,8 @@ input DeleteFormInput {
 
 type User @model {
   id: ID!
-  ownerId: ID!
-  accountId: ID!
+  ownerId: ID
+  accountId: ID
   account: Account
   email: String!
   userGroup: String!
