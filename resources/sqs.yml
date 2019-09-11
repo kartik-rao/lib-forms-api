@@ -1,0 +1,18 @@
+Resources:
+  EntryQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: ${self:provider.environment.sqs_entry}
+  IntegrationQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: ${self:provider.environment.sqs_integration}
+
+# Print out the queue names
+Outputs:
+  IntegrationQueue:
+    Value:
+      Ref: IntegrationQueue
+  EntryQueue:
+    Value:
+      Ref: EntryQueue

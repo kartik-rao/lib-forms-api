@@ -174,6 +174,8 @@ CREATE TABLE  IF NOT EXISTS Form (
     endDate VARCHAR(24),
     isPaused TINYINT DEFAULT 1,
     isDeleted TINYINT DEFAULT 0,
+    redirectNotStarted VARCHAR(1024),
+    redirectHasEnded VARCHAR(1024),
     PRIMARY KEY (id),
     UNIQUE INDEX `INDX_Form_id` (`id` ASC),
     UNIQUE INDEX `INDX_Form_id_account_id` (`id` ASC, `accountId` ASC),

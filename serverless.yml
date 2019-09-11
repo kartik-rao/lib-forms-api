@@ -15,27 +15,36 @@ provider:
   functions:
     postconfirmation: ${self:service}-${self:provider.stage}-postconfirmation
     invite: ${self:service}-${self:provider.stage}-invite
+    formentry: ${self:service}-${self:provider.stage}-form-entry
+    formrender: ${self:service}-${self:provider.stage}-form
   profile: fl-infrastructure
   environment:
-    region        : ${self:provider.region}
-    domain        : ${opt:domain, 'dev-app.forms.li'}
-    protocol      : ${opt:protocol, 'http://'}
-    urlPrefix     : ${opt:urlPrefix, '${self:provider.environment.protocol}${self:provider.environment.domain}'}
-    environment   : ${self:provider.stage}
-    serviceName   : ${self:service}
-    databaseName  : ${self:service}
-    userPoolId    : ${ssm:/${self:provider.stage}/formsli/cognito/userpool/id}
-    userPoolArn   : ${ssm:/${self:provider.stage}/formsli/cognito/userpool/arn}
-    dbClusterId   : ${ssm:/${self:provider.stage}/formsli/rds/id}
-    dbClusterArn  : "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:${self:provider.environment.dbClusterId}"
-    dbClusterSecretArn: ${ssm:/${self:provider.stage}/formsli/rds/password/secret}
-    s3_user_bucket: ${ssm:/${self:provider.stage}/formsli/s3/bucket/name}
+    region         : ${self:provider.region}
+    domain         : ${opt:domain, 'dev-app.forms.li'}
+    protocol       : ${opt:protocol, 'http://'}
+    urlPrefix      : ${opt:urlPrefix, '${self:provider.environment.protocol}${self:provider.environment.domain}'}
+    environment    : ${self:provider.stage}
+    serviceName    : ${self:service}
+    databaseName   : ${self:service}
+    userPoolId     : ${ssm:/${self:provider.stage}/formsli/cognito/userpool/id}
+    userPoolArn    : ${ssm:/${self:provider.stage}/formsli/cognito/userpool/arn}
+    dbClusterId    : ${ssm:/${self:provider.stage}/formsli/rds/id}
+    dbClusterArn   : "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:${self:provider.environment.dbClusterId}"
+    dbClusterSecretArn : ${ssm:/${self:provider.stage}/formsli/rds/password/secret}
+    s3_user_bucket     : ${ssm:/${self:provider.stage}/formsli/s3/buckets/user/name}
+    s3_app_bucket      : ${ssm:/${self:provider.stage}/formsli/s3/buckets/app/name}
+    sqs_entry          : ${self:service}-${self:provider.stage}-entry-queue
+    sqs_integration    : ${self:service}-${self:provider.stage}-integration-queue
+    sqs_entry_url      :
+      Ref: EntryQueue
+    sqs_integration_url:
+      Ref: IntegrationQueue
   iamRoleStatements:
     - Effect: "Allow"
       Action:
         - "secretsmanager:GetSecretValue"
       Resource:
-        - "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/${self:provider.stage}/formsli/rds/*"
+        - "arn:aws:secretsmanager:ap-northeast-1:#{AWS::AccountId}:secret:/${self:provider.stage}/formsli/rds/*"
     - Effect: "Allow"
       Action:
         - "rds-data:InsertItems"
@@ -63,7 +72,16 @@ provider:
       Action:
         - ses:SendEmail
         - ses:SendRawEmail
-      Resource: "arn:aws:ses:us-east-1:*:*"
+      Resource: "arn:aws:ses:us-east-1:#{AWS::AccountId}:*"
+    - Effect: Allow
+      Action:
+        - sqs:RecieveMessage
+        - sqs:SendMessage
+      Resource: "arn:aws:sqs:#{AWS::Region}:#{AWS::AccountId}:*"
+    - Effect: Allow
+      Action:
+        - sqs:ListQueues
+      Resource: "arn:aws:sqs:#{AWS::Region}:#{AWS::AccountId}:*"
 
 plugins:
   - serverless-webpack
@@ -77,8 +95,17 @@ plugins:
 resources:
   - ${file(resources/iam.yml)}
   - ${file(resources/apig.auth.yml)}
+  - ${file(resources/sqs.yml)}
 
 custom:
+  customDomain:
+    DependsOn: ApiGatewayApiKey1
+    domainName: ${self:provider.stage}-api.forms.li
+    certificateName: "*.forms.li"
+    stage: ${self:provider.stage}
+    createRoute53Record: true
+    endpointType: 'regional'
+    securityPolicy: tls_1_2
   # Stack Output Plugin
   output:
     file: outputs/stack.${self:provider.stage}.json # toml, yaml, yml, and json format is available
@@ -120,6 +147,22 @@ custom:
     substitutions:
 
 functions:
+  formEntry:
+    name: ${self:provider.functions.formentry}
+    handler: src/formentry.handle
+    events:
+      - http:
+          path: /formentry/{formId}
+          method: post
+          cors: true
+  formRender:
+    name: ${self:provider.functions.formrender}
+    handler: src/formrender.handle
+    events:
+      - http:
+          path: /form/{formId}
+          method: get
+          cors: true
   postConfirmation:
     name: ${self:provider.functions.postconfirmation}
     handler: src/postconfirmation.handle

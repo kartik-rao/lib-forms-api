@@ -191,6 +191,8 @@ type Form @model  {
   endDate  : AWSDateTime
   isPaused : Boolean
   isDeleted: Boolean
+  redirectNotStarted: AWSURL
+  redirectHasEnded : AWSURL
   versions(limit: Int): [FormVersion]
   integrations(limit: Int): [Integration]
   entries(limit: Int): [FormEntry]
