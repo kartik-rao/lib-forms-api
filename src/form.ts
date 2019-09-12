@@ -57,13 +57,11 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
             } else {
                 callback(null, {statusCode: 204, headers: CORS_HEADERS, body: JSON.stringify({
                     error: "InactiveForm",
-                    data : {
-                        name: data.name,
-                        description: data.description,
-                        hasEnded : hasEnded,
-                        notStarted : notStarted,
-                        redirect : redirect
-                    }
+                    name: data.name,
+                    description: data.description,
+                    hasEnded : hasEnded,
+                    notStarted : notStarted,
+                    redirect : redirect
                 })});
             }
         } else {
