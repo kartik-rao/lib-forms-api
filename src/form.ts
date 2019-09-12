@@ -34,8 +34,7 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
         });
         console.log(`${ServiceName} - formrender.handle - QUERY ${event.pathParameters.formId} RES`, response);
         if (response && response.records && response.records.length > 0) {
-            let starts;
-            let ends;
+            let starts, ends;
             let now = dayjs();
             let data = response.records[0];
             if (data.startDate) {
@@ -47,7 +46,7 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
             let hasEnded = ends && now.isAfter(ends);
             let notStarted = starts && now.isBefore(starts);
             let allowed = !hasEnded && !notStarted;
-            let redirect = ends && now.isAfter(ends) ? data.redirectHasEnded : starts && now.isBefore(starts) ? data.redirectNotStarted;
+            let redirect = hasEnded || notStarted ? (hasEnded ? data.redirectHasEnded : data.redirectNotStarted) : null;
 
             if (allowed) {
                 if(data.formData) {
@@ -63,7 +62,7 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
                         description: data.description,
                         hasEnded : hasEnded,
                         notStarted : notStarted,
-                        redirect : hasEnded ? data.redirectHasEnded : data.redirectNotStarted
+                        redirect : redirect
                     }
                 })});
             }
