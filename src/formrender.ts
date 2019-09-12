@@ -69,6 +69,6 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
         }
     } catch(e) {
         console.log(`${ServiceName} - formrender.handle ERROR`, e);
-        callback(null, {stautusCode: 500, headers: CORS_HEADERS, body: {error: "InternalServerError"}});
+        callback(null, {stautusCode: 200, headers: CORS_HEADERS, body: {error: e.message}});
     }
 }
