@@ -13,7 +13,7 @@ const CORS_HEADERS = {
     "Access-Control-Allow-Origin"      : "*",  // Required for CORS support to work
     "Access-Control-Allow-Credentials" : true, // Required for cookies, authorization headers with HTTPS
     "Content-Type"                     : "text/html",
-    "Cache-Control"                    : ENV == "development" ? "private, max-age=0" : "public, max-age=900"
+    "Cache-Control"                    : ENV == "dev" ? "private, max-age=0" : "public, max-age=900"
 }
 
 export const handle = async (event : APIGatewayEvent, context : APIGatewayEventRequestContext, callback : any) => {
