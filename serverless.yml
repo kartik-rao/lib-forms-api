@@ -87,7 +87,7 @@ plugins:
   - serverless-webpack
   - serverless-pseudo-parameters
   - serverless-iam-roles-per-function
-  # - serverless-domain-manager
+  - serverless-domain-manager
   - serverless-appsync-plugin
   - '@anttiviljami/serverless-stack-output'
   - serverless-offline
