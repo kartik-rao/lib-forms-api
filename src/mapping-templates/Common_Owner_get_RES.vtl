@@ -6,7 +6,7 @@ $util.qr($ctx.stash.paths.add("Common_Owner_get_RES.vtl"))
 #end
 
 #if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)
-    $util.error("User not found", 'NotFound')
+    $utils.toJson(null)
 #else
     $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])
 #end
