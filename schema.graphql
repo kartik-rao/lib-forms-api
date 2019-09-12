@@ -226,6 +226,7 @@ input DeleteFormInput {
 type User @model {
   id: ID!
   ownerId: ID
+  ownedBy: User
   accountId: ID
   account: Account
   email: String!

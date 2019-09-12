@@ -13,6 +13,18 @@
   field: numForms
   request: User_numForms_get_REQ.vtl
   response: Common_FN_count_RES.vtl
+# User.account
+- dataSource: AppData
+  type: User
+  field: account
+  request: Common_Account_get_REQ.vtl
+  response: Common_Account_get_RES.vtl
+# User.ownedBy
+- dataSource: AppData
+  type: User
+  field: ownedBy
+  request: Common_Owner_get_REQ.vtl
+  response: Common_Owner_get_RES.vtl
 
 - dataSource: AppData
   type: Query
