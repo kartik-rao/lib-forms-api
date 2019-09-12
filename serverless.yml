@@ -20,9 +20,10 @@ provider:
   profile: fl-infrastructure
   environment:
     region         : ${self:provider.region}
-    domain         : ${opt:domain, 'dev-app.forms.li'}
-    protocol       : ${opt:protocol, 'http://'}
-    urlPrefix      : ${opt:urlPrefix, '${self:provider.environment.protocol}${self:provider.environment.domain}'}
+    rootDomain     : ${opt:domain, 'forms.li'}
+    appDomain      : "app.${self:provider.environment.rootDomain}"
+    apiDomain      : "api.${self:provider.environment.rootDomain}"
+    staticDomain   : "static.${self:provider.environment.rootDomain}"
     environment    : ${self:provider.stage}
     serviceName    : ${self:service}
     databaseName   : ${self:service}
@@ -100,7 +101,7 @@ resources:
 custom:
   customDomain:
     DependsOn: ApiGatewayApiKey1
-    domainName: ${self:provider.stage}-api.forms.li
+    domainName: ${self:provider.stage}-${self:provider.environment.apiDomain}
     certificateName: "*.forms.li"
     stage: ${self:provider.stage}
     createRoute53Record: true
@@ -147,20 +148,28 @@ custom:
     substitutions:
 
 functions:
+  formJson:
+    name: ${self:provider.functions.form}
+    handler: src/form.handle
+    events:
+      - http:
+          path: /form/json/{formId}
+          method: get
+          cors: true
   formEntry:
     name: ${self:provider.functions.formentry}
     handler: src/formentry.handle
     events:
       - http:
-          path: /formentry/{formId}
+          path: /form/entry/{formId}
           method: post
           cors: true
-  formRender:
-    name: ${self:provider.functions.formrender}
-    handler: src/formrender.handle
+  formView:
+    name: ${self:provider.functions.formview}
+    handler: src/formview.handle
     events:
       - http:
-          path: /form/{formId}
+          path: /form/view/{formId}
           method: get
           cors: true
   postConfirmation:

@@ -16,6 +16,13 @@
         }
       }
     },
+    "FormJsonLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/formsli-dev-formJson",
+        "RetentionInDays": 14
+      }
+    },
     "FormEntryLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
@@ -23,10 +30,10 @@
         "RetentionInDays": 14
       }
     },
-    "FormRenderLogGroup": {
+    "FormViewLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/formsli-dev-form",
+        "LogGroupName": "/aws/lambda/formsli-dev-formView",
         "RetentionInDays": 14
       }
     },
@@ -194,6 +201,81 @@
         }
       }
     },
+    "FormJsonLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/formsli/dev/1568283394892-2019-09-12T10:16:34.892Z/formsli.zip"
+        },
+        "FunctionName": "formsli-dev-formJson",
+        "Handler": "src/form.handle",
+        "MemorySize": 2048,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs10.x",
+        "Timeout": 30,
+        "Tags": [
+          {
+            "Key": "service",
+            "Value": "formsli"
+          },
+          {
+            "Key": "region",
+            "Value": "ap-northeast-1"
+          }
+        ],
+        "Environment": {
+          "Variables": {
+            "region": "ap-northeast-1",
+            "rootDomain": "forms.li",
+            "appDomain": "app.forms.li",
+            "apiDomain": "api.forms.li",
+            "staticDomain": "static.forms.li",
+            "environment": "dev",
+            "serviceName": "formsli",
+            "databaseName": "formsli",
+            "userPoolId": "ap-northeast-1_Q798Nsl33",
+            "userPoolArn": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33",
+            "dbClusterId": "fl-rds-cluster-dev",
+            "dbClusterArn": {
+              "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
+            },
+            "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX",
+            "s3_user_bucket": "fl-dev-userdata.s3.amazonaws.com",
+            "s3_app_bucket": "fl-dev-webapp.s3.amazonaws.com",
+            "sqs_entry": "formsli-dev-entry-queue",
+            "sqs_integration": "formsli-dev-integration-queue",
+            "sqs_entry_url": {
+              "Ref": "EntryQueue"
+            },
+            "sqs_integration_url": {
+              "Ref": "IntegrationQueue"
+            }
+          }
+        }
+      },
+      "DependsOn": [
+        "FormJsonLogGroup",
+        "IamRoleLambdaExecution"
+      ]
+    },
+    "FormJsonLambdaVersionb2opWebVckeVVfEd1zc4KUuookC3415YavgfwuRKk4": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "FormJsonLambdaFunction"
+        },
+        "CodeSha256": "CtvoRSLH8bWYYSAlqNx+sh4jto8HTJJvsaLnshBZNaI="
+      }
+    },
     "FormEntryLambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
@@ -201,7 +283,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568251534377-2019-09-12T01:25:34.377Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568283394892-2019-09-12T10:16:34.892Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-form-entry",
         "Handler": "src/formentry.handle",
@@ -227,9 +309,10 @@
         "Environment": {
           "Variables": {
             "region": "ap-northeast-1",
-            "domain": "dev-app.forms.li",
-            "protocol": "http://",
-            "urlPrefix": "http://dev-app.forms.li",
+            "rootDomain": "forms.li",
+            "appDomain": "app.forms.li",
+            "apiDomain": "api.forms.li",
+            "staticDomain": "static.forms.li",
             "environment": "dev",
             "serviceName": "formsli",
             "databaseName": "formsli",
@@ -258,27 +341,27 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "FormEntryLambdaVersionR93e7bDDEOZe5ukvwTxlawFe27U5WR7v8mX4TKEnU": {
+    "FormEntryLambdaVersion5WS65uQDDDiQLiW8PJq6cMgw3drQNxyg3tAuqFFtC2k": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "FormEntryLambdaFunction"
         },
-        "CodeSha256": "+leQXo/XsQFi4444rGOj7PQ4/gCQw7kd+H9lmZq5XDs="
+        "CodeSha256": "CtvoRSLH8bWYYSAlqNx+sh4jto8HTJJvsaLnshBZNaI="
       }
     },
-    "FormRenderLambdaFunction": {
+    "FormViewLambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
         "Code": {
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568251534377-2019-09-12T01:25:34.377Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568283394892-2019-09-12T10:16:34.892Z/formsli.zip"
         },
-        "FunctionName": "formsli-dev-form",
-        "Handler": "src/formrender.handle",
+        "FunctionName": "formsli-dev-formView",
+        "Handler": "src/formview.handle",
         "MemorySize": 2048,
         "Role": {
           "Fn::GetAtt": [
@@ -301,9 +384,10 @@
         "Environment": {
           "Variables": {
             "region": "ap-northeast-1",
-            "domain": "dev-app.forms.li",
-            "protocol": "http://",
-            "urlPrefix": "http://dev-app.forms.li",
+            "rootDomain": "forms.li",
+            "appDomain": "app.forms.li",
+            "apiDomain": "api.forms.li",
+            "staticDomain": "static.forms.li",
             "environment": "dev",
             "serviceName": "formsli",
             "databaseName": "formsli",
@@ -328,18 +412,18 @@
         }
       },
       "DependsOn": [
-        "FormRenderLogGroup",
+        "FormViewLogGroup",
         "IamRoleLambdaExecution"
       ]
     },
-    "FormRenderLambdaVersion2zgN1LvK8cDyeKL89heT4WHgUdlqhDYweRvRes2fkk": {
+    "FormViewLambdaVersionL3KuMk6qYpGF7xwXlwD6MAja0iA4hLG3qaeoFZuf4": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
-          "Ref": "FormRenderLambdaFunction"
+          "Ref": "FormViewLambdaFunction"
         },
-        "CodeSha256": "+leQXo/XsQFi4444rGOj7PQ4/gCQw7kd+H9lmZq5XDs="
+        "CodeSha256": "CtvoRSLH8bWYYSAlqNx+sh4jto8HTJJvsaLnshBZNaI="
       }
     },
     "PostConfirmationLambdaFunction": {
@@ -349,7 +433,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568251534377-2019-09-12T01:25:34.377Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568283394892-2019-09-12T10:16:34.892Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -375,9 +459,10 @@
         "Environment": {
           "Variables": {
             "region": "ap-northeast-1",
-            "domain": "dev-app.forms.li",
-            "protocol": "http://",
-            "urlPrefix": "http://dev-app.forms.li",
+            "rootDomain": "forms.li",
+            "appDomain": "app.forms.li",
+            "apiDomain": "api.forms.li",
+            "staticDomain": "static.forms.li",
             "environment": "dev",
             "serviceName": "formsli",
             "databaseName": "formsli",
@@ -406,14 +491,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "PostConfirmationLambdaVersionYKCQ7P8fwhw0B9235VBoQjLE3qoiWTRSyQz5h1gjY": {
+    "PostConfirmationLambdaVersionHzlh9Ws8C2uJb3vTexKznYJAJDhZtoRGvN0p89tPY": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "PostConfirmationLambdaFunction"
         },
-        "CodeSha256": "+leQXo/XsQFi4444rGOj7PQ4/gCQw7kd+H9lmZq5XDs="
+        "CodeSha256": "CtvoRSLH8bWYYSAlqNx+sh4jto8HTJJvsaLnshBZNaI="
       }
     },
     "SignupLambdaFunction": {
@@ -423,7 +508,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568251534377-2019-09-12T01:25:34.377Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568283394892-2019-09-12T10:16:34.892Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-invite",
         "Handler": "src/invite.handle",
@@ -449,9 +534,10 @@
         "Environment": {
           "Variables": {
             "region": "ap-northeast-1",
-            "domain": "dev-app.forms.li",
-            "protocol": "http://",
-            "urlPrefix": "http://dev-app.forms.li",
+            "rootDomain": "forms.li",
+            "appDomain": "app.forms.li",
+            "apiDomain": "api.forms.li",
+            "staticDomain": "static.forms.li",
             "environment": "dev",
             "serviceName": "formsli",
             "databaseName": "formsli",
@@ -480,14 +566,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "SignupLambdaVersionfbuSsUbVnz4sLCajV8iIBHHnqkxPjTRqaqGfEoA": {
+    "SignupLambdaVersionmhpJ0oGhGnUQrLiMZMTdmBmwE05uc1k34XQcsYppEo": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "SignupLambdaFunction"
         },
-        "CodeSha256": "+leQXo/XsQFi4444rGOj7PQ4/gCQw7kd+H9lmZq5XDs="
+        "CodeSha256": "CtvoRSLH8bWYYSAlqNx+sh4jto8HTJJvsaLnshBZNaI="
       }
     },
     "ApiGatewayRestApi": {
@@ -498,33 +584,6 @@
           "Types": [
             "EDGE"
           ]
-        }
-      }
-    },
-    "ApiGatewayResourceFormentry": {
-      "Type": "AWS::ApiGateway::Resource",
-      "Properties": {
-        "ParentId": {
-          "Fn::GetAtt": [
-            "ApiGatewayRestApi",
-            "RootResourceId"
-          ]
-        },
-        "PathPart": "formentry",
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        }
-      }
-    },
-    "ApiGatewayResourceFormentryFormidVar": {
-      "Type": "AWS::ApiGateway::Resource",
-      "Properties": {
-        "ParentId": {
-          "Ref": "ApiGatewayResourceFormentry"
-        },
-        "PathPart": "{formId}",
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
         }
       }
     },
@@ -543,11 +602,71 @@
         }
       }
     },
-    "ApiGatewayResourceFormFormidVar": {
+    "ApiGatewayResourceFormJson": {
       "Type": "AWS::ApiGateway::Resource",
       "Properties": {
         "ParentId": {
           "Ref": "ApiGatewayResourceForm"
+        },
+        "PathPart": "json",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceFormJsonFormidVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceFormJson"
+        },
+        "PathPart": "{formId}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceFormEntry": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceForm"
+        },
+        "PathPart": "entry",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceFormEntryFormidVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceFormEntry"
+        },
+        "PathPart": "{formId}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceFormView": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceForm"
+        },
+        "PathPart": "view",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceFormViewFormidVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceFormView"
         },
         "PathPart": "{formId}",
         "RestApiId": {
@@ -585,54 +704,7 @@
         }
       }
     },
-    "ApiGatewayMethodFormentryFormidVarOptions": {
-      "Type": "AWS::ApiGateway::Method",
-      "Properties": {
-        "AuthorizationType": "NONE",
-        "HttpMethod": "OPTIONS",
-        "MethodResponses": [
-          {
-            "StatusCode": "200",
-            "ResponseParameters": {
-              "method.response.header.Access-Control-Allow-Origin": true,
-              "method.response.header.Access-Control-Allow-Headers": true,
-              "method.response.header.Access-Control-Allow-Methods": true,
-              "method.response.header.Access-Control-Allow-Credentials": true
-            },
-            "ResponseModels": {}
-          }
-        ],
-        "RequestParameters": {},
-        "Integration": {
-          "Type": "MOCK",
-          "RequestTemplates": {
-            "application/json": "{statusCode:200}"
-          },
-          "ContentHandling": "CONVERT_TO_TEXT",
-          "IntegrationResponses": [
-            {
-              "StatusCode": "200",
-              "ResponseParameters": {
-                "method.response.header.Access-Control-Allow-Origin": "'*'",
-                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
-                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'",
-                "method.response.header.Access-Control-Allow-Credentials": "'false'"
-              },
-              "ResponseTemplates": {
-                "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".*\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
-              }
-            }
-          ]
-        },
-        "ResourceId": {
-          "Ref": "ApiGatewayResourceFormentryFormidVar"
-        },
-        "RestApiId": {
-          "Ref": "ApiGatewayRestApi"
-        }
-      }
-    },
-    "ApiGatewayMethodFormFormidVarOptions": {
+    "ApiGatewayMethodFormJsonFormidVarOptions": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
         "AuthorizationType": "NONE",
@@ -672,7 +744,101 @@
           ]
         },
         "ResourceId": {
-          "Ref": "ApiGatewayResourceFormFormidVar"
+          "Ref": "ApiGatewayResourceFormJsonFormidVar"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodFormEntryFormidVarOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Credentials": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "ContentHandling": "CONVERT_TO_TEXT",
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'",
+                "method.response.header.Access-Control-Allow-Credentials": "'false'"
+              },
+              "ResponseTemplates": {
+                "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".*\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceFormEntryFormidVar"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodFormViewFormidVarOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Credentials": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "ContentHandling": "CONVERT_TO_TEXT",
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'",
+                "method.response.header.Access-Control-Allow-Credentials": "'false'"
+              },
+              "ResponseTemplates": {
+                "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".*\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceFormViewFormidVar"
         },
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
@@ -773,13 +939,56 @@
         }
       }
     },
-    "ApiGatewayMethodFormentryFormidVarPost": {
+    "ApiGatewayMethodFormJsonFormidVarGet": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceFormJsonFormidVar"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "FormJsonLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      }
+    },
+    "ApiGatewayMethodFormEntryFormidVarPost": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
         "HttpMethod": "POST",
         "RequestParameters": {},
         "ResourceId": {
-          "Ref": "ApiGatewayResourceFormentryFormidVar"
+          "Ref": "ApiGatewayResourceFormEntryFormidVar"
         },
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
@@ -816,13 +1025,13 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayMethodFormFormidVarGet": {
+    "ApiGatewayMethodFormViewFormidVarGet": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
         "HttpMethod": "GET",
         "RequestParameters": {},
         "ResourceId": {
-          "Ref": "ApiGatewayResourceFormFormidVar"
+          "Ref": "ApiGatewayResourceFormViewFormidVar"
         },
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
@@ -847,7 +1056,7 @@
                 ":lambda:path/2015-03-31/functions/",
                 {
                   "Fn::GetAtt": [
-                    "FormRenderLambdaFunction",
+                    "FormViewLambdaFunction",
                     "Arn"
                   ]
                 },
@@ -948,7 +1157,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1568251510528": {
+    "ApiGatewayDeployment1568283370881": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -957,15 +1166,54 @@
         "StageName": "dev"
       },
       "DependsOn": [
-        "ApiGatewayMethodFormentryFormidVarOptions",
-        "ApiGatewayMethodFormFormidVarOptions",
+        "ApiGatewayMethodFormJsonFormidVarOptions",
+        "ApiGatewayMethodFormEntryFormidVarOptions",
+        "ApiGatewayMethodFormViewFormidVarOptions",
         "ApiGatewayMethodPostconfirmOptions",
         "ApiGatewayMethodInviteOptions",
-        "ApiGatewayMethodFormentryFormidVarPost",
-        "ApiGatewayMethodFormFormidVarGet",
+        "ApiGatewayMethodFormJsonFormidVarGet",
+        "ApiGatewayMethodFormEntryFormidVarPost",
+        "ApiGatewayMethodFormViewFormidVarGet",
         "ApiGatewayMethodPostconfirmPost",
         "ApiGatewayMethodInvitePost"
       ]
+    },
+    "FormJsonLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "FormJsonLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
     },
     "FormEntryLambdaPermissionApiGateway": {
       "Type": "AWS::Lambda::Permission",
@@ -1004,12 +1252,12 @@
         }
       }
     },
-    "FormRenderLambdaPermissionApiGateway": {
+    "FormViewLambdaPermissionApiGateway": {
       "Type": "AWS::Lambda::Permission",
       "Properties": {
         "FunctionName": {
           "Fn::GetAtt": [
-            "FormRenderLambdaFunction",
+            "FormViewLambdaFunction",
             "Arn"
           ]
         },
@@ -1145,7 +1393,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568251534377-2019-09-12T01:25:34.377Z/custom-resources.zip"
+          "S3Key": "serverless/formsli/dev/1568283394892-2019-09-12T10:16:34.892Z/custom-resources.zip"
         },
         "FunctionName": "formsli-dev-custom-resource-existing-cup",
         "Handler": "cognitoUserPool/handler.handler",
@@ -2996,28 +3244,34 @@
         "Ref": "ServerlessDeploymentBucket"
       }
     },
+    "FormJsonLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "FormJsonLambdaVersionb2opWebVckeVVfEd1zc4KUuookC3415YavgfwuRKk4"
+      }
+    },
     "FormEntryLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "FormEntryLambdaVersionR93e7bDDEOZe5ukvwTxlawFe27U5WR7v8mX4TKEnU"
+        "Ref": "FormEntryLambdaVersion5WS65uQDDDiQLiW8PJq6cMgw3drQNxyg3tAuqFFtC2k"
       }
     },
-    "FormRenderLambdaFunctionQualifiedArn": {
+    "FormViewLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "FormRenderLambdaVersion2zgN1LvK8cDyeKL89heT4WHgUdlqhDYweRvRes2fkk"
+        "Ref": "FormViewLambdaVersionL3KuMk6qYpGF7xwXlwD6MAja0iA4hLG3qaeoFZuf4"
       }
     },
     "PostConfirmationLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "PostConfirmationLambdaVersionYKCQ7P8fwhw0B9235VBoQjLE3qoiWTRSyQz5h1gjY"
+        "Ref": "PostConfirmationLambdaVersionHzlh9Ws8C2uJb3vTexKznYJAJDhZtoRGvN0p89tPY"
       }
     },
     "SignupLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "SignupLambdaVersionfbuSsUbVnz4sLCajV8iIBHHnqkxPjTRqaqGfEoA"
+        "Ref": "SignupLambdaVersionmhpJ0oGhGnUQrLiMZMTdmBmwE05uc1k34XQcsYppEo"
       }
     },
     "ServiceEndpoint": {
