@@ -148,6 +148,7 @@ DROP TABLE IF EXISTS FormVersion;
 CREATE TABLE  IF NOT EXISTS FormVersion (
     id VARCHAR(36) NOT NULL,
     formId VARCHAR(36) NOT NULL,
+    accountId VARCHAR(36) NOT NULL,
     ownerId VARCHAR(36) NOT NULL,
     createdAt VARCHAR(24) NOT NULL,
     notes varchar(512) NOT NULL,
