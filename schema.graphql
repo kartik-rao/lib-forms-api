@@ -68,14 +68,14 @@ input AccountFilterInput {
   name: StringFilter
   createdAt: DateFilter
   updatedAt: DateFilter
-  planId: IntFilter
+  planId: StringFilter
   active: IntFilter
   criteria: [AccountFilterInput!]
 }
 
 input UserFilterInput {
   accountId: StringFilter
-  ownerId: IntFilter
+  ownerId: StringFilter
   email: StringFilter
   userGroup: StringFilter
   given_name: StringFilter
@@ -87,7 +87,7 @@ input UserFilterInput {
 }
 
 input PlanTypeFilterInput {
-  ownerId: IntFilter
+  ownerId: StringFilter
   cost: FloatFilter
   billingTerm: StringFilter
   name: StringFilter
@@ -98,8 +98,8 @@ input PlanTypeFilterInput {
 }
 
 input IntegrationTypeFilterInput {
-  ownerId: IntFilter
-  planTypeId: IntFilter
+  ownerId: StringFilter
+  planTypeId: StringFilter
   name: StringFilter
   createdAt: DateFilter
   updatedAt: DateFilter
@@ -108,9 +108,9 @@ input IntegrationTypeFilterInput {
 }
 
 input IntegrationFilterInput {
-  ownerId: IntFilter
-  accountId: IntFilter
-  formId: IntFilter
+  ownerId: StringFilter
+  accountId: StringFilter
+  formId: StringFilter
   active: IntFilter
   isDeleted: IntFilter
   lastExecuted: DateFilter
@@ -122,8 +122,8 @@ input IntegrationFilterInput {
 
 input FormFilterInput {
   name: StringFilter
-  ownerId: IntFilter
-  accountId: IntFilter
+  ownerId: StringFilter
+  accountId: StringFilter
   createdAt: DateFilter
   updatedAt: DateFilter
   startsAt: DateFilter
@@ -134,9 +134,9 @@ input FormFilterInput {
 }
 
 input PlanFilterInput {
-  accountId: IntFilter
-  ownerId: IntFilter
-  planTypeId: IntFilter
+  accountId: StringFilter
+  ownerId: StringFilter
+  planTypeId: StringFilter
   lastBillDate: DateFilter
   createdAt: DateFilter
   updatedAt: DateFilter
