@@ -73,6 +73,16 @@ input AccountFilterInput {
   criteria: [AccountFilterInput!]
 }
 
+enum SortOrder { asc desc }
+
+input AccountSortInput {
+  name: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+  planId: SortOrder
+  sortBy: [AccountSortInput!]
+}
+
 input UserFilterInput {
   accountId: StringFilter
   ownerId: StringFilter
@@ -86,6 +96,17 @@ input UserFilterInput {
   criteria: [UserFilterInput!]
 }
 
+input UserSortInput {
+  accountId: SortOrder
+  email: SortOrder
+  given_name: SortOrder
+  family_name: SortOrder
+  userGroup: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+  sortBy: [UserSortInput!]
+}
+
 input PlanTypeFilterInput {
   ownerId: StringFilter
   cost: FloatFilter
@@ -97,6 +118,15 @@ input PlanTypeFilterInput {
   criteria: [PlanTypeFilterInput!]
 }
 
+input PlanTypeSortInput {
+  name: SortOrder
+  billingTerm: SortOrder
+  cost: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+  sortBy: [PlanTypeSortInput!]
+}
+
 input IntegrationTypeFilterInput {
   ownerId: StringFilter
   planTypeId: StringFilter
@@ -105,6 +135,13 @@ input IntegrationTypeFilterInput {
   updatedAt: DateFilter
   active: IntFilter
   criteria: [IntegrationTypeFilterInput!]
+}
+
+input IntegrationTypeSortInput {
+  name: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+  sortBy: [IntegrationTypeSortInput!]
 }
 
 input IntegrationFilterInput {
@@ -120,6 +157,13 @@ input IntegrationFilterInput {
   criteria: [IntegrationFilterInput!]
 }
 
+input IntegrationSortInput {
+  lastExecuted: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+  sortBy: [IntegrationSortInput!]
+}
+
 input FormFilterInput {
   name: StringFilter
   ownerId: StringFilter
@@ -133,6 +177,15 @@ input FormFilterInput {
   criteria: [FormFilterInput!]
 }
 
+input FormSortInput {
+  name: SortOrder
+  createdAt: SortOrder
+  updatedAt: SortOrder
+  startsAt: SortOrder
+  endsAt: SortOrder
+  sortBy: [FormSortInput!]
+}
+
 input PlanFilterInput {
   accountId: StringFilter
   ownerId: StringFilter
@@ -143,6 +196,15 @@ input PlanFilterInput {
   startDate: DateFilter
   endDate: DateFilter
   criteria: [PlanFilterInput!]
+}
+
+input PlanSortInput {
+  createdAt: SortOrder
+  updatedAt: SortOrder
+  lastBillDate: SortOrder
+  startDate: SortOrder
+  endDate: SortOrder
+  sortBy: [PlanSortInput!]
 }
 
 type FormEntry @model {
@@ -166,6 +228,19 @@ type FormVersion @model {
   createdAt: AWSDateTime
   notes: String
   formData: AWSJSON!
+}
+
+input FormVersionFilterInput {
+  accountId: StringFilter
+  formId: StringFilter
+  ownerId: StringFilter
+  createdAt: DateFilter
+  criteria: [FormVersionFilterInput!]
+}
+
+input FormVersionSortInput {
+  createdAt: SortOrder
+  sortBy: [FormVersionSortInput!]
 }
 
 input AddFormVersionInput {
@@ -455,13 +530,14 @@ type Query {
   getIntegrationType(integrationTypeId: String!): IntegrationType
   getIntegration(integrationId: String!): Integration
   getFormEntry(formEntryId: String!): FormEntry
-  listAccounts(offsetLimit: OffsetLimit, filter: AccountFilterInput): [Account]
-  listUsers(offsetLimit: OffsetLimit, filter: UserFilterInput) : [User]
-  listPlans(offsetLimit: OffsetLimit, filter: PlanFilterInput): [Plan]
-  listPlanTypes(offsetLimit: OffsetLimit, filter: PlanTypeFilterInput): [PlanType]
-  listForms(offsetLimit: OffsetLimit, filter: FormFilterInput) : [Form]
-  listIntegrationTypes(offsetLimit: OffsetLimit, filter: IntegrationTypeFilterInput): [IntegrationType]
-  listIntegrations(offsetLimit: OffsetLimit, filter: IntegrationFilterInput): [Integration]
+  listAccounts(offsetLimit: OffsetLimit, filter: AccountFilterInput, sort: AccountSortInput): [Account]
+  listUsers(offsetLimit: OffsetLimit, filter: UserFilterInput, sort: UserSortInput) : [User]
+  listPlans(offsetLimit: OffsetLimit, filter: PlanFilterInput, sort: PlanSortInput): [Plan]
+  listPlanTypes(offsetLimit: OffsetLimit, filter: PlanTypeFilterInput, sort: PlanTypeSortInput): [PlanType]
+  listForms(offsetLimit: OffsetLimit, filter: FormFilterInput, sort: FormSortInput) : [Form]
+  listFormVersions(offsetLimit: OffsetLimit, filter: FormVersionFilterInput, sort: FormVersionSortInput) : [FormVersion]
+  listIntegrationTypes(offsetLimit: OffsetLimit, filter: IntegrationTypeFilterInput, sort: IntegrationTypeSortInput): [IntegrationType]
+  listIntegrations(offsetLimit: OffsetLimit, filter: IntegrationFilterInput, sort: IntegrationSortInput): [Integration]
   listFormEntries(offsetLimit: OffsetLimit, formId: String!) : [FormEntry]
   listFormEntriesByTime(offsetLimit: OffsetLimit, formId: String!, timestampPrefix: String!): [FormEntry]
 }

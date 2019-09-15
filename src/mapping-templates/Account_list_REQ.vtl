@@ -2,15 +2,6 @@ $util.qr($ctx.stash.paths.put("Account_list_REQ.vtl"))
 #set($identity=$ctx.stash.identity)
 #set($args=$ctx.arguments)
 
-#set($expmap = {
-  "ne" : "!=",
-  "eq" : "=",
-  "le" : "<=",
-  "lt" : "<",
-  "ge" : ">=",
-  "gt" : ">"
-})
-
 #if($identity.isAdmin == true)
     $util.qr($ctx.stash.put("request", $args))
     $util.qr($ctx.stash.request.put("itemType", 'Account'))
@@ -23,7 +14,7 @@ $util.qr($ctx.stash.paths.put("Account_list_REQ.vtl"))
     {
         "version": "2018-05-29",
         "statements": [
-            "SELECT * FROM Account ${filter} LIMIT ${limits.offset}, ${limits.limit}"
+            "SELECT * FROM Account ${filter} ${ctx.stash.sortExpression} LIMIT ${limits.offset}, ${limits.limit}"
         ]
     }
 #else

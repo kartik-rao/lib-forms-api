@@ -27,6 +27,6 @@ $util.qr($ctx.stash.put("limits", $limits))
 {
     "version": "2018-05-29",
     "statements": [
-        "SELECT * FROM Form ${filter} LIMIT ${limits.offset}, ${limits.limit}"
+        "SELECT * FROM Form ${filter} ${ctx.stash.sortExpression} LIMIT ${limits.offset}, ${limits.limit}"
     ]
 }

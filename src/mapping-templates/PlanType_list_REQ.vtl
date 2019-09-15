@@ -13,9 +13,9 @@ $util.qr($ctx.stash.paths.add("PlanType_list_REQ.vtl"))
     {
         "statements": [
             #if(!$identity.isAdmin)
-                "SELECT * FROM PlanType active=1 LIMIT ${limits.offset}, ${limits.limit}"
+                "SELECT * FROM PlanType WHERE active=1 LIMIT ${limits.offset}, ${limits.limit}"
             #else
-                "SELECT * FROM PlanType LIMIT ${limits.offset}, ${limits.limit}"
+                "SELECT * FROM PlanType ${ctx.stash.sortExpression} LIMIT ${limits.offset}, ${limits.limit}"
             #end
         ]
     }

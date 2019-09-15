@@ -234,6 +234,12 @@
   kind: PIPELINE
   functions:
     - FN_getFormVersion
+# FormVersion.ownedBy
+- dataSource: AppData
+  type: FormVersion
+  field: ownedBy
+  request: Common_Owner_get_REQ.vtl
+  response: Common_Owner_get_RES.vtl
 
 ## PlanType
 - dataSource: AppData
