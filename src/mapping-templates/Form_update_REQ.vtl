@@ -2,6 +2,10 @@ $util.qr($ctx.stash.paths.add("Form_update_REQ.vtl"))
 #set($identity=$ctx.stash.identity)
 #set($args=$ctx.arguments.input)
 
+#if(!$args)
+    $util.error("Missing mandatory args", "BadRequest")
+#end
+
 #set($isAllowed = false)
 #if($identity.isAdmin == true || $identity.isAccountAdmin == true || $identity.isAccountEditor == true)
     #set($isAllowed = true)
@@ -22,7 +26,7 @@ $util.qr($ctx.stash.paths.add("Form_update_REQ.vtl"))
         "variableMap": {
             ":id" : "${args.id}",
             ":name" : "${args.name}",
-            ":isPaused": ":isPaused",
+            ":isPaused": $args.isPaused,
             ":description": "description",
             ":startDate": "${args.startDate}",
             ":endDate": "${args.endDate}",

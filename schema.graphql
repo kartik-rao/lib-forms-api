@@ -246,7 +246,7 @@ input FormVersionSortInput {
 input AddFormVersionInput {
   accountId: ID!
   formId: ID!
-  notes: String
+  notes: String!
   formData: AWSJSON!
 }
 
@@ -264,8 +264,8 @@ type Form @model  {
   updatedAt: AWSDateTime
   startDate: AWSDateTime
   endDate  : AWSDateTime
-  isPaused : Boolean
-  isDeleted: Boolean
+  isPaused : Int
+  isDeleted: Int
   redirectNotStarted: AWSURL
   redirectHasEnded : AWSURL
   versions(limit: Int): [FormVersion]
@@ -280,7 +280,7 @@ input AddFormInput {
   description: String!
   startsAt: AWSDateTime
   endsAt: AWSDateTime
-  isPaused: Boolean
+  isPaused: Int
 }
 
 input UpdateFormInput {
@@ -290,7 +290,7 @@ input UpdateFormInput {
   description: String
   startsAt: AWSDateTime
   endsAt: AWSDateTime
-  isPaused: Boolean
+  isPaused: Int
 }
 
 input DeleteFormInput {
@@ -548,7 +548,7 @@ type Mutation {
   addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!
   addIntegration(input: AddIntegrationInput): Integration!
   addForm(input: AddFormInput!): Form!
-  addFormVersion(input: AddFormVersionInput): Form!
+  addFormVersion(input: AddFormVersionInput!): Form!
 
   updatePlanType(input: UpdatePlanTypeInput): PlanType!
   updatePlan(input: UpdatePlanInput): Plan!
