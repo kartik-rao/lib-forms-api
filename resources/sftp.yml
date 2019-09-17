@@ -2,7 +2,6 @@ Resources:
   SftpUserRole:
     Type: AWS::IAM::Role
     Properties:
-      Path: /sftp/
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -30,7 +29,6 @@ Resources:
   TransferIdentityProviderRole:
     Type: AWS::IAM::Role
     Properties:
-      Path: /sftp/
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -71,7 +69,6 @@ Resources:
   TransferLoggingRole:
     Type: AWS::IAM::Role
     Properties:
-      Path: /sftp/
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -87,6 +84,7 @@ Resources:
       - TransferIdentityProviderRole
       - TransferLoggingRole
       - ApiGatewayRestApi
+      - SftpUserRole
     Type: AWS::Transfer::Server
     Properties:
       EndpointType: "PUBLIC"

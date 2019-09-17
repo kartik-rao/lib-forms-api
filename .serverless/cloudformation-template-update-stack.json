@@ -216,7 +216,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568730144117-2019-09-17T14:22:24.117Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568736766397-2019-09-17T16:12:46.397Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-auth-ftp",
         "Handler": "src/authftp.handle",
@@ -296,14 +296,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "FtpAuthLambdaVersionij6eTD7m0dJL2lhcEMStcd5qejjX3WfIFBVLKITpeQ": {
+    "FtpAuthLambdaVersion8FOoTA7t0xIDAM38TedaNmLIpG3w1B3rB4F93U72k": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "FtpAuthLambdaFunction"
         },
-        "CodeSha256": "fywSSWIpW7OLzDaRmjbw2uyXf4kX91vUDIQQmr4mp5M="
+        "CodeSha256": "AZC0GaS4jdegqZtrWRxnpLfe2JOWuz0E4qYGzEwWhUU="
       }
     },
     "FormJsonLambdaFunction": {
@@ -313,7 +313,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568730144117-2019-09-17T14:22:24.117Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568736766397-2019-09-17T16:12:46.397Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-form-json",
         "Handler": "src/form.handle",
@@ -393,14 +393,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "FormJsonLambdaVersionWQcUbApsuctpWf5rFnmT4xKIVctoOuBX8aHVrjs6w": {
+    "FormJsonLambdaVersionvVKMogX5z1zMry6O1l81zKk9qpvFW0nfpkwJy5eXvA": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "FormJsonLambdaFunction"
         },
-        "CodeSha256": "fywSSWIpW7OLzDaRmjbw2uyXf4kX91vUDIQQmr4mp5M="
+        "CodeSha256": "AZC0GaS4jdegqZtrWRxnpLfe2JOWuz0E4qYGzEwWhUU="
       }
     },
     "FormEntryLambdaFunction": {
@@ -410,7 +410,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568730144117-2019-09-17T14:22:24.117Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568736766397-2019-09-17T16:12:46.397Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-form-entry",
         "Handler": "src/formentry.handle",
@@ -490,14 +490,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "FormEntryLambdaVersionR85Fuly0WM4VUKJVYNDfVUNL32DcCXTwIAD6O6M": {
+    "FormEntryLambdaVersion1J7QZSDhUmyVBYCcqiAi9hBz0muybj6IQfw5fV3x3c": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "FormEntryLambdaFunction"
         },
-        "CodeSha256": "fywSSWIpW7OLzDaRmjbw2uyXf4kX91vUDIQQmr4mp5M="
+        "CodeSha256": "AZC0GaS4jdegqZtrWRxnpLfe2JOWuz0E4qYGzEwWhUU="
       }
     },
     "FormViewLambdaFunction": {
@@ -507,7 +507,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568730144117-2019-09-17T14:22:24.117Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568736766397-2019-09-17T16:12:46.397Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-form-view",
         "Handler": "src/formview.handle",
@@ -587,14 +587,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "FormViewLambdaVersion36siwaDn88BEGe4I8mZtd7E4M3lUqWH7ym3ilhbJ4": {
+    "FormViewLambdaVersioncZPCOy9LpAnoJrxNX9mQ7vBTme9BxVbgRlussUO3wA": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "FormViewLambdaFunction"
         },
-        "CodeSha256": "fywSSWIpW7OLzDaRmjbw2uyXf4kX91vUDIQQmr4mp5M="
+        "CodeSha256": "AZC0GaS4jdegqZtrWRxnpLfe2JOWuz0E4qYGzEwWhUU="
       }
     },
     "PostConfirmationLambdaFunction": {
@@ -604,7 +604,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568730144117-2019-09-17T14:22:24.117Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568736766397-2019-09-17T16:12:46.397Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -684,14 +684,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "PostConfirmationLambdaVersionrbLXYFCkvJ1BN8qKnSa59LsiDEZpWMCphnTEIku4vE": {
+    "PostConfirmationLambdaVersionjh8lin402UNDBQCX0a1gp23mMBrxaXOSHKvfC8qQxQ": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "PostConfirmationLambdaFunction"
         },
-        "CodeSha256": "fywSSWIpW7OLzDaRmjbw2uyXf4kX91vUDIQQmr4mp5M="
+        "CodeSha256": "AZC0GaS4jdegqZtrWRxnpLfe2JOWuz0E4qYGzEwWhUU="
       }
     },
     "SignupLambdaFunction": {
@@ -701,7 +701,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568730144117-2019-09-17T14:22:24.117Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568736766397-2019-09-17T16:12:46.397Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-invite",
         "Handler": "src/invite.handle",
@@ -781,14 +781,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "SignupLambdaVersioneKxuzY6R65SFMcQS4q5rzDiKNqKpnWxuqIAlq0RXfY": {
+    "SignupLambdaVersionMkiebT0328l3QOoies8wV7nK7eBUUfbdBr1wn5lsE": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "SignupLambdaFunction"
         },
-        "CodeSha256": "fywSSWIpW7OLzDaRmjbw2uyXf4kX91vUDIQQmr4mp5M="
+        "CodeSha256": "AZC0GaS4jdegqZtrWRxnpLfe2JOWuz0E4qYGzEwWhUU="
       }
     },
     "ApiGatewayRestApi": {
@@ -1525,7 +1525,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1568730119179": {
+    "ApiGatewayDeployment1568736742378": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -1800,7 +1800,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568730144117-2019-09-17T14:22:24.117Z/custom-resources.zip"
+          "S3Key": "serverless/formsli/dev/1568736766397-2019-09-17T16:12:46.397Z/custom-resources.zip"
         },
         "FunctionName": "formsli-dev-custom-resource-existing-cup",
         "Handler": "cognitoUserPool/handler.handler",
@@ -2091,7 +2091,6 @@
     "SftpUserRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
-        "Path": "/sftp/",
         "AssumeRolePolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
@@ -2140,7 +2139,6 @@
     "TransferIdentityProviderRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
-        "Path": "/sftp/",
         "AssumeRolePolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
@@ -2220,7 +2218,6 @@
     "TransferLoggingRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
-        "Path": "/sftp/",
         "AssumeRolePolicyDocument": {
           "Version": "2012-10-17",
           "Statement": [
@@ -2244,7 +2241,8 @@
       "DependsOn": [
         "TransferIdentityProviderRole",
         "TransferLoggingRole",
-        "ApiGatewayRestApi"
+        "ApiGatewayRestApi",
+        "SftpUserRole"
       ],
       "Type": "AWS::Transfer::Server",
       "Properties": {
@@ -3898,37 +3896,37 @@
     "FtpAuthLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "FtpAuthLambdaVersionij6eTD7m0dJL2lhcEMStcd5qejjX3WfIFBVLKITpeQ"
+        "Ref": "FtpAuthLambdaVersion8FOoTA7t0xIDAM38TedaNmLIpG3w1B3rB4F93U72k"
       }
     },
     "FormJsonLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "FormJsonLambdaVersionWQcUbApsuctpWf5rFnmT4xKIVctoOuBX8aHVrjs6w"
+        "Ref": "FormJsonLambdaVersionvVKMogX5z1zMry6O1l81zKk9qpvFW0nfpkwJy5eXvA"
       }
     },
     "FormEntryLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "FormEntryLambdaVersionR85Fuly0WM4VUKJVYNDfVUNL32DcCXTwIAD6O6M"
+        "Ref": "FormEntryLambdaVersion1J7QZSDhUmyVBYCcqiAi9hBz0muybj6IQfw5fV3x3c"
       }
     },
     "FormViewLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "FormViewLambdaVersion36siwaDn88BEGe4I8mZtd7E4M3lUqWH7ym3ilhbJ4"
+        "Ref": "FormViewLambdaVersioncZPCOy9LpAnoJrxNX9mQ7vBTme9BxVbgRlussUO3wA"
       }
     },
     "PostConfirmationLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "PostConfirmationLambdaVersionrbLXYFCkvJ1BN8qKnSa59LsiDEZpWMCphnTEIku4vE"
+        "Ref": "PostConfirmationLambdaVersionjh8lin402UNDBQCX0a1gp23mMBrxaXOSHKvfC8qQxQ"
       }
     },
     "SignupLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "SignupLambdaVersioneKxuzY6R65SFMcQS4q5rzDiKNqKpnWxuqIAlq0RXfY"
+        "Ref": "SignupLambdaVersionMkiebT0328l3QOoies8wV7nK7eBUUfbdBr1wn5lsE"
       }
     },
     "ServiceEndpoint": {

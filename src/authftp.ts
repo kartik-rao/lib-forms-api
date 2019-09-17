@@ -20,13 +20,12 @@ const S3Bucket = process.env.s3_user_bucket;
 const SftpRoleArn = process.env.sftp_role_arn;
 const SftpServerId = process.env.sftp_server_id;
 
-const readOnlyActions = ["s3:GetObject","s3:GetObjectVersion", "s3:ListBucket"];
-const readWriteActions = ["s3:PutObject"].concat(readOnlyActions);
-const allActions = ["s3:DeleteObjectVersion","s3:DeleteObject"].concat(readWriteActions);
+const readOnlyActions = ["s3:GetObject","s3:GetObjectVersion"];
+const allActions = ["s3:DeleteObjectVersion","s3:PutObject","s3:DeleteObject"].concat(readOnlyActions);
 
 const groupActionsMap = {
-    "AccountAdmin"  : allActions,
-    "AccountEditor" : readWriteActions,
+    "AccountAdmin"  : readOnlyActions,
+    "AccountEditor" : readOnlyActions,
     "AccountViewer" : readOnlyActions,
     "Admin"         : allActions
 }
@@ -40,54 +39,52 @@ const attributeListToMap = (attrs: AttributeType[]) : any => {
 }
 
 const getPolicyResponse = (tenantId: string, group: string) => {
-    let homeDirectory, tenantPrefix; 
-    if(group == "Admin") {
-        homeDirectory = `/${S3Bucket}/`;
-        tenantPrefix = `["*"]`;
-    } else {
-        homeDirectory = `/${S3Bucket}/${tenantId}`;
-        tenantPrefix =  `["${tenantId}/*", "${tenantId}"]`;
-    }
+    let homeDirectory = group == "Admin" ? `/${S3Bucket}/home/` : `/${S3Bucket}/home/${tenantId}/`; 
+    let listBucketCondition = group == "Admin" ? "" : `,
+    "Condition": {
+        "StringLike": {
+            "s3:prefix": [
+                "home/${tenantId}/*",
+                "home/${tenantId}"
+            ]
+        }
+    }`;
+
     return {
-        headers: CORS_HEADERS,
         body: JSON.stringify({
             Role: SftpRoleArn,
             Policy: `{
-            "Version": "2012-10-17",
-            "Statement": [
-                {
-                    "Sid": "AllowListingOfUserFolder",
-                    "Action": [
-                        "s3:ListBucket"
-                    ],
-                    "Effect": "Allow",
-                    "Resource": [
-                        "arn:aws:s3:::${S3Bucket}"
-                    ],
-                    "Condition": {
-                        "StringLike": {
-                            "s3:prefix": ${tenantPrefix}
-                        }
-                    }
-                },
-                {
-                    "Sid": "AWSTransferRequirements",
-                    "Effect": "Allow",
-                    "Action": [
-                        "s3:ListAllMyBuckets",
-                        "s3:GetBucketLocation"
-                    ],
-                    "Resource": "*"
-                },
-                {
-                    "Sid": "HomeDirObjectAccess",
-                    "Effect": "Allow",
-                    "Action": ${JSON.stringify(groupActionsMap[group])}
-                    ,
-                    "Resource": "arn:aws:s3:::${homeDirectory}*"
-                }
-            ]
+                "Version": "2012-10-17",
+                "Statement": [
+                    {
+                        "Sid": "AllowListingOfUserFolder",
+                        "Action": [
+                            "s3:ListBucket"
+                        ],
+                        "Effect": "Allow",
+                        "Resource": [
+                            "arn:aws:s3:::\${transfer:HomeBucket}"
+                        ]
+                        ${listBucketCondition}
+                    },
+                    {
+                        "Sid": "AWSTransferRequirements",
+                        "Effect": "Allow",
+                        "Action": [
+                            "s3:ListAllMyBuckets",
+                            "s3:GetBucketLocation"
+                        ],
+                        "Resource": "*"
+                    },
+                    {
+                        "Sid": "HomeDirObjectAccess",
+                        "Effect": "Allow",
+                        "Action": ${JSON.stringify(groupActionsMap[group])},
+                        "Resource": "arn:aws:s3:::\${transfer:HomeDirectory}*"
+                     }
+                ]
             }`,
+            HomeBucket : S3Bucket,
             HomeDirectory: homeDirectory
         }),
         statusCode: 200
@@ -129,6 +126,7 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
             callback(null, {body: JSON.stringify({message: "InvalidTenantOrGroup"}), statusCode:200, headers: CORS_HEADERS});
             return;
         }
+        console.log("${ServiceName} - authftp.handle - response", JSON.stringify(getPolicyResponse(tenantId, group)));
         callback(null, getPolicyResponse(tenantId, group));
     } catch (error) {
         console.log(`${ServiceName} - authftp.handle - user.initiateAuth ERROR - ${error.message}`);
