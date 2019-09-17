@@ -16,10 +16,17 @@
         }
       }
     },
+    "FtpAuthLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/formsli-dev-auth-ftp",
+        "RetentionInDays": 14
+      }
+    },
     "FormJsonLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/formsli-dev-formJson",
+        "LogGroupName": "/aws/lambda/formsli-dev-form-json",
         "RetentionInDays": 14
       }
     },
@@ -33,7 +40,7 @@
     "FormViewLogGroup": {
       "Type": "AWS::Logs::LogGroup",
       "Properties": {
-        "LogGroupName": "/aws/lambda/formsli-dev-formView",
+        "LogGroupName": "/aws/lambda/formsli-dev-form-view",
         "RetentionInDays": 14
       }
     },
@@ -148,7 +155,8 @@
                     "cognito-idp:AdminUpdateUserAttributes",
                     "cognito-idp:AdminRemoveUserFromGroup",
                     "cognito-idp:AdminGetUser",
-                    "cognito-idp:AdminCreateUser"
+                    "cognito-idp:AdminCreateUser",
+                    "cognito-idp:AdminInitiateAuth"
                   ],
                   "Resource": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33"
                 },
@@ -201,6 +209,103 @@
         }
       }
     },
+    "FtpAuthLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/formsli/dev/1568730144117-2019-09-17T14:22:24.117Z/formsli.zip"
+        },
+        "FunctionName": "formsli-dev-auth-ftp",
+        "Handler": "src/authftp.handle",
+        "MemorySize": 2048,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs10.x",
+        "Timeout": 30,
+        "Tags": [
+          {
+            "Key": "service",
+            "Value": "formsli"
+          },
+          {
+            "Key": "region",
+            "Value": "ap-northeast-1"
+          }
+        ],
+        "Environment": {
+          "Variables": {
+            "region": "ap-northeast-1",
+            "hostedZoneId": "Z3CMAQR65ETWUL",
+            "rootDomain": "forms.li",
+            "appDomain": "app.forms.li",
+            "apiDomain": "api.forms.li",
+            "staticDomain": "static.forms.li",
+            "sftpDomain": "sftp.forms.li",
+            "environment": "dev",
+            "serviceName": "formsli",
+            "databaseName": "formsli",
+            "userPoolId": "ap-northeast-1_Q798Nsl33",
+            "userPoolArn": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33",
+            "userPoolClientId": "7pvdgcaflsg9juob60mosafi9d",
+            "userPoolAdminClientId": "2ksv14apb63gdhstuvmc5196l5",
+            "dbClusterId": "fl-rds-cluster-dev",
+            "dbClusterArn": {
+              "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
+            },
+            "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX",
+            "s3_user_bucket": "fl-dev-userdata",
+            "s3_app_bucket": "fl-dev-webapp",
+            "sqs_entry": "formsli-dev-entry-queue",
+            "sqs_integration": "formsli-dev-integration-queue",
+            "sqs_entry_url": {
+              "Ref": "EntryQueue"
+            },
+            "sqs_integration_url": {
+              "Ref": "IntegrationQueue"
+            },
+            "sftp_server_id": {
+              "Fn::GetAtt": [
+                "SftpServer",
+                "ServerId"
+              ]
+            },
+            "sftp_server_arn": {
+              "Fn::GetAtt": [
+                "SftpServer",
+                "Arn"
+              ]
+            },
+            "sftp_role_arn": {
+              "Fn::GetAtt": [
+                "SftpUserRole",
+                "Arn"
+              ]
+            }
+          }
+        }
+      },
+      "DependsOn": [
+        "FtpAuthLogGroup",
+        "IamRoleLambdaExecution"
+      ]
+    },
+    "FtpAuthLambdaVersionij6eTD7m0dJL2lhcEMStcd5qejjX3WfIFBVLKITpeQ": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "FtpAuthLambdaFunction"
+        },
+        "CodeSha256": "fywSSWIpW7OLzDaRmjbw2uyXf4kX91vUDIQQmr4mp5M="
+      }
+    },
     "FormJsonLambdaFunction": {
       "Type": "AWS::Lambda::Function",
       "Properties": {
@@ -208,9 +313,9 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568686136238-2019-09-17T02:08:56.238Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568730144117-2019-09-17T14:22:24.117Z/formsli.zip"
         },
-        "FunctionName": "formsli-dev-formJson",
+        "FunctionName": "formsli-dev-form-json",
         "Handler": "src/form.handle",
         "MemorySize": 2048,
         "Role": {
@@ -234,22 +339,26 @@
         "Environment": {
           "Variables": {
             "region": "ap-northeast-1",
+            "hostedZoneId": "Z3CMAQR65ETWUL",
             "rootDomain": "forms.li",
             "appDomain": "app.forms.li",
             "apiDomain": "api.forms.li",
             "staticDomain": "static.forms.li",
+            "sftpDomain": "sftp.forms.li",
             "environment": "dev",
             "serviceName": "formsli",
             "databaseName": "formsli",
             "userPoolId": "ap-northeast-1_Q798Nsl33",
             "userPoolArn": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33",
+            "userPoolClientId": "7pvdgcaflsg9juob60mosafi9d",
+            "userPoolAdminClientId": "2ksv14apb63gdhstuvmc5196l5",
             "dbClusterId": "fl-rds-cluster-dev",
             "dbClusterArn": {
               "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
             },
             "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX",
-            "s3_user_bucket": "fl-dev-userdata.s3.amazonaws.com",
-            "s3_app_bucket": "fl-dev-webapp.s3.amazonaws.com",
+            "s3_user_bucket": "fl-dev-userdata",
+            "s3_app_bucket": "fl-dev-webapp",
             "sqs_entry": "formsli-dev-entry-queue",
             "sqs_integration": "formsli-dev-integration-queue",
             "sqs_entry_url": {
@@ -257,6 +366,24 @@
             },
             "sqs_integration_url": {
               "Ref": "IntegrationQueue"
+            },
+            "sftp_server_id": {
+              "Fn::GetAtt": [
+                "SftpServer",
+                "ServerId"
+              ]
+            },
+            "sftp_server_arn": {
+              "Fn::GetAtt": [
+                "SftpServer",
+                "Arn"
+              ]
+            },
+            "sftp_role_arn": {
+              "Fn::GetAtt": [
+                "SftpUserRole",
+                "Arn"
+              ]
             }
           }
         }
@@ -266,14 +393,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "FormJsonLambdaVersionkrMEKfKSVVU6cWlAWqaKvtBC1qpLp7Ict5gqVg9tMmA": {
+    "FormJsonLambdaVersionWQcUbApsuctpWf5rFnmT4xKIVctoOuBX8aHVrjs6w": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "FormJsonLambdaFunction"
         },
-        "CodeSha256": "bYNoVtZJ9/eMI+StVnFJyPnnNa1XPVhXtmNwobfzN6w="
+        "CodeSha256": "fywSSWIpW7OLzDaRmjbw2uyXf4kX91vUDIQQmr4mp5M="
       }
     },
     "FormEntryLambdaFunction": {
@@ -283,7 +410,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568686136238-2019-09-17T02:08:56.238Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568730144117-2019-09-17T14:22:24.117Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-form-entry",
         "Handler": "src/formentry.handle",
@@ -309,22 +436,26 @@
         "Environment": {
           "Variables": {
             "region": "ap-northeast-1",
+            "hostedZoneId": "Z3CMAQR65ETWUL",
             "rootDomain": "forms.li",
             "appDomain": "app.forms.li",
             "apiDomain": "api.forms.li",
             "staticDomain": "static.forms.li",
+            "sftpDomain": "sftp.forms.li",
             "environment": "dev",
             "serviceName": "formsli",
             "databaseName": "formsli",
             "userPoolId": "ap-northeast-1_Q798Nsl33",
             "userPoolArn": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33",
+            "userPoolClientId": "7pvdgcaflsg9juob60mosafi9d",
+            "userPoolAdminClientId": "2ksv14apb63gdhstuvmc5196l5",
             "dbClusterId": "fl-rds-cluster-dev",
             "dbClusterArn": {
               "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
             },
             "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX",
-            "s3_user_bucket": "fl-dev-userdata.s3.amazonaws.com",
-            "s3_app_bucket": "fl-dev-webapp.s3.amazonaws.com",
+            "s3_user_bucket": "fl-dev-userdata",
+            "s3_app_bucket": "fl-dev-webapp",
             "sqs_entry": "formsli-dev-entry-queue",
             "sqs_integration": "formsli-dev-integration-queue",
             "sqs_entry_url": {
@@ -332,6 +463,24 @@
             },
             "sqs_integration_url": {
               "Ref": "IntegrationQueue"
+            },
+            "sftp_server_id": {
+              "Fn::GetAtt": [
+                "SftpServer",
+                "ServerId"
+              ]
+            },
+            "sftp_server_arn": {
+              "Fn::GetAtt": [
+                "SftpServer",
+                "Arn"
+              ]
+            },
+            "sftp_role_arn": {
+              "Fn::GetAtt": [
+                "SftpUserRole",
+                "Arn"
+              ]
             }
           }
         }
@@ -341,14 +490,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "FormEntryLambdaVersionGKELoeaAnHON7RkExUb80CIou2mUTSrIL0vrhTIGxVI": {
+    "FormEntryLambdaVersionR85Fuly0WM4VUKJVYNDfVUNL32DcCXTwIAD6O6M": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "FormEntryLambdaFunction"
         },
-        "CodeSha256": "bYNoVtZJ9/eMI+StVnFJyPnnNa1XPVhXtmNwobfzN6w="
+        "CodeSha256": "fywSSWIpW7OLzDaRmjbw2uyXf4kX91vUDIQQmr4mp5M="
       }
     },
     "FormViewLambdaFunction": {
@@ -358,9 +507,9 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568686136238-2019-09-17T02:08:56.238Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568730144117-2019-09-17T14:22:24.117Z/formsli.zip"
         },
-        "FunctionName": "formsli-dev-formView",
+        "FunctionName": "formsli-dev-form-view",
         "Handler": "src/formview.handle",
         "MemorySize": 2048,
         "Role": {
@@ -384,22 +533,26 @@
         "Environment": {
           "Variables": {
             "region": "ap-northeast-1",
+            "hostedZoneId": "Z3CMAQR65ETWUL",
             "rootDomain": "forms.li",
             "appDomain": "app.forms.li",
             "apiDomain": "api.forms.li",
             "staticDomain": "static.forms.li",
+            "sftpDomain": "sftp.forms.li",
             "environment": "dev",
             "serviceName": "formsli",
             "databaseName": "formsli",
             "userPoolId": "ap-northeast-1_Q798Nsl33",
             "userPoolArn": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33",
+            "userPoolClientId": "7pvdgcaflsg9juob60mosafi9d",
+            "userPoolAdminClientId": "2ksv14apb63gdhstuvmc5196l5",
             "dbClusterId": "fl-rds-cluster-dev",
             "dbClusterArn": {
               "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
             },
             "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX",
-            "s3_user_bucket": "fl-dev-userdata.s3.amazonaws.com",
-            "s3_app_bucket": "fl-dev-webapp.s3.amazonaws.com",
+            "s3_user_bucket": "fl-dev-userdata",
+            "s3_app_bucket": "fl-dev-webapp",
             "sqs_entry": "formsli-dev-entry-queue",
             "sqs_integration": "formsli-dev-integration-queue",
             "sqs_entry_url": {
@@ -407,6 +560,24 @@
             },
             "sqs_integration_url": {
               "Ref": "IntegrationQueue"
+            },
+            "sftp_server_id": {
+              "Fn::GetAtt": [
+                "SftpServer",
+                "ServerId"
+              ]
+            },
+            "sftp_server_arn": {
+              "Fn::GetAtt": [
+                "SftpServer",
+                "Arn"
+              ]
+            },
+            "sftp_role_arn": {
+              "Fn::GetAtt": [
+                "SftpUserRole",
+                "Arn"
+              ]
             }
           }
         }
@@ -416,14 +587,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "FormViewLambdaVersionFqqwoTqzwULjjlf16FiIcw24nxX7BsKVEUExbAM9TI": {
+    "FormViewLambdaVersion36siwaDn88BEGe4I8mZtd7E4M3lUqWH7ym3ilhbJ4": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "FormViewLambdaFunction"
         },
-        "CodeSha256": "bYNoVtZJ9/eMI+StVnFJyPnnNa1XPVhXtmNwobfzN6w="
+        "CodeSha256": "fywSSWIpW7OLzDaRmjbw2uyXf4kX91vUDIQQmr4mp5M="
       }
     },
     "PostConfirmationLambdaFunction": {
@@ -433,7 +604,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568686136238-2019-09-17T02:08:56.238Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568730144117-2019-09-17T14:22:24.117Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -459,22 +630,26 @@
         "Environment": {
           "Variables": {
             "region": "ap-northeast-1",
+            "hostedZoneId": "Z3CMAQR65ETWUL",
             "rootDomain": "forms.li",
             "appDomain": "app.forms.li",
             "apiDomain": "api.forms.li",
             "staticDomain": "static.forms.li",
+            "sftpDomain": "sftp.forms.li",
             "environment": "dev",
             "serviceName": "formsli",
             "databaseName": "formsli",
             "userPoolId": "ap-northeast-1_Q798Nsl33",
             "userPoolArn": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33",
+            "userPoolClientId": "7pvdgcaflsg9juob60mosafi9d",
+            "userPoolAdminClientId": "2ksv14apb63gdhstuvmc5196l5",
             "dbClusterId": "fl-rds-cluster-dev",
             "dbClusterArn": {
               "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
             },
             "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX",
-            "s3_user_bucket": "fl-dev-userdata.s3.amazonaws.com",
-            "s3_app_bucket": "fl-dev-webapp.s3.amazonaws.com",
+            "s3_user_bucket": "fl-dev-userdata",
+            "s3_app_bucket": "fl-dev-webapp",
             "sqs_entry": "formsli-dev-entry-queue",
             "sqs_integration": "formsli-dev-integration-queue",
             "sqs_entry_url": {
@@ -482,6 +657,24 @@
             },
             "sqs_integration_url": {
               "Ref": "IntegrationQueue"
+            },
+            "sftp_server_id": {
+              "Fn::GetAtt": [
+                "SftpServer",
+                "ServerId"
+              ]
+            },
+            "sftp_server_arn": {
+              "Fn::GetAtt": [
+                "SftpServer",
+                "Arn"
+              ]
+            },
+            "sftp_role_arn": {
+              "Fn::GetAtt": [
+                "SftpUserRole",
+                "Arn"
+              ]
             }
           }
         }
@@ -491,14 +684,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "PostConfirmationLambdaVersiontXRhYQK4pUoE1wCjJH2osC6JxU300HiSUBidgOQ5UA": {
+    "PostConfirmationLambdaVersionrbLXYFCkvJ1BN8qKnSa59LsiDEZpWMCphnTEIku4vE": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "PostConfirmationLambdaFunction"
         },
-        "CodeSha256": "bYNoVtZJ9/eMI+StVnFJyPnnNa1XPVhXtmNwobfzN6w="
+        "CodeSha256": "fywSSWIpW7OLzDaRmjbw2uyXf4kX91vUDIQQmr4mp5M="
       }
     },
     "SignupLambdaFunction": {
@@ -508,7 +701,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568686136238-2019-09-17T02:08:56.238Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568730144117-2019-09-17T14:22:24.117Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-invite",
         "Handler": "src/invite.handle",
@@ -534,22 +727,26 @@
         "Environment": {
           "Variables": {
             "region": "ap-northeast-1",
+            "hostedZoneId": "Z3CMAQR65ETWUL",
             "rootDomain": "forms.li",
             "appDomain": "app.forms.li",
             "apiDomain": "api.forms.li",
             "staticDomain": "static.forms.li",
+            "sftpDomain": "sftp.forms.li",
             "environment": "dev",
             "serviceName": "formsli",
             "databaseName": "formsli",
             "userPoolId": "ap-northeast-1_Q798Nsl33",
             "userPoolArn": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33",
+            "userPoolClientId": "7pvdgcaflsg9juob60mosafi9d",
+            "userPoolAdminClientId": "2ksv14apb63gdhstuvmc5196l5",
             "dbClusterId": "fl-rds-cluster-dev",
             "dbClusterArn": {
               "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
             },
             "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX",
-            "s3_user_bucket": "fl-dev-userdata.s3.amazonaws.com",
-            "s3_app_bucket": "fl-dev-webapp.s3.amazonaws.com",
+            "s3_user_bucket": "fl-dev-userdata",
+            "s3_app_bucket": "fl-dev-webapp",
             "sqs_entry": "formsli-dev-entry-queue",
             "sqs_integration": "formsli-dev-integration-queue",
             "sqs_entry_url": {
@@ -557,6 +754,24 @@
             },
             "sqs_integration_url": {
               "Ref": "IntegrationQueue"
+            },
+            "sftp_server_id": {
+              "Fn::GetAtt": [
+                "SftpServer",
+                "ServerId"
+              ]
+            },
+            "sftp_server_arn": {
+              "Fn::GetAtt": [
+                "SftpServer",
+                "Arn"
+              ]
+            },
+            "sftp_role_arn": {
+              "Fn::GetAtt": [
+                "SftpUserRole",
+                "Arn"
+              ]
             }
           }
         }
@@ -566,14 +781,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "SignupLambdaVersionNPCgN7OkjxFdp92X9wwQySIXocsk2cqe7tzFUP3z0": {
+    "SignupLambdaVersioneKxuzY6R65SFMcQS4q5rzDiKNqKpnWxuqIAlq0RXfY": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "SignupLambdaFunction"
         },
-        "CodeSha256": "bYNoVtZJ9/eMI+StVnFJyPnnNa1XPVhXtmNwobfzN6w="
+        "CodeSha256": "fywSSWIpW7OLzDaRmjbw2uyXf4kX91vUDIQQmr4mp5M="
       }
     },
     "ApiGatewayRestApi": {
@@ -584,6 +799,69 @@
           "Types": [
             "EDGE"
           ]
+        }
+      }
+    },
+    "ApiGatewayResourceServers": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Fn::GetAtt": [
+            "ApiGatewayRestApi",
+            "RootResourceId"
+          ]
+        },
+        "PathPart": "servers",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceServersServeridVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceServers"
+        },
+        "PathPart": "{serverId}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceServersServeridVarUsers": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceServersServeridVar"
+        },
+        "PathPart": "users",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceServersServeridVarUsersUsernameVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceServersServeridVarUsers"
+        },
+        "PathPart": "{username}",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayResourceServersServeridVarUsersUsernameVarConfig": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceServersServeridVarUsersUsernameVar"
+        },
+        "PathPart": "config",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
         }
       }
     },
@@ -699,6 +977,53 @@
           ]
         },
         "PathPart": "invite",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodServersServeridVarUsersUsernameVarConfigOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Credentials": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "ContentHandling": "CONVERT_TO_TEXT",
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'",
+                "method.response.header.Access-Control-Allow-Credentials": "'false'"
+              },
+              "ResponseTemplates": {
+                "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".*\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceServersServeridVarUsersUsernameVarConfig"
+        },
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
         }
@@ -939,6 +1264,49 @@
         }
       }
     },
+    "ApiGatewayMethodServersServeridVarUsersUsernameVarConfigGet": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceServersServeridVarUsersUsernameVarConfig"
+        },
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ApiKeyRequired": false,
+        "AuthorizationType": "AWS_IAM",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "FtpAuthLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      }
+    },
     "ApiGatewayMethodFormJsonFormidVarGet": {
       "Type": "AWS::ApiGateway::Method",
       "Properties": {
@@ -1157,7 +1525,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1568686112763": {
+    "ApiGatewayDeployment1568730119179": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -1166,17 +1534,56 @@
         "StageName": "dev"
       },
       "DependsOn": [
+        "ApiGatewayMethodServersServeridVarUsersUsernameVarConfigOptions",
         "ApiGatewayMethodFormJsonFormidVarOptions",
         "ApiGatewayMethodFormEntryFormidVarOptions",
         "ApiGatewayMethodFormViewFormidVarOptions",
         "ApiGatewayMethodPostconfirmOptions",
         "ApiGatewayMethodInviteOptions",
+        "ApiGatewayMethodServersServeridVarUsersUsernameVarConfigGet",
         "ApiGatewayMethodFormJsonFormidVarGet",
         "ApiGatewayMethodFormEntryFormidVarPost",
         "ApiGatewayMethodFormViewFormidVarGet",
         "ApiGatewayMethodPostconfirmPost",
         "ApiGatewayMethodInvitePost"
       ]
+    },
+    "FtpAuthLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "FtpAuthLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "/*/*"
+            ]
+          ]
+        }
+      }
     },
     "FormJsonLambdaPermissionApiGateway": {
       "Type": "AWS::Lambda::Permission",
@@ -1393,7 +1800,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568686136238-2019-09-17T02:08:56.238Z/custom-resources.zip"
+          "S3Key": "serverless/formsli/dev/1568730144117-2019-09-17T14:22:24.117Z/custom-resources.zip"
         },
         "FunctionName": "formsli-dev-custom-resource-existing-cup",
         "Handler": "cognitoUserPool/handler.handler",
@@ -1679,6 +2086,228 @@
       "Type": "AWS::SQS::Queue",
       "Properties": {
         "QueueName": "formsli-dev-integration-queue"
+      }
+    },
+    "SftpUserRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "Path": "/sftp/",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "transfer.amazonaws.com"
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "SftpBucketAccessPolicy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:*"
+                  ],
+                  "Resource": {
+                    "Fn::Join": [
+                      ":",
+                      [
+                        "arn",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        "s3::",
+                        "fl-dev-userdata*"
+                      ]
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "TransferIdentityProviderRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "Path": "/sftp/",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "transfer.amazonaws.com"
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": "TransferCanInvokeAuthorizeApi",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "execute-api:Invoke"
+                  ],
+                  "Resource": {
+                    "Fn::Join": [
+                      ":",
+                      [
+                        "arn",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        "execute-api",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        {
+                          "Ref": "AWS::AccountId"
+                        },
+                        {
+                          "Fn::Join": [
+                            "",
+                            [
+                              {
+                                "Ref": "ApiGatewayRestApi"
+                              },
+                              "/dev/GET/*"
+                            ]
+                          ]
+                        }
+                      ]
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "PolicyName": "TransferCanReadAuthorizeApi",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "apigateway:GET"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "TransferLoggingRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "Path": "/sftp/",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "transfer.amazonaws.com"
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AWSTransferLoggingAccess"
+        ]
+      }
+    },
+    "SftpServer": {
+      "DependsOn": [
+        "TransferIdentityProviderRole",
+        "TransferLoggingRole",
+        "ApiGatewayRestApi"
+      ],
+      "Type": "AWS::Transfer::Server",
+      "Properties": {
+        "EndpointType": "PUBLIC",
+        "IdentityProviderType": "API_GATEWAY",
+        "LoggingRole": {
+          "Fn::GetAtt": [
+            "TransferLoggingRole",
+            "Arn"
+          ]
+        },
+        "IdentityProviderDetails": {
+          "InvocationRole": {
+            "Fn::GetAtt": [
+              "TransferIdentityProviderRole",
+              "Arn"
+            ]
+          },
+          "Url": {
+            "Fn::Join": [
+              "",
+              [
+                "https://",
+                {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                {
+                  "Fn::Sub": ".execute-api.${AWS::Region}.amazonaws.com/dev/"
+                }
+              ]
+            ]
+          }
+        }
+      }
+    },
+    "SftpDomain": {
+      "DependsOn": [
+        "SftpServer"
+      ],
+      "Type": "AWS::Route53::RecordSet",
+      "Properties": {
+        "HostedZoneId": "Z3CMAQR65ETWUL",
+        "Name": "dev-sftp.forms.li",
+        "Type": "CNAME",
+        "TTL": 300,
+        "ResourceRecords": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                {
+                  "Fn::GetAtt": [
+                    "SftpServer",
+                    "ServerId"
+                  ]
+                },
+                {
+                  "Fn::Sub": ".server.transfer.${AWS::Region}.amazonaws.com"
+                }
+              ]
+            ]
+          }
+        ]
       }
     },
     "GraphQlApi": {
@@ -3266,34 +3895,40 @@
         "Ref": "ServerlessDeploymentBucket"
       }
     },
+    "FtpAuthLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "FtpAuthLambdaVersionij6eTD7m0dJL2lhcEMStcd5qejjX3WfIFBVLKITpeQ"
+      }
+    },
     "FormJsonLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "FormJsonLambdaVersionkrMEKfKSVVU6cWlAWqaKvtBC1qpLp7Ict5gqVg9tMmA"
+        "Ref": "FormJsonLambdaVersionWQcUbApsuctpWf5rFnmT4xKIVctoOuBX8aHVrjs6w"
       }
     },
     "FormEntryLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "FormEntryLambdaVersionGKELoeaAnHON7RkExUb80CIou2mUTSrIL0vrhTIGxVI"
+        "Ref": "FormEntryLambdaVersionR85Fuly0WM4VUKJVYNDfVUNL32DcCXTwIAD6O6M"
       }
     },
     "FormViewLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "FormViewLambdaVersionFqqwoTqzwULjjlf16FiIcw24nxX7BsKVEUExbAM9TI"
+        "Ref": "FormViewLambdaVersion36siwaDn88BEGe4I8mZtd7E4M3lUqWH7ym3ilhbJ4"
       }
     },
     "PostConfirmationLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "PostConfirmationLambdaVersiontXRhYQK4pUoE1wCjJH2osC6JxU300HiSUBidgOQ5UA"
+        "Ref": "PostConfirmationLambdaVersionrbLXYFCkvJ1BN8qKnSa59LsiDEZpWMCphnTEIku4vE"
       }
     },
     "SignupLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "SignupLambdaVersionNPCgN7OkjxFdp92X9wwQySIXocsk2cqe7tzFUP3z0"
+        "Ref": "SignupLambdaVersioneKxuzY6R65SFMcQS4q5rzDiKNqKpnWxuqIAlq0RXfY"
       }
     },
     "ServiceEndpoint": {

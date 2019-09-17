@@ -14,32 +14,41 @@ provider:
     region: ${self:provider.region}
   functions:
     postconfirmation: ${self:service}-${self:provider.stage}-postconfirmation
-    invite: ${self:service}-${self:provider.stage}-invite
-    formentry: ${self:service}-${self:provider.stage}-form-entry
-    formrender: ${self:service}-${self:provider.stage}-form
+    invite    : ${self:service}-${self:provider.stage}-invite
+    formentry : ${self:service}-${self:provider.stage}-form-entry
+    formjson  : ${self:service}-${self:provider.stage}-form-json
+    formview  : ${self:service}-${self:provider.stage}-form-view
+    authftp   : ${self:service}-${self:provider.stage}-auth-ftp
   profile: fl-infrastructure
   environment:
     region         : ${self:provider.region}
+    hostedZoneId   : Z3CMAQR65ETWUL
     rootDomain     : ${opt:domain, 'forms.li'}
     appDomain      : "app.${self:provider.environment.rootDomain}"
     apiDomain      : "api.${self:provider.environment.rootDomain}"
     staticDomain   : "static.${self:provider.environment.rootDomain}"
+    sftpDomain     : "sftp.${self:provider.environment.rootDomain}"
     environment    : ${self:provider.stage}
     serviceName    : ${self:service}
     databaseName   : ${self:service}
     userPoolId     : ${ssm:/${self:provider.stage}/formsli/cognito/userpool/id}
     userPoolArn    : ${ssm:/${self:provider.stage}/formsli/cognito/userpool/arn}
+    userPoolClientId: ${ssm:/${self:provider.stage}/formsli/cognito/userpool/clientId}
+    userPoolAdminClientId: ${ssm:/${self:provider.stage}/formsli/cognito/userpool/adminClientId}
     dbClusterId    : ${ssm:/${self:provider.stage}/formsli/rds/id}
     dbClusterArn   : "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:${self:provider.environment.dbClusterId}"
     dbClusterSecretArn : ${ssm:/${self:provider.stage}/formsli/rds/password/secret}
-    s3_user_bucket     : ${ssm:/${self:provider.stage}/formsli/s3/buckets/user/name}
-    s3_app_bucket      : ${ssm:/${self:provider.stage}/formsli/s3/buckets/app/name}
+    s3_user_bucket     : ${ssm:/${self:provider.stage}/formsli/s3/buckets/user/id}
+    s3_app_bucket      : ${ssm:/${self:provider.stage}/formsli/s3/buckets/app/id}
     sqs_entry          : ${self:service}-${self:provider.stage}-entry-queue
     sqs_integration    : ${self:service}-${self:provider.stage}-integration-queue
     sqs_entry_url      :
       Ref: EntryQueue
     sqs_integration_url:
       Ref: IntegrationQueue
+    sftp_server_id     : { Fn::GetAtt: [SftpServer, ServerId] }
+    sftp_server_arn    : { Fn::GetAtt: [SftpServer, Arn] }
+    sftp_role_arn      : { Fn::GetAtt: [SftpUserRole, Arn] }
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -68,6 +77,7 @@ provider:
         - cognito-idp:AdminRemoveUserFromGroup
         - cognito-idp:AdminGetUser
         - cognito-idp:AdminCreateUser
+        - cognito-idp:AdminInitiateAuth
       Resource: "${self:provider.environment.userPoolArn}"
     - Effect: Allow
       Action:
@@ -97,6 +107,7 @@ resources:
   - ${file(resources/iam.yml)}
   - ${file(resources/apig.auth.yml)}
   - ${file(resources/sqs.yml)}
+  - ${file(resources/sftp.yml)}
 
 custom:
   customDomain:
@@ -148,8 +159,17 @@ custom:
     substitutions:
 
 functions:
+  ftpAuth :
+    name: ${self:provider.functions.authftp}
+    handler: src/authftp.handle
+    events:
+      - http:
+          path  : /servers/{serverId}/users/{username}/config
+          method: get
+          cors  : true
+          authorizer: aws_iam
   formJson:
-    name: ${self:provider.functions.form}
+    name: ${self:provider.functions.formjson}
     handler: src/form.handle
     events:
       - http:
