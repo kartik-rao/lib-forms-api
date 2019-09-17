@@ -26,7 +26,7 @@ $util.qr($ctx.stash.paths.add("Form_update_REQ.vtl"))
         "variableMap": {
             ":id" : "${args.id}",
             ":name" : "${args.name}",
-            ":isPaused": $args.isPaused,
+            #if($args.isPaused)":isPaused": $args.isPaused,#end
             ":description": "description",
             ":startDate": "${args.startDate}",
             ":endDate": "${args.endDate}",
