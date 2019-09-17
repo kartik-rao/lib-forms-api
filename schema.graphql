@@ -288,8 +288,10 @@ input UpdateFormInput {
   currentVersionId: ID
   name: String
   description: String
-  startsAt: AWSDateTime
-  endsAt: AWSDateTime
+  startDate: AWSDateTime
+  endDate: AWSDateTime
+  redirectNotStarted: AWSURL
+  redirectHasEnded : AWSURL
   isPaused: Int
 }
 
