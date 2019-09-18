@@ -10,7 +10,7 @@ import { ExecuteStatementResponse } from 'aws-sdk/clients/rdsdataservice';
 const Region        = process.env.region;
 const ServiceName   = process.env.serviceName;
 const UserBucket    = process.env.s3_user_bucket;
-const LambdaRoleArn = process.env.lambdaRoleArn;
+const RoleArn       = process.env.kinesisAccessRole;
 const DBClusterId   = process.env.dbClusterArn;
 const DBSecretARN   = process.env.dbClusterSecretArn;
 
@@ -24,29 +24,30 @@ const CORS_HEADERS = {
 export const handle = async (event : APIGatewayEvent, context : APIGatewayEventRequestContext, callback : any) => {
     if (!event.requestContext.authorizer || !event.requestContext.authorizer.claims) {
         console.error(new Error("NoAuth"));
-        callback(null, {statusCode: 403, headers: CORS_HEADERS, body: JSON.stringify({message: "Forbidden"})});
+        callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({message: "Unauthorized", status:401})});
         return;
     }
 
     let claims: any = event.requestContext.authorizer.claims;
     console.log(`${ServiceName} - createstream.handle - auth claims`, JSON.stringify(claims));
 
-    let tenantId = claims["custom:tenantId"];
-    if (!tenantId || tenantId.length == 0) {
-        console.error(new Error("NoTenantId"));
-        callback(null, {statusCode: 403, headers: CORS_HEADERS, body: JSON.stringify({message: "Forbidden"})});
-        return;
-    }
     let group = claims["custom:group"];
     if (!group || group.length == 0) {
         console.error(new Error("NoGroup"));
-        callback(null, {statusCode: 403, headers: CORS_HEADERS, body: JSON.stringify({message: "Forbidden"})});
+        callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({message: "Forbidden", status:403})});
         return;
     }
 
-    if (group != "AccountEditor" || group !="Admin" || group !="AccountAdmin") {
+    if (!(group == "AccountEditor" || group == "Admin" || group == "AccountAdmin")) {
         console.error(new Error(`Group ${group} is not authorized to create stream`));
-        callback(null, {statusCode: 403, headers: CORS_HEADERS, body: JSON.stringify({message: "Forbidden"})});
+        callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({message: "Forbidden", status:403})});
+        return;
+    }
+
+    let tenantId = group == "Admin" ? event.queryStringParameters.tenantId : claims["custom:tenantId"];
+    if (!tenantId) {
+        console.error(new Error(`NoTenantId`));
+        callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({message: "BadRequest", status:400})});
         return;
     }
 
@@ -55,7 +56,7 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
 
     try {
         const rds = new AWS.RDSDataService();
-        const checkUserEmailSQL:AWS.RDSDataService.ExecuteStatementRequest = {
+        const checkFormInTenant:AWS.RDSDataService.ExecuteStatementRequest = {
             database: ServiceName,
             resourceArn: DBClusterId,
             secretArn: DBSecretARN,
@@ -65,9 +66,9 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
                 {name: "accountId", value: {stringValue: tenantId}},
             ]
         };
-        console.log(`${ServiceName} - createstream.handle - rds-checkEmailInUse REQ`);
-        let countResponse: ExecuteStatementResponse = await rds.executeStatement(checkUserEmailSQL).promise();
-        console.log(`${ServiceName} - createstream.handle - rds-checkEmailInUse RES`, JSON.stringify(countResponse.records));
+        console.log(`${ServiceName} - createstream.handle - rds-checkForm REQ`);
+        let countResponse: ExecuteStatementResponse = await rds.executeStatement(checkFormInTenant).promise();
+        console.log(`${ServiceName} - createstream.handle - rds-checkForm RES`, JSON.stringify(countResponse.records));
         if(countResponse.records[0][0]['longValue'] == 0) {
             console.error(new Error("InvalidFormId"));
             callback(null, {statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({"message": `Form [${formId}] not found in tenant [${tenantId}]`})});
@@ -79,13 +80,13 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
     }
 
     let firehose = new AWS.Firehose({region: Region});
-    const streamName = getDeliveryStreamName(ServiceName, stage, tenantId, formId);
+    const streamName = getDeliveryStreamName(stage, tenantId, formId);
     const streamPrefix = getDeliveryStreamPrefix(tenantId, formId);
     const streamErrorPrefix = getDeliveryStreamErrorPrefix(tenantId, formId);
 
     try {
         let streams = await firehose.listDeliveryStreams({ExclusiveStartDeliveryStreamName: streamName}).promise();
-        if (!streams.DeliveryStreamNames || streams.DeliveryStreamNames.length > 0) {
+        if (!streams.DeliveryStreamNames || streams.DeliveryStreamNames.length == 0) {
             await firehose.createDeliveryStream({
                 DeliveryStreamName: streamName,
                 DeliveryStreamType: "DirectPut",
@@ -93,12 +94,13 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
                     Prefix: streamPrefix,
                     ErrorOutputPrefix: streamErrorPrefix,
                     BucketARN : `arn:aws:s3:::${UserBucket}`,
-                    RoleARN: LambdaRoleArn
+                    RoleARN: RoleArn
                 },
                 Tags : [
-                    { Key: "ServiceName",  Value: ServiceName},
                     { Key: "Stage",  Value: stage},
-                    { Key: "TenantId",  Value: tenantId}
+                    { Key: "ServiceName",  Value: ServiceName},
+                    { Key: "TenantId",  Value: tenantId},
+                    { Key: "FormId",  Value: formId}
                 ]
             }).promise();
             console.log(`${ServiceName} - createstream.handle created delivery stream ${streamName}`);

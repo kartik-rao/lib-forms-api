@@ -28,7 +28,7 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
         return;
     }
 
-    const streamName = getDeliveryStreamName(ServiceName, stage, tenantId, formId);
+    const streamName = getDeliveryStreamName(stage, tenantId, formId);
     let attributes: MessageBodyAttributeMap = {
         "Region"     : {DataType: "String", StringValue: Region},
         "Service"    : {DataType: "String", StringValue: ServiceName},

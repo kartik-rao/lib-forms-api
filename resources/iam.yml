@@ -82,6 +82,70 @@ Resources:
               - logs:CreateLogStream
               - logs:PutLogEvents
             Resource: "*"
+  KinesisAccessPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Allow AWS AppSync to write logs
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "s3:AbortMultipartUpload"
+              - "s3:GetBucketLocation"
+              - "s3:GetObject"
+              - "s3:ListBucket"
+              - "s3:ListBucketMultipartUploads"
+              - "s3:PutObject"
+            Resource:
+              Fn::Join:
+                - ":"
+                - 
+                  - "arn"
+                  - Ref: 'AWS::Partition'
+                  - "s3::"
+                  - ${self:provider.environment.s3_user_bucket}*
+          - Effect: "Allow"
+            Action:
+              - "kms:Decrypt"
+              - "kms:GenerateDataKey"
+            Resource: "arn:aws:kms:#{AWS::Region}:#{AWS::AccountId}:key/*"
+            Condition:
+              StringEquals:
+                "kms:ViaService" : "s3.#{AWS::Region}.amazonaws.com"
+              StringLike:
+                "kms:EncryptionContext:aws:s3:arn" : "arn:aws:s3:::${self:provider.environment.s3_user_bucket}/home*"
+          - Effect: "Allow"
+            Action:
+              - "logs:PutLogEvents"
+            Resource:
+              - "arn:aws:logs:#{AWS::Region}:#{AWS::AccountId}:*:*:*:*"
+          - Effect: "Allow"
+            Action:
+              - "lambda:InvokeFunction"
+              - "lambda:GetFunctionConfiguration"
+            Resource:
+              - "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:*:*"
+  KinesisAccessRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "${self:service}-${self:provider.region}-kinesis-iam-role"
+      ManagedPolicyArns:
+        - Ref: KinesisAccessPolicy
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "sts:AssumeRole"
+            Principal:
+              Service:
+                - "firehose.amazonaws.com"
+            Condition:
+              StringEquals:
+                "sts:ExternalId": "#{AWS::AccountId}"
+    DependsOn:
+      - KinesisAccessPolicy
 Outputs:
   Region:
     Value: ${self:provider.region}

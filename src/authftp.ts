@@ -5,6 +5,8 @@ process.env.TZ = 'UTC';
 import { APIGatewayEvent, APIGatewayEventRequestContext } from 'aws-lambda';
 import AWS from 'aws-sdk';
 import { AttributeType } from "aws-sdk/clients/cognitoidentityserviceprovider";
+import short from "short-uuid";
+const uuidTranslator = short();
 
 const CORS_HEADERS = {
     "Access-Control-Allow-Headers"     : "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
@@ -93,10 +95,10 @@ const getPolicyResponse = (tenantId: string, group: string) => {
 
 export const handle = async (event : APIGatewayEvent, context : APIGatewayEventRequestContext, callback : any) => {
     console.log(`${ServiceName} - authftp.handle - initialize - head=[${JSON.stringify(event.headers||{})}] path=[${JSON.stringify(event.pathParameters||{})}] query=[${JSON.stringify(event.queryStringParameters||{})}]`);
-    let {serverId} = event.pathParameters;
-    let parts = event.headers.Password.split(" ");
-    let username = parts[0];
-    let password = parts[1];
+
+    let {serverId, username} = event.pathParameters;
+    username = uuidTranslator.toUUID(username);
+    let password = event.headers.Password;
 
     if(SftpServerId != serverId) {
         callback(null, {body: JSON.stringify({message: "UnauthorizedResource"}), statusCode:200, headers: CORS_HEADERS});

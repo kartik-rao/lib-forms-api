@@ -51,8 +51,14 @@ provider:
     sftp_server_id     : { Fn::GetAtt: [SftpServer, ServerId] }
     sftp_server_arn    : { Fn::GetAtt: [SftpServer, Arn] }
     sftp_role_arn      : { Fn::GetAtt: [SftpUserRole, Arn] }
-    lambdaRoleArn      : { Fn::GetAtt: [IamRoleLambdaExecution, Arn] }
+    kinesisAccessRole  : { Fn::GetAtt: [KinesisAccessRole, Arn] }
   iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "iam:passRole"
+        - "iam:getRole"
+      Resource:
+        - { Fn::GetAtt: [KinesisAccessRole, Arn] }
     - Effect: "Allow"
       Action:
         - "secretsmanager:GetSecretValue"
@@ -182,8 +188,11 @@ functions:
     events:
       - http:
           path  : /stream/{formId}
-          method: post
+          method: PUT
           cors  : true
+          parameters:
+            querystrings:
+              tenantId: false
           authorizer:
             type: COGNITO_USER_POOLS
             authorizerId:
