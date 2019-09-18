@@ -14,11 +14,13 @@ provider:
     region: ${self:provider.region}
   functions:
     postconfirmation: ${self:service}-${self:provider.stage}-postconfirmation
-    invite    : ${self:service}-${self:provider.stage}-invite
-    formentry : ${self:service}-${self:provider.stage}-form-entry
-    formjson  : ${self:service}-${self:provider.stage}-form-json
-    formview  : ${self:service}-${self:provider.stage}-form-view
-    authftp   : ${self:service}-${self:provider.stage}-auth-ftp
+    invite        : ${self:service}-${self:provider.stage}-invite
+    formentry     : ${self:service}-${self:provider.stage}-form-entry
+    formjson      : ${self:service}-${self:provider.stage}-form-json
+    formview      : ${self:service}-${self:provider.stage}-form-view
+    authftp       : ${self:service}-${self:provider.stage}-auth-ftp
+    processEntries: ${self:service}-${self:provider.stage}-form-process-entries
+    createEntryStream : ${self:service}-${self:provider.stage}-form-create-stream
   profile: fl-infrastructure
   environment:
     region         : ${self:provider.region}
@@ -49,6 +51,7 @@ provider:
     sftp_server_id     : { Fn::GetAtt: [SftpServer, ServerId] }
     sftp_server_arn    : { Fn::GetAtt: [SftpServer, Arn] }
     sftp_role_arn      : { Fn::GetAtt: [SftpUserRole, Arn] }
+    lambdaRoleArn      : { Fn::GetAtt: [IamRoleLambdaExecution, Arn] }
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -93,6 +96,11 @@ provider:
       Action:
         - sqs:ListQueues
       Resource: "arn:aws:sqs:#{AWS::Region}:#{AWS::AccountId}:*"
+    - Effect: Allow
+      Action:
+        - firehose:*
+      Resource : 
+        - "*"
 
 plugins:
   - serverless-webpack
@@ -159,6 +167,32 @@ custom:
     substitutions:
 
 functions:
+  processEntries:
+    name: ${self:provider.functions.processEntries}
+    handler: src/processentries.handle
+    events:
+      - sqs: 
+          arn:
+            Fn::GetAtt:
+              - EntryQueue
+              - Arn
+  createEntryStream :
+    name: ${self:provider.functions.createEntryStream}
+    handler: src/createstream.handle
+    events:
+      - http:
+          path  : /stream/{formId}
+          method: post
+          cors  : true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              Ref: MyApiGatewayAuthorizer
+            claims:
+              - email
+              - username
+              - custom:tenantId
+              - custom:group
   ftpAuth :
     name: ${self:provider.functions.authftp}
     handler: src/authftp.handle
@@ -181,7 +215,7 @@ functions:
     handler: src/formentry.handle
     events:
       - http:
-          path: /form/entry/{formId}
+          path: /form/entry/{tenantId}/{formId}
           method: post
           cors: true
   formView:
