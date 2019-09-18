@@ -22,7 +22,7 @@ export const handle = async (event : SQSEvent, context : APIGatewayEventRequestC
         event.Records.forEach(async (message: SQSRecord) => {
             let StreamName = message.messageAttributes["StreamName"];
             try {
-                await firehose.putRecord({DeliveryStreamName: StreamName.stringValue, Record: {Data : message.body + "/n"}}).promise();
+                await firehose.putRecord({DeliveryStreamName: StreamName.stringValue, Record: {Data : message.body + "\n"}}).promise();
                 await entryQueue.deleteMessage({QueueUrl: QueueUrl, ReceiptHandle: message.receiptHandle}).promise();
                 callback(null, {statusCode: 200, body: JSON.stringify({status: "OK"}), headers: CORS_HEADERS})
             } catch (error) {
