@@ -176,6 +176,7 @@ functions:
   processEntries:
     name: ${self:provider.functions.processEntries}
     handler: src/processentries.handle
+    reservedConcurrency: 10
     events:
       - sqs: 
           arn:
