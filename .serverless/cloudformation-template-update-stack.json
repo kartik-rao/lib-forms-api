@@ -270,7 +270,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568789136332-2019-09-18T06:45:36.332Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568796677535-2019-09-18T08:51:17.535Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-form-process-entries",
         "Handler": "src/processentries.handle",
@@ -373,7 +373,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568789136332-2019-09-18T06:45:36.332Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568796677535-2019-09-18T08:51:17.535Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-form-create-stream",
         "Handler": "src/createstream.handle",
@@ -476,7 +476,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568789136332-2019-09-18T06:45:36.332Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568796677535-2019-09-18T08:51:17.535Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-auth-ftp",
         "Handler": "src/authftp.handle",
@@ -579,7 +579,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568789136332-2019-09-18T06:45:36.332Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568796677535-2019-09-18T08:51:17.535Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-form-json",
         "Handler": "src/form.handle",
@@ -682,7 +682,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568789136332-2019-09-18T06:45:36.332Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568796677535-2019-09-18T08:51:17.535Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-form-entry",
         "Handler": "src/formentry.handle",
@@ -785,7 +785,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568789136332-2019-09-18T06:45:36.332Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568796677535-2019-09-18T08:51:17.535Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-form-view",
         "Handler": "src/formview.handle",
@@ -888,7 +888,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568789136332-2019-09-18T06:45:36.332Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568796677535-2019-09-18T08:51:17.535Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-postconfirmation",
         "Handler": "src/postconfirmation.handle",
@@ -991,7 +991,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568789136332-2019-09-18T06:45:36.332Z/formsli.zip"
+          "S3Key": "serverless/formsli/dev/1568796677535-2019-09-18T08:51:17.535Z/formsli.zip"
         },
         "FunctionName": "formsli-dev-invite",
         "Handler": "src/invite.handle",
@@ -1953,7 +1953,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1568789110225": {
+    "ApiGatewayDeployment1568796651316": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -2267,7 +2267,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli/dev/1568789136332-2019-09-18T06:45:36.332Z/custom-resources.zip"
+          "S3Key": "serverless/formsli/dev/1568796677535-2019-09-18T08:51:17.535Z/custom-resources.zip"
         },
         "FunctionName": "formsli-dev-custom-resource-existing-cup",
         "Handler": "cognitoUserPool/handler.handler",
@@ -3486,7 +3486,7 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_add_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed)\n    #set($versionId = $util.autoId())\n    #set($now = \"${util.time.nowISO8601()}\")\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $versionId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"INSERT INTO FormVersion(id, formId, ownerId, notes, createdAt, formData) VALUES(:id, :formId, :ownerId, :notes, :createdAt, :formData)\",\n            \"SELECT * FROM FormVersion WHERE id='${versionId}'\"\n        ],\n        \"variableMap\": {\n            \":id\": \"${versionId}\",\n            \":accountId\" : \"${args.accountId}\",\n            \":formId\": \"${args.formId}\",\n            \":ownerId\": \"${identity.callerId}\",\n            \":notes\": \"${args.notes}\",\n            \":createdAt\": \"${now}\",\n            \":formData\": \"${util.escapeJavaScript($util.toJson($args.formData))}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on [FormVersion]\", \"Unauthorized\")\n#end",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_add_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed)\n    #set($versionId = $util.autoId())\n    #set($now = \"${util.time.nowISO8601()}\")\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $versionId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"INSERT INTO FormVersion(id, formId, ownerId, accountId, notes, createdAt, formData) VALUES(:id, :formId, :ownerId, :accountId, :notes, :createdAt, :formData)\",\n            \"SELECT * FROM FormVersion WHERE id='${versionId}'\"\n        ],\n        \"variableMap\": {\n            \":id\": \"${versionId}\",\n            \":accountId\" : \"${args.accountId}\",\n            \":formId\": \"${args.formId}\",\n            \":ownerId\": \"${identity.callerId}\",\n            \":notes\": \"$util.escapeJavaScript($args.notes)\",\n            \":createdAt\": \"${now}\",\n            \":formData\": \"${util.escapeJavaScript($util.toJson($args.formData))}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on [FormVersion]\", \"Unauthorized\")\n#end",
         "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_upsert_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
         "FunctionVersion": "2018-05-29"
       }

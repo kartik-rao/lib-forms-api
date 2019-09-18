@@ -17,7 +17,7 @@ $util.qr($ctx.stash.paths.add("FormVersion_add_REQ.vtl"))
     {
         "version": "2018-05-29",
         "statements": [
-            "INSERT INTO FormVersion(id, formId, ownerId, notes, createdAt, formData) VALUES(:id, :formId, :ownerId, :notes, :createdAt, :formData)",
+            "INSERT INTO FormVersion(id, formId, ownerId, accountId, notes, createdAt, formData) VALUES(:id, :formId, :ownerId, :accountId, :notes, :createdAt, :formData)",
             "SELECT * FROM FormVersion WHERE id='${versionId}'"
         ],
         "variableMap": {
@@ -25,7 +25,7 @@ $util.qr($ctx.stash.paths.add("FormVersion_add_REQ.vtl"))
             ":accountId" : "${args.accountId}",
             ":formId": "${args.formId}",
             ":ownerId": "${identity.callerId}",
-            ":notes": "${args.notes}",
+            ":notes": "$util.escapeJavaScript($args.notes)",
             ":createdAt": "${now}",
             ":formData": "${util.escapeJavaScript($util.toJson($args.formData))}"
         }
