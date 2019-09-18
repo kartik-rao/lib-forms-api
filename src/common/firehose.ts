@@ -6,9 +6,9 @@ export function getDeliveryStreamName (stage: string, tenantId: string, formId: 
 }
 
 export function getDeliveryStreamPrefix (tenantId: string, formId: string) {
-    return `/home/${tenantId}/${formId}/processed`;
+    return `home/${tenantId}/${formId}/processed/`;
 }
 
 export function getDeliveryStreamErrorPrefix (tenantId: string, formId: string) {
-    return `/home/${tenantId}/${formId}/error`;
+    return `home/${tenantId}/${formId}/error/`;
 }
