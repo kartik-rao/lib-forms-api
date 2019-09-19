@@ -243,6 +243,9 @@ functions:
           - "rds-data:ExecuteSql"
           - "rds-data:BatchExecuteStatement"
           - "rds-data:ExecuteStatement"
+        Resource:
+          - "${self:provider.environment.dbClusterArn}"
+          - "${self:provider.environment.dbClusterArn}:*"
   formEntry:
     name: ${self:provider.functions.formentry}
     handler: src/formentry.handle
@@ -283,6 +286,12 @@ functions:
         Action:
           - ses:SendEmail
           - ses:SendRawEmail
+        Resource: 
+          - "*"
+        Condition:
+          StringLike:
+            ses:FromAddress:
+              - "*@forms.li"
       - Effect: "Allow"
         Action:
           - "secretsmanager:GetSecretValue"
