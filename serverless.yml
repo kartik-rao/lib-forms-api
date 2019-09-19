@@ -4,6 +4,7 @@ frameworkVersion: '>=1.5.0 <2.0.0'
 provider:
   name: aws
   runtime: nodejs10.x
+  tracing: true
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'ap-northeast-1'}
   memorySize: 2048
@@ -55,63 +56,23 @@ provider:
   iamRoleStatements:
     - Effect: "Allow"
       Action:
-        - "iam:passRole"
-        - "iam:getRole"
+        - "tag:GetResources"
+        - "secretsmanager:CreateSecret"
+        - "secretsmanager:ListSecrets"
+        - "secretsmanager:GetRandomPassword"
+        - "logs:CreateLogGroup"
+        - "logs:CreateLogStream"
+        - "logs:PutLogEvents"
+        - "xray:PutTelemetryRecords"
+        - "xray:PutTraceSegments"
       Resource:
-        - { Fn::GetAtt: [KinesisAccessRole, Arn] }
-    - Effect: "Allow"
-      Action:
-        - "secretsmanager:GetSecretValue"
-      Resource:
-        - "arn:aws:secretsmanager:ap-northeast-1:#{AWS::AccountId}:secret:/${self:provider.stage}/formsli/rds/*"
-    - Effect: "Allow"
-      Action:
-        - "rds-data:InsertItems"
-        - "rds-data:GetItems"
-        - "rds-data:UpdateItems"
-        - "rds-data:DeleteItems"
-        - "rds-data:ExecuteSql"
-        - "rds-data:BatchExecuteStatement"
-        - "rds-data:BeginTransaction"
-        - "rds-data:CommitTransaction"
-        - "rds-data:ExecuteStatement"
-        - "rds-data:RollbackTransaction"
-      Resource:
-        - "${self:provider.environment.dbClusterArn}"
-        - "${self:provider.environment.dbClusterArn}:*"
-    - Effect: Allow
-      Action:
-        - cognito-idp:AdminAddUserToGroup
-        - cognito-idp:AdminUpdateUserAttributes
-        - cognito-idp:AdminRemoveUserFromGroup
-        - cognito-idp:AdminGetUser
-        - cognito-idp:AdminCreateUser
-        - cognito-idp:AdminInitiateAuth
-      Resource: "${self:provider.environment.userPoolArn}"
-    - Effect: Allow
-      Action:
-        - ses:SendEmail
-        - ses:SendRawEmail
-      Resource: "arn:aws:ses:us-east-1:#{AWS::AccountId}:*"
-    - Effect: Allow
-      Action:
-        - sqs:RecieveMessage
-        - sqs:SendMessage
-      Resource: "arn:aws:sqs:#{AWS::Region}:#{AWS::AccountId}:*"
-    - Effect: Allow
-      Action:
-        - sqs:ListQueues
-      Resource: "arn:aws:sqs:#{AWS::Region}:#{AWS::AccountId}:*"
-    - Effect: Allow
-      Action:
-        - firehose:*
-      Resource : 
         - "*"
 
 plugins:
   - serverless-webpack
   - serverless-pseudo-parameters
   - serverless-iam-roles-per-function
+  - serverless-plugin-tracing
   - serverless-domain-manager
   - serverless-appsync-plugin
   - '@anttiviljami/serverless-stack-output'
@@ -124,6 +85,8 @@ resources:
   - ${file(resources/sftp.yml)}
 
 custom:
+  serverless-iam-roles-per-function:
+    defaultInherit: true
   customDomain:
     DependsOn: ApiGatewayApiKey1
     domainName: ${self:provider.stage}-${self:provider.environment.apiDomain}
@@ -183,6 +146,26 @@ functions:
             Fn::GetAtt:
               - EntryQueue
               - Arn
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - sqs:RecieveMessage
+          - sqs:SendMessage
+          - sqs:ListQueues
+        Resource : 
+          - { Fn::GetAtt: [EntryQueue, Arn] }
+      - Effect: Allow
+        Action:
+          - firehose:putRecord
+          - firehose:putRecordBatch
+        Resource : 
+          - "*"
+      - Effect: "Allow"
+        Action:
+          - "iam:passRole"
+          - "iam:getRole"
+        Resource:
+          - { Fn::GetAtt: [KinesisAccessRole, Arn] }
   createEntryStream :
     name: ${self:provider.functions.createEntryStream}
     handler: src/createstream.handle
@@ -203,6 +186,28 @@ functions:
               - username
               - custom:tenantId
               - custom:group
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "secretsmanager:GetSecretValue"
+        Resource:
+          - "arn:aws:secretsmanager:ap-northeast-1:#{AWS::AccountId}:secret:/${self:provider.stage}/formsli/rds/*"
+      - Effect: Allow
+        Action:
+          - firehose:listDeliveryStreams
+          - firehose:createDeliveryStream
+          - firehose:describeDeliveryStream
+        Resource : 
+          - "*"
+      - Effect: "Allow"
+        Action:
+          - "rds-data:BeginTransaction"
+          - "rds-data:CommitTransaction"
+          - "rds-data:ExecuteStatement"
+          - "rds-data:RollbackTransaction"
+        Resource:
+          - "${self:provider.environment.dbClusterArn}"
+          - "${self:provider.environment.dbClusterArn}:*"
   ftpAuth :
     name: ${self:provider.functions.authftp}
     handler: src/authftp.handle
@@ -212,6 +217,12 @@ functions:
           method: get
           cors  : true
           authorizer: aws_iam
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - cognito-idp:AdminGetUser
+          - cognito-idp:AdminInitiateAuth
+        Resource: "${self:provider.environment.userPoolArn}"
   formJson:
     name: ${self:provider.functions.formjson}
     handler: src/form.handle
@@ -220,6 +231,18 @@ functions:
           path: /form/json/{formId}
           method: get
           cors: true
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "secretsmanager:GetSecretValue"
+        Resource:
+          - "arn:aws:secretsmanager:ap-northeast-1:#{AWS::AccountId}:secret:/${self:provider.stage}/formsli/rds/*"
+      - Effect: "Allow"
+        Action:
+          - "rds-data:GetItems"
+          - "rds-data:ExecuteSql"
+          - "rds-data:BatchExecuteStatement"
+          - "rds-data:ExecuteStatement"
   formEntry:
     name: ${self:provider.functions.formentry}
     handler: src/formentry.handle
@@ -228,6 +251,13 @@ functions:
           path: /form/entry/{tenantId}/{formId}
           method: post
           cors: true
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - sqs:SendMessage
+          - sqs:ListQueues
+        Resource : 
+          - { Fn::GetAtt: [EntryQueue, Arn] }
   formView:
     name: ${self:provider.functions.formview}
     handler: src/formview.handle
@@ -248,6 +278,32 @@ functions:
           pool: fl-${self:provider.stage}-userpool
           trigger: PostConfirmation
           existing: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - ses:SendEmail
+          - ses:SendRawEmail
+      - Effect: "Allow"
+        Action:
+          - "secretsmanager:GetSecretValue"
+        Resource:
+          - "arn:aws:secretsmanager:ap-northeast-1:#{AWS::AccountId}:secret:/${self:provider.stage}/formsli/rds/*"
+      - Effect: "Allow"
+        Action:
+          - "rds-data:BatchExecuteStatement"
+          - "rds-data:BeginTransaction"
+          - "rds-data:CommitTransaction"
+          - "rds-data:ExecuteStatement"
+          - "rds-data:RollbackTransaction"
+        Resource:
+          - "${self:provider.environment.dbClusterArn}"
+          - "${self:provider.environment.dbClusterArn}:*"
+      - Effect: Allow
+        Action:
+          - cognito-idp:AdminAddUserToGroup
+          - cognito-idp:AdminUpdateUserAttributes
+          - cognito-idp:AdminGetUser
+        Resource: "${self:provider.environment.userPoolArn}"
   signup:
     name: ${self:provider.functions.invite}
     handler: src/invite.handle
@@ -265,3 +321,21 @@ functions:
               - username
               - custom:tenantId
               - custom:group
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "secretsmanager:GetSecretValue"
+        Resource:
+          - "arn:aws:secretsmanager:ap-northeast-1:#{AWS::AccountId}:secret:/${self:provider.stage}/formsli/rds/*"
+      - Effect: "Allow"
+        Action:
+          - "rds-data:ExecuteStatement"
+        Resource:
+          - "${self:provider.environment.dbClusterArn}"
+          - "${self:provider.environment.dbClusterArn}:*"
+      - Effect: Allow
+        Action:
+          - cognito-idp:AdminAddUserToGroup
+          - cognito-idp:AdminCreateUser
+          - cognito-idp:AdminGetUser
+        Resource: "${self:provider.environment.userPoolArn}"
