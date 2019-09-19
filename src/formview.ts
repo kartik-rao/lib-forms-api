@@ -1,4 +1,4 @@
-//# sourceMappingURL=./formrender.js.map
+//# sourceMappingURL=./formview.js.map
 require('source-map-support').install();
 process.env.TZ = 'UTC';
 import {APIGatewayEventRequestContext, APIGatewayEvent} from 'aws-lambda';
@@ -6,7 +6,6 @@ const ServiceName  = process.env.serviceName;
 
 const ENV = process.env.environment;
 const STATIC_DOMAIN = process.env.staticDomain || "static.forms.li";
-const API_DOMAIN = process.env.apiDomain || "api.forms.li";
 
 const CORS_HEADERS = {
     "Access-Control-Allow-Headers"     : "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
@@ -17,9 +16,8 @@ const CORS_HEADERS = {
 }
 
 export const handle = async (event : APIGatewayEvent, context : APIGatewayEventRequestContext, callback : any) => {
-    console.log(`${ServiceName} - formrender.handle`, event);
+    console.log(`${ServiceName} - formview.handle`, event);
     let envPrefix = ENV == "dev" ? "dev-" : ENV == "staging" ? `staging-` : "";
-    let apiDomain = `${envPrefix}${API_DOMAIN}`;
     let staticDomain = `${envPrefix}${STATIC_DOMAIN}`;
     let reactEnv = ENV == "production" ? "production" : "development";
     let staticPath = `//${staticDomain}/lib/lib-forms-core`;

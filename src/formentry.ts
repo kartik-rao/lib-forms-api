@@ -15,7 +15,10 @@ const CORS_HEADERS = {
     "Content-Type": "application/json"
 }
 
-import * as AWS from "aws-sdk";
+import _AWS from 'aws-sdk';
+import XRay from 'aws-xray-sdk';
+const AWS = XRay.captureAWS(_AWS);
+
 import { MessageBodyAttributeMap } from 'aws-sdk/clients/sqs';
 import {getDeliveryStreamName} from "./common/firehose";
 

@@ -3,7 +3,11 @@ require('source-map-support').install();
 process.env.TZ = 'UTC';
 
 import { APIGatewayEvent, APIGatewayEventRequestContext } from 'aws-lambda';
-import AWS from 'aws-sdk';
+
+import _AWS from 'aws-sdk';
+import XRay from 'aws-xray-sdk';
+const AWS = XRay.captureAWS(_AWS);
+
 import { AttributeType } from "aws-sdk/clients/cognitoidentityserviceprovider";
 import short from "short-uuid";
 const uuidTranslator = short();

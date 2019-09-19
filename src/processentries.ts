@@ -3,7 +3,9 @@ require('source-map-support').install();
 process.env.TZ = 'UTC';
 
 import {APIGatewayEventRequestContext, SQSEvent, SQSRecord} from 'aws-lambda';
-import * as AWS from "aws-sdk";
+import _AWS from 'aws-sdk';
+import XRay from 'aws-xray-sdk';
+const AWS = XRay.captureAWS(_AWS);
 
 const Region   = process.env.region;
 const QueueUrl = process.env.sqs_entry_url;
