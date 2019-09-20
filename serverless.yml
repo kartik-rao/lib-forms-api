@@ -83,6 +83,7 @@ resources:
   - ${file(resources/apig.auth.yml)}
   - ${file(resources/sqs.yml)}
   - ${file(resources/sftp.yml)}
+  - ${file(resources/ssm.yml)}
 
 custom:
   serverless-iam-roles-per-function:
@@ -109,6 +110,8 @@ custom:
   appSync:
     name:  formsli-api-${self:provider.stage}
     authenticationType: AMAZON_COGNITO_USER_POOLS
+    additionalAuthenticationProviders:
+      - authenticationType: API_KEY
     userPoolConfig:
       awsRegion: ${self:provider.region}
       defaultAction: ALLOW
@@ -348,3 +351,22 @@ functions:
           - cognito-idp:AdminCreateUser
           - cognito-idp:AdminGetUser
         Resource: "${self:provider.environment.userPoolArn}"
+
+Outputs:
+  GraphQlApi:
+    Description: "The ARN of the GraphQL API"
+    Value: { Ref: GraphQlApi }
+    Export:
+      Name: graphql-api-arn
+
+  GraphQlApiUrl:
+    Description: "The GraphQL API Endpoint URL"
+    Value: { Fn::GetAtt: [GraphQlApi, GraphQLUrl] }
+    Export:
+      Name: graphql-api-url
+
+  GraphQlApiId:
+    Description: "The Appsync GraphQL API ID"
+    Value: { Fn::GetAtt: [GraphQlApi, ApiId] }
+    Export:
+      Name: graphql-api-id
