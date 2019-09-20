@@ -279,7 +279,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1568868413927-2019-09-19T04:46:53.927Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-process-entries",
               "Handler": "src/processentries.handle",
@@ -386,7 +386,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1568868413927-2019-09-19T04:46:53.927Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-create-stream",
               "Handler": "src/createstream.handle",
@@ -492,7 +492,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1568868413927-2019-09-19T04:46:53.927Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-auth-ftp",
               "Handler": "src/authftp.handle",
@@ -598,7 +598,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1568868413927-2019-09-19T04:46:53.927Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-json",
               "Handler": "src/form.handle",
@@ -704,7 +704,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1568868413927-2019-09-19T04:46:53.927Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-entry",
               "Handler": "src/formentry.handle",
@@ -810,7 +810,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1568868413927-2019-09-19T04:46:53.927Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-view",
               "Handler": "src/formview.handle",
@@ -916,7 +916,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1568868413927-2019-09-19T04:46:53.927Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-postconfirmation",
               "Handler": "src/postconfirmation.handle",
@@ -1022,7 +1022,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1568868413927-2019-09-19T04:46:53.927Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-invite",
               "Handler": "src/invite.handle",
@@ -1987,7 +1987,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1568868385886": {
+          "ApiGatewayDeployment1568952787398": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -2301,7 +2301,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1568868413927-2019-09-19T04:46:53.927Z/custom-resources.zip"
+                "S3Key": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z/custom-resources.zip"
               },
               "FunctionName": "formsli-dev-custom-resource-existing-cup",
               "Handler": "cognitoUserPool/handler.handler",
@@ -3661,12 +3661,55 @@
               ]
             }
           },
+          "ssmAppsyncApiId": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/graphql/api/id",
+              "Value": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "Type": "String"
+            }
+          },
+          "ssmAppsyncUrl": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/graphql/api/url",
+              "Value": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "GraphQLUrl"
+                ]
+              },
+              "Type": "String"
+            }
+          },
+          "ssmAppsyncApiKey": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/graphql/api/key",
+              "Value": {
+                "Fn::GetAtt": [
+                  "GraphQlApiKeyDefault",
+                  "ApiKey"
+                ]
+              },
+              "Type": "String"
+            }
+          },
           "GraphQlApi": {
             "Type": "AWS::AppSync::GraphQLApi",
             "Properties": {
               "Name": "formsli-api-dev",
               "AuthenticationType": "AMAZON_COGNITO_USER_POOLS",
-              "AdditionalAuthenticationProviders": [],
+              "AdditionalAuthenticationProviders": [
+                {
+                  "AuthenticationType": "API_KEY"
+                }
+              ],
               "UserPoolConfig": {
                 "AwsRegion": "ap-northeast-1",
                 "UserPoolId": "ap-northeast-1_Q798Nsl33",
@@ -3703,10 +3746,23 @@
               "RetentionInDays": 14
             }
           },
+          "GraphQlApiKeyDefault": {
+            "Type": "AWS::AppSync::ApiKey",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "Description": "serverless-appsync-plugin: AppSync API Key for GraphQlApiKeyDefault",
+              "Expires": 1600488820
+            }
+          },
           "GraphQlSchema": {
             "Type": "AWS::AppSync::GraphQLSchema",
             "Properties": {
-              "Definition": "enum FilterWith {\n  AND\n  OR\n}\n\nenum NumericFilterExpression {\n  in\n  ne\n  eq\n  le\n  lt\n  ge\n  gt\n  between\n  notBetween\n  isNull\n  isNotNull\n}\n\nenum BooleanFilterExpression {\n  ne\n  eq\n}\n\nenum StringFilterExpression {\n  ne\n  eq\n  contains\n  notContains\n  startsWith\n  isNull\n  isNotNull\n  in\n}\n\ninput DateFilter {\n  with  : FilterWith\n  expression: NumericFilterExpression!\n  value: [AWSDateTime!]\n}\n\ninput BooleanFilter {\n  with  : FilterWith\n  expression: BooleanFilterExpression!\n  value: [Boolean!]\n}\n\ninput FloatFilter {\n  with  : FilterWith\n  expression: NumericFilterExpression!\n  value: [Float!]\n}\n\n\ninput IntFilter {\n  with  : FilterWith\n  expression: NumericFilterExpression!\n  value: [Int!]\n}\n\ninput StringFilter {\n  with  : FilterWith\n  expression: StringFilterExpression!\n  value: [String!]\n}\n\ninput AccountFilterInput {\n  name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  planId: StringFilter\n  active: IntFilter\n  criteria: [AccountFilterInput!]\n}\n\nenum SortOrder { asc desc }\n\ninput AccountSortInput {\n  name: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  planId: SortOrder\n  sortBy: [AccountSortInput!]\n}\n\ninput UserFilterInput {\n  accountId: StringFilter\n  ownerId: StringFilter\n  email: StringFilter\n  userGroup: StringFilter\n  given_name: StringFilter\n  family_name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  isDeleted: IntFilter\n  criteria: [UserFilterInput!]\n}\n\ninput UserSortInput {\n  accountId: SortOrder\n  email: SortOrder\n  given_name: SortOrder\n  family_name: SortOrder\n  userGroup: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [UserSortInput!]\n}\n\ninput PlanTypeFilterInput {\n  ownerId: StringFilter\n  cost: FloatFilter\n  billingTerm: StringFilter\n  name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  isDeleted: IntFilter\n  criteria: [PlanTypeFilterInput!]\n}\n\ninput PlanTypeSortInput {\n  name: SortOrder\n  billingTerm: SortOrder\n  cost: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [PlanTypeSortInput!]\n}\n\ninput IntegrationTypeFilterInput {\n  ownerId: StringFilter\n  planTypeId: StringFilter\n  name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  active: IntFilter\n  criteria: [IntegrationTypeFilterInput!]\n}\n\ninput IntegrationTypeSortInput {\n  name: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [IntegrationTypeSortInput!]\n}\n\ninput IntegrationFilterInput {\n  ownerId: StringFilter\n  accountId: StringFilter\n  formId: StringFilter\n  active: IntFilter\n  isDeleted: IntFilter\n  lastExecuted: DateFilter\n  lastExecutionResult: IntFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  criteria: [IntegrationFilterInput!]\n}\n\ninput IntegrationSortInput {\n  lastExecuted: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [IntegrationSortInput!]\n}\n\ninput FormFilterInput {\n  name: StringFilter\n  ownerId: StringFilter\n  accountId: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  startsAt: DateFilter\n  endsAt: DateFilter\n  isPaused: IntFilter\n  isDeleted: IntFilter\n  criteria: [FormFilterInput!]\n}\n\ninput FormSortInput {\n  name: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  startsAt: SortOrder\n  endsAt: SortOrder\n  sortBy: [FormSortInput!]\n}\n\ninput PlanFilterInput {\n  accountId: StringFilter\n  ownerId: StringFilter\n  planTypeId: StringFilter\n  lastBillDate: DateFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  startDate: DateFilter\n  endDate: DateFilter\n  criteria: [PlanFilterInput!]\n}\n\ninput PlanSortInput {\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  lastBillDate: SortOrder\n  startDate: SortOrder\n  endDate: SortOrder\n  sortBy: [PlanSortInput!]\n}\n\ntype FormEntry @model {\n  id: ID!\n  formId: ID!\n  form: Form!\n  data: AWSJSON!\n  createdAt: AWSDateTime!\n}\n\ninput AddFormEntryInput {\n  data: AWSJSON!\n}\n\ntype FormVersion @model {\n  id: ID!\n  accountId: ID!\n  formId: ID!\n  ownerId: ID!\n  ownedBy: User!\n  createdAt: AWSDateTime\n  notes: String\n  formData: AWSJSON!\n}\n\ninput FormVersionFilterInput {\n  accountId: StringFilter\n  formId: StringFilter\n  ownerId: StringFilter\n  createdAt: DateFilter\n  criteria: [FormVersionFilterInput!]\n}\n\ninput FormVersionSortInput {\n  createdAt: SortOrder\n  sortBy: [FormVersionSortInput!]\n}\n\ninput AddFormVersionInput {\n  accountId: ID!\n  formId: ID!\n  notes: String!\n  formData: AWSJSON!\n}\n\ntype Form @model  {\n  id: ID!\n  ownerId: ID!\n  name: String!\n  description: String!\n  versionId: ID\n  version: FormVersion\n  ownedBy: User!\n  accountId: ID!\n  account: Account!\n  createdAt: AWSDateTime!\n  updatedAt: AWSDateTime\n  startDate: AWSDateTime\n  endDate  : AWSDateTime\n  isPaused : Int\n  isDeleted: Int\n  redirectNotStarted: AWSURL\n  redirectHasEnded : AWSURL\n  versions(limit: Int): [FormVersion]\n  integrations(limit: Int): [Integration]\n  entries(limit: Int): [FormEntry]\n}\n\n\ninput AddFormInput {\n  accountId: ID!\n  name: String!\n  description: String!\n  startsAt: AWSDateTime\n  endsAt: AWSDateTime\n  isPaused: Int\n}\n\ninput UpdateFormInput {\n  id: ID!\n  currentVersionId: ID\n  name: String\n  description: String\n  startDate: AWSDateTime\n  endDate: AWSDateTime\n  redirectNotStarted: AWSURL\n  redirectHasEnded : AWSURL\n  isPaused: Int\n}\n\ninput DeleteFormInput {\n  id: ID!\n  accountId: ID!\n}\n\ntype User @model {\n  id: ID!\n  ownerId: ID\n  ownedBy: User\n  accountId: ID\n  account: Account\n  email: String!\n  userGroup: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Int\n  numForms: Int\n}\n\n\ninput UpdateUserInputData {\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ninput UpdateUserInput {\n  id: ID!\n  data: UpdateUserInputData!\n}\n\nenum AddressType {\n  BILLING\n  CONTACT\n}\n\ntype Address @model {\n  id: ID!\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype AddAddressInput {\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype Account @model {\n  id: ID!\n  name: String!\n  addresses(limit: Int): [Address]\n  website: String\n  taxId: String\n  ownerId: ID!\n  ownedBy: User!\n  plan : Plan\n  planId: ID\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  active: Int\n  numForms: Int\n  numUsers: Int\n  users(limit: Int): [User]\n  forms(limit: Int): [Form]\n}\n\ninput UpdateAccountInput {\n  id: ID!\n  name: String\n}\ntype PlanType @model {\n  id: ID!\n  ownerId: ID!\n  ownedBy: User!\n  name: String!\n  cost: Float!\n  active: Int!\n  billingTerm: String!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Int\n}\n\ninput AddPlanTypeInput {\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Int!\n}\n\ninput UpdatePlanTypeInput {\n  id: ID!\n  name: String\n  cost: Float\n  billingTerm: String\n  active: Int\n}\n\ntype Plan @model {\n  id: ID!\n  accountId: ID!\n  account: Account!\n  ownerId: ID!\n  ownedBy: User!\n  planTypeId: ID!\n  startDate: AWSDateTime!\n  endDate: AWSDateTime\n  active: Int\n  lastBillDate: AWSDateTime\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  planType: PlanType\n  isDeleted: Int\n}\n\ninput AddPlanInput {\n  accountId: ID!\n  planTypeId: ID!\n  endDate: AWSDateTime\n  active: Int\n}\n\ninput UpdatePlanInput {\n  planId: ID!\n  accountId: ID!\n  active: Int!\n  endDate: AWSDateTime\n}\n\ntype IntegrationType @model {\n  id: ID!\n  ownerId: ID!\n  ownedBy: User!\n  planTypeId: ID!\n  planType: PlanType\n  name: String!\n  active: Int!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\n\ninput AddIntegrationTypeInput {\n  name: String!\n  active: Int\n}\n\ninput UpdateIntegrationTypeInput {\n  id: ID!\n  name: String!\n  active: Int\n}\n\ntype Integration @model {\n  id: ID!\n  integrationTypeId: ID!\n  integrationType: IntegrationType\n  ownerId: ID!\n  accountId: ID!\n  formId: ID!\n  form: Form!\n  active: Int!\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  lastExecuted: AWSDateTime\n  lastExecutionResult: Int\n  lastExecutionResultMessage: String\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Int\n}\n\n\ninput AddIntegrationInput {\n  integrationTypeId: ID!\n  accountId: ID!\n  formId: ID!\n  active: Int\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationTypeInputData {\n  active: Int\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationInput {\n  id: ID!\n  active: Int\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput OffsetLimit {\n  offset: Int\n  limit: Int\n}\n\ntype Query {\n  getAccount(accountId: ID!): Account\n  getUser(userId: ID!): User\n  getPlan(planId: String!): Plan\n  getActiveAccountPlan(accountId: String!): Plan\n  getPlanType(planTypeId: String!): PlanType\n  getForm(formId: String!) : Form\n  getFormVersion(versionId: String!) : FormVersion\n  getIntegrationType(integrationTypeId: String!): IntegrationType\n  getIntegration(integrationId: String!): Integration\n  getFormEntry(formEntryId: String!): FormEntry\n  listAccounts(offsetLimit: OffsetLimit, filter: AccountFilterInput, sort: AccountSortInput): [Account]\n  listUsers(offsetLimit: OffsetLimit, filter: UserFilterInput, sort: UserSortInput) : [User]\n  listPlans(offsetLimit: OffsetLimit, filter: PlanFilterInput, sort: PlanSortInput): [Plan]\n  listPlanTypes(offsetLimit: OffsetLimit, filter: PlanTypeFilterInput, sort: PlanTypeSortInput): [PlanType]\n  listForms(offsetLimit: OffsetLimit, filter: FormFilterInput, sort: FormSortInput) : [Form]\n  listFormVersions(offsetLimit: OffsetLimit, filter: FormVersionFilterInput, sort: FormVersionSortInput) : [FormVersion]\n  listIntegrationTypes(offsetLimit: OffsetLimit, filter: IntegrationTypeFilterInput, sort: IntegrationTypeSortInput): [IntegrationType]\n  listIntegrations(offsetLimit: OffsetLimit, filter: IntegrationFilterInput, sort: IntegrationSortInput): [Integration]\n  listFormEntries(offsetLimit: OffsetLimit, formId: String!) : [FormEntry]\n  listFormEntriesByTime(offsetLimit: OffsetLimit, formId: String!, timestampPrefix: String!): [FormEntry]\n}\n\ntype Mutation {\n  addPlanType(input: AddPlanTypeInput): PlanType!\n  addPlan(input: AddPlanInput): Plan!\n  addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!\n  addIntegration(input: AddIntegrationInput): Integration!\n  addForm(input: AddFormInput!): Form!\n  addFormVersion(input: AddFormVersionInput!): Form!\n\n  updatePlanType(input: UpdatePlanTypeInput): PlanType!\n  updatePlan(input: UpdatePlanInput): Plan!\n  updateAccount(input: UpdateAccountInput): Account!\n  updateAccountPlan(input: AddPlanInput): Account!\n  updateUser(input: UpdateUserInput): User!\n  updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!\n  updateIntegration(input: UpdateIntegrationInput): Integration!\n  updateForm(input: UpdateFormInput): Form!\n\n  deleteForm(input: DeleteFormInput): Form!\n  deletePlanType(planTypeId: ID!): PlanType!\n  deletePlan(accountId: ID!, planId: ID!): Plan!\n  deleteAccount(accountId: ID!): Account!\n  deleteUser(userId: ID!): User!\n  deleteIntegrationType(integrationTypeId: ID!): IntegrationType!\n  deleteIntegration(integrationId: ID!): Integration!\n\n  addFormEntry(input: AddFormEntryInput!): FormEntry!\n}\n\nschema {\n  query: Query\n  mutation: Mutation\n}\n",
+              "Definition": "enum FilterWith {\n  AND\n  OR\n}\n\nenum NumericFilterExpression {\n  in\n  ne\n  eq\n  le\n  lt\n  ge\n  gt\n  between\n  notBetween\n  isNull\n  isNotNull\n}\n\nenum BooleanFilterExpression {\n  ne\n  eq\n}\n\nenum StringFilterExpression {\n  ne\n  eq\n  contains\n  notContains\n  startsWith\n  isNull\n  isNotNull\n  in\n}\n\ninput DateFilter {\n  with  : FilterWith\n  expression: NumericFilterExpression!\n  value: [AWSDateTime!]\n}\n\ninput BooleanFilter {\n  with  : FilterWith\n  expression: BooleanFilterExpression!\n  value: [Boolean!]\n}\n\ninput FloatFilter {\n  with  : FilterWith\n  expression: NumericFilterExpression!\n  value: [Float!]\n}\n\n\ninput IntFilter {\n  with  : FilterWith\n  expression: NumericFilterExpression!\n  value: [Int!]\n}\n\ninput StringFilter {\n  with  : FilterWith\n  expression: StringFilterExpression!\n  value: [String!]\n}\n\ninput AccountFilterInput {\n  name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  planId: StringFilter\n  active: IntFilter\n  criteria: [AccountFilterInput!]\n}\n\nenum SortOrder { asc desc }\n\ninput AccountSortInput {\n  name: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  planId: SortOrder\n  sortBy: [AccountSortInput!]\n}\n\ninput UserFilterInput {\n  accountId: StringFilter\n  ownerId: StringFilter\n  email: StringFilter\n  userGroup: StringFilter\n  given_name: StringFilter\n  family_name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  isDeleted: IntFilter\n  criteria: [UserFilterInput!]\n}\n\ninput UserSortInput {\n  accountId: SortOrder\n  email: SortOrder\n  given_name: SortOrder\n  family_name: SortOrder\n  userGroup: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [UserSortInput!]\n}\n\ninput PlanTypeFilterInput {\n  ownerId: StringFilter\n  cost: FloatFilter\n  billingTerm: StringFilter\n  name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  isDeleted: IntFilter\n  criteria: [PlanTypeFilterInput!]\n}\n\ninput PlanTypeSortInput {\n  name: SortOrder\n  billingTerm: SortOrder\n  cost: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [PlanTypeSortInput!]\n}\n\ninput IntegrationTypeFilterInput {\n  ownerId: StringFilter\n  planTypeId: StringFilter\n  name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  active: IntFilter\n  criteria: [IntegrationTypeFilterInput!]\n}\n\ninput IntegrationTypeSortInput {\n  name: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [IntegrationTypeSortInput!]\n}\n\ninput IntegrationFilterInput {\n  ownerId: StringFilter\n  accountId: StringFilter\n  formId: StringFilter\n  active: IntFilter\n  isDeleted: IntFilter\n  lastExecuted: DateFilter\n  lastExecutionResult: IntFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  criteria: [IntegrationFilterInput!]\n}\n\ninput IntegrationSortInput {\n  lastExecuted: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [IntegrationSortInput!]\n}\n\ninput FormFilterInput {\n  name: StringFilter\n  ownerId: StringFilter\n  accountId: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  startsAt: DateFilter\n  endsAt: DateFilter\n  isPaused: IntFilter\n  isDeleted: IntFilter\n  criteria: [FormFilterInput!]\n}\n\ninput FormSortInput {\n  name: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  startsAt: SortOrder\n  endsAt: SortOrder\n  sortBy: [FormSortInput!]\n}\n\ninput PlanFilterInput {\n  accountId: StringFilter\n  ownerId: StringFilter\n  planTypeId: StringFilter\n  lastBillDate: DateFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  startDate: DateFilter\n  endDate: DateFilter\n  criteria: [PlanFilterInput!]\n}\n\ninput PlanSortInput {\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  lastBillDate: SortOrder\n  startDate: SortOrder\n  endDate: SortOrder\n  sortBy: [PlanSortInput!]\n}\n\ntype FormEntry @model {\n  id: ID!\n  formId: ID!\n  form: Form!\n  data: AWSJSON!\n  createdAt: AWSDateTime!\n}\n\ninput AddFormEntryInput {\n  data: AWSJSON!\n}\n\ntype FormVersion @model {\n  id: ID!\n  accountId: ID!\n  formId: ID!\n  ownerId: ID!\n  ownedBy: User!\n  createdAt: AWSDateTime\n  notes: String\n  formData: AWSJSON!\n}\n\ninput FormVersionFilterInput {\n  accountId: StringFilter\n  formId: StringFilter\n  ownerId: StringFilter\n  createdAt: DateFilter\n  criteria: [FormVersionFilterInput!]\n}\n\ninput FormVersionSortInput {\n  createdAt: SortOrder\n  sortBy: [FormVersionSortInput!]\n}\n\ninput AddFormVersionInput {\n  accountId: ID!\n  formId: ID!\n  notes: String!\n  formData: AWSJSON!\n}\n\ninput DeleteFormVersionInput {\n  accountId: ID!\n  formId: ID!\n  versionId: ID!\n}\n\ntype Form @model  {\n  id: ID!\n  ownerId: ID!\n  name: String!\n  description: String!\n  versionId: ID\n  version: FormVersion\n  ownedBy: User!\n  accountId: ID!\n  account: Account!\n  createdAt: AWSDateTime!\n  updatedAt: AWSDateTime\n  startDate: AWSDateTime\n  endDate  : AWSDateTime\n  isPaused : Int\n  isDeleted: Int\n  redirectNotStarted: AWSURL\n  redirectHasEnded : AWSURL\n  versions(limit: Int): [FormVersion]\n  integrations(limit: Int): [Integration]\n  entries(limit: Int): [FormEntry]\n}\n\n\ninput AddFormInput {\n  accountId: ID!\n  name: String!\n  description: String!\n  startsAt: AWSDateTime\n  endsAt: AWSDateTime\n  isPaused: Int\n}\n\ninput UpdateFormInput {\n  id: ID!\n  currentVersionId: ID\n  name: String\n  description: String\n  startDate: AWSDateTime\n  endDate: AWSDateTime\n  redirectNotStarted: AWSURL\n  redirectHasEnded : AWSURL\n  isPaused: Int\n}\n\ninput DeleteFormInput {\n  id: ID!\n  accountId: ID!\n}\n\ntype User @model {\n  id: ID!\n  ownerId: ID\n  ownedBy: User\n  accountId: ID\n  account: Account\n  email: String!\n  userGroup: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Int\n  numForms: Int\n}\n\n\ninput UpdateUserInputData {\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ninput UpdateUserInput {\n  id: ID!\n  data: UpdateUserInputData!\n}\n\nenum AddressType {\n  BILLING\n  CONTACT\n}\n\ntype Address @model {\n  id: ID!\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype AddAddressInput {\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype Account @model {\n  id: ID!\n  name: String!\n  addresses(limit: Int): [Address]\n  website: String\n  taxId: String\n  ownerId: ID!\n  ownedBy: User!\n  plan : Plan\n  planId: ID\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  active: Int\n  numForms: Int\n  numUsers: Int\n  users(limit: Int): [User]\n  forms(limit: Int): [Form]\n}\n\ninput UpdateAccountInput {\n  id: ID!\n  name: String\n}\ntype PlanType @model {\n  id: ID!\n  ownerId: ID!\n  ownedBy: User!\n  name: String!\n  cost: Float!\n  active: Int!\n  billingTerm: String!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Int\n}\n\ninput AddPlanTypeInput {\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Int!\n}\n\ninput UpdatePlanTypeInput {\n  id: ID!\n  name: String\n  cost: Float\n  billingTerm: String\n  active: Int\n}\n\ntype Plan @model {\n  id: ID!\n  accountId: ID!\n  account: Account!\n  ownerId: ID!\n  ownedBy: User!\n  planTypeId: ID!\n  startDate: AWSDateTime!\n  endDate: AWSDateTime\n  active: Int\n  lastBillDate: AWSDateTime\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  planType: PlanType\n  isDeleted: Int\n}\n\ninput AddPlanInput {\n  accountId: ID!\n  planTypeId: ID!\n  endDate: AWSDateTime\n  active: Int\n}\n\ninput UpdatePlanInput {\n  planId: ID!\n  accountId: ID!\n  active: Int!\n  endDate: AWSDateTime\n}\n\ntype IntegrationType @model {\n  id: ID!\n  ownerId: ID!\n  ownedBy: User!\n  planTypeId: ID!\n  planType: PlanType\n  name: String!\n  active: Int!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\n\ninput AddIntegrationTypeInput {\n  name: String!\n  active: Int\n}\n\ninput UpdateIntegrationTypeInput {\n  id: ID!\n  name: String!\n  active: Int\n}\n\ntype Integration @model {\n  id: ID!\n  integrationTypeId: ID!\n  integrationType: IntegrationType\n  ownerId: ID!\n  accountId: ID!\n  formId: ID!\n  form: Form!\n  active: Int!\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  lastExecuted: AWSDateTime\n  lastExecutionResult: Int\n  lastExecutionResultMessage: String\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Int\n}\n\n\ninput AddIntegrationInput {\n  integrationTypeId: ID!\n  accountId: ID!\n  formId: ID!\n  active: Int\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationTypeInputData {\n  active: Int\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationInput {\n  id: ID!\n  active: Int\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput OffsetLimit {\n  offset: Int\n  limit: Int\n}\n\ntype Query {\n  getAccount(accountId: ID!): Account\n  getUser(userId: ID!): User\n  getPlan(planId: String!): Plan\n  getActiveAccountPlan(accountId: String!): Plan\n  getPlanType(planTypeId: String!): PlanType\n  getForm(formId: String!) : Form\n  getFormVersion(versionId: String!) : FormVersion\n  getIntegrationType(integrationTypeId: String!): IntegrationType\n  getIntegration(integrationId: String!): Integration\n  getFormEntry(formEntryId: String!): FormEntry\n  listAccounts(offsetLimit: OffsetLimit, filter: AccountFilterInput, sort: AccountSortInput): [Account]\n  listUsers(offsetLimit: OffsetLimit, filter: UserFilterInput, sort: UserSortInput) : [User]\n  listPlans(offsetLimit: OffsetLimit, filter: PlanFilterInput, sort: PlanSortInput): [Plan]\n  listPlanTypes(offsetLimit: OffsetLimit, filter: PlanTypeFilterInput, sort: PlanTypeSortInput): [PlanType]\n  listForms(offsetLimit: OffsetLimit, filter: FormFilterInput, sort: FormSortInput) : [Form]\n  listFormVersions(offsetLimit: OffsetLimit, filter: FormVersionFilterInput, sort: FormVersionSortInput) : [FormVersion]\n  listIntegrationTypes(offsetLimit: OffsetLimit, filter: IntegrationTypeFilterInput, sort: IntegrationTypeSortInput): [IntegrationType]\n  listIntegrations(offsetLimit: OffsetLimit, filter: IntegrationFilterInput, sort: IntegrationSortInput): [Integration]\n  listFormEntries(offsetLimit: OffsetLimit, formId: String!) : [FormEntry]\n  listFormEntriesByTime(offsetLimit: OffsetLimit, formId: String!, timestampPrefix: String!): [FormEntry]\n}\n\ntype Mutation {\n  addPlanType(input: AddPlanTypeInput): PlanType!\n  addPlan(input: AddPlanInput): Plan!\n  addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!\n  addIntegration(input: AddIntegrationInput): Integration!\n  addForm(input: AddFormInput!): Form!\n  addFormVersion(input: AddFormVersionInput!): Form!\n\n  updatePlanType(input: UpdatePlanTypeInput): PlanType!\n  updatePlan(input: UpdatePlanInput): Plan!\n  updateAccount(input: UpdateAccountInput): Account!\n  updateAccountPlan(input: AddPlanInput): Account!\n  updateUser(input: UpdateUserInput): User!\n  updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!\n  updateIntegration(input: UpdateIntegrationInput): Integration!\n  updateForm(input: UpdateFormInput): Form!\n\n  deleteForm(input: DeleteFormInput!): Form!\n  deletePlanType(planTypeId: ID!): PlanType!\n  deletePlan(accountId: ID!, planId: ID!): Plan!\n  deleteAccount(accountId: ID!): Account!\n  deleteUser(userId: ID!): User!\n  deleteIntegrationType(integrationTypeId: ID!): IntegrationType!\n  deleteIntegration(integrationId: ID!): Integration!\n  deleteFormVersion(input: DeleteFormVersionInput!): FormVersion!\n  addFormEntry(input: AddFormEntryInput!): FormEntry!\n}\n\nschema {\n  query: Query\n  mutation: Mutation\n}",
               "ApiId": {
                 "Fn::GetAtt": [
                   "GraphQlApi",
@@ -4195,7 +4251,7 @@
                   "Name"
                 ]
               },
-              "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_attach_REQ.vtl\"))\n#set($args=$ctx.arguments.input)\n#set($now = \"${util.time.nowISO8601()}\")\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"UPDATE Form SET versionId=:versionId, updatedAt=:updatedAt WHERE id=:formId\",\n        \"SELECT * FROM Form WHERE id=:formId\"\n    ],\n    \"variableMap\" : {\n        \":versionId\": \"${ctx.prev.result.id}\",\n        \":updatedAt\": \"${now}\",\n        \":formId\"   : \"${args.formId}\"\n    }\n}",
+              "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_attach_REQ.vtl\"))\n#set($args=$ctx.arguments.input)\n#set($now = \"${util.time.nowISO8601()}\")\n#set($identity=$ctx.stash.identity)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed)\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"UPDATE Form SET versionId=:versionId, updatedAt=:updatedAt WHERE id=:formId AND accountId=:accountId\",\n            \"SELECT * FROM Form WHERE id=:formId\"\n        ],\n        \"variableMap\" : {\n            \":versionId\": \"${args.versionId}\",\n            \":updatedAt\": \"${now}\",\n            \":formId\"   : \"${args.formId}\",\n            \":accountId\": \"${args.accountId}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [POST] on [Form]\", \"Unauthorized\")\n#end",
               "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_upsert_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
               "FunctionVersion": "2018-05-29"
             }
@@ -4237,7 +4293,7 @@
                   "Name"
                 ]
               },
-              "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_add_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed)\n    #set($versionId = $util.autoId())\n    #set($now = \"${util.time.nowISO8601()}\")\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $versionId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"INSERT INTO FormVersion(id, formId, ownerId, accountId, notes, createdAt, formData) VALUES(:id, :formId, :ownerId, :accountId, :notes, :createdAt, :formData)\",\n            \"SELECT * FROM FormVersion WHERE id='${versionId}'\"\n        ],\n        \"variableMap\": {\n            \":id\": \"${versionId}\",\n            \":accountId\" : \"${args.accountId}\",\n            \":formId\": \"${args.formId}\",\n            \":ownerId\": \"${identity.callerId}\",\n            \":notes\": \"$util.escapeJavaScript($args.notes)\",\n            \":createdAt\": \"${now}\",\n            \":formData\": \"${util.escapeJavaScript($util.toJson($args.formData))}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on [FormVersion]\", \"Unauthorized\")\n#end",
+              "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_add_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed)\n    #set($versionId = $util.autoId())\n    #set($now = \"${util.time.nowISO8601()}\")\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $versionId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"INSERT INTO FormVersion(id, formId, ownerId, accountId, notes, createdAt, formData) VALUES(:id, :formId, :ownerId, :accountId, :notes, :createdAt, :formData)\",\n            \"SELECT * FROM Form WHERE id=:formId\"\n        ],\n        \"variableMap\": {\n            \":id\": \"${versionId}\",\n            \":accountId\" : \"${args.accountId}\",\n            \":formId\": \"${args.formId}\",\n            \":ownerId\": \"${identity.callerId}\",\n            \":notes\": \"$util.escapeJavaScript($args.notes)\",\n            \":createdAt\": \"${now}\",\n            \":formData\": \"${util.escapeJavaScript($util.toJson($args.formData))}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on [FormVersion]\", \"Unauthorized\")\n#end",
               "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_upsert_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
               "FunctionVersion": "2018-05-29"
             }
@@ -4901,12 +4957,6 @@
                       "GraphQlFunctionConfigurationFNaddFormVersion",
                       "FunctionId"
                     ]
-                  },
-                  {
-                    "Fn::GetAtt": [
-                      "GraphQlFunctionConfigurationFNattachFormVersion",
-                      "FunctionId"
-                    ]
                   }
                 ]
               }
@@ -5380,6 +5430,14 @@
                 "GraphQLUrl"
               ]
             }
+          },
+          "GraphQlApiKeyDefault": {
+            "Value": {
+              "Fn::GetAtt": [
+                "GraphQlApiKeyDefault",
+                "ApiKey"
+              ]
+            }
           }
         }
       },
@@ -5441,6 +5499,11 @@
       "appSync": {
         "name": "formsli-api-dev",
         "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+        "additionalAuthenticationProviders": [
+          {
+            "authenticationType": "API_KEY"
+          }
+        ],
         "userPoolConfig": {
           "awsRegion": "ap-northeast-1",
           "defaultAction": "ALLOW",
@@ -5706,8 +5769,7 @@
             "request": "Common_REQ.vtl",
             "response": "Common_RES.vtl",
             "functions": [
-              "FN_addFormVersion",
-              "FN_attachFormVersion"
+              "FN_addFormVersion"
             ]
           },
           {
@@ -6949,6 +7011,45 @@
               }
             ]
           }
+        },
+        "ssmAppsyncApiId": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/graphql/api/id",
+            "Value": {
+              "Fn::GetAtt": [
+                "GraphQlApi",
+                "ApiId"
+              ]
+            },
+            "Type": "String"
+          }
+        },
+        "ssmAppsyncUrl": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/graphql/api/url",
+            "Value": {
+              "Fn::GetAtt": [
+                "GraphQlApi",
+                "GraphQLUrl"
+              ]
+            },
+            "Type": "String"
+          }
+        },
+        "ssmAppsyncApiKey": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/graphql/api/key",
+            "Value": {
+              "Fn::GetAtt": [
+                "GraphQlApiKeyDefault",
+                "ApiKey"
+              ]
+            },
+            "Type": "String"
+          }
         }
       },
       "Outputs": {
@@ -7008,7 +7109,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli/dev/1568868413927-2019-09-19T04:46:53.927Z",
+    "artifactDirectoryName": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z",
     "artifact": ""
   }
 }

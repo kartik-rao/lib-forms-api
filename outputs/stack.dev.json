@@ -5,6 +5,7 @@
   "SignupLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-dev-invite:69",
   "ServerlessDeploymentBucketName": "formsli-dev-serverlessdeploymentbucket-bm92t1cn4gv4",
   "GraphQlApiUrl": "https://ugn2kqey75aolcnah6vtnbuydi.appsync-api.ap-northeast-1.amazonaws.com/graphql",
+  "GraphQlApiKeyDefault": "da2-ddco74plobfnnirpuqsjazxdxy",
   "CreateEntryStreamLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-dev-form-create-stream:11",
   "FormEntryLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-dev-form-entry:53",
   "Stage": "dev",
