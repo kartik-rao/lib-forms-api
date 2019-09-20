@@ -250,6 +250,12 @@ input AddFormVersionInput {
   formData: AWSJSON!
 }
 
+input DeleteFormVersionInput {
+  accountId: ID!
+  formId: ID!
+  versionId: ID!
+}
+
 type Form @model  {
   id: ID!
   ownerId: ID!
@@ -561,14 +567,14 @@ type Mutation {
   updateIntegration(input: UpdateIntegrationInput): Integration!
   updateForm(input: UpdateFormInput): Form!
 
-  deleteForm(input: DeleteFormInput): Form!
+  deleteForm(input: DeleteFormInput!): Form!
   deletePlanType(planTypeId: ID!): PlanType!
   deletePlan(accountId: ID!, planId: ID!): Plan!
   deleteAccount(accountId: ID!): Account!
   deleteUser(userId: ID!): User!
   deleteIntegrationType(integrationTypeId: ID!): IntegrationType!
   deleteIntegration(integrationId: ID!): Integration!
-
+  deleteFormVersion(input: DeleteFormVersionInput!): FormVersion!
   addFormEntry(input: AddFormEntryInput!): FormEntry!
 }
 
