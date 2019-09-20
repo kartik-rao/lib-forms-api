@@ -130,6 +130,11 @@
   request: FormVersion_add_REQ.vtl
   response: Common_FN_upsert_RES.vtl
 - dataSource: AppData
+  type: Mutation
+  name: FN_deleteFormVersion
+  request: FormVersion_delete_REQ.vtl
+  response: Common_FN_delete_RES.vtl
+- dataSource: AppData
   type: Query
   name: FN_getFormVersion
   request: FormVersion_get_REQ.vtl
