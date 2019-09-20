@@ -279,7 +279,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1568953701747-2019-09-20T04:28:21.747Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-process-entries",
               "Handler": "src/processentries.handle",
@@ -386,7 +386,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1568953701747-2019-09-20T04:28:21.747Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-create-stream",
               "Handler": "src/createstream.handle",
@@ -492,7 +492,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1568953701747-2019-09-20T04:28:21.747Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-auth-ftp",
               "Handler": "src/authftp.handle",
@@ -598,7 +598,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1568953701747-2019-09-20T04:28:21.747Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-json",
               "Handler": "src/form.handle",
@@ -704,7 +704,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1568953701747-2019-09-20T04:28:21.747Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-entry",
               "Handler": "src/formentry.handle",
@@ -810,7 +810,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1568953701747-2019-09-20T04:28:21.747Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-view",
               "Handler": "src/formview.handle",
@@ -916,7 +916,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1568953701747-2019-09-20T04:28:21.747Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-postconfirmation",
               "Handler": "src/postconfirmation.handle",
@@ -1022,7 +1022,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1568953701747-2019-09-20T04:28:21.747Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-invite",
               "Handler": "src/invite.handle",
@@ -1987,7 +1987,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1568952787398": {
+          "ApiGatewayDeployment1568953675301": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -2301,7 +2301,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z/custom-resources.zip"
+                "S3Key": "serverless/formsli/dev/1568953701747-2019-09-20T04:28:21.747Z/custom-resources.zip"
               },
               "FunctionName": "formsli-dev-custom-resource-existing-cup",
               "Handler": "cognitoUserPool/handler.handler",
@@ -3756,7 +3756,7 @@
                 ]
               },
               "Description": "serverless-appsync-plugin: AppSync API Key for GraphQlApiKeyDefault",
-              "Expires": 1600488820
+              "Expires": 1600489707
             }
           },
           "GraphQlSchema": {
@@ -4295,6 +4295,27 @@
               },
               "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_add_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed)\n    #set($versionId = $util.autoId())\n    #set($now = \"${util.time.nowISO8601()}\")\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $versionId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"INSERT INTO FormVersion(id, formId, ownerId, accountId, notes, createdAt, formData) VALUES(:id, :formId, :ownerId, :accountId, :notes, :createdAt, :formData)\",\n            \"SELECT * FROM Form WHERE id=:formId\"\n        ],\n        \"variableMap\": {\n            \":id\": \"${versionId}\",\n            \":accountId\" : \"${args.accountId}\",\n            \":formId\": \"${args.formId}\",\n            \":ownerId\": \"${identity.callerId}\",\n            \":notes\": \"$util.escapeJavaScript($args.notes)\",\n            \":createdAt\": \"${now}\",\n            \":formData\": \"${util.escapeJavaScript($util.toJson($args.formData))}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on [FormVersion]\", \"Unauthorized\")\n#end",
               "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_upsert_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
+              "FunctionVersion": "2018-05-29"
+            }
+          },
+          "GraphQlFunctionConfigurationFNdeleteFormVersion": {
+            "Type": "AWS::AppSync::FunctionConfiguration",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "Name": "GraphQlFunctionConfigurationFNdeleteFormVersion",
+              "DataSourceName": {
+                "Fn::GetAtt": [
+                  "GraphQlDsAppData",
+                  "Name"
+                ]
+              },
+              "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_delete_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed)\n    #set($now = \"${util.time.nowISO8601()}\")\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $args.versionId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n    $util.qr($ctx.stash.put(\"operation\", 'delete'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"SELECT * FROM FormVersion WHERE id=:versionId\",\n            \"DELETE FROM FormVersion WHERE NOT EXISTS(SELECT NULL FROM Form f WHERE id=:formId and accountId=:accountId and f.versionId=:versionId) AND id=:versionId\"\n        ],\n        \"variableMap\": {\n            \":versionId\": \"${versionId}\",\n            \":accountId\" : \"${args.accountId}\",\n            \":formId\": \"${args.formId}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [DELETE] on [FormVersion]\", \"Unauthorized\")\n#end\n\n",
+              "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_delete_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.error(\"${request.itemType} [${request.id}] not found\", 'NotFound')\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
               "FunctionVersion": "2018-05-29"
             }
           },
@@ -4955,6 +4976,33 @@
                   {
                     "Fn::GetAtt": [
                       "GraphQlFunctionConfigurationFNaddFormVersion",
+                      "FunctionId"
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          "GraphQlResolverMutationdeleteFormVersion": {
+            "Type": "AWS::AppSync::Resolver",
+            "DependsOn": "GraphQlSchema",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "TypeName": "Mutation",
+              "FieldName": "deleteFormVersion",
+              "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+              "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+              "Kind": "PIPELINE",
+              "PipelineConfig": {
+                "Functions": [
+                  {
+                    "Fn::GetAtt": [
+                      "GraphQlFunctionConfigurationFNdeleteFormVersion",
                       "FunctionId"
                     ]
                   }
@@ -5774,6 +5822,17 @@
           },
           {
             "dataSource": "AppData",
+            "type": "Mutation",
+            "field": "deleteFormVersion",
+            "kind": "PIPELINE",
+            "request": "Common_REQ.vtl",
+            "response": "Common_RES.vtl",
+            "functions": [
+              "FN_deleteFormVersion"
+            ]
+          },
+          {
+            "dataSource": "AppData",
             "type": "Query",
             "field": "listForms",
             "kind": "PIPELINE",
@@ -6054,6 +6113,13 @@
             "name": "FN_addFormVersion",
             "request": "FormVersion_add_REQ.vtl",
             "response": "Common_FN_upsert_RES.vtl"
+          },
+          {
+            "dataSource": "AppData",
+            "type": "Mutation",
+            "name": "FN_deleteFormVersion",
+            "request": "FormVersion_delete_REQ.vtl",
+            "response": "Common_FN_delete_RES.vtl"
           },
           {
             "dataSource": "AppData",
@@ -7109,7 +7175,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli/dev/1568952814624-2019-09-20T04:13:34.624Z",
+    "artifactDirectoryName": "serverless/formsli/dev/1568953701747-2019-09-20T04:28:21.747Z",
     "artifact": ""
   }
 }
