@@ -190,7 +190,14 @@
   response: Common_RES.vtl
   functions:
     - FN_addFormVersion
-    - FN_attachFormVersion
+- dataSource: AppData
+  type: Mutation
+  field: deleteFormVersion
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_deleteFormVersion
 - dataSource: AppData
   type: Query
   field: listForms
