@@ -25,6 +25,7 @@ $util.qr($ctx.stash.paths.add("FormVersion_add_REQ.vtl"))
             ":accountId" : "${args.accountId}",
             ":formId": "${args.formId}",
             ":ownerId": "${identity.callerId}",
+            ":displayName" : "${args.displayName}",
             ":notes": "$util.escapeJavaScript($args.notes)",
             ":createdAt": "${now}",
             ":formData": "${util.escapeJavaScript($util.toJson($args.formData))}"

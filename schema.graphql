@@ -226,6 +226,7 @@ type FormVersion @model {
   ownerId: ID!
   ownedBy: User!
   createdAt: AWSDateTime
+  displayName: String!
   notes: String
   formData: AWSJSON!
 }
@@ -246,6 +247,7 @@ input FormVersionSortInput {
 input AddFormVersionInput {
   accountId: ID!
   formId: ID!
+  displayName: String!
   notes: String!
   formData: AWSJSON!
 }
@@ -262,6 +264,7 @@ type Form @model  {
   name: String!
   description: String!
   versionId: ID
+  versionActivatedDate: AWSDateTime
   version: FormVersion
   ownedBy: User!
   accountId: ID!
@@ -269,8 +272,8 @@ type Form @model  {
   createdAt: AWSDateTime!
   updatedAt: AWSDateTime
   startDate: AWSDateTime
-  endDate  : AWSDateTime
-  isPaused : Int
+  endDate: AWSDateTime
+  isPaused: Int
   isDeleted: Int
   redirectNotStarted: AWSURL
   redirectHasEnded : AWSURL

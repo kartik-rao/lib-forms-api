@@ -147,6 +147,7 @@ CREATE TABLE  IF NOT EXISTS Integration (
 DROP TABLE IF EXISTS FormVersion;
 CREATE TABLE  IF NOT EXISTS FormVersion (
     id VARCHAR(36) NOT NULL,
+    displayName varchar(256) NOT NULL,
     formId VARCHAR(36) NOT NULL,
     accountId VARCHAR(36) NOT NULL,
     ownerId VARCHAR(36) NOT NULL,
@@ -166,6 +167,7 @@ CREATE TABLE  IF NOT EXISTS Form (
     id VARCHAR(36) NOT NULL,
     ownerId VARCHAR(36) NOT NULL,
     versionId VARCHAR(36) NULL,
+    versionActivatedDate VARCHAR(27),
     accountId VARCHAR(36) NOT NULL,
     `name` varchar(256),
     `description` varchar(512),
