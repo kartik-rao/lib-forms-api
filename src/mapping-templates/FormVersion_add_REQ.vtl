@@ -18,7 +18,7 @@ $util.qr($ctx.stash.paths.add("FormVersion_add_REQ.vtl"))
         "version": "2018-05-29",
         "statements": [
             "INSERT INTO FormVersion(id, formId, ownerId, accountId, notes, createdAt, formData) VALUES(:id, :formId, :ownerId, :accountId, :notes, :createdAt, :formData)",
-            "SELECT * FROM FormVersion WHERE id='${versionId}'"
+            "SELECT * FROM Form WHERE id=:formId"
         ],
         "variableMap": {
             ":id": "${versionId}",
