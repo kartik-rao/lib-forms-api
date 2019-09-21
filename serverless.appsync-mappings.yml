@@ -192,6 +192,14 @@
     - FN_addFormVersion
 - dataSource: AppData
   type: Mutation
+  field: attachFormVersion
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_attachFormVersion
+- dataSource: AppData
+  type: Mutation
   field: deleteFormVersion
   kind: PIPELINE
   request: Common_REQ.vtl
@@ -247,6 +255,12 @@
   field: ownedBy
   request: Common_Owner_get_REQ.vtl
   response: Common_Owner_get_RES.vtl
+# FormEntry
+- dataSource: AppData
+  type: Mutation
+  field: addFormEntry
+  request: FormEntry_add_REQ.vtl
+  response: FormEntry_add_RES.vtl
 
 ## PlanType
 - dataSource: AppData
