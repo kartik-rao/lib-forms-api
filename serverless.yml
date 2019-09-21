@@ -41,6 +41,9 @@ provider:
     dbClusterId    : ${ssm:/${self:provider.stage}/formsli/rds/id}
     dbClusterArn   : "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:${self:provider.environment.dbClusterId}"
     dbClusterSecretArn : ${ssm:/${self:provider.stage}/formsli/rds/password/secret}
+    graphqlApiId       : ${ssm:/${self:provider.stage}/formsli/graphql/api/id}
+    graphqlApiUrl      : ${ssm:/${self:provider.stage}/formsli/graphql/api/url}
+    graphqlApiKey      : ${ssm:/${self:provider.stage}/formsli/graphql/api/key}
     s3_user_bucket     : ${ssm:/${self:provider.stage}/formsli/s3/buckets/user/id}
     s3_app_bucket      : ${ssm:/${self:provider.stage}/formsli/s3/buckets/app/id}
     sqs_entry          : ${self:service}-${self:provider.stage}-entry-queue
@@ -264,6 +267,18 @@ functions:
           - sqs:ListQueues
         Resource : 
           - { Fn::GetAtt: [EntryQueue, Arn] }
+      - Effect: "Allow"
+        Action:
+          - "ssm:GetParameter"
+          - "ssm:GetParameters"
+          - "ssm:GetParametersByPath"
+        Resource:
+          - "arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:provider.stage}/${self:service}/graphql/*"
+      - Effect: "Allow"
+        Action:
+          - "appsync:GraphQL"
+        Resource:
+          - "arn:aws:appsync:#{AWS::Region}:#{AWS::AccountId}:apis/${self:provider.environment.graphqlApiId}/types/Mutation/fields/addFormEntry"
   formView:
     name: ${self:provider.functions.formview}
     handler: src/formview.handle
