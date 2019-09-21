@@ -20,7 +20,7 @@ $util.qr($ctx.stash.paths.add("FormVersion_delete_REQ.vtl"))
             "DELETE FROM FormVersion WHERE NOT EXISTS(SELECT NULL FROM Form f WHERE id=:formId and accountId=:accountId and f.versionId=:versionId) AND id=:versionId"
         ],
         "variableMap": {
-            ":versionId": "${versionId}",
+            ":versionId": "${args.versionId}",
             ":accountId" : "${args.accountId}",
             ":formId": "${args.formId}"
         }

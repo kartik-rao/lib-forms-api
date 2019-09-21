@@ -16,7 +16,7 @@ $util.qr($ctx.stash.paths.add("FormVersion_attach_REQ.vtl"))
     {
         "version": "2018-05-29",
         "statements": [
-            "UPDATE Form SET versionId=:versionId, updatedAt=:updatedAt WHERE id=:formId AND accountId=:accountId",
+            "UPDATE Form SET versionId=:versionId, updatedAt=:updatedAt, versionActivatedDate=:versionActivatedDate WHERE id=:formId AND accountId=:accountId",
             "SELECT * FROM Form WHERE id=:formId"
         ],
         "variableMap" : {
