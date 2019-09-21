@@ -215,7 +215,14 @@ type FormEntry @model {
   createdAt: AWSDateTime!
 }
 
+type FormEntrySansData {
+  id: ID!
+  formId: ID!
+  createdAt: AWSDateTime!
+}
+
 input AddFormEntryInput {
+  formId: ID!
   data: AWSJSON!
 }
 
@@ -250,6 +257,12 @@ input AddFormVersionInput {
   displayName: String!
   notes: String!
   formData: AWSJSON!
+}
+
+input AttachFormVersionInput {
+  formId: ID!
+  versionId: ID!
+  accountId: ID!
 }
 
 input DeleteFormVersionInput {
@@ -560,6 +573,7 @@ type Mutation {
   addIntegration(input: AddIntegrationInput): Integration!
   addForm(input: AddFormInput!): Form!
   addFormVersion(input: AddFormVersionInput!): Form!
+  attachFormVersion(input: AttachFormVersionInput!) : Form!
 
   updatePlanType(input: UpdatePlanTypeInput): PlanType!
   updatePlan(input: UpdatePlanInput): Plan!
@@ -578,7 +592,8 @@ type Mutation {
   deleteIntegrationType(integrationTypeId: ID!): IntegrationType!
   deleteIntegration(integrationId: ID!): Integration!
   deleteFormVersion(input: DeleteFormVersionInput!): FormVersion!
-  addFormEntry(input: AddFormEntryInput!): FormEntry!
+  addFormEntry(input: AddFormEntryInput!): FormEntrySansData!
+  @aws_api_key
 }
 
 schema {
