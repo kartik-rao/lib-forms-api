@@ -146,6 +146,23 @@ Resources:
                 "sts:ExternalId": "#{AWS::AccountId}"
     DependsOn:
       - KinesisAccessPolicy
+  # LambdaAppsyncIamUser:
+  #   Type: "AWS::IAM::AccessKey"
+  #   Properties:
+  #     UserName: ${self:provider.stage}-${self.provider.service}-appsync-user
+  # SsmAppsyncUserAccessKey:
+  #   Type : "AWS::SSM::Parameter"
+  #   Properties:
+  #     Name: "/${self:provider.stage}/formsli/graphql/api/user/accesskeyid"
+  #     Value:
+  #       - Ref: AccessKeyId
+  #     Type: String
+  # SsmAppsyncUserSecretAccessKey:
+  #   Type : "AWS::SSM::Parameter"
+  #   Properties:
+  #     Name: "/${self:provider.stage}/formsli/graphql/api/user/secretaccesskey"
+  #     Value: { Fn::GetAtt: [LambdaAppsyncIamUser, SecretAccessKey] }
+  #     Type: String
 Outputs:
   Region:
     Value: ${self:provider.region}
