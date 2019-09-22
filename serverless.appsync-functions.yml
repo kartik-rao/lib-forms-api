@@ -123,7 +123,7 @@
   name: FN_deleteForm
   request: Form_delete_REQ.vtl
   response: Common_FN_delete_RES.vtl
- ## FormVersion
+## FormVersion
 - dataSource: AppData
   type: Mutation
   name: FN_addFormVersion
@@ -139,3 +139,9 @@
   name: FN_getFormVersion
   request: FormVersion_get_REQ.vtl
   response: FormVersion_get_RES.vtl
+## FormEntry
+- dataSource: AppData
+  type: Query
+  name: FN_listFormEntry
+  request: FormEntry_list_REQ.vtl
+  response: Common_FN_list_RES.vtl
