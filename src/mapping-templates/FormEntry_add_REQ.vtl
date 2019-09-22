@@ -1,9 +1,9 @@
 $util.qr($ctx.stash.put("paths", []))
 $util.qr($ctx.stash.paths.add("FormEntry_add_REQ.vtl"))
 #set($args=$ctx.arguments.input)
-#set($entryId = $util.autoId())
 #set($now = "${util.time.nowISO8601()}")
 
+#set($entryId = $util.defaultIfNull($args.id, $util.autoId()))
 $util.qr($ctx.stash.put("request", $args))
 $util.qr($ctx.stash.request.put("id", $entryId))
 $util.qr($ctx.stash.request.put("itemType", 'FormEntry'))

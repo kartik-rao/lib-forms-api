@@ -215,13 +215,14 @@ type FormEntry @model {
   createdAt: AWSDateTime!
 }
 
-type FormEntrySansData {
+type FormEntrySansData @aws_api_key {
   id: ID!
   formId: ID!
   createdAt: AWSDateTime!
 }
 
 input AddFormEntryInput {
+  id: ID!
   formId: ID!
   data: AWSJSON!
 }

@@ -22,8 +22,11 @@ provider:
     formjson      : ${self:service}-${self:provider.stage}-form-json
     formview      : ${self:service}-${self:provider.stage}-form-view
     authftp       : ${self:service}-${self:provider.stage}-auth-ftp
-    processEntries: ${self:service}-${self:provider.stage}-form-process-entries
     createEntryStream : ${self:service}-${self:provider.stage}-form-create-stream
+    sqs_fn_appsync     : ${self:service}-${self:provider.stage}-put-appsync
+    sqs_fn_firehose    : ${self:service}-${self:provider.stage}-put-firehose
+    sqs_fn_analytics   : ${self:service}-${self:provider.stage}-put-analytics
+    sqs_fn_integration : ${self:service}-${self:provider.stage}-integration
   profile: fl-infrastructure
   environment:
     region         : ${self:provider.region}
@@ -49,11 +52,17 @@ provider:
     s3_user_bucket     : ${ssm:/${self:provider.stage}/formsli/s3/buckets/user/id}
     s3_app_bucket      : ${ssm:/${self:provider.stage}/formsli/s3/buckets/app/id}
     sqs_entry          : ${self:service}-${self:provider.stage}-entry-queue
+    sqs_firehose       : ${self:service}-${self:provider.stage}-firehose-queue
     sqs_integration    : ${self:service}-${self:provider.stage}-integration-queue
+    sqs_analytics      : ${self:service}-${self:provider.stage}-analytics-queue
     sqs_entry_url      :
       Ref: EntryQueue
     sqs_integration_url:
       Ref: IntegrationQueue
+    sqs_firehose_url:
+      Ref: FirehoseQueue
+    sqs_analytics_url:
+      Ref: AnalyticsQueue
     sftp_server_id     : { Fn::GetAtt: [SftpServer, ServerId] }
     sftp_server_arn    : { Fn::GetAtt: [SftpServer, Arn] }
     sftp_role_arn      : { Fn::GetAtt: [SftpUserRole, Arn] }
@@ -72,6 +81,13 @@ provider:
         - "xray:PutTraceSegments"
       Resource:
         - "*"
+    - Effect: "Allow"
+      Action:
+        - "ssm:GetParameter"
+        - "ssm:GetParameters"
+        - "ssm:GetParametersByPath"
+      Resource:
+        - "arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:provider.stage}/${self:service}/*"
 
 plugins:
   - serverless-webpack
@@ -144,9 +160,40 @@ custom:
     substitutions:
 
 functions:
-  processEntries:
-    name: ${self:provider.functions.processEntries}
-    handler: src/processentries.handle
+  sqs_fn_firehose:
+    name: ${self:provider.functions.sqs_fn_firehose}
+    handler: src/sqs_fn_firehose.handle
+    reservedConcurrency: 10
+    events:
+      - sqs: 
+          arn:
+            Fn::GetAtt:
+              - FirehoseQueue
+              - Arn
+          enabled: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - sqs:ReceiveMessage
+          - sqs:DeleteMessage
+          - sqs:GetQueueAttributes
+        Resource : 
+          - { Fn::GetAtt: [FirehoseQueue, Arn] }
+      - Effect: Allow
+        Action:
+          - firehose:putRecord
+          - firehose:putRecordBatch
+        Resource : 
+          - "*"
+      - Effect: "Allow"
+        Action:
+          - "iam:passRole"
+          - "iam:getRole"
+        Resource:
+          - { Fn::GetAtt: [KinesisAccessRole, Arn] }
+  sqs_fn_appsync: 
+    name: ${self:pvider.functions.sqs_fn_appsync} 
+    handler: src/sqs_fn_appsync.handle
     reservedConcurrency: 10
     events:
       - sqs: 
@@ -163,25 +210,6 @@ functions:
           - sqs:GetQueueAttributes
         Resource : 
           - { Fn::GetAtt: [EntryQueue, Arn] }
-      - Effect: Allow
-        Action:
-          - firehose:putRecord
-          - firehose:putRecordBatch
-        Resource : 
-          - "*"
-      - Effect: "Allow"
-        Action:
-          - "iam:passRole"
-          - "iam:getRole"
-        Resource:
-          - { Fn::GetAtt: [KinesisAccessRole, Arn] }
-      - Effect: "Allow"
-        Action:
-          - "ssm:GetParameter"
-          - "ssm:GetParameters"
-          - "ssm:GetParametersByPath"
-        Resource:
-          - "arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:provider.stage}/${self:service}/graphql/*"
       - Effect: "Allow"
         Action:
           - "appsync:GraphQL"

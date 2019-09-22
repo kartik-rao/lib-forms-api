@@ -4,10 +4,17 @@ process.env.TZ = 'UTC';
 
 import {APIGatewayEventRequestContext, APIGatewayEvent} from 'aws-lambda';
 import {EntryMessageAttributeMap, EntryMessageBody} from "./common/Entry";
+import {parallel} from "async";
 
-const Region        = process.env.region;
-const QueueUrl      = process.env.sqs_entry_url;
-const ServiceName   = process.env.serviceName;
+const Env                 = process.env.environment;
+const ServiceName         = process.env.serviceName;
+const Region              = process.env.region;
+const EntryQueueUrl       = process.env.sqs_entry_url;
+const FirehoseQueueUrl    = process.env.sqs_firehose_url;
+const IntegrationQueueUrl = process.env.sqs_integration_url;
+const AnalyticsQueueUrl   = process.env.sqs_integration_url;
+
+const isDebug = Env !== "production";
 
 const CORS_HEADERS = {
     "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
@@ -55,12 +62,33 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
         return;
     }
 
-    let entryQueue = new AWS.SQS({region: Region});
-    try {
-        await entryQueue.sendMessage({MessageBody: JSON.stringify(queueData),  QueueUrl: QueueUrl, MessageAttributes: attributes}).promise();
-        callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({message: "OK", status:202, id: requestId, timestamp: requestTime})});
-    } catch (e) {
-        console.log(`${ServiceName} - formrender.handle ERROR`, e);
-        callback(null, {statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({message: "InternalServerError", status: 500, requestId: requestId})});
-    }
+    let sqs = new AWS.SQS({region: Region});
+    let baseMessage = {MessageBody: JSON.stringify(queueData),  MessageAttributes: attributes};
+
+    let sendMessageAsync = (message: any) => {
+        return async (callback) => {
+            try {
+                isDebug && console.log(`${ServiceName} - formentry.handle.sendMessageAsync SEND [${message.QueueUrl}]`);
+                let response = await sqs.sendMessage(message).promise();
+                callback(null, response);
+            } catch (error) {
+                console.log(`${ServiceName} - formentry.handle.sendMessageAsync ERROR [${message.QueueUrl}]`, error);
+                callback(error);
+            }
+        }
+    };
+
+    parallel({
+        entry: sendMessageAsync({...baseMessage,  QueueUrl: EntryQueueUrl}),
+        firehose: sendMessageAsync({...baseMessage,  QueueUrl: FirehoseQueueUrl}),
+        analytics: sendMessageAsync({...baseMessage,  QueueUrl: AnalyticsQueueUrl}),
+        integration: sendMessageAsync({...baseMessage,  QueueUrl: IntegrationQueueUrl})
+    }, (err) => {
+        if(err) {
+            console.log(`${ServiceName} - formentry.handle ERROR - SQS.parallel`, err);
+            callback(null, {statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({message: "InternalServerError", status: 500, requestId: requestId})});
+        } else {
+            callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({message: "OK", status:202, id: requestId, timestamp: requestTime})});
+        }
+    });
 }

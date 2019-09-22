@@ -3,16 +3,29 @@ Resources:
     Type: "AWS::SQS::Queue"
     Properties:
       QueueName: ${self:provider.environment.sqs_entry}
+  FirehoseQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: ${self:provider.environment.sqs_firehose}
+  AnalyticsQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: ${self:provider.environment.sqs_analytics}
   IntegrationQueue:
     Type: "AWS::SQS::Queue"
     Properties:
       QueueName: ${self:provider.environment.sqs_integration}
-
 # Print out the queue names
 Outputs:
-  IntegrationQueue:
+  FirehoseQueue:
     Value:
-      Ref: IntegrationQueue
+      Ref: FirehoseQueue
   EntryQueue:
     Value:
       Ref: EntryQueue
+  IntegrationQueue:
+    Value:
+      Ref: IntegrationQueue
+  AnalyticsQueue:
+    Value:
+      Ref: AnalyticsQueue
