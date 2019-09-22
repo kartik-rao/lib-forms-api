@@ -4,7 +4,6 @@ process.env.TZ = 'UTC';
 
 import {APIGatewayEventRequestContext, APIGatewayEvent} from 'aws-lambda';
 import {EntryMessageAttributeMap, EntryMessageBody} from "./common/Entry";
-import {parallel} from "async";
 
 const Env                 = process.env.environment;
 const ServiceName         = process.env.serviceName;
@@ -26,6 +25,12 @@ const CORS_HEADERS = {
 import _AWS from 'aws-sdk';
 import XRay from 'aws-xray-sdk';
 const AWS = XRay.captureAWS(_AWS);
+import dayjs from "dayjs";
+import customParseFormat from 'dayjs/plugin/customParseFormat'
+import utc from 'dayjs/plugin/utc'
+
+dayjs.extend(utc)
+dayjs.extend(customParseFormat)
 
 import {getDeliveryStreamName} from "./common/firehose";
 import { MessageAttributeValue } from 'aws-sdk/clients/sqs';
@@ -49,9 +54,10 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
         "StreamName" : {DataType: "String", StringValue: streamName}
     };
 
+    // 22/Sep/2019:08:15:50 +0000
     let queueData: EntryMessageBody = {
         __RequestId: requestId,
-        __RequestTimestamp: requestTime,
+        __RequestTimestamp: dayjs(requestTime, 'DD/MMM/YYYY:HH:mm:ss ZZ').utc().format(),
         __RequestIpAddress : identity.sourceIp,
         __RequestUserAgent: identity.userAgent,
         Payload : event.body
@@ -64,31 +70,18 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
 
     let sqs = new AWS.SQS({region: Region});
     let baseMessage = {MessageBody: JSON.stringify(queueData),  MessageAttributes: attributes};
+    isDebug && console.log(`${ServiceName} - formentry.handle.sendMessageAsync SEND`);
 
-    let sendMessageAsync = (message: any) => {
-        return async (callback) => {
-            try {
-                isDebug && console.log(`${ServiceName} - formentry.handle.sendMessageAsync SEND [${message.QueueUrl}]`);
-                let response = await sqs.sendMessage(message).promise();
-                callback(null, response);
-            } catch (error) {
-                console.log(`${ServiceName} - formentry.handle.sendMessageAsync ERROR [${message.QueueUrl}]`, error);
-                callback(error);
-            }
-        }
-    };
-
-    parallel({
-        entry: sendMessageAsync({...baseMessage,  QueueUrl: EntryQueueUrl}),
-        firehose: sendMessageAsync({...baseMessage,  QueueUrl: FirehoseQueueUrl}),
-        analytics: sendMessageAsync({...baseMessage,  QueueUrl: AnalyticsQueueUrl}),
-        integration: sendMessageAsync({...baseMessage,  QueueUrl: IntegrationQueueUrl})
-    }, (err) => {
-        if(err) {
-            console.log(`${ServiceName} - formentry.handle ERROR - SQS.parallel`, err);
-            callback(null, {statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({message: "InternalServerError", status: 500, requestId: requestId})});
-        } else {
-            callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({message: "OK", status:202, id: requestId, timestamp: requestTime})});
-        }
-    });
+    try {
+        await Promise.all([
+            sqs.sendMessage({...baseMessage,  QueueUrl: EntryQueueUrl}).promise(),
+            sqs.sendMessage({...baseMessage,  QueueUrl: FirehoseQueueUrl}).promise(),
+            sqs.sendMessage({...baseMessage,  QueueUrl: AnalyticsQueueUrl}).promise(),
+            sqs.sendMessage({...baseMessage,  QueueUrl: IntegrationQueueUrl}).promise()
+        ]);
+        callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({message: "OK", status:202, id: requestId, timestamp: requestTime})});
+    } catch (error) {
+        console.log(`${ServiceName} - formentry.handle ERROR - SQS.parallel`, error);
+        callback(null, {statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({message: "InternalServerError", status: 500, requestId: requestId})});
+    }
 }
