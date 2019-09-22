@@ -310,6 +310,9 @@ functions:
           - sqs:ListQueues
         Resource : 
           - { Fn::GetAtt: [EntryQueue, Arn] }
+          - { Fn::GetAtt: [AnalyticsQueue, Arn] }
+          - { Fn::GetAtt: [IntegrationQueue, Arn] }
+          - { Fn::GetAtt: [FirehoseQueue, Arn] }
   formView:
     name: ${self:provider.functions.formview}
     handler: src/formview.handle
