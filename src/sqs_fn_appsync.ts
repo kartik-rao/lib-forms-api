@@ -37,7 +37,7 @@ export const handle = async (event : SQSEvent, context : APIGatewayEventRequestC
     let firehose = new AWS.Firehose({region: Region});
 
     // Set up Apollo client
-    const client = new AWSAppSyncClient({
+    const appsync = new AWSAppSyncClient({
         url: GraphQlUrl,
         region: Region,
         auth: {
@@ -47,37 +47,41 @@ export const handle = async (event : SQSEvent, context : APIGatewayEventRequestC
         disableOffline: true
     });
 
+    const mutation = gql(`mutation AddFormEntry($input: AddFormEntryInput!) {
+        addFormEntry(input: $input) {
+          id
+          formId
+          createdAt
+        }
+    }`);
+
     try {
-        isDebug && console.log(`${ServiceName} - sqs_fn_appsync.handle - hydrated appsync client`);
-        client.hydrated().then((client) => {
-            const mutation = gql(`mutation AddFormEntry($input: AddFormEntryInput!) {
-                addFormEntry(input: $input) {
-                  id
-                  formId
-                  createdAt
-                }
-              }`);
 
-            isDebug && console.log(`${ServiceName} - sqs_fn_appsync.handle - processing ${event.Records.length} entries`);
-            event.Records.forEach(async (sqsRecord: SQSRecord) => {
-                let Attributes = sqsRecord.messageAttributes as EntryMessageAttributeMap<SQSMessageAttribute>;
-                let Body = JSON.parse(sqsRecord.body) as EntryMessageBody;
-                let {__RequestId, __RequestTimestamp} = Body;
-                let FormId = Attributes.FormId.stringValue;
+        isDebug && console.log(`${ServiceName} - sqs_fn_appsync.handle - processing ${event.Records.length} entries`);
+        let client = await appsync.hydrated();
 
-                let {receiptHandle} = sqsRecord;
+        let writeRowAndDeleteMessage = (sqsRecord: SQSRecord) : Promise<any>  => {
+            let Attributes = sqsRecord.messageAttributes as EntryMessageAttributeMap<SQSMessageAttribute>;
+            let Body = JSON.parse(sqsRecord.body) as EntryMessageBody;
+            let {__RequestId} = Body;
+            let FormId = Attributes.FormId.stringValue;
+            const variables = {input:{id:__RequestId, formId: FormId, data: Body.Payload}};
 
-                client.mutate({ mutation: mutation, variables: {input:{id:__RequestId, formId: FormId, data: Body.Payload}}})
-                .then(async (response) => {
-                    await entryQueue.deleteMessage({QueueUrl: QueueUrl, ReceiptHandle: receiptHandle}).promise();
-                    callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({message: "OK", status:202, requestId: __RequestId, timestamp: __RequestTimestamp})});
-                }).catch((error) => {
-                    console.log(`${ServiceName} - sqs_fn_appsync.handle appsync.mutation handler ERROR`, error);
-                    callback(null, {statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({message: "InternalServerError", status: 500, requestId: __RequestId})});
-                });
-            });
+            return Promise.all([
+                client.mutate({mutation: mutation, variables: variables}),
+                entryQueue.deleteMessage({QueueUrl: QueueUrl, ReceiptHandle: sqsRecord.receiptHandle}).promise()
+            ]);
+        };
+
+        let rowPromises : Promise<any>[] = event.Records.map((r) => {
+            return writeRowAndDeleteMessage(r)
         });
+
+        await Promise.all(rowPromises);
+        callback(null, {statusCode: 200, body: JSON.stringify({message:"OK", requestId: context.requestId})});
+
     } catch (error) {
-        console.log(`${ServiceName} - sqs_fn_appsync.handle appsync.client hydration ERROR`, error);
+        console.log(`${ServiceName} - sqs_fn_appsync.handle ERROR`, error);
+        callback(null, {statusCode: 500, body: JSON.stringify({message: "InternalServerError", status: 500, requestId: context.requestId})});
     }
 }
