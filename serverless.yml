@@ -1,5 +1,7 @@
 #serverless.yml
 service: formsli
+# package:
+#   individually: true
 frameworkVersion: '>=1.5.0 <2.0.0'
 provider:
   name: aws
@@ -152,12 +154,13 @@ functions:
             Fn::GetAtt:
               - EntryQueue
               - Arn
+          enabled: true
     iamRoleStatements:
       - Effect: Allow
         Action:
-          - sqs:RecieveMessage
-          - sqs:SendMessage
-          - sqs:ListQueues
+          - sqs:ReceiveMessage
+          - sqs:DeleteMessage
+          - sqs:GetQueueAttributes
         Resource : 
           - { Fn::GetAtt: [EntryQueue, Arn] }
       - Effect: Allow
@@ -172,6 +175,18 @@ functions:
           - "iam:getRole"
         Resource:
           - { Fn::GetAtt: [KinesisAccessRole, Arn] }
+      - Effect: "Allow"
+        Action:
+          - "ssm:GetParameter"
+          - "ssm:GetParameters"
+          - "ssm:GetParametersByPath"
+        Resource:
+          - "arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:provider.stage}/${self:service}/graphql/*"
+      - Effect: "Allow"
+        Action:
+          - "appsync:GraphQL"
+        Resource:
+          - "arn:aws:appsync:#{AWS::Region}:#{AWS::AccountId}:apis/${self:provider.environment.graphqlApiId}/types/Mutation/fields/addFormEntry"
   createEntryStream :
     name: ${self:provider.functions.createEntryStream}
     handler: src/createstream.handle
@@ -267,18 +282,6 @@ functions:
           - sqs:ListQueues
         Resource : 
           - { Fn::GetAtt: [EntryQueue, Arn] }
-      - Effect: "Allow"
-        Action:
-          - "ssm:GetParameter"
-          - "ssm:GetParameters"
-          - "ssm:GetParametersByPath"
-        Resource:
-          - "arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:provider.stage}/${self:service}/graphql/*"
-      - Effect: "Allow"
-        Action:
-          - "appsync:GraphQL"
-        Resource:
-          - "arn:aws:appsync:#{AWS::Region}:#{AWS::AccountId}:apis/${self:provider.environment.graphqlApiId}/types/Mutation/fields/addFormEntry"
   formView:
     name: ${self:provider.functions.formview}
     handler: src/formview.handle

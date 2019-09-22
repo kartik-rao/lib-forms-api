@@ -282,7 +282,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569043086282-2019-09-21T05:18:06.282Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1569061656703-2019-09-21T10:27:36.703Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-process-entries",
               "Handler": "src/processentries.handle",
@@ -375,14 +375,14 @@
               "ProcessEntriesLogGroup"
             ]
           },
-          "ProcessEntriesLambdaVersionwhaHUm5VDrRhhyrSmvhZiW45wdeSnBWutaAjOOaF8": {
+          "ProcessEntriesLambdaVersionBoMpQxiWBFmCdUSgeWzkLEJdHb48aUNUKl5vQINeJU": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ProcessEntriesLambdaFunction"
               },
-              "CodeSha256": "WwsoGHq4H4Uzwqw11dMCa9glLm3WWO5qVqJ77QoxgHc="
+              "CodeSha256": "0jFUhtB0io0NNO+ChsqKr+PIWtVR5Lyudr3/bRbqVZo="
             }
           },
           "CreateEntryStreamLambdaFunction": {
@@ -392,7 +392,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569043086282-2019-09-21T05:18:06.282Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1569061656703-2019-09-21T10:27:36.703Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-create-stream",
               "Handler": "src/createstream.handle",
@@ -484,14 +484,14 @@
               "CreateEntryStreamLogGroup"
             ]
           },
-          "CreateEntryStreamLambdaVersionm6mAZRTTwBGOrDtfsRliC0Bd18PBYS0fTB5j0oKqPE": {
+          "CreateEntryStreamLambdaVersion1UecsHX93D7oJY82L8t3n1fQ9YWbc1qstRg01s1EjTo": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateEntryStreamLambdaFunction"
               },
-              "CodeSha256": "WwsoGHq4H4Uzwqw11dMCa9glLm3WWO5qVqJ77QoxgHc="
+              "CodeSha256": "0jFUhtB0io0NNO+ChsqKr+PIWtVR5Lyudr3/bRbqVZo="
             }
           },
           "FtpAuthLambdaFunction": {
@@ -501,7 +501,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569043086282-2019-09-21T05:18:06.282Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1569061656703-2019-09-21T10:27:36.703Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-auth-ftp",
               "Handler": "src/authftp.handle",
@@ -593,14 +593,14 @@
               "FtpAuthLogGroup"
             ]
           },
-          "FtpAuthLambdaVersionCS2l6lP4TWt6wJcQ3vFyNVvowSFSSJyXZY8lViY": {
+          "FtpAuthLambdaVersionvlgasqflytGVw5M7dmtTxEZLo9UzLXZPBvF43D94s": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "FtpAuthLambdaFunction"
               },
-              "CodeSha256": "WwsoGHq4H4Uzwqw11dMCa9glLm3WWO5qVqJ77QoxgHc="
+              "CodeSha256": "0jFUhtB0io0NNO+ChsqKr+PIWtVR5Lyudr3/bRbqVZo="
             }
           },
           "FormJsonLambdaFunction": {
@@ -610,7 +610,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569043086282-2019-09-21T05:18:06.282Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1569061656703-2019-09-21T10:27:36.703Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-json",
               "Handler": "src/form.handle",
@@ -702,14 +702,14 @@
               "FormJsonLogGroup"
             ]
           },
-          "FormJsonLambdaVersionNafmTrKVcSbKrzVun5dYBQLQEmtoSdRDexqN5sz5A": {
+          "FormJsonLambdaVersionQJUHzDJKWKNVdUSeU59vTvzg2lLb6lPU2FJ0TjjYdc": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "FormJsonLambdaFunction"
               },
-              "CodeSha256": "WwsoGHq4H4Uzwqw11dMCa9glLm3WWO5qVqJ77QoxgHc="
+              "CodeSha256": "0jFUhtB0io0NNO+ChsqKr+PIWtVR5Lyudr3/bRbqVZo="
             }
           },
           "FormEntryLambdaFunction": {
@@ -719,7 +719,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569043086282-2019-09-21T05:18:06.282Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1569061656703-2019-09-21T10:27:36.703Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-entry",
               "Handler": "src/formentry.handle",
@@ -811,14 +811,14 @@
               "FormEntryLogGroup"
             ]
           },
-          "FormEntryLambdaVersionYqrCvoMkp9VeHaX8fswIk51awyftCXNdDSaffxmjk": {
+          "FormEntryLambdaVersionwIh2pb4Ue4DglxL0HfBUm9e64JjkQt8iwqOXuXw3Qz4": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "FormEntryLambdaFunction"
               },
-              "CodeSha256": "WwsoGHq4H4Uzwqw11dMCa9glLm3WWO5qVqJ77QoxgHc="
+              "CodeSha256": "0jFUhtB0io0NNO+ChsqKr+PIWtVR5Lyudr3/bRbqVZo="
             }
           },
           "FormViewLambdaFunction": {
@@ -828,7 +828,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569043086282-2019-09-21T05:18:06.282Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1569061656703-2019-09-21T10:27:36.703Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-view",
               "Handler": "src/formview.handle",
@@ -920,14 +920,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "FormViewLambdaVersion8HRsWQu2jzMiRpFDRUG1KyXQ1qo8ydXRhWPNfo": {
+          "FormViewLambdaVersionLzYi56J4VrBUYk6hGLRmfVbCw3LfHbF2WuhBbgaVjk": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "FormViewLambdaFunction"
               },
-              "CodeSha256": "WwsoGHq4H4Uzwqw11dMCa9glLm3WWO5qVqJ77QoxgHc="
+              "CodeSha256": "0jFUhtB0io0NNO+ChsqKr+PIWtVR5Lyudr3/bRbqVZo="
             }
           },
           "PostConfirmationLambdaFunction": {
@@ -937,7 +937,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569043086282-2019-09-21T05:18:06.282Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1569061656703-2019-09-21T10:27:36.703Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-postconfirmation",
               "Handler": "src/postconfirmation.handle",
@@ -1029,14 +1029,14 @@
               "PostConfirmationLogGroup"
             ]
           },
-          "PostConfirmationLambdaVersionTwD3W9yR5TsUvQmnV5KIiK46iGkEiK9AMDjRaWEi0": {
+          "PostConfirmationLambdaVersionx1DL6l56tBB3vCmi4ZHl4EnIEubiWEqfCMI3mNbAneU": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "PostConfirmationLambdaFunction"
               },
-              "CodeSha256": "WwsoGHq4H4Uzwqw11dMCa9glLm3WWO5qVqJ77QoxgHc="
+              "CodeSha256": "0jFUhtB0io0NNO+ChsqKr+PIWtVR5Lyudr3/bRbqVZo="
             }
           },
           "SignupLambdaFunction": {
@@ -1046,7 +1046,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569043086282-2019-09-21T05:18:06.282Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1569061656703-2019-09-21T10:27:36.703Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-invite",
               "Handler": "src/invite.handle",
@@ -1138,14 +1138,14 @@
               "SignupLogGroup"
             ]
           },
-          "SignupLambdaVersionRSTWbb0kStEAHWkD3L6xLz1UPv8RoV2nbAn19P0DA": {
+          "SignupLambdaVersionzDABnEZiI5Mw5fefJ3Vzc71HXtdvEn9dzhD96QKZw": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SignupLambdaFunction"
               },
-              "CodeSha256": "WwsoGHq4H4Uzwqw11dMCa9glLm3WWO5qVqJ77QoxgHc="
+              "CodeSha256": "0jFUhtB0io0NNO+ChsqKr+PIWtVR5Lyudr3/bRbqVZo="
             }
           },
           "ApiGatewayRestApi": {
@@ -2014,7 +2014,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1569043056288": {
+          "ApiGatewayDeployment1569061617720": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -2328,7 +2328,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569043086282-2019-09-21T05:18:06.282Z/custom-resources.zip"
+                "S3Key": "serverless/formsli/dev/1569061656703-2019-09-21T10:27:36.703Z/custom-resources.zip"
               },
               "FunctionName": "formsli-dev-custom-resource-existing-cup",
               "Handler": "cognitoUserPool/handler.handler",
@@ -2475,9 +2475,9 @@
                       {
                         "Effect": "Allow",
                         "Action": [
-                          "sqs:RecieveMessage",
-                          "sqs:SendMessage",
-                          "sqs:ListQueues"
+                          "sqs:ReceiveMessage",
+                          "sqs:DeleteMessage",
+                          "sqs:GetQueueAttributes"
                         ],
                         "Resource": [
                           {
@@ -2510,6 +2510,30 @@
                               "KinesisAccessRole",
                               "Arn"
                             ]
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "ssm:GetParameter",
+                          "ssm:GetParameters",
+                          "ssm:GetParametersByPath"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/dev/formsli/graphql/*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "appsync:GraphQL"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:aws:appsync:${AWS::Region}:${AWS::AccountId}:apis/yco3dnclencvdeilvzwngs2qki/types/Mutation/fields/addFormEntry"
                           }
                         ]
                       }
@@ -2884,30 +2908,6 @@
                               "EntryQueue",
                               "Arn"
                             ]
-                          }
-                        ]
-                      },
-                      {
-                        "Effect": "Allow",
-                        "Action": [
-                          "ssm:GetParameter",
-                          "ssm:GetParameters",
-                          "ssm:GetParametersByPath"
-                        ],
-                        "Resource": [
-                          {
-                            "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/dev/formsli/graphql/*"
-                          }
-                        ]
-                      },
-                      {
-                        "Effect": "Allow",
-                        "Action": [
-                          "appsync:GraphQL"
-                        ],
-                        "Resource": [
-                          {
-                            "Fn::Sub": "arn:aws:appsync:${AWS::Region}:${AWS::AccountId}:apis/yco3dnclencvdeilvzwngs2qki/types/Mutation/fields/addFormEntry"
                           }
                         ]
                       }
@@ -3807,7 +3807,7 @@
                 ]
               },
               "Description": "serverless-appsync-plugin: AppSync API Key for GraphQlApiKeyDefault",
-              "Expires": 1600579092
+              "Expires": 1600597663
             }
           },
           "GraphQlSchema": {
@@ -5270,7 +5270,7 @@
               },
               "TypeName": "Mutation",
               "FieldName": "addFormEntry",
-              "RequestMappingTemplate": "$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"FormEntry_add_REQ.vtl\"))\n#set($args=$ctx.arguments.input)\n#set($entryId = $util.autoId())\n#set($now = \"${util.time.nowISO8601()}\")\n\n$util.qr($ctx.stash.put(\"request\", $args))\n$util.qr($ctx.stash.request.put(\"id\", $entryId))\n$util.qr($ctx.stash.request.put(\"itemType\", 'FormEntry'))\n$util.qr($ctx.stash.put(\"operation\", 'put'))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"INSERT INTO FormEntry(id, formId, data, createdAt) VALUES(:id, :formId, :data, :createdAt)\",\n        \"SELECT id, formId, createdAt FROM FormEntry WHERE id=:formId\"\n    ],\n    \"variableMap\": {\n        \":id\": \"${entryId}\",\n        \":formId\": \"${args.formId}\",\n        \":data\": \"${util.escapeJavaScript($util.toJson($args.data))}\",\n        \":createdAt\": \"${now}\"\n    }\n}",
+              "RequestMappingTemplate": "$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"FormEntry_add_REQ.vtl\"))\n#set($args=$ctx.arguments.input)\n#set($entryId = $util.autoId())\n#set($now = \"${util.time.nowISO8601()}\")\n\n$util.qr($ctx.stash.put(\"request\", $args))\n$util.qr($ctx.stash.request.put(\"id\", $entryId))\n$util.qr($ctx.stash.request.put(\"itemType\", 'FormEntry'))\n$util.qr($ctx.stash.put(\"operation\", 'put'))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"INSERT INTO FormEntry(id, formId, data, createdAt) VALUES(:id, :formId, :data, :createdAt)\",\n        \"SELECT id, formId, createdAt FROM FormEntry WHERE id=:id\"\n    ],\n    \"variableMap\": {\n        \":id\": \"${entryId}\",\n        \":formId\": \"${args.formId}\",\n        \":data\": \"${util.escapeJavaScript($util.toJson($args.data))}\",\n        \":createdAt\": \"${now}\"\n    }\n}",
               "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormEntry_add_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
               "DataSourceName": {
                 "Fn::GetAtt": [
@@ -5447,49 +5447,49 @@
           "ProcessEntriesLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ProcessEntriesLambdaVersionwhaHUm5VDrRhhyrSmvhZiW45wdeSnBWutaAjOOaF8"
+              "Ref": "ProcessEntriesLambdaVersionBoMpQxiWBFmCdUSgeWzkLEJdHb48aUNUKl5vQINeJU"
             }
           },
           "CreateEntryStreamLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateEntryStreamLambdaVersionm6mAZRTTwBGOrDtfsRliC0Bd18PBYS0fTB5j0oKqPE"
+              "Ref": "CreateEntryStreamLambdaVersion1UecsHX93D7oJY82L8t3n1fQ9YWbc1qstRg01s1EjTo"
             }
           },
           "FtpAuthLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "FtpAuthLambdaVersionCS2l6lP4TWt6wJcQ3vFyNVvowSFSSJyXZY8lViY"
+              "Ref": "FtpAuthLambdaVersionvlgasqflytGVw5M7dmtTxEZLo9UzLXZPBvF43D94s"
             }
           },
           "FormJsonLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "FormJsonLambdaVersionNafmTrKVcSbKrzVun5dYBQLQEmtoSdRDexqN5sz5A"
+              "Ref": "FormJsonLambdaVersionQJUHzDJKWKNVdUSeU59vTvzg2lLb6lPU2FJ0TjjYdc"
             }
           },
           "FormEntryLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "FormEntryLambdaVersionYqrCvoMkp9VeHaX8fswIk51awyftCXNdDSaffxmjk"
+              "Ref": "FormEntryLambdaVersionwIh2pb4Ue4DglxL0HfBUm9e64JjkQt8iwqOXuXw3Qz4"
             }
           },
           "FormViewLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "FormViewLambdaVersion8HRsWQu2jzMiRpFDRUG1KyXQ1qo8ydXRhWPNfo"
+              "Ref": "FormViewLambdaVersionLzYi56J4VrBUYk6hGLRmfVbCw3LfHbF2WuhBbgaVjk"
             }
           },
           "PostConfirmationLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "PostConfirmationLambdaVersionTwD3W9yR5TsUvQmnV5KIiK46iGkEiK9AMDjRaWEi0"
+              "Ref": "PostConfirmationLambdaVersionx1DL6l56tBB3vCmi4ZHl4EnIEubiWEqfCMI3mNbAneU"
             }
           },
           "SignupLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SignupLambdaVersionRSTWbb0kStEAHWkD3L6xLz1UPv8RoV2nbAn19P0DA"
+              "Ref": "SignupLambdaVersionzDABnEZiI5Mw5fefJ3Vzc71HXtdvEn9dzhD96QKZw"
             }
           },
           "ServiceEndpoint": {
@@ -6271,7 +6271,8 @@
             "sqs": {
               "arn": {
                 "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"IamRoleLambdaExecution\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][3][\"Resource\"][0]"
-              }
+              },
+              "enabled": true
             }
           }
         ],
@@ -6284,6 +6285,12 @@
           },
           {
             "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"ProcessEntriesIamRoleLambdaExecution\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][4]"
+          },
+          {
+            "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"ProcessEntriesIamRoleLambdaExecution\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][5]"
+          },
+          {
+            "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"ProcessEntriesIamRoleLambdaExecution\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][6]"
           }
         ],
         "package": {
@@ -6492,12 +6499,6 @@
         "iamRoleStatements": [
           {
             "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"FormEntryIamRoleLambdaExecution\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][2]"
-          },
-          {
-            "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"FormEntryIamRoleLambdaExecution\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][3]"
-          },
-          {
-            "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"FormEntryIamRoleLambdaExecution\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][4]"
           }
         ],
         "package": {
@@ -7299,7 +7300,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli/dev/1569043086282-2019-09-21T05:18:06.282Z",
+    "artifactDirectoryName": "serverless/formsli/dev/1569061656703-2019-09-21T10:27:36.703Z",
     "artifact": ""
   }
 }

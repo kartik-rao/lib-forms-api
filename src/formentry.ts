@@ -3,6 +3,7 @@ require('source-map-support').install();
 process.env.TZ = 'UTC';
 
 import {APIGatewayEventRequestContext, APIGatewayEvent} from 'aws-lambda';
+import {EntryMessageAttributeMap, EntryMessageBody} from "./common/Entry";
 
 const Region        = process.env.region;
 const QueueUrl      = process.env.sqs_entry_url;
@@ -19,8 +20,8 @@ import _AWS from 'aws-sdk';
 import XRay from 'aws-xray-sdk';
 const AWS = XRay.captureAWS(_AWS);
 
-import { MessageBodyAttributeMap } from 'aws-sdk/clients/sqs';
 import {getDeliveryStreamName} from "./common/firehose";
+import { MessageAttributeValue } from 'aws-sdk/clients/sqs';
 
 export const handle = async (event : APIGatewayEvent, context : APIGatewayEventRequestContext, callback : any) => {
     let {requestId, stage, identity, requestTime} = event.requestContext;
@@ -32,7 +33,7 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
     }
 
     const streamName = getDeliveryStreamName(stage, tenantId, formId);
-    let attributes: MessageBodyAttributeMap = {
+    let attributes: EntryMessageAttributeMap<MessageAttributeValue> = {
         "Region"     : {DataType: "String", StringValue: Region},
         "Service"    : {DataType: "String", StringValue: ServiceName},
         "Stage"      : {DataType: "String", StringValue: stage},
@@ -41,12 +42,12 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
         "StreamName" : {DataType: "String", StringValue: streamName}
     };
 
-    let queueData = {
-        requestId: requestId,
-        requestTime: requestTime,
-        ip : identity.sourceIp,
-        userAgent: identity.userAgent,
-        payload : event.body
+    let queueData: EntryMessageBody = {
+        __RequestId: requestId,
+        __RequestTimestamp: requestTime,
+        __RequestIpAddress : identity.sourceIp,
+        __RequestUserAgent: identity.userAgent,
+        Payload : event.body
     }
 
     if (event.queryStringParameters && event.queryStringParameters.echo) {

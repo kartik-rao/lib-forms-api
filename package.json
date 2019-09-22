@@ -28,7 +28,16 @@
     "node-fetch": "^2.6.0",
     "short-uuid": "^3.1.1",
     "source-map-support": "^0.5.12",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "es6-promise": "^4.1.1",
+    "graphql-tag": "^2.5.0",
+    "isomorphic-fetch": "^2.2.1",
+    "ws": "^3.3.1",
+    "apollo-cache-inmemory": "^1.1.0",
+    "apollo-client": "^2.0.3",
+    "apollo-link": "^1.0.3",
+    "apollo-link-http": "^1.2.0",
+    "aws-appsync": "^1.8.1"
   },
   "devDependencies": {
     "@anttiviljami/serverless-stack-output": "^0.3.1",
@@ -38,7 +47,6 @@
     "@types/webpack": "^4.4.25",
     "@types/webpack-env": "^1.13.9",
     "awesome-typescript-loader": "^5.2.1",
-    "aws-appsync": "^1.7.1",
     "aws-cognito-idp-userpool-domain": "^0.1.5",
     "copy-webpack-plugin": "^5.0.0",
     "cross-env": "^5.2.0",
