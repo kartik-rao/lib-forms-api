@@ -239,6 +239,12 @@
   field: versions
   request: Form_formVersion_list_REQ.vtl
   response: Form_formVersion_list_RES.vtl
+# Form.numEntries
+- dataSource: AppData
+  type: Form
+  field: numEntries
+  request: Form_numEntries_get_REQ.vtl
+  response: Common_FN_count_RES.vtl
 
 ## FormVersion
 - dataSource: AppData
@@ -261,7 +267,15 @@
   field: addFormEntry
   request: FormEntry_add_REQ.vtl
   response: FormEntry_add_RES.vtl
-
+- dataSource: AppData
+  type: Query
+  field: listFormEntries
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_parseFilter
+    - FN_listFormEntry
 ## PlanType
 - dataSource: AppData
   type: Query
