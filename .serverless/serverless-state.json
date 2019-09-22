@@ -332,7 +332,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569144242229-2019-09-22T09:24:02.229Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1569151516318-2019-09-22T11:25:16.318Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-put-firehose",
               "Handler": "src/sqs_fn_firehose.handle",
@@ -433,14 +433,14 @@
               "SqsUnderscorefnUnderscorefirehoseLogGroup"
             ]
           },
-          "SqsUnderscorefnUnderscorefirehoseLambdaVersion06peTIM5JegzKSc8FkSGsVv5uRDcikzEoWHt0OWzlA": {
+          "SqsUnderscorefnUnderscorefirehoseLambdaVersionKxigatUiMVdvDjRh6y1T3nF1wZIDM8vXxMKZVxCHOAM": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SqsUnderscorefnUnderscorefirehoseLambdaFunction"
               },
-              "CodeSha256": "UkjM9EL98aCf/P/r13v+Kw6fSziiIqJzU3eNBImexeQ="
+              "CodeSha256": "Y4n7FU99EuseuMmtGPpGlAVNAvdKovR51apyxd92w4c="
             }
           },
           "SqsUnderscorefnUnderscoreappsyncLambdaFunction": {
@@ -450,7 +450,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569144242229-2019-09-22T09:24:02.229Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1569151516318-2019-09-22T11:25:16.318Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-sqs_fn_appsync",
               "Handler": "src/sqs_fn_appsync.handle",
@@ -551,14 +551,14 @@
               "SqsUnderscorefnUnderscoreappsyncLogGroup"
             ]
           },
-          "SqsUnderscorefnUnderscoreappsyncLambdaVersion5gCwYbBsdEYvbiojZK1M3EYOiy2xm0vu3kXdHp5kH04": {
+          "SqsUnderscorefnUnderscoreappsyncLambdaVersionwBdYpo5bgWOuqqBbhFry8Z3byWGapAoEPG6rZ0eg": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SqsUnderscorefnUnderscoreappsyncLambdaFunction"
               },
-              "CodeSha256": "UkjM9EL98aCf/P/r13v+Kw6fSziiIqJzU3eNBImexeQ="
+              "CodeSha256": "Y4n7FU99EuseuMmtGPpGlAVNAvdKovR51apyxd92w4c="
             }
           },
           "CreateEntryStreamLambdaFunction": {
@@ -568,7 +568,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569144242229-2019-09-22T09:24:02.229Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1569151516318-2019-09-22T11:25:16.318Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-create-stream",
               "Handler": "src/createstream.handle",
@@ -668,14 +668,14 @@
               "CreateEntryStreamLogGroup"
             ]
           },
-          "CreateEntryStreamLambdaVersionLfuVdj5GXqrnDSfeamYTaNRTbqo43h1NKxFWgeYTHQ": {
+          "CreateEntryStreamLambdaVersionfj0bvVEInceqcoHwnjfko8WKDEOFNN5NaA00pF1Ctg": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateEntryStreamLambdaFunction"
               },
-              "CodeSha256": "UkjM9EL98aCf/P/r13v+Kw6fSziiIqJzU3eNBImexeQ="
+              "CodeSha256": "Y4n7FU99EuseuMmtGPpGlAVNAvdKovR51apyxd92w4c="
             }
           },
           "FtpAuthLambdaFunction": {
@@ -685,7 +685,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569144242229-2019-09-22T09:24:02.229Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1569151516318-2019-09-22T11:25:16.318Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-auth-ftp",
               "Handler": "src/authftp.handle",
@@ -785,14 +785,14 @@
               "FtpAuthLogGroup"
             ]
           },
-          "FtpAuthLambdaVersion1y0uv4RcnmjDNOwycXDUYl2K60fcHEdzyMc1KE4XlfM": {
+          "FtpAuthLambdaVersionzNJbzBln4xRrUKpAsav0s39lWvOl5jar7bAzh7eE": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "FtpAuthLambdaFunction"
               },
-              "CodeSha256": "UkjM9EL98aCf/P/r13v+Kw6fSziiIqJzU3eNBImexeQ="
+              "CodeSha256": "Y4n7FU99EuseuMmtGPpGlAVNAvdKovR51apyxd92w4c="
             }
           },
           "FormJsonLambdaFunction": {
@@ -802,7 +802,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569144242229-2019-09-22T09:24:02.229Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1569151516318-2019-09-22T11:25:16.318Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-json",
               "Handler": "src/form.handle",
@@ -902,14 +902,14 @@
               "FormJsonLogGroup"
             ]
           },
-          "FormJsonLambdaVersionFmhHL8d4WBjO8THJcj8XoLx9SHcZzHid7oSL0mcRI": {
+          "FormJsonLambdaVersion00SbEbXQa66UC8jLF9zuEzP7SCLgWWwuwV1Ogksus8": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "FormJsonLambdaFunction"
               },
-              "CodeSha256": "UkjM9EL98aCf/P/r13v+Kw6fSziiIqJzU3eNBImexeQ="
+              "CodeSha256": "Y4n7FU99EuseuMmtGPpGlAVNAvdKovR51apyxd92w4c="
             }
           },
           "FormEntryLambdaFunction": {
@@ -919,7 +919,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569144242229-2019-09-22T09:24:02.229Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1569151516318-2019-09-22T11:25:16.318Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-entry",
               "Handler": "src/formentry.handle",
@@ -1019,14 +1019,14 @@
               "FormEntryLogGroup"
             ]
           },
-          "FormEntryLambdaVersioniBy8zOs0ws65SukPZ050SiYHIqBSyNsjcKS1k8Tg": {
+          "FormEntryLambdaVersionN4JZyffGrOyZPUGUmRpjwxjkiMeAcCEWXPibE2VmEs": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "FormEntryLambdaFunction"
               },
-              "CodeSha256": "UkjM9EL98aCf/P/r13v+Kw6fSziiIqJzU3eNBImexeQ="
+              "CodeSha256": "Y4n7FU99EuseuMmtGPpGlAVNAvdKovR51apyxd92w4c="
             }
           },
           "FormViewLambdaFunction": {
@@ -1036,7 +1036,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569144242229-2019-09-22T09:24:02.229Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1569151516318-2019-09-22T11:25:16.318Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-form-view",
               "Handler": "src/formview.handle",
@@ -1136,14 +1136,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "FormViewLambdaVersionfXzE0iifO6botWu8GZkdH0TWX3GcqVyxNqud5WeyE": {
+          "FormViewLambdaVersionU0cPST3ogrgwEu2i6WPz0ow9RheNE0qLx9vkQuqzI": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "FormViewLambdaFunction"
               },
-              "CodeSha256": "UkjM9EL98aCf/P/r13v+Kw6fSziiIqJzU3eNBImexeQ="
+              "CodeSha256": "Y4n7FU99EuseuMmtGPpGlAVNAvdKovR51apyxd92w4c="
             }
           },
           "PostConfirmationLambdaFunction": {
@@ -1153,7 +1153,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569144242229-2019-09-22T09:24:02.229Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1569151516318-2019-09-22T11:25:16.318Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-postconfirmation",
               "Handler": "src/postconfirmation.handle",
@@ -1253,14 +1253,14 @@
               "PostConfirmationLogGroup"
             ]
           },
-          "PostConfirmationLambdaVersionGXVfAVzvPrnsthp6YPGjU8I3O24gyX4t2uswIAQdZk": {
+          "PostConfirmationLambdaVersionYtHdsjLpbfZoet0B2U1kdFR56ICdKOPorSrHMRjauY": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "PostConfirmationLambdaFunction"
               },
-              "CodeSha256": "UkjM9EL98aCf/P/r13v+Kw6fSziiIqJzU3eNBImexeQ="
+              "CodeSha256": "Y4n7FU99EuseuMmtGPpGlAVNAvdKovR51apyxd92w4c="
             }
           },
           "SignupLambdaFunction": {
@@ -1270,7 +1270,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569144242229-2019-09-22T09:24:02.229Z/formsli.zip"
+                "S3Key": "serverless/formsli/dev/1569151516318-2019-09-22T11:25:16.318Z/formsli.zip"
               },
               "FunctionName": "formsli-dev-invite",
               "Handler": "src/invite.handle",
@@ -1370,14 +1370,14 @@
               "SignupLogGroup"
             ]
           },
-          "SignupLambdaVersionHoQr9O48FHhTWojEUBJJNg0Zpcbd5phEfpD3yTmVI": {
+          "SignupLambdaVersioniWFyRgqaZ84kaKrcfpIhKuwQ6Y5cgoap17FxbeOVo": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "SignupLambdaFunction"
               },
-              "CodeSha256": "UkjM9EL98aCf/P/r13v+Kw6fSziiIqJzU3eNBImexeQ="
+              "CodeSha256": "Y4n7FU99EuseuMmtGPpGlAVNAvdKovR51apyxd92w4c="
             }
           },
           "ApiGatewayRestApi": {
@@ -2246,7 +2246,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1569144202336": {
+          "ApiGatewayDeployment1569151472486": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -2560,7 +2560,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli/dev/1569144242229-2019-09-22T09:24:02.229Z/custom-resources.zip"
+                "S3Key": "serverless/formsli/dev/1569151516318-2019-09-22T11:25:16.318Z/custom-resources.zip"
               },
               "FunctionName": "formsli-dev-custom-resource-existing-cup",
               "Handler": "cognitoUserPool/handler.handler",
@@ -4251,13 +4251,13 @@
                 ]
               },
               "Description": "serverless-appsync-plugin: AppSync API Key for GraphQlApiKeyDefault",
-              "Expires": 1600680248
+              "Expires": 1600687524
             }
           },
           "GraphQlSchema": {
             "Type": "AWS::AppSync::GraphQLSchema",
             "Properties": {
-              "Definition": "enum FilterWith {\n  AND\n  OR\n}\n\nenum NumericFilterExpression {\n  in\n  ne\n  eq\n  le\n  lt\n  ge\n  gt\n  between\n  notBetween\n  isNull\n  isNotNull\n}\n\nenum BooleanFilterExpression {\n  ne\n  eq\n}\n\nenum StringFilterExpression {\n  ne\n  eq\n  contains\n  notContains\n  startsWith\n  isNull\n  isNotNull\n  in\n}\n\ninput DateFilter {\n  with  : FilterWith\n  expression: NumericFilterExpression!\n  value: [AWSDateTime!]\n}\n\ninput BooleanFilter {\n  with  : FilterWith\n  expression: BooleanFilterExpression!\n  value: [Boolean!]\n}\n\ninput FloatFilter {\n  with  : FilterWith\n  expression: NumericFilterExpression!\n  value: [Float!]\n}\n\n\ninput IntFilter {\n  with  : FilterWith\n  expression: NumericFilterExpression!\n  value: [Int!]\n}\n\ninput StringFilter {\n  with  : FilterWith\n  expression: StringFilterExpression!\n  value: [String!]\n}\n\ninput AccountFilterInput {\n  name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  planId: StringFilter\n  active: IntFilter\n  criteria: [AccountFilterInput!]\n}\n\nenum SortOrder { asc desc }\n\ninput AccountSortInput {\n  name: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  planId: SortOrder\n  sortBy: [AccountSortInput!]\n}\n\ninput UserFilterInput {\n  accountId: StringFilter\n  ownerId: StringFilter\n  email: StringFilter\n  userGroup: StringFilter\n  given_name: StringFilter\n  family_name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  isDeleted: IntFilter\n  criteria: [UserFilterInput!]\n}\n\ninput UserSortInput {\n  accountId: SortOrder\n  email: SortOrder\n  given_name: SortOrder\n  family_name: SortOrder\n  userGroup: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [UserSortInput!]\n}\n\ninput PlanTypeFilterInput {\n  ownerId: StringFilter\n  cost: FloatFilter\n  billingTerm: StringFilter\n  name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  isDeleted: IntFilter\n  criteria: [PlanTypeFilterInput!]\n}\n\ninput PlanTypeSortInput {\n  name: SortOrder\n  billingTerm: SortOrder\n  cost: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [PlanTypeSortInput!]\n}\n\ninput IntegrationTypeFilterInput {\n  ownerId: StringFilter\n  planTypeId: StringFilter\n  name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  active: IntFilter\n  criteria: [IntegrationTypeFilterInput!]\n}\n\ninput IntegrationTypeSortInput {\n  name: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [IntegrationTypeSortInput!]\n}\n\ninput IntegrationFilterInput {\n  ownerId: StringFilter\n  accountId: StringFilter\n  formId: StringFilter\n  active: IntFilter\n  isDeleted: IntFilter\n  lastExecuted: DateFilter\n  lastExecutionResult: IntFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  criteria: [IntegrationFilterInput!]\n}\n\ninput IntegrationSortInput {\n  lastExecuted: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [IntegrationSortInput!]\n}\n\ninput FormFilterInput {\n  name: StringFilter\n  ownerId: StringFilter\n  accountId: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  startsAt: DateFilter\n  endsAt: DateFilter\n  isPaused: IntFilter\n  isDeleted: IntFilter\n  criteria: [FormFilterInput!]\n}\n\ninput FormSortInput {\n  name: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  startsAt: SortOrder\n  endsAt: SortOrder\n  sortBy: [FormSortInput!]\n}\n\ninput PlanFilterInput {\n  accountId: StringFilter\n  ownerId: StringFilter\n  planTypeId: StringFilter\n  lastBillDate: DateFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  startDate: DateFilter\n  endDate: DateFilter\n  criteria: [PlanFilterInput!]\n}\n\ninput PlanSortInput {\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  lastBillDate: SortOrder\n  startDate: SortOrder\n  endDate: SortOrder\n  sortBy: [PlanSortInput!]\n}\n\ntype FormEntry @model {\n  id: ID!\n  formId: ID!\n  form: Form!\n  data: AWSJSON!\n  createdAt: AWSDateTime!\n}\n\ntype FormEntrySansData @aws_api_key {\n  id: ID!\n  formId: ID!\n  createdAt: AWSDateTime!\n}\n\ninput AddFormEntryInput {\n  id: ID!\n  formId: ID!\n  data: AWSJSON!\n}\n\ntype FormVersion @model {\n  id: ID!\n  accountId: ID!\n  formId: ID!\n  ownerId: ID!\n  ownedBy: User!\n  createdAt: AWSDateTime\n  displayName: String!\n  notes: String\n  formData: AWSJSON!\n}\n\ninput FormVersionFilterInput {\n  accountId: StringFilter\n  formId: StringFilter\n  ownerId: StringFilter\n  createdAt: DateFilter\n  criteria: [FormVersionFilterInput!]\n}\n\ninput FormVersionSortInput {\n  createdAt: SortOrder\n  sortBy: [FormVersionSortInput!]\n}\n\ninput AddFormVersionInput {\n  accountId: ID!\n  formId: ID!\n  displayName: String!\n  notes: String!\n  formData: AWSJSON!\n}\n\ninput AttachFormVersionInput {\n  formId: ID!\n  versionId: ID!\n  accountId: ID!\n}\n\ninput DeleteFormVersionInput {\n  accountId: ID!\n  formId: ID!\n  versionId: ID!\n}\n\ntype Form @model  {\n  id: ID!\n  ownerId: ID!\n  name: String!\n  description: String!\n  versionId: ID\n  versionActivatedDate: AWSDateTime\n  version: FormVersion\n  ownedBy: User!\n  accountId: ID!\n  account: Account!\n  createdAt: AWSDateTime!\n  updatedAt: AWSDateTime\n  startDate: AWSDateTime\n  endDate: AWSDateTime\n  isPaused: Int\n  isDeleted: Int\n  redirectNotStarted: AWSURL\n  redirectHasEnded : AWSURL\n  versions(limit: Int): [FormVersion]\n  integrations(limit: Int): [Integration]\n  entries(limit: Int): [FormEntry]\n}\n\n\ninput AddFormInput {\n  accountId: ID!\n  name: String!\n  description: String!\n  startsAt: AWSDateTime\n  endsAt: AWSDateTime\n  isPaused: Int\n}\n\ninput UpdateFormInput {\n  id: ID!\n  currentVersionId: ID\n  name: String\n  description: String\n  startDate: AWSDateTime\n  endDate: AWSDateTime\n  redirectNotStarted: AWSURL\n  redirectHasEnded : AWSURL\n  isPaused: Int\n}\n\ninput DeleteFormInput {\n  id: ID!\n  accountId: ID!\n}\n\ntype User @model {\n  id: ID!\n  ownerId: ID\n  ownedBy: User\n  accountId: ID\n  account: Account\n  email: String!\n  userGroup: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Int\n  numForms: Int\n}\n\n\ninput UpdateUserInputData {\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ninput UpdateUserInput {\n  id: ID!\n  data: UpdateUserInputData!\n}\n\nenum AddressType {\n  BILLING\n  CONTACT\n}\n\ntype Address @model {\n  id: ID!\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype AddAddressInput {\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype Account @model {\n  id: ID!\n  name: String!\n  addresses(limit: Int): [Address]\n  website: String\n  taxId: String\n  ownerId: ID!\n  ownedBy: User!\n  plan : Plan\n  planId: ID\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  active: Int\n  numForms: Int\n  numUsers: Int\n  users(limit: Int): [User]\n  forms(limit: Int): [Form]\n}\n\ninput UpdateAccountInput {\n  id: ID!\n  name: String\n}\ntype PlanType @model {\n  id: ID!\n  ownerId: ID!\n  ownedBy: User!\n  name: String!\n  cost: Float!\n  active: Int!\n  billingTerm: String!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Int\n}\n\ninput AddPlanTypeInput {\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Int!\n}\n\ninput UpdatePlanTypeInput {\n  id: ID!\n  name: String\n  cost: Float\n  billingTerm: String\n  active: Int\n}\n\ntype Plan @model {\n  id: ID!\n  accountId: ID!\n  account: Account!\n  ownerId: ID!\n  ownedBy: User!\n  planTypeId: ID!\n  startDate: AWSDateTime!\n  endDate: AWSDateTime\n  active: Int\n  lastBillDate: AWSDateTime\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  planType: PlanType\n  isDeleted: Int\n}\n\ninput AddPlanInput {\n  accountId: ID!\n  planTypeId: ID!\n  endDate: AWSDateTime\n  active: Int\n}\n\ninput UpdatePlanInput {\n  planId: ID!\n  accountId: ID!\n  active: Int!\n  endDate: AWSDateTime\n}\n\ntype IntegrationType @model {\n  id: ID!\n  ownerId: ID!\n  ownedBy: User!\n  planTypeId: ID!\n  planType: PlanType\n  name: String!\n  active: Int!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\n\ninput AddIntegrationTypeInput {\n  name: String!\n  active: Int\n}\n\ninput UpdateIntegrationTypeInput {\n  id: ID!\n  name: String!\n  active: Int\n}\n\ntype Integration @model {\n  id: ID!\n  integrationTypeId: ID!\n  integrationType: IntegrationType\n  ownerId: ID!\n  accountId: ID!\n  formId: ID!\n  form: Form!\n  active: Int!\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  lastExecuted: AWSDateTime\n  lastExecutionResult: Int\n  lastExecutionResultMessage: String\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Int\n}\n\n\ninput AddIntegrationInput {\n  integrationTypeId: ID!\n  accountId: ID!\n  formId: ID!\n  active: Int\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationTypeInputData {\n  active: Int\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationInput {\n  id: ID!\n  active: Int\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput OffsetLimit {\n  offset: Int\n  limit: Int\n}\n\ntype Query {\n  getAccount(accountId: ID!): Account\n  getUser(userId: ID!): User\n  getPlan(planId: String!): Plan\n  getActiveAccountPlan(accountId: String!): Plan\n  getPlanType(planTypeId: String!): PlanType\n  getForm(formId: String!) : Form\n  getFormVersion(versionId: String!) : FormVersion\n  getIntegrationType(integrationTypeId: String!): IntegrationType\n  getIntegration(integrationId: String!): Integration\n  getFormEntry(formEntryId: String!): FormEntry\n  listAccounts(offsetLimit: OffsetLimit, filter: AccountFilterInput, sort: AccountSortInput): [Account]\n  listUsers(offsetLimit: OffsetLimit, filter: UserFilterInput, sort: UserSortInput) : [User]\n  listPlans(offsetLimit: OffsetLimit, filter: PlanFilterInput, sort: PlanSortInput): [Plan]\n  listPlanTypes(offsetLimit: OffsetLimit, filter: PlanTypeFilterInput, sort: PlanTypeSortInput): [PlanType]\n  listForms(offsetLimit: OffsetLimit, filter: FormFilterInput, sort: FormSortInput) : [Form]\n  listFormVersions(offsetLimit: OffsetLimit, filter: FormVersionFilterInput, sort: FormVersionSortInput) : [FormVersion]\n  listIntegrationTypes(offsetLimit: OffsetLimit, filter: IntegrationTypeFilterInput, sort: IntegrationTypeSortInput): [IntegrationType]\n  listIntegrations(offsetLimit: OffsetLimit, filter: IntegrationFilterInput, sort: IntegrationSortInput): [Integration]\n  listFormEntries(offsetLimit: OffsetLimit, formId: String!) : [FormEntry]\n  listFormEntriesByTime(offsetLimit: OffsetLimit, formId: String!, timestampPrefix: String!): [FormEntry]\n}\n\ntype Mutation {\n  addPlanType(input: AddPlanTypeInput): PlanType!\n  addPlan(input: AddPlanInput): Plan!\n  addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!\n  addIntegration(input: AddIntegrationInput): Integration!\n  addForm(input: AddFormInput!): Form!\n  addFormVersion(input: AddFormVersionInput!): Form!\n  attachFormVersion(input: AttachFormVersionInput!) : Form!\n\n  updatePlanType(input: UpdatePlanTypeInput): PlanType!\n  updatePlan(input: UpdatePlanInput): Plan!\n  updateAccount(input: UpdateAccountInput): Account!\n  updateAccountPlan(input: AddPlanInput): Account!\n  updateUser(input: UpdateUserInput): User!\n  updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!\n  updateIntegration(input: UpdateIntegrationInput): Integration!\n  updateForm(input: UpdateFormInput): Form!\n\n  deleteForm(input: DeleteFormInput!): Form!\n  deletePlanType(planTypeId: ID!): PlanType!\n  deletePlan(accountId: ID!, planId: ID!): Plan!\n  deleteAccount(accountId: ID!): Account!\n  deleteUser(userId: ID!): User!\n  deleteIntegrationType(integrationTypeId: ID!): IntegrationType!\n  deleteIntegration(integrationId: ID!): Integration!\n  deleteFormVersion(input: DeleteFormVersionInput!): FormVersion!\n  addFormEntry(input: AddFormEntryInput!): FormEntrySansData!\n  @aws_api_key\n}\n\nschema {\n  query: Query\n  mutation: Mutation\n}",
+              "Definition": "enum FilterWith {\n  AND\n  OR\n}\n\nenum NumericFilterExpression {\n  in\n  ne\n  eq\n  le\n  lt\n  ge\n  gt\n  between\n  notBetween\n  isNull\n  isNotNull\n}\n\nenum BooleanFilterExpression {\n  ne\n  eq\n}\n\nenum StringFilterExpression {\n  ne\n  eq\n  contains\n  notContains\n  startsWith\n  isNull\n  isNotNull\n  in\n}\n\ninput DateFilter {\n  with  : FilterWith\n  expression: NumericFilterExpression!\n  value: [AWSDateTime!]\n}\n\ninput BooleanFilter {\n  with  : FilterWith\n  expression: BooleanFilterExpression!\n  value: [Boolean!]\n}\n\ninput FloatFilter {\n  with  : FilterWith\n  expression: NumericFilterExpression!\n  value: [Float!]\n}\n\n\ninput IntFilter {\n  with  : FilterWith\n  expression: NumericFilterExpression!\n  value: [Int!]\n}\n\ninput StringFilter {\n  with  : FilterWith\n  expression: StringFilterExpression!\n  value: [String!]\n}\n\ninput AccountFilterInput {\n  name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  planId: StringFilter\n  active: IntFilter\n  criteria: [AccountFilterInput!]\n}\n\nenum SortOrder { asc desc }\n\ninput AccountSortInput {\n  name: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  planId: SortOrder\n  sortBy: [AccountSortInput!]\n}\n\ninput UserFilterInput {\n  accountId: StringFilter\n  ownerId: StringFilter\n  email: StringFilter\n  userGroup: StringFilter\n  given_name: StringFilter\n  family_name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  isDeleted: IntFilter\n  criteria: [UserFilterInput!]\n}\n\ninput UserSortInput {\n  accountId: SortOrder\n  email: SortOrder\n  given_name: SortOrder\n  family_name: SortOrder\n  userGroup: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [UserSortInput!]\n}\n\ninput PlanTypeFilterInput {\n  ownerId: StringFilter\n  cost: FloatFilter\n  billingTerm: StringFilter\n  name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  isDeleted: IntFilter\n  criteria: [PlanTypeFilterInput!]\n}\n\ninput PlanTypeSortInput {\n  name: SortOrder\n  billingTerm: SortOrder\n  cost: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [PlanTypeSortInput!]\n}\n\ninput IntegrationTypeFilterInput {\n  ownerId: StringFilter\n  planTypeId: StringFilter\n  name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  active: IntFilter\n  criteria: [IntegrationTypeFilterInput!]\n}\n\ninput IntegrationTypeSortInput {\n  name: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [IntegrationTypeSortInput!]\n}\n\ninput IntegrationFilterInput {\n  ownerId: StringFilter\n  accountId: StringFilter\n  formId: StringFilter\n  active: IntFilter\n  isDeleted: IntFilter\n  lastExecuted: DateFilter\n  lastExecutionResult: IntFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  criteria: [IntegrationFilterInput!]\n}\n\ninput IntegrationSortInput {\n  lastExecuted: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [IntegrationSortInput!]\n}\n\ninput FormFilterInput {\n  name: StringFilter\n  ownerId: StringFilter\n  accountId: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  startsAt: DateFilter\n  endsAt: DateFilter\n  isPaused: IntFilter\n  isDeleted: IntFilter\n  criteria: [FormFilterInput!]\n}\n\ninput FormSortInput {\n  name: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  startsAt: SortOrder\n  endsAt: SortOrder\n  sortBy: [FormSortInput!]\n}\n\ninput PlanFilterInput {\n  accountId: StringFilter\n  ownerId: StringFilter\n  planTypeId: StringFilter\n  lastBillDate: DateFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  startDate: DateFilter\n  endDate: DateFilter\n  criteria: [PlanFilterInput!]\n}\n\ninput PlanSortInput {\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  lastBillDate: SortOrder\n  startDate: SortOrder\n  endDate: SortOrder\n  sortBy: [PlanSortInput!]\n}\n\ntype FormEntry @model {\n  id: ID!\n  accountId: ID!\n  formId: ID!\n  form: Form!\n  data: AWSJSON!\n  createdAt: AWSDateTime!\n}\n\ninput FormEntryFilterInput {\n  formId: StringFilter\n  createdAt: DateFilter\n  accountId: StringFilter\n  criteria: [FormEntryFilterInput!]\n}\n\ninput FormEntrySortInput {\n  createdAt: SortOrder\n}\n\ntype FormEntrySansData @aws_api_key {\n  id: ID!\n  formId: ID!\n  createdAt: AWSDateTime!\n}\n\ninput AddFormEntryInput {\n  id: ID!\n  accountId: ID!\n  formId: ID!\n  data: AWSJSON!\n}\n\ntype FormVersion @model {\n  id: ID!\n  accountId: ID!\n  formId: ID!\n  ownerId: ID!\n  ownedBy: User!\n  createdAt: AWSDateTime\n  displayName: String!\n  notes: String\n  formData: AWSJSON!\n}\n\ninput FormVersionFilterInput {\n  accountId: StringFilter\n  formId: StringFilter\n  ownerId: StringFilter\n  createdAt: DateFilter\n  criteria: [FormVersionFilterInput!]\n}\n\ninput FormVersionSortInput {\n  createdAt: SortOrder\n  sortBy: [FormVersionSortInput!]\n}\n\ninput AddFormVersionInput {\n  accountId: ID!\n  formId: ID!\n  displayName: String!\n  notes: String!\n  formData: AWSJSON!\n}\n\ninput AttachFormVersionInput {\n  formId: ID!\n  versionId: ID!\n  accountId: ID!\n}\n\ninput DeleteFormVersionInput {\n  accountId: ID!\n  formId: ID!\n  versionId: ID!\n}\n\ntype Form @model  {\n  id: ID!\n  ownerId: ID!\n  name: String!\n  description: String!\n  versionId: ID\n  versionActivatedDate: AWSDateTime\n  version: FormVersion\n  ownedBy: User!\n  accountId: ID!\n  account: Account!\n  createdAt: AWSDateTime!\n  updatedAt: AWSDateTime\n  startDate: AWSDateTime\n  endDate: AWSDateTime\n  isPaused: Int\n  isDeleted: Int\n  redirectNotStarted: AWSURL\n  redirectHasEnded : AWSURL\n  versions(limit: Int): [FormVersion]\n  integrations(limit: Int): [Integration]\n  numEntries: Int\n  entries(limit: Int): [FormEntry]\n}\n\n\ninput AddFormInput {\n  accountId: ID!\n  name: String!\n  description: String!\n  startsAt: AWSDateTime\n  endsAt: AWSDateTime\n  isPaused: Int\n}\n\ninput UpdateFormInput {\n  id: ID!\n  currentVersionId: ID\n  name: String\n  description: String\n  startDate: AWSDateTime\n  endDate: AWSDateTime\n  redirectNotStarted: AWSURL\n  redirectHasEnded : AWSURL\n  isPaused: Int\n}\n\ninput DeleteFormInput {\n  id: ID!\n  accountId: ID!\n}\n\ntype User @model {\n  id: ID!\n  ownerId: ID\n  ownedBy: User\n  accountId: ID\n  account: Account\n  email: String!\n  userGroup: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Int\n  numForms: Int\n}\n\n\ninput UpdateUserInputData {\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ninput UpdateUserInput {\n  id: ID!\n  data: UpdateUserInputData!\n}\n\nenum AddressType {\n  BILLING\n  CONTACT\n}\n\ntype Address @model {\n  id: ID!\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype AddAddressInput {\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype Account @model {\n  id: ID!\n  name: String!\n  addresses(limit: Int): [Address]\n  website: String\n  taxId: String\n  ownerId: ID!\n  ownedBy: User!\n  plan : Plan\n  planId: ID\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  active: Int\n  numForms: Int\n  numUsers: Int\n  users(limit: Int): [User]\n  forms(limit: Int): [Form]\n}\n\ninput UpdateAccountInput {\n  id: ID!\n  name: String\n}\ntype PlanType @model {\n  id: ID!\n  ownerId: ID!\n  ownedBy: User!\n  name: String!\n  cost: Float!\n  active: Int!\n  billingTerm: String!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Int\n}\n\ninput AddPlanTypeInput {\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Int!\n}\n\ninput UpdatePlanTypeInput {\n  id: ID!\n  name: String\n  cost: Float\n  billingTerm: String\n  active: Int\n}\n\ntype Plan @model {\n  id: ID!\n  accountId: ID!\n  account: Account!\n  ownerId: ID!\n  ownedBy: User!\n  planTypeId: ID!\n  startDate: AWSDateTime!\n  endDate: AWSDateTime\n  active: Int\n  lastBillDate: AWSDateTime\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  planType: PlanType\n  isDeleted: Int\n}\n\ninput AddPlanInput {\n  accountId: ID!\n  planTypeId: ID!\n  endDate: AWSDateTime\n  active: Int\n}\n\ninput UpdatePlanInput {\n  planId: ID!\n  accountId: ID!\n  active: Int!\n  endDate: AWSDateTime\n}\n\ntype IntegrationType @model {\n  id: ID!\n  ownerId: ID!\n  ownedBy: User!\n  planTypeId: ID!\n  planType: PlanType\n  name: String!\n  active: Int!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\n\ninput AddIntegrationTypeInput {\n  name: String!\n  active: Int\n}\n\ninput UpdateIntegrationTypeInput {\n  id: ID!\n  name: String!\n  active: Int\n}\n\ntype Integration @model {\n  id: ID!\n  integrationTypeId: ID!\n  integrationType: IntegrationType\n  ownerId: ID!\n  accountId: ID!\n  formId: ID!\n  form: Form!\n  active: Int!\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  lastExecuted: AWSDateTime\n  lastExecutionResult: Int\n  lastExecutionResultMessage: String\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Int\n}\n\n\ninput AddIntegrationInput {\n  integrationTypeId: ID!\n  accountId: ID!\n  formId: ID!\n  active: Int\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationTypeInputData {\n  active: Int\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationInput {\n  id: ID!\n  active: Int\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput OffsetLimit {\n  offset: Int\n  limit: Int\n}\n\ntype Query {\n  getAccount(accountId: ID!): Account\n  getUser(userId: ID!): User\n  getPlan(planId: String!): Plan\n  getActiveAccountPlan(accountId: String!): Plan\n  getPlanType(planTypeId: String!): PlanType\n  getForm(formId: String!) : Form\n  getFormVersion(versionId: String!) : FormVersion\n  getIntegrationType(integrationTypeId: String!): IntegrationType\n  getIntegration(integrationId: String!): Integration\n  getFormEntry(formEntryId: String!): FormEntry\n  listAccounts(offsetLimit: OffsetLimit, filter: AccountFilterInput, sort: AccountSortInput): [Account]\n  listUsers(offsetLimit: OffsetLimit, filter: UserFilterInput, sort: UserSortInput) : [User]\n  listPlans(offsetLimit: OffsetLimit, filter: PlanFilterInput, sort: PlanSortInput): [Plan]\n  listPlanTypes(offsetLimit: OffsetLimit, filter: PlanTypeFilterInput, sort: PlanTypeSortInput): [PlanType]\n  listForms(offsetLimit: OffsetLimit, filter: FormFilterInput, sort: FormSortInput) : [Form]\n  listFormVersions(offsetLimit: OffsetLimit, filter: FormVersionFilterInput, sort: FormVersionSortInput) : [FormVersion]\n  listIntegrationTypes(offsetLimit: OffsetLimit, filter: IntegrationTypeFilterInput, sort: IntegrationTypeSortInput): [IntegrationType]\n  listIntegrations(offsetLimit: OffsetLimit, filter: IntegrationFilterInput, sort: IntegrationSortInput): [Integration]\n  listFormEntries(offsetLimit: OffsetLimit, filter: FormEntryFilterInput, sort: FormEntrySortInput) : [FormEntry]\n}\n\ntype Mutation {\n  addPlanType(input: AddPlanTypeInput): PlanType!\n  addPlan(input: AddPlanInput): Plan!\n  addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!\n  addIntegration(input: AddIntegrationInput): Integration!\n  addForm(input: AddFormInput!): Form!\n  addFormVersion(input: AddFormVersionInput!): Form!\n  attachFormVersion(input: AttachFormVersionInput!) : Form!\n\n  updatePlanType(input: UpdatePlanTypeInput): PlanType!\n  updatePlan(input: UpdatePlanInput): Plan!\n  updateAccount(input: UpdateAccountInput): Account!\n  updateAccountPlan(input: AddPlanInput): Account!\n  updateUser(input: UpdateUserInput): User!\n  updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!\n  updateIntegration(input: UpdateIntegrationInput): Integration!\n  updateForm(input: UpdateFormInput): Form!\n\n  deleteForm(input: DeleteFormInput!): Form!\n  deletePlanType(planTypeId: ID!): PlanType!\n  deletePlan(accountId: ID!, planId: ID!): Plan!\n  deleteAccount(accountId: ID!): Account!\n  deleteUser(userId: ID!): User!\n  deleteIntegrationType(integrationTypeId: ID!): IntegrationType!\n  deleteIntegration(integrationId: ID!): Integration!\n  deleteFormVersion(input: DeleteFormVersionInput!): FormVersion!\n  addFormEntry(input: AddFormEntryInput!): FormEntrySansData!\n  @aws_api_key\n}\n\nschema {\n  query: Query\n  mutation: Mutation\n}",
               "ApiId": {
                 "Fn::GetAtt": [
                   "GraphQlApi",
@@ -4832,6 +4832,27 @@
               },
               "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_get_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#set($isAllowed = false)\n#if($identity.tenantId == $args.accountId || $identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $args.versionId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n    $util.qr($ctx.stash.put(\"operation\", 'get'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            #if($identity.isAdmin != true)\n                \"SELECT * FROM FormVersion WHERE id='${args.versionId}' AND accountId='${identity.tenantId}'\"\n            #else\n                \"SELECT * FROM FormVersion WHERE id='${args.versionId}'\"\n            #end\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [GET] on FormVersion[${args.versionId}]\", \"Unauthorized\")\n#end\n",
               "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_formVersion_get_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.toJson(null)\n#else\n    #set($result=$utils.rds.toJsonObject($ctx.result)[0][0])\n    #if($result.formData)\n        $util.qr($result.put(\"formData\", $util.parseJson($result.formData)))\n    #end\n    $util.toJson($result)\n#end",
+              "FunctionVersion": "2018-05-29"
+            }
+          },
+          "GraphQlFunctionConfigurationFNlistFormEntry": {
+            "Type": "AWS::AppSync::FunctionConfiguration",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "Name": "GraphQlFunctionConfigurationFNlistFormEntry",
+              "DataSourceName": {
+                "Fn::GetAtt": [
+                  "GraphQlDsAppData",
+                  "Name"
+                ]
+              },
+              "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormEntry_list_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n$util.qr($ctx.stash.put(\"request\", $args))\n$util.qr($ctx.stash.request.put(\"itemType\", 'FormEntry'))\n$util.qr($ctx.stash.put(\"operation\", 'list'))\n#set($limits = $util.defaultIfNull($args.offsetLimit, {\"offset\":0,\"limit\":50}))\n$util.qr($limits.put(\"offset\", $util.defaultIfNull($args.offsetLimit.offset, 0)))\n$util.qr($limits.put(\"limit\", $util.defaultIfNull($args.offsetLimit.limit, 50)))\n$util.qr($ctx.stash.put(\"limits\", $limits))\n#set($sort = $util.defaultIfNull($ctx.stash.sortExpression, \"\"))\n#if($ctx.stash.filterExpression)\n    #if(!$identity.isAdmin)\n        #if($ctx.stash.filterExpression.indexOf('accountId') == -1 && !$identity.isAdmin)\n            #set($filter=\"${ctx.stash.filterExpression} AND accountId = '${identity.tenantId}'\")\n        #end\n    #else\n        #set($filter=$ctx.stash.filterExpression)\n    #end\n#else\n    #if(!$identity.isAdmin)\n        #set($filter = \"WHERE accountId = '${identity.tenantId}'\")\n    #else\n        #set($filter = \"\")\n    #end\n#end\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM FormEntry ${filter} ${sort} LIMIT ${limits.offset}, ${limits.limit}\"\n    ]\n}",
+              "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_list_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$utils.toJson($utils.rds.toJsonObject($ctx.result)[0])",
               "FunctionVersion": "2018-05-29"
             }
           },
@@ -5653,6 +5674,28 @@
               }
             }
           },
+          "GraphQlResolverFormnumEntries": {
+            "Type": "AWS::AppSync::Resolver",
+            "DependsOn": "GraphQlSchema",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "TypeName": "Form",
+              "FieldName": "numEntries",
+              "RequestMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Form_numEntries_get_REQ.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT count(*) as item_count FROM FormEntry WHERE formId='${ctx.source.id}'\"\n    ]\n}",
+              "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_count_RES.vtl\"))\n#set($count=$utils.rds.toJsonObject($ctx.result)[0][0])\n#if($count[\"item_count\"])\n    $utils.toJson($count[\"item_count\"])\n#else\n    $utils.toJson(0)\n#end",
+              "DataSourceName": {
+                "Fn::GetAtt": [
+                  "GraphQlDsAppData",
+                  "Name"
+                ]
+              }
+            }
+          },
           "GraphQlResolverQuerygetFormVersion": {
             "Type": "AWS::AppSync::Resolver",
             "DependsOn": "GraphQlSchema",
@@ -5720,6 +5763,39 @@
                 "Fn::GetAtt": [
                   "GraphQlDsAppData",
                   "Name"
+                ]
+              }
+            }
+          },
+          "GraphQlResolverQuerylistFormEntries": {
+            "Type": "AWS::AppSync::Resolver",
+            "DependsOn": "GraphQlSchema",
+            "Properties": {
+              "ApiId": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "TypeName": "Query",
+              "FieldName": "listFormEntries",
+              "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+              "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+              "Kind": "PIPELINE",
+              "PipelineConfig": {
+                "Functions": [
+                  {
+                    "Fn::GetAtt": [
+                      "GraphQlFunctionConfigurationFNparseFilter",
+                      "FunctionId"
+                    ]
+                  },
+                  {
+                    "Fn::GetAtt": [
+                      "GraphQlFunctionConfigurationFNlistFormEntry",
+                      "FunctionId"
+                    ]
+                  }
                 ]
               }
             }
@@ -5891,55 +5967,55 @@
           "SqsUnderscorefnUnderscorefirehoseLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SqsUnderscorefnUnderscorefirehoseLambdaVersion06peTIM5JegzKSc8FkSGsVv5uRDcikzEoWHt0OWzlA"
+              "Ref": "SqsUnderscorefnUnderscorefirehoseLambdaVersionKxigatUiMVdvDjRh6y1T3nF1wZIDM8vXxMKZVxCHOAM"
             }
           },
           "SqsUnderscorefnUnderscoreappsyncLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SqsUnderscorefnUnderscoreappsyncLambdaVersion5gCwYbBsdEYvbiojZK1M3EYOiy2xm0vu3kXdHp5kH04"
+              "Ref": "SqsUnderscorefnUnderscoreappsyncLambdaVersionwBdYpo5bgWOuqqBbhFry8Z3byWGapAoEPG6rZ0eg"
             }
           },
           "CreateEntryStreamLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateEntryStreamLambdaVersionLfuVdj5GXqrnDSfeamYTaNRTbqo43h1NKxFWgeYTHQ"
+              "Ref": "CreateEntryStreamLambdaVersionfj0bvVEInceqcoHwnjfko8WKDEOFNN5NaA00pF1Ctg"
             }
           },
           "FtpAuthLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "FtpAuthLambdaVersion1y0uv4RcnmjDNOwycXDUYl2K60fcHEdzyMc1KE4XlfM"
+              "Ref": "FtpAuthLambdaVersionzNJbzBln4xRrUKpAsav0s39lWvOl5jar7bAzh7eE"
             }
           },
           "FormJsonLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "FormJsonLambdaVersionFmhHL8d4WBjO8THJcj8XoLx9SHcZzHid7oSL0mcRI"
+              "Ref": "FormJsonLambdaVersion00SbEbXQa66UC8jLF9zuEzP7SCLgWWwuwV1Ogksus8"
             }
           },
           "FormEntryLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "FormEntryLambdaVersioniBy8zOs0ws65SukPZ050SiYHIqBSyNsjcKS1k8Tg"
+              "Ref": "FormEntryLambdaVersionN4JZyffGrOyZPUGUmRpjwxjkiMeAcCEWXPibE2VmEs"
             }
           },
           "FormViewLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "FormViewLambdaVersionfXzE0iifO6botWu8GZkdH0TWX3GcqVyxNqud5WeyE"
+              "Ref": "FormViewLambdaVersionU0cPST3ogrgwEu2i6WPz0ow9RheNE0qLx9vkQuqzI"
             }
           },
           "PostConfirmationLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "PostConfirmationLambdaVersionGXVfAVzvPrnsthp6YPGjU8I3O24gyX4t2uswIAQdZk"
+              "Ref": "PostConfirmationLambdaVersionYtHdsjLpbfZoet0B2U1kdFR56ICdKOPorSrHMRjauY"
             }
           },
           "SignupLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "SignupLambdaVersionHoQr9O48FHhTWojEUBJJNg0Zpcbd5phEfpD3yTmVI"
+              "Ref": "SignupLambdaVersioniWFyRgqaZ84kaKrcfpIhKuwQ6Y5cgoap17FxbeOVo"
             }
           },
           "ServiceEndpoint": {
@@ -6444,6 +6520,13 @@
           },
           {
             "dataSource": "AppData",
+            "type": "Form",
+            "field": "numEntries",
+            "request": "Form_numEntries_get_REQ.vtl",
+            "response": "Common_FN_count_RES.vtl"
+          },
+          {
+            "dataSource": "AppData",
             "type": "Query",
             "field": "getFormVersion",
             "request": "Common_REQ.vtl",
@@ -6466,6 +6549,18 @@
             "field": "addFormEntry",
             "request": "FormEntry_add_REQ.vtl",
             "response": "FormEntry_add_RES.vtl"
+          },
+          {
+            "dataSource": "AppData",
+            "type": "Query",
+            "field": "listFormEntries",
+            "kind": "PIPELINE",
+            "request": "Common_REQ.vtl",
+            "response": "Common_RES.vtl",
+            "functions": [
+              "FN_parseFilter",
+              "FN_listFormEntry"
+            ]
           },
           {
             "dataSource": "AppData",
@@ -6705,6 +6800,13 @@
             "name": "FN_getFormVersion",
             "request": "FormVersion_get_REQ.vtl",
             "response": "FormVersion_get_RES.vtl"
+          },
+          {
+            "dataSource": "AppData",
+            "type": "Query",
+            "name": "FN_listFormEntry",
+            "request": "FormEntry_list_REQ.vtl",
+            "response": "Common_FN_list_RES.vtl"
           }
         ],
         "substitutions": null
@@ -7870,7 +7972,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli/dev/1569144242229-2019-09-22T09:24:02.229Z",
+    "artifactDirectoryName": "serverless/formsli/dev/1569151516318-2019-09-22T11:25:16.318Z",
     "artifact": ""
   }
 }
