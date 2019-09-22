@@ -209,10 +209,22 @@ input PlanSortInput {
 
 type FormEntry @model {
   id: ID!
+  accountId: ID!
   formId: ID!
   form: Form!
   data: AWSJSON!
   createdAt: AWSDateTime!
+}
+
+input FormEntryFilterInput {
+  formId: StringFilter
+  createdAt: DateFilter
+  accountId: StringFilter
+  criteria: [FormEntryFilterInput!]
+}
+
+input FormEntrySortInput {
+  createdAt: SortOrder
 }
 
 type FormEntrySansData @aws_api_key {
@@ -223,6 +235,7 @@ type FormEntrySansData @aws_api_key {
 
 input AddFormEntryInput {
   id: ID!
+  accountId: ID!
   formId: ID!
   data: AWSJSON!
 }
@@ -293,6 +306,7 @@ type Form @model  {
   redirectHasEnded : AWSURL
   versions(limit: Int): [FormVersion]
   integrations(limit: Int): [Integration]
+  numEntries: Int
   entries(limit: Int): [FormEntry]
 }
 
@@ -563,8 +577,7 @@ type Query {
   listFormVersions(offsetLimit: OffsetLimit, filter: FormVersionFilterInput, sort: FormVersionSortInput) : [FormVersion]
   listIntegrationTypes(offsetLimit: OffsetLimit, filter: IntegrationTypeFilterInput, sort: IntegrationTypeSortInput): [IntegrationType]
   listIntegrations(offsetLimit: OffsetLimit, filter: IntegrationFilterInput, sort: IntegrationSortInput): [Integration]
-  listFormEntries(offsetLimit: OffsetLimit, formId: String!) : [FormEntry]
-  listFormEntriesByTime(offsetLimit: OffsetLimit, formId: String!, timestampPrefix: String!): [FormEntry]
+  listFormEntries(offsetLimit: OffsetLimit, filter: FormEntryFilterInput, sort: FormEntrySortInput) : [FormEntry]
 }
 
 type Mutation {
