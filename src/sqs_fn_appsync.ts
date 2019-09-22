@@ -50,6 +50,7 @@ export const handle = async (event : SQSEvent, context : APIGatewayEventRequestC
     const mutation = gql(`mutation AddFormEntry($input: AddFormEntryInput!) {
         addFormEntry(input: $input) {
           id
+          accountId
           formId
           createdAt
         }
@@ -65,7 +66,8 @@ export const handle = async (event : SQSEvent, context : APIGatewayEventRequestC
             let Body = JSON.parse(sqsRecord.body) as EntryMessageBody;
             let {__RequestId} = Body;
             let FormId = Attributes.FormId.stringValue;
-            const variables = {input:{id:__RequestId, formId: FormId, data: Body.Payload}};
+            let AccountId = Attributes.TenantId.stringValue;
+            const variables = {input:{id:__RequestId, formId: FormId, accountId: AccountId, data: Body.Payload}};
 
             return Promise.all([
                 client.mutate({mutation: mutation, variables: variables}),
