@@ -1,0 +1,13 @@
+schema: 
+  - client-schema.graphql
+  - schema.graphql
+generates:
+  lib/index.d.ts:
+    - typescript
+    - typescript-operations
+config:
+  scalars:
+    AWSJSON  : String
+    AWSPhone : String
+    AWSDateTime : Date
+    AWSURL : String
