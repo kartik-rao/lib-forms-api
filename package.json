@@ -1,6 +1,6 @@
 {
   "name": "@kartikrao/lib-forms-api",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "GraphQL API for forms app data",
   "main": "lib/index.js",
   "repository": {
