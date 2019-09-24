@@ -92,7 +92,7 @@ describe("Form", () => {
 
         const getForm = {query: `query {
             getForm (formId: "${formId}")
-            {id, formData {id createdAt notes}, createdAt, updatedAt}
+            {id createdAt updatedAt}
             }
         `};
 
@@ -146,12 +146,13 @@ describe("Form", () => {
         }
         const addFormVersion = {query: `mutation {
             addFormVersion (input: {
-                accountId: "${tenantId}",
-                formId: "${formId}",
-                notes: "Test Form Version",
+                displayName: "v1"
+                formId: "${formId}"
+                accountId: "${tenantId}"
+                notes: "Test Form Version"
                 formData: "{}"
             })
-            {id, createdAt, versionId, formData {id, notes, formId, createdAt}}
+            {id createdAt versionId version {id notes displayName createdAt}}
             }
         `};
 
