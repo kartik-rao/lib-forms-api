@@ -10,6 +10,8 @@ generates:
     - typescript-operations
     - typescript-resolvers
 config:
+  typesPrefix: I
+  skipTypename: true
   declarationKind: 'interface'
   scalars:
     AWSJSON  : string
