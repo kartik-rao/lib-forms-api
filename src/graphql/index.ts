@@ -912,6 +912,12 @@ export type IFormFieldsFragment = { id: string, ownerId: string, description: st
     & IAccountFieldsFragment
    };
 
+export type IPlanFieldsFragment = { id: string, accountId: string, ownerId: string, planTypeId: string, startDate: string, account: {  }
+    & IAccountFieldsFragment
+  , ownedBy: {  }
+    & IUserFieldsFragment
+   };
+
 export type IAddPlanTypeMutationVariables = {
   input?: Maybe<IAddPlanTypeInput>
 };
@@ -972,7 +978,9 @@ export type IAddFormVersionMutation = { addFormVersion: { id: string, ownerId: s
       & IUserFieldsFragment
     , account: {  }
       & IAccountFieldsFragment
-    , versions: Maybe<Array<Maybe<{ id: string, accountId: string, formId: string, ownerId: string, createdAt: Maybe<string>, displayName: string, notes: Maybe<string>, formData: string }>>> } };
+    , versions: Maybe<Array<Maybe<{ id: string, accountId: string, formId: string, ownerId: string, createdAt: Maybe<string>, displayName: string, notes: Maybe<string>, ownedBy: {  }
+        & IUserFieldsFragment
+       }>>> } };
 
 export type IAttachFormVersionMutationVariables = {
   input: IAttachFormVersionInput
@@ -1160,11 +1168,9 @@ export type IGetAccountQueryVariables = {
 
 export type IGetAccountQuery = { getAccount: Maybe<{ id: string, name: string, website: Maybe<string>, taxId: Maybe<string>, ownerId: string, planId: Maybe<string>, createdAt: Maybe<string>, updatedAt: Maybe<string>, active: Maybe<number>, numForms: Maybe<number>, numUsers: Maybe<number>, addresses: Maybe<Array<Maybe<{ id: string, name: string, addressee: Maybe<string>, addressType: IAddressType, phone_number: Maybe<string>, email: string, street: Maybe<string>, city: Maybe<string>, state: Maybe<string>, country: Maybe<string> }>>>, ownedBy: {  }
       & IUserFieldsFragment
-    , plan: Maybe<{ id: string, accountId: string, ownerId: string, planTypeId: string, startDate: string, endDate: Maybe<string>, active: Maybe<number>, lastBillDate: Maybe<string>, createdAt: Maybe<string>, updatedAt: Maybe<string>, isDeleted: Maybe<number>, account: {  }
-        & IAccountFieldsFragment
-      , ownedBy: {  }
-        & IUserFieldsFragment
-       }>, users: Maybe<Array<Maybe<{  }
+    , plan: Maybe<{  }
+      & IPlanFieldsFragment
+    >, users: Maybe<Array<Maybe<{  }
       & IUserFieldsFragment
     >>>, forms: Maybe<Array<Maybe<{ id: string, ownerId: string, name: string, description: string, accountId: string, createdAt: string, ownedBy: {  }
         & IUserFieldsFragment
@@ -1272,11 +1278,9 @@ export type IListAccountsQueryVariables = {
 
 export type IListAccountsQuery = { listAccounts: Maybe<Array<Maybe<{ id: string, name: string, website: Maybe<string>, taxId: Maybe<string>, ownerId: string, planId: Maybe<string>, createdAt: Maybe<string>, updatedAt: Maybe<string>, active: Maybe<number>, numForms: Maybe<number>, numUsers: Maybe<number>, addresses: Maybe<Array<Maybe<{ id: string, name: string, addressee: Maybe<string>, addressType: IAddressType, phone_number: Maybe<string>, email: string, street: Maybe<string>, city: Maybe<string>, state: Maybe<string>, country: Maybe<string> }>>>, ownedBy: {  }
       & IUserFieldsFragment
-    , plan: Maybe<{ id: string, accountId: string, ownerId: string, planTypeId: string, startDate: string, endDate: Maybe<string>, active: Maybe<number>, lastBillDate: Maybe<string>, createdAt: Maybe<string>, updatedAt: Maybe<string>, isDeleted: Maybe<number>, ownedBy: {  }
-        & IUserFieldsFragment
-       }>, users: Maybe<Array<Maybe<{  }
-      & IUserFieldsFragment
-    >>>, forms: Maybe<Array<Maybe<{ id: string, ownerId: string, name: string, description: string, versionId: Maybe<string>, versionActivatedDate: Maybe<string>, accountId: string, createdAt: string, updatedAt: Maybe<string>, startDate: Maybe<string>, endDate: Maybe<string>, isPaused: Maybe<number>, isDeleted: Maybe<number>, redirectNotStarted: Maybe<string>, redirectHasEnded: Maybe<string> }>>> }>>> };
+    , plan: Maybe<{  }
+      & IPlanFieldsFragment
+    > }>>> };
 
 export type IListUsersQueryVariables = {
   offsetLimit?: Maybe<IOffsetLimit>,
@@ -1285,7 +1289,11 @@ export type IListUsersQueryVariables = {
 };
 
 
-export type IListUsersQuery = { listUsers: Maybe<Array<Maybe<{ id: string, ownerId: Maybe<string>, accountId: Maybe<string>, email: string, userGroup: string, given_name: string, family_name: string, phone_number: Maybe<string>, createdAt: Maybe<string>, updatedAt: Maybe<string>, isDeleted: Maybe<number>, ownedBy: Maybe<{ id: string, email: string, userGroup: string, given_name: string, family_name: string, phone_number: Maybe<string>, createdAt: Maybe<string>, updatedAt: Maybe<string>, isDeleted: Maybe<number>, numForms: Maybe<number> }>, account: Maybe<{ id: string, name: string, website: Maybe<string>, taxId: Maybe<string>, ownerId: string, planId: Maybe<string>, createdAt: Maybe<string>, updatedAt: Maybe<string>, active: Maybe<number> }> }>>> };
+export type IListUsersQuery = { listUsers: Maybe<Array<Maybe<{ id: string, ownerId: Maybe<string>, accountId: Maybe<string>, email: string, userGroup: string, given_name: string, family_name: string, phone_number: Maybe<string>, createdAt: Maybe<string>, updatedAt: Maybe<string>, isDeleted: Maybe<number>, ownedBy: Maybe<{  }
+      & IUserFieldsFragment
+    >, account: Maybe<{  }
+      & IAccountFieldsFragment
+    > }>>> };
 
 export type IListPlansQueryVariables = {
   offsetLimit?: Maybe<IOffsetLimit>,
@@ -1294,7 +1302,11 @@ export type IListPlansQueryVariables = {
 };
 
 
-export type IListPlansQuery = { listPlans: Maybe<Array<Maybe<{ id: string, accountId: string, ownerId: string, planTypeId: string, startDate: string, endDate: Maybe<string>, active: Maybe<number>, lastBillDate: Maybe<string>, createdAt: Maybe<string>, updatedAt: Maybe<string>, isDeleted: Maybe<number>, account: { id: string, name: string, website: Maybe<string>, taxId: Maybe<string>, ownerId: string, planId: Maybe<string>, createdAt: Maybe<string>, updatedAt: Maybe<string>, active: Maybe<number>, numForms: Maybe<number>, numUsers: Maybe<number> }, ownedBy: { id: string, ownerId: Maybe<string>, accountId: Maybe<string>, email: string, userGroup: string, given_name: string, family_name: string, phone_number: Maybe<string>, createdAt: Maybe<string>, updatedAt: Maybe<string>, isDeleted: Maybe<number>, numForms: Maybe<number> }, planType: Maybe<{ id: string, ownerId: string, name: string, cost: number, active: number, billingTerm: string, createdAt: Maybe<string>, updatedAt: Maybe<string>, isDeleted: Maybe<number> }> }>>> };
+export type IListPlansQuery = { listPlans: Maybe<Array<Maybe<{ id: string, accountId: string, ownerId: string, planTypeId: string, startDate: string, endDate: Maybe<string>, active: Maybe<number>, lastBillDate: Maybe<string>, createdAt: Maybe<string>, updatedAt: Maybe<string>, isDeleted: Maybe<number>, account: {  }
+      & IAccountFieldsFragment
+    , ownedBy: {  }
+      & IUserFieldsFragment
+    , planType: Maybe<{ id: string, ownerId: string, name: string, cost: number, active: number, billingTerm: string, createdAt: Maybe<string>, updatedAt: Maybe<string>, isDeleted: Maybe<number> }> }>>> };
 
 export type IListPlanTypesQueryVariables = {
   offsetLimit?: Maybe<IOffsetLimit>,
@@ -1303,7 +1315,9 @@ export type IListPlanTypesQueryVariables = {
 };
 
 
-export type IListPlanTypesQuery = { listPlanTypes: Maybe<Array<Maybe<{ id: string, ownerId: string, name: string, cost: number, active: number, billingTerm: string, createdAt: Maybe<string>, updatedAt: Maybe<string>, isDeleted: Maybe<number>, ownedBy: { id: string, ownerId: Maybe<string>, accountId: Maybe<string>, email: string, userGroup: string, given_name: string, family_name: string, phone_number: Maybe<string>, createdAt: Maybe<string>, updatedAt: Maybe<string>, isDeleted: Maybe<number> } }>>> };
+export type IListPlanTypesQuery = { listPlanTypes: Maybe<Array<Maybe<{ id: string, ownerId: string, name: string, cost: number, active: number, billingTerm: string, createdAt: Maybe<string>, updatedAt: Maybe<string>, isDeleted: Maybe<number>, ownedBy: {  }
+      & IUserFieldsFragment
+     }>>> };
 
 export type IListFormsQueryVariables = {
   offsetLimit?: Maybe<IOffsetLimit>,
@@ -1312,7 +1326,7 @@ export type IListFormsQueryVariables = {
 };
 
 
-export type IListFormsQuery = { listForms: Maybe<Array<Maybe<{ id: string, ownerId: string, name: string, description: string, versionId: Maybe<string>, versionActivatedDate: Maybe<string>, accountId: string, createdAt: string, updatedAt: Maybe<string>, startDate: Maybe<string>, endDate: Maybe<string>, isPaused: Maybe<number>, isDeleted: Maybe<number>, redirectNotStarted: Maybe<string>, redirectHasEnded: Maybe<string>, version: Maybe<{ id: string, displayName: string, createdAt: Maybe<string>, notes: Maybe<string>, ownedBy: {  }
+export type IListFormsQuery = { listForms: Maybe<Array<Maybe<{ id: string, ownerId: string, name: string, description: string, versionId: Maybe<string>, versionActivatedDate: Maybe<string>, accountId: string, createdAt: string, updatedAt: Maybe<string>, startDate: Maybe<string>, endDate: Maybe<string>, isPaused: Maybe<number>, isDeleted: Maybe<number>, redirectNotStarted: Maybe<string>, redirectHasEnded: Maybe<string>, version: Maybe<{ id: string, accountId: string, displayName: string, createdAt: Maybe<string>, notes: Maybe<string>, ownedBy: {  }
         & IUserFieldsFragment
        }>, ownedBy: {  }
       & IUserFieldsFragment
@@ -1327,7 +1341,7 @@ export type IListFormVersionsQueryVariables = {
 };
 
 
-export type IListFormVersionsQuery = { listFormVersions: Maybe<Array<Maybe<{ id: string, accountId: string, formId: string, ownerId: string, createdAt: Maybe<string>, displayName: string, notes: Maybe<string>, formData: string, ownedBy: {  }
+export type IListFormVersionsQuery = { listFormVersions: Maybe<Array<Maybe<{ id: string, accountId: string, formId: string, ownerId: string, createdAt: Maybe<string>, displayName: string, notes: Maybe<string>, ownedBy: {  }
       & IUserFieldsFragment
      }>>> };
 

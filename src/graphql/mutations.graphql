@@ -168,7 +168,7 @@ mutation AddFormVersion($input: AddFormVersionInput!) {
         createdAt
         displayName
         notes
-        formData
+        ownedBy {...userFields}
       }
     }
   }
