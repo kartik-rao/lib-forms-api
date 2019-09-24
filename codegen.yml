@@ -8,10 +8,11 @@ generates:
   src/graphql/index.ts:
     - typescript
     - typescript-operations
+    - typescript-resolvers
 config:
   declarationKind: 'interface'
   scalars:
-    AWSJSON  : String
-    AWSPhone : String
-    AWSDateTime : Date
-    AWSURL : String
+    AWSJSON  : string
+    AWSPhone : string
+    AWSDateTime : string
+    AWSURL : string

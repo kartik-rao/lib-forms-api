@@ -1,4 +1,6 @@
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 export type Maybe<T> = T | null;
+export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export interface Scalars {
   ID: string,
@@ -6,10 +8,10 @@ export interface Scalars {
   Boolean: boolean,
   Int: number,
   Float: number,
-  AWSPhone: String,
-  AWSDateTime: Date,
-  AWSJSON: String,
-  AWSURL: String,
+  AWSPhone: string,
+  AWSDateTime: string,
+  AWSJSON: string,
+  AWSURL: string,
 }
 
 
@@ -891,6 +893,13 @@ export interface UserFilterInput {
   updatedAt?: Maybe<DateFilter>,
   isDeleted?: Maybe<IntFilter>,
   criteria?: Maybe<Array<UserFilterInput>>,
+}
+
+export enum UserGroup {
+  Admin = 'Admin',
+  AccountAdmin = 'AccountAdmin',
+  AccountEditor = 'AccountEditor',
+  AccountViewer = 'AccountViewer'
 }
 
 export interface UserSortInput {
@@ -1876,3 +1885,509 @@ export type ListFormEntriesQuery = (
     ) }
   )>>> }
 );
+
+
+export type ResolverTypeWrapper<T> = Promise<T> | T;
+
+export type ResolverFn<TResult, TParent, TContext, TArgs> = (
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => Promise<TResult> | TResult;
+
+
+export type StitchingResolver<TResult, TParent, TContext, TArgs> = {
+  fragment: string;
+  resolve: ResolverFn<TResult, TParent, TContext, TArgs>;
+};
+
+export type Resolver<TResult, TParent = {}, TContext = {}, TArgs = {}> =
+  | ResolverFn<TResult, TParent, TContext, TArgs>
+  | StitchingResolver<TResult, TParent, TContext, TArgs>;
+
+export type SubscriptionSubscribeFn<TResult, TParent, TContext, TArgs> = (
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => AsyncIterator<TResult> | Promise<AsyncIterator<TResult>>;
+
+export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => TResult | Promise<TResult>;
+
+export interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {
+  subscribe: SubscriptionSubscribeFn<{ [key in TKey]: TResult }, TParent, TContext, TArgs>;
+  resolve?: SubscriptionResolveFn<TResult, { [key in TKey]: TResult }, TContext, TArgs>;
+}
+
+export interface SubscriptionResolverObject<TResult, TParent, TContext, TArgs> {
+  subscribe: SubscriptionSubscribeFn<any, TParent, TContext, TArgs>;
+  resolve: SubscriptionResolveFn<TResult, any, TContext, TArgs>;
+}
+
+export type SubscriptionObject<TResult, TKey extends string, TParent, TContext, TArgs> =
+  | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>
+  | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;
+
+export type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TContext = {}, TArgs = {}> =
+  | ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
+  | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;
+
+export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
+  parent: TParent,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => Maybe<TTypes>;
+
+export type NextResolverFn<T> = () => Promise<T>;
+
+export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs = {}> = (
+  next: NextResolverFn<TResult>,
+  parent: TParent,
+  args: TArgs,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => TResult | Promise<TResult>;
+
+/** Mapping between all available schema types and the resolvers types */
+export type ResolversTypes = {
+  Query: ResolverTypeWrapper<{}>,
+  ID: ResolverTypeWrapper<Scalars['ID']>,
+  Account: ResolverTypeWrapper<Account>,
+  String: ResolverTypeWrapper<Scalars['String']>,
+  Int: ResolverTypeWrapper<Scalars['Int']>,
+  Address: ResolverTypeWrapper<Address>,
+  AddressType: AddressType,
+  AWSPhone: ResolverTypeWrapper<Scalars['AWSPhone']>,
+  User: ResolverTypeWrapper<User>,
+  AWSDateTime: ResolverTypeWrapper<Scalars['AWSDateTime']>,
+  Plan: ResolverTypeWrapper<Plan>,
+  PlanType: ResolverTypeWrapper<PlanType>,
+  Float: ResolverTypeWrapper<Scalars['Float']>,
+  Form: ResolverTypeWrapper<Form>,
+  FormVersion: ResolverTypeWrapper<FormVersion>,
+  AWSJSON: ResolverTypeWrapper<Scalars['AWSJSON']>,
+  AWSURL: ResolverTypeWrapper<Scalars['AWSURL']>,
+  Integration: ResolverTypeWrapper<Integration>,
+  IntegrationType: ResolverTypeWrapper<IntegrationType>,
+  FormEntry: ResolverTypeWrapper<FormEntry>,
+  OffsetLimit: OffsetLimit,
+  AccountFilterInput: AccountFilterInput,
+  StringFilter: StringFilter,
+  FilterWith: FilterWith,
+  StringFilterExpression: StringFilterExpression,
+  DateFilter: DateFilter,
+  NumericFilterExpression: NumericFilterExpression,
+  IntFilter: IntFilter,
+  AccountSortInput: AccountSortInput,
+  SortOrder: SortOrder,
+  UserFilterInput: UserFilterInput,
+  UserSortInput: UserSortInput,
+  PlanFilterInput: PlanFilterInput,
+  PlanSortInput: PlanSortInput,
+  PlanTypeFilterInput: PlanTypeFilterInput,
+  FloatFilter: FloatFilter,
+  PlanTypeSortInput: PlanTypeSortInput,
+  FormFilterInput: FormFilterInput,
+  FormSortInput: FormSortInput,
+  FormVersionFilterInput: FormVersionFilterInput,
+  FormVersionSortInput: FormVersionSortInput,
+  IntegrationTypeFilterInput: IntegrationTypeFilterInput,
+  IntegrationTypeSortInput: IntegrationTypeSortInput,
+  IntegrationFilterInput: IntegrationFilterInput,
+  IntegrationSortInput: IntegrationSortInput,
+  FormEntryFilterInput: FormEntryFilterInput,
+  FormEntrySortInput: FormEntrySortInput,
+  Mutation: ResolverTypeWrapper<{}>,
+  AddPlanTypeInput: AddPlanTypeInput,
+  AddPlanInput: AddPlanInput,
+  AddIntegrationTypeInput: AddIntegrationTypeInput,
+  AddIntegrationInput: AddIntegrationInput,
+  AddFormInput: AddFormInput,
+  AddFormVersionInput: AddFormVersionInput,
+  AttachFormVersionInput: AttachFormVersionInput,
+  UpdatePlanTypeInput: UpdatePlanTypeInput,
+  UpdatePlanInput: UpdatePlanInput,
+  UpdateAccountInput: UpdateAccountInput,
+  UpdateUserInput: UpdateUserInput,
+  UpdateUserInputData: UpdateUserInputData,
+  UpdateIntegrationTypeInput: UpdateIntegrationTypeInput,
+  UpdateIntegrationInput: UpdateIntegrationInput,
+  UpdateFormInput: UpdateFormInput,
+  DeleteFormInput: DeleteFormInput,
+  DeleteFormVersionInput: DeleteFormVersionInput,
+  AddFormEntryInput: AddFormEntryInput,
+  FormEntrySansData: ResolverTypeWrapper<FormEntrySansData>,
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
+  BooleanFilterExpression: BooleanFilterExpression,
+  UserGroup: UserGroup,
+  BooleanFilter: BooleanFilter,
+  AddAddressInput: ResolverTypeWrapper<AddAddressInput>,
+  UpdateIntegrationTypeInputData: UpdateIntegrationTypeInputData,
+};
+
+/** Mapping between all available schema types and the resolvers parents */
+export type ResolversParentTypes = {
+  Query: {},
+  ID: Scalars['ID'],
+  Account: Account,
+  String: Scalars['String'],
+  Int: Scalars['Int'],
+  Address: Address,
+  AddressType: AddressType,
+  AWSPhone: Scalars['AWSPhone'],
+  User: User,
+  AWSDateTime: Scalars['AWSDateTime'],
+  Plan: Plan,
+  PlanType: PlanType,
+  Float: Scalars['Float'],
+  Form: Form,
+  FormVersion: FormVersion,
+  AWSJSON: Scalars['AWSJSON'],
+  AWSURL: Scalars['AWSURL'],
+  Integration: Integration,
+  IntegrationType: IntegrationType,
+  FormEntry: FormEntry,
+  OffsetLimit: OffsetLimit,
+  AccountFilterInput: AccountFilterInput,
+  StringFilter: StringFilter,
+  FilterWith: FilterWith,
+  StringFilterExpression: StringFilterExpression,
+  DateFilter: DateFilter,
+  NumericFilterExpression: NumericFilterExpression,
+  IntFilter: IntFilter,
+  AccountSortInput: AccountSortInput,
+  SortOrder: SortOrder,
+  UserFilterInput: UserFilterInput,
+  UserSortInput: UserSortInput,
+  PlanFilterInput: PlanFilterInput,
+  PlanSortInput: PlanSortInput,
+  PlanTypeFilterInput: PlanTypeFilterInput,
+  FloatFilter: FloatFilter,
+  PlanTypeSortInput: PlanTypeSortInput,
+  FormFilterInput: FormFilterInput,
+  FormSortInput: FormSortInput,
+  FormVersionFilterInput: FormVersionFilterInput,
+  FormVersionSortInput: FormVersionSortInput,
+  IntegrationTypeFilterInput: IntegrationTypeFilterInput,
+  IntegrationTypeSortInput: IntegrationTypeSortInput,
+  IntegrationFilterInput: IntegrationFilterInput,
+  IntegrationSortInput: IntegrationSortInput,
+  FormEntryFilterInput: FormEntryFilterInput,
+  FormEntrySortInput: FormEntrySortInput,
+  Mutation: {},
+  AddPlanTypeInput: AddPlanTypeInput,
+  AddPlanInput: AddPlanInput,
+  AddIntegrationTypeInput: AddIntegrationTypeInput,
+  AddIntegrationInput: AddIntegrationInput,
+  AddFormInput: AddFormInput,
+  AddFormVersionInput: AddFormVersionInput,
+  AttachFormVersionInput: AttachFormVersionInput,
+  UpdatePlanTypeInput: UpdatePlanTypeInput,
+  UpdatePlanInput: UpdatePlanInput,
+  UpdateAccountInput: UpdateAccountInput,
+  UpdateUserInput: UpdateUserInput,
+  UpdateUserInputData: UpdateUserInputData,
+  UpdateIntegrationTypeInput: UpdateIntegrationTypeInput,
+  UpdateIntegrationInput: UpdateIntegrationInput,
+  UpdateFormInput: UpdateFormInput,
+  DeleteFormInput: DeleteFormInput,
+  DeleteFormVersionInput: DeleteFormVersionInput,
+  AddFormEntryInput: AddFormEntryInput,
+  FormEntrySansData: FormEntrySansData,
+  Boolean: Scalars['Boolean'],
+  BooleanFilterExpression: BooleanFilterExpression,
+  UserGroup: UserGroup,
+  BooleanFilter: BooleanFilter,
+  AddAddressInput: AddAddressInput,
+  UpdateIntegrationTypeInputData: UpdateIntegrationTypeInputData,
+};
+
+export type ModelDirectiveResolver<Result, Parent, ContextType = any, Args = {  }> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type Aws_Api_KeyDirectiveResolver<Result, Parent, ContextType = any, Args = {  }> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type AccountResolvers<ContextType = any, ParentType extends ResolversParentTypes['Account'] = ResolversParentTypes['Account']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  addresses?: Resolver<Maybe<Array<Maybe<ResolversTypes['Address']>>>, ParentType, ContextType, AccountAddressesArgs>,
+  website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  taxId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  ownerId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  ownedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>,
+  plan?: Resolver<Maybe<ResolversTypes['Plan']>, ParentType, ContextType>,
+  planId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>,
+  createdAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  updatedAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  active?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
+  numForms?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
+  numUsers?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
+  users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType, AccountUsersArgs>,
+  forms?: Resolver<Maybe<Array<Maybe<ResolversTypes['Form']>>>, ParentType, ContextType, AccountFormsArgs>,
+};
+
+export type AddAddressInputResolvers<ContextType = any, ParentType extends ResolversParentTypes['AddAddressInput'] = ResolversParentTypes['AddAddressInput']> = {
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  addressee?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  addressType?: Resolver<ResolversTypes['AddressType'], ParentType, ContextType>,
+  phone_number?: Resolver<Maybe<ResolversTypes['AWSPhone']>, ParentType, ContextType>,
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  street?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  state?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  country?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+};
+
+export type AddressResolvers<ContextType = any, ParentType extends ResolversParentTypes['Address'] = ResolversParentTypes['Address']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  addressee?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  addressType?: Resolver<ResolversTypes['AddressType'], ParentType, ContextType>,
+  phone_number?: Resolver<Maybe<ResolversTypes['AWSPhone']>, ParentType, ContextType>,
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  street?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  state?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  country?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+};
+
+export interface AwsDateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['AWSDateTime'], any> {
+  name: 'AWSDateTime'
+}
+
+export interface AwsjsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['AWSJSON'], any> {
+  name: 'AWSJSON'
+}
+
+export interface AwsPhoneScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['AWSPhone'], any> {
+  name: 'AWSPhone'
+}
+
+export interface AwsurlScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['AWSURL'], any> {
+  name: 'AWSURL'
+}
+
+export type FormResolvers<ContextType = any, ParentType extends ResolversParentTypes['Form'] = ResolversParentTypes['Form']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  ownerId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  description?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  versionId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>,
+  versionActivatedDate?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  version?: Resolver<Maybe<ResolversTypes['FormVersion']>, ParentType, ContextType>,
+  ownedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>,
+  accountId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  account?: Resolver<ResolversTypes['Account'], ParentType, ContextType>,
+  createdAt?: Resolver<ResolversTypes['AWSDateTime'], ParentType, ContextType>,
+  updatedAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  startDate?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  endDate?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  isPaused?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
+  isDeleted?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
+  redirectNotStarted?: Resolver<Maybe<ResolversTypes['AWSURL']>, ParentType, ContextType>,
+  redirectHasEnded?: Resolver<Maybe<ResolversTypes['AWSURL']>, ParentType, ContextType>,
+  versions?: Resolver<Maybe<Array<Maybe<ResolversTypes['FormVersion']>>>, ParentType, ContextType, FormVersionsArgs>,
+  integrations?: Resolver<Maybe<Array<Maybe<ResolversTypes['Integration']>>>, ParentType, ContextType, FormIntegrationsArgs>,
+  numEntries?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
+  entries?: Resolver<Maybe<Array<Maybe<ResolversTypes['FormEntry']>>>, ParentType, ContextType, FormEntriesArgs>,
+};
+
+export type FormEntryResolvers<ContextType = any, ParentType extends ResolversParentTypes['FormEntry'] = ResolversParentTypes['FormEntry']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  accountId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  formId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  form?: Resolver<ResolversTypes['Form'], ParentType, ContextType>,
+  data?: Resolver<ResolversTypes['AWSJSON'], ParentType, ContextType>,
+  createdAt?: Resolver<ResolversTypes['AWSDateTime'], ParentType, ContextType>,
+};
+
+export type FormEntrySansDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['FormEntrySansData'] = ResolversParentTypes['FormEntrySansData']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  formId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  createdAt?: Resolver<ResolversTypes['AWSDateTime'], ParentType, ContextType>,
+};
+
+export type FormVersionResolvers<ContextType = any, ParentType extends ResolversParentTypes['FormVersion'] = ResolversParentTypes['FormVersion']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  accountId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  formId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  ownerId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  ownedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>,
+  createdAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  formData?: Resolver<ResolversTypes['AWSJSON'], ParentType, ContextType>,
+};
+
+export type IntegrationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Integration'] = ResolversParentTypes['Integration']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  integrationTypeId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  integrationType?: Resolver<Maybe<ResolversTypes['IntegrationType']>, ParentType, ContextType>,
+  ownerId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  accountId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  formId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  form?: Resolver<ResolversTypes['Form'], ParentType, ContextType>,
+  active?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  authType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  auth?: Resolver<Maybe<ResolversTypes['AWSJSON']>, ParentType, ContextType>,
+  target?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  method?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  lastExecuted?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  lastExecutionResult?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
+  lastExecutionResultMessage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  createdAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  updatedAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  isDeleted?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
+};
+
+export type IntegrationTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['IntegrationType'] = ResolversParentTypes['IntegrationType']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  ownerId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  ownedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>,
+  planTypeId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  planType?: Resolver<Maybe<ResolversTypes['PlanType']>, ParentType, ContextType>,
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  active?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  createdAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  updatedAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+};
+
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
+  addPlanType?: Resolver<ResolversTypes['PlanType'], ParentType, ContextType, MutationAddPlanTypeArgs>,
+  addPlan?: Resolver<ResolversTypes['Plan'], ParentType, ContextType, MutationAddPlanArgs>,
+  addIntegrationType?: Resolver<ResolversTypes['IntegrationType'], ParentType, ContextType, MutationAddIntegrationTypeArgs>,
+  addIntegration?: Resolver<ResolversTypes['Integration'], ParentType, ContextType, MutationAddIntegrationArgs>,
+  addForm?: Resolver<ResolversTypes['Form'], ParentType, ContextType, RequireFields<MutationAddFormArgs, 'input'>>,
+  addFormVersion?: Resolver<ResolversTypes['Form'], ParentType, ContextType, RequireFields<MutationAddFormVersionArgs, 'input'>>,
+  attachFormVersion?: Resolver<ResolversTypes['Form'], ParentType, ContextType, RequireFields<MutationAttachFormVersionArgs, 'input'>>,
+  updatePlanType?: Resolver<ResolversTypes['PlanType'], ParentType, ContextType, MutationUpdatePlanTypeArgs>,
+  updatePlan?: Resolver<ResolversTypes['Plan'], ParentType, ContextType, MutationUpdatePlanArgs>,
+  updateAccount?: Resolver<ResolversTypes['Account'], ParentType, ContextType, MutationUpdateAccountArgs>,
+  updateAccountPlan?: Resolver<ResolversTypes['Account'], ParentType, ContextType, MutationUpdateAccountPlanArgs>,
+  updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, MutationUpdateUserArgs>,
+  updateIntegrationType?: Resolver<ResolversTypes['IntegrationType'], ParentType, ContextType, MutationUpdateIntegrationTypeArgs>,
+  updateIntegration?: Resolver<ResolversTypes['Integration'], ParentType, ContextType, MutationUpdateIntegrationArgs>,
+  updateForm?: Resolver<ResolversTypes['Form'], ParentType, ContextType, MutationUpdateFormArgs>,
+  deleteForm?: Resolver<ResolversTypes['Form'], ParentType, ContextType, RequireFields<MutationDeleteFormArgs, 'input'>>,
+  deletePlanType?: Resolver<ResolversTypes['PlanType'], ParentType, ContextType, RequireFields<MutationDeletePlanTypeArgs, 'planTypeId'>>,
+  deletePlan?: Resolver<ResolversTypes['Plan'], ParentType, ContextType, RequireFields<MutationDeletePlanArgs, 'accountId' | 'planId'>>,
+  deleteAccount?: Resolver<ResolversTypes['Account'], ParentType, ContextType, RequireFields<MutationDeleteAccountArgs, 'accountId'>>,
+  deleteUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'userId'>>,
+  deleteIntegrationType?: Resolver<ResolversTypes['IntegrationType'], ParentType, ContextType, RequireFields<MutationDeleteIntegrationTypeArgs, 'integrationTypeId'>>,
+  deleteIntegration?: Resolver<ResolversTypes['Integration'], ParentType, ContextType, RequireFields<MutationDeleteIntegrationArgs, 'integrationId'>>,
+  deleteFormVersion?: Resolver<ResolversTypes['FormVersion'], ParentType, ContextType, RequireFields<MutationDeleteFormVersionArgs, 'input'>>,
+  addFormEntry?: Resolver<ResolversTypes['FormEntrySansData'], ParentType, ContextType, RequireFields<MutationAddFormEntryArgs, 'input'>>,
+};
+
+export type PlanResolvers<ContextType = any, ParentType extends ResolversParentTypes['Plan'] = ResolversParentTypes['Plan']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  accountId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  account?: Resolver<ResolversTypes['Account'], ParentType, ContextType>,
+  ownerId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  ownedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>,
+  planTypeId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  startDate?: Resolver<ResolversTypes['AWSDateTime'], ParentType, ContextType>,
+  endDate?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  active?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
+  lastBillDate?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  createdAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  updatedAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  planType?: Resolver<Maybe<ResolversTypes['PlanType']>, ParentType, ContextType>,
+  isDeleted?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
+};
+
+export type PlanTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['PlanType'] = ResolversParentTypes['PlanType']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  ownerId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  ownedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>,
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  cost?: Resolver<ResolversTypes['Float'], ParentType, ContextType>,
+  active?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  billingTerm?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  createdAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  updatedAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  isDeleted?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
+};
+
+export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  getAccount?: Resolver<Maybe<ResolversTypes['Account']>, ParentType, ContextType, RequireFields<QueryGetAccountArgs, 'accountId'>>,
+  getUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryGetUserArgs, 'userId'>>,
+  getPlan?: Resolver<Maybe<ResolversTypes['Plan']>, ParentType, ContextType, RequireFields<QueryGetPlanArgs, 'planId'>>,
+  getActiveAccountPlan?: Resolver<Maybe<ResolversTypes['Plan']>, ParentType, ContextType, RequireFields<QueryGetActiveAccountPlanArgs, 'accountId'>>,
+  getPlanType?: Resolver<Maybe<ResolversTypes['PlanType']>, ParentType, ContextType, RequireFields<QueryGetPlanTypeArgs, 'planTypeId'>>,
+  getForm?: Resolver<Maybe<ResolversTypes['Form']>, ParentType, ContextType, RequireFields<QueryGetFormArgs, 'formId'>>,
+  getFormVersion?: Resolver<Maybe<ResolversTypes['FormVersion']>, ParentType, ContextType, RequireFields<QueryGetFormVersionArgs, 'versionId'>>,
+  getIntegrationType?: Resolver<Maybe<ResolversTypes['IntegrationType']>, ParentType, ContextType, RequireFields<QueryGetIntegrationTypeArgs, 'integrationTypeId'>>,
+  getIntegration?: Resolver<Maybe<ResolversTypes['Integration']>, ParentType, ContextType, RequireFields<QueryGetIntegrationArgs, 'integrationId'>>,
+  getFormEntry?: Resolver<Maybe<ResolversTypes['FormEntry']>, ParentType, ContextType, RequireFields<QueryGetFormEntryArgs, 'formEntryId'>>,
+  listAccounts?: Resolver<Maybe<Array<Maybe<ResolversTypes['Account']>>>, ParentType, ContextType, QueryListAccountsArgs>,
+  listUsers?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType, QueryListUsersArgs>,
+  listPlans?: Resolver<Maybe<Array<Maybe<ResolversTypes['Plan']>>>, ParentType, ContextType, QueryListPlansArgs>,
+  listPlanTypes?: Resolver<Maybe<Array<Maybe<ResolversTypes['PlanType']>>>, ParentType, ContextType, QueryListPlanTypesArgs>,
+  listForms?: Resolver<Maybe<Array<Maybe<ResolversTypes['Form']>>>, ParentType, ContextType, QueryListFormsArgs>,
+  listFormVersions?: Resolver<Maybe<Array<Maybe<ResolversTypes['FormVersion']>>>, ParentType, ContextType, QueryListFormVersionsArgs>,
+  listIntegrationTypes?: Resolver<Maybe<Array<Maybe<ResolversTypes['IntegrationType']>>>, ParentType, ContextType, QueryListIntegrationTypesArgs>,
+  listIntegrations?: Resolver<Maybe<Array<Maybe<ResolversTypes['Integration']>>>, ParentType, ContextType, QueryListIntegrationsArgs>,
+  listFormEntries?: Resolver<Maybe<Array<Maybe<ResolversTypes['FormEntry']>>>, ParentType, ContextType, QueryListFormEntriesArgs>,
+};
+
+export type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  ownerId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>,
+  ownedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>,
+  accountId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>,
+  account?: Resolver<Maybe<ResolversTypes['Account']>, ParentType, ContextType>,
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  userGroup?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  given_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  family_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  phone_number?: Resolver<Maybe<ResolversTypes['AWSPhone']>, ParentType, ContextType>,
+  createdAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  updatedAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>,
+  isDeleted?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
+  numForms?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
+};
+
+export type Resolvers<ContextType = any> = {
+  Account?: AccountResolvers<ContextType>,
+  AddAddressInput?: AddAddressInputResolvers<ContextType>,
+  Address?: AddressResolvers<ContextType>,
+  AWSDateTime?: GraphQLScalarType,
+  AWSJSON?: GraphQLScalarType,
+  AWSPhone?: GraphQLScalarType,
+  AWSURL?: GraphQLScalarType,
+  Form?: FormResolvers<ContextType>,
+  FormEntry?: FormEntryResolvers<ContextType>,
+  FormEntrySansData?: FormEntrySansDataResolvers<ContextType>,
+  FormVersion?: FormVersionResolvers<ContextType>,
+  Integration?: IntegrationResolvers<ContextType>,
+  IntegrationType?: IntegrationTypeResolvers<ContextType>,
+  Mutation?: MutationResolvers<ContextType>,
+  Plan?: PlanResolvers<ContextType>,
+  PlanType?: PlanTypeResolvers<ContextType>,
+  Query?: QueryResolvers<ContextType>,
+  User?: UserResolvers<ContextType>,
+};
+
+
+/**
+ * @deprecated
+ * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
+*/
+export type IResolvers<ContextType = any> = Resolvers<ContextType>;
+export type DirectiveResolvers<ContextType = any> = {
+  model?: ModelDirectiveResolver<any, any, ContextType>,
+  aws_api_key?: Aws_Api_KeyDirectiveResolver<any, any, ContextType>,
+};
+
+
+/**
+* @deprecated
+* Use "DirectiveResolvers" root object instead. If you wish to get "IDirectiveResolvers", add "typesPrefix: I" to your config.
+*/
+export type IDirectiveResolvers<ContextType = any> = DirectiveResolvers<ContextType>;
