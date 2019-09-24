@@ -18,24 +18,13 @@ query GetAccount($accountId: ID!) {
       taxId
       ownerId
       ownedBy {...userFields}
-      plan {...planFields}
       planId
+      plan {...planFields}
       createdAt
       updatedAt
       active
       numForms
       numUsers
-      users {...userFields}
-      forms {
-        id
-        ownerId
-        name
-        description
-        accountId
-        createdAt
-        ownedBy {...userFields}
-        account {...accountFields}
-      }
     }
 }
 

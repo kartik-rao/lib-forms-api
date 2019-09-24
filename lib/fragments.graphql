@@ -25,12 +25,19 @@ fragment formFields on Form {
   createdAt
 }
 
+fragment planTypeFields on PlanType {
+  id
+  name
+  cost
+  billingTerm
+}
+
 fragment planFields on Plan {
   id
   accountId
-  account {...accountFields}
   ownerId
   ownedBy {...userFields}
   planTypeId
+  planType {...planTypeFields}
   startDate
 }

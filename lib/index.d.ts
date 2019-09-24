@@ -1,4 +1,4 @@
-import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
+import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from "graphql";
 export declare type Maybe<T> = T | null;
 export declare type RequireFields<T, K extends keyof T> = {
     [X in Exclude<keyof T, K>]?: T[X];
@@ -18,31 +18,31 @@ export interface Scalars {
     AWSURL: string;
 }
 export interface IAccount {
-    id: Scalars['ID'];
-    name: Scalars['String'];
+    id: Scalars["ID"];
+    name: Scalars["String"];
     addresses?: Maybe<Array<Maybe<IAddress>>>;
-    website?: Maybe<Scalars['String']>;
-    taxId?: Maybe<Scalars['String']>;
-    ownerId: Scalars['ID'];
+    website?: Maybe<Scalars["String"]>;
+    taxId?: Maybe<Scalars["String"]>;
+    ownerId: Scalars["ID"];
     ownedBy: IUser;
     plan?: Maybe<IPlan>;
-    planId?: Maybe<Scalars['ID']>;
-    createdAt?: Maybe<Scalars['AWSDateTime']>;
-    updatedAt?: Maybe<Scalars['AWSDateTime']>;
-    active?: Maybe<Scalars['Int']>;
-    numForms?: Maybe<Scalars['Int']>;
-    numUsers?: Maybe<Scalars['Int']>;
+    planId?: Maybe<Scalars["ID"]>;
+    createdAt?: Maybe<Scalars["AWSDateTime"]>;
+    updatedAt?: Maybe<Scalars["AWSDateTime"]>;
+    active?: Maybe<Scalars["Int"]>;
+    numForms?: Maybe<Scalars["Int"]>;
+    numUsers?: Maybe<Scalars["Int"]>;
     users?: Maybe<Array<Maybe<IUser>>>;
     forms?: Maybe<Array<Maybe<IForm>>>;
 }
 export interface IAccountAddressesArgs {
-    limit?: Maybe<Scalars['Int']>;
+    limit?: Maybe<Scalars["Int"]>;
 }
 export interface IAccountUsersArgs {
-    limit?: Maybe<Scalars['Int']>;
+    limit?: Maybe<Scalars["Int"]>;
 }
 export interface IAccountFormsArgs {
-    limit?: Maybe<Scalars['Int']>;
+    limit?: Maybe<Scalars["Int"]>;
 }
 export interface IAccountFilterInput {
     name?: Maybe<IStringFilter>;
@@ -60,88 +60,88 @@ export interface IAccountSortInput {
     sortBy?: Maybe<Array<IAccountSortInput>>;
 }
 export interface IAddAddressInput {
-    name: Scalars['String'];
-    addressee?: Maybe<Scalars['String']>;
+    name: Scalars["String"];
+    addressee?: Maybe<Scalars["String"]>;
     addressType: IAddressType;
-    phone_number?: Maybe<Scalars['AWSPhone']>;
-    email: Scalars['String'];
-    street?: Maybe<Scalars['String']>;
-    city?: Maybe<Scalars['String']>;
-    state?: Maybe<Scalars['String']>;
-    country?: Maybe<Scalars['String']>;
+    phone_number?: Maybe<Scalars["AWSPhone"]>;
+    email: Scalars["String"];
+    street?: Maybe<Scalars["String"]>;
+    city?: Maybe<Scalars["String"]>;
+    state?: Maybe<Scalars["String"]>;
+    country?: Maybe<Scalars["String"]>;
 }
 export interface IAddFormEntryInput {
-    id: Scalars['ID'];
-    accountId: Scalars['ID'];
-    formId: Scalars['ID'];
-    data: Scalars['AWSJSON'];
+    id: Scalars["ID"];
+    accountId: Scalars["ID"];
+    formId: Scalars["ID"];
+    data: Scalars["AWSJSON"];
 }
 export interface IAddFormInput {
-    accountId: Scalars['ID'];
-    name: Scalars['String'];
-    description: Scalars['String'];
-    startsAt?: Maybe<Scalars['AWSDateTime']>;
-    endsAt?: Maybe<Scalars['AWSDateTime']>;
-    isPaused?: Maybe<Scalars['Int']>;
+    accountId: Scalars["ID"];
+    name: Scalars["String"];
+    description: Scalars["String"];
+    startsAt?: Maybe<Scalars["AWSDateTime"]>;
+    endsAt?: Maybe<Scalars["AWSDateTime"]>;
+    isPaused?: Maybe<Scalars["Int"]>;
 }
 export interface IAddFormVersionInput {
-    accountId: Scalars['ID'];
-    formId: Scalars['ID'];
-    displayName: Scalars['String'];
-    notes: Scalars['String'];
-    formData: Scalars['AWSJSON'];
+    accountId: Scalars["ID"];
+    formId: Scalars["ID"];
+    displayName: Scalars["String"];
+    notes: Scalars["String"];
+    formData: Scalars["AWSJSON"];
 }
 export interface IAddIntegrationInput {
-    integrationTypeId: Scalars['ID'];
-    accountId: Scalars['ID'];
-    formId: Scalars['ID'];
-    active?: Maybe<Scalars['Int']>;
-    authType?: Maybe<Scalars['String']>;
-    auth?: Maybe<Scalars['AWSJSON']>;
-    target?: Maybe<Scalars['String']>;
-    method?: Maybe<Scalars['String']>;
+    integrationTypeId: Scalars["ID"];
+    accountId: Scalars["ID"];
+    formId: Scalars["ID"];
+    active?: Maybe<Scalars["Int"]>;
+    authType?: Maybe<Scalars["String"]>;
+    auth?: Maybe<Scalars["AWSJSON"]>;
+    target?: Maybe<Scalars["String"]>;
+    method?: Maybe<Scalars["String"]>;
 }
 export interface IAddIntegrationTypeInput {
-    name: Scalars['String'];
-    active?: Maybe<Scalars['Int']>;
+    name: Scalars["String"];
+    active?: Maybe<Scalars["Int"]>;
 }
 export interface IAddPlanInput {
-    accountId: Scalars['ID'];
-    planTypeId: Scalars['ID'];
-    endDate?: Maybe<Scalars['AWSDateTime']>;
-    active?: Maybe<Scalars['Int']>;
+    accountId: Scalars["ID"];
+    planTypeId: Scalars["ID"];
+    endDate?: Maybe<Scalars["AWSDateTime"]>;
+    active?: Maybe<Scalars["Int"]>;
 }
 export interface IAddPlanTypeInput {
-    name: Scalars['String'];
-    cost: Scalars['Float'];
-    billingTerm: Scalars['String'];
-    active: Scalars['Int'];
+    name: Scalars["String"];
+    cost: Scalars["Float"];
+    billingTerm: Scalars["String"];
+    active: Scalars["Int"];
 }
 export interface IAddress {
-    id: Scalars['ID'];
-    name: Scalars['String'];
-    addressee?: Maybe<Scalars['String']>;
+    id: Scalars["ID"];
+    name: Scalars["String"];
+    addressee?: Maybe<Scalars["String"]>;
     addressType: IAddressType;
-    phone_number?: Maybe<Scalars['AWSPhone']>;
-    email: Scalars['String'];
-    street?: Maybe<Scalars['String']>;
-    city?: Maybe<Scalars['String']>;
-    state?: Maybe<Scalars['String']>;
-    country?: Maybe<Scalars['String']>;
+    phone_number?: Maybe<Scalars["AWSPhone"]>;
+    email: Scalars["String"];
+    street?: Maybe<Scalars["String"]>;
+    city?: Maybe<Scalars["String"]>;
+    state?: Maybe<Scalars["String"]>;
+    country?: Maybe<Scalars["String"]>;
 }
 export declare enum IAddressType {
     Billing = "BILLING",
     Contact = "CONTACT"
 }
 export interface IAttachFormVersionInput {
-    formId: Scalars['ID'];
-    versionId: Scalars['ID'];
-    accountId: Scalars['ID'];
+    formId: Scalars["ID"];
+    versionId: Scalars["ID"];
+    accountId: Scalars["ID"];
 }
 export interface IBooleanFilter {
     with?: Maybe<IFilterWith>;
     expression: IBooleanFilterExpression;
-    value?: Maybe<Array<Scalars['Boolean']>>;
+    value?: Maybe<Array<Scalars["Boolean"]>>;
 }
 export declare enum IBooleanFilterExpression {
     Ne = "ne",
@@ -150,16 +150,16 @@ export declare enum IBooleanFilterExpression {
 export interface IDateFilter {
     with?: Maybe<IFilterWith>;
     expression: INumericFilterExpression;
-    value?: Maybe<Array<Scalars['AWSDateTime']>>;
+    value?: Maybe<Array<Scalars["AWSDateTime"]>>;
 }
 export interface IDeleteFormInput {
-    id: Scalars['ID'];
-    accountId: Scalars['ID'];
+    id: Scalars["ID"];
+    accountId: Scalars["ID"];
 }
 export interface IDeleteFormVersionInput {
-    accountId: Scalars['ID'];
-    formId: Scalars['ID'];
-    versionId: Scalars['ID'];
+    accountId: Scalars["ID"];
+    formId: Scalars["ID"];
+    versionId: Scalars["ID"];
 }
 export declare enum IFilterWith {
     And = "AND",
@@ -168,48 +168,48 @@ export declare enum IFilterWith {
 export interface IFloatFilter {
     with?: Maybe<IFilterWith>;
     expression: INumericFilterExpression;
-    value?: Maybe<Array<Scalars['Float']>>;
+    value?: Maybe<Array<Scalars["Float"]>>;
 }
 export interface IForm {
-    id: Scalars['ID'];
-    ownerId: Scalars['ID'];
-    name: Scalars['String'];
-    description: Scalars['String'];
-    versionId?: Maybe<Scalars['ID']>;
-    versionActivatedDate?: Maybe<Scalars['AWSDateTime']>;
+    id: Scalars["ID"];
+    ownerId: Scalars["ID"];
+    name: Scalars["String"];
+    description: Scalars["String"];
+    versionId?: Maybe<Scalars["ID"]>;
+    versionActivatedDate?: Maybe<Scalars["AWSDateTime"]>;
     version?: Maybe<IFormVersion>;
     ownedBy: IUser;
-    accountId: Scalars['ID'];
+    accountId: Scalars["ID"];
     account: IAccount;
-    createdAt: Scalars['AWSDateTime'];
-    updatedAt?: Maybe<Scalars['AWSDateTime']>;
-    startDate?: Maybe<Scalars['AWSDateTime']>;
-    endDate?: Maybe<Scalars['AWSDateTime']>;
-    isPaused?: Maybe<Scalars['Int']>;
-    isDeleted?: Maybe<Scalars['Int']>;
-    redirectNotStarted?: Maybe<Scalars['AWSURL']>;
-    redirectHasEnded?: Maybe<Scalars['AWSURL']>;
+    createdAt: Scalars["AWSDateTime"];
+    updatedAt?: Maybe<Scalars["AWSDateTime"]>;
+    startDate?: Maybe<Scalars["AWSDateTime"]>;
+    endDate?: Maybe<Scalars["AWSDateTime"]>;
+    isPaused?: Maybe<Scalars["Int"]>;
+    isDeleted?: Maybe<Scalars["Int"]>;
+    redirectNotStarted?: Maybe<Scalars["AWSURL"]>;
+    redirectHasEnded?: Maybe<Scalars["AWSURL"]>;
     versions?: Maybe<Array<Maybe<IFormVersion>>>;
     integrations?: Maybe<Array<Maybe<IIntegration>>>;
-    numEntries?: Maybe<Scalars['Int']>;
+    numEntries?: Maybe<Scalars["Int"]>;
     entries?: Maybe<Array<Maybe<IFormEntry>>>;
 }
 export interface IFormVersionsArgs {
-    limit?: Maybe<Scalars['Int']>;
+    limit?: Maybe<Scalars["Int"]>;
 }
 export interface IFormIntegrationsArgs {
-    limit?: Maybe<Scalars['Int']>;
+    limit?: Maybe<Scalars["Int"]>;
 }
 export interface IFormEntriesArgs {
-    limit?: Maybe<Scalars['Int']>;
+    limit?: Maybe<Scalars["Int"]>;
 }
 export interface IFormEntry {
-    id: Scalars['ID'];
-    accountId: Scalars['ID'];
-    formId: Scalars['ID'];
+    id: Scalars["ID"];
+    accountId: Scalars["ID"];
+    formId: Scalars["ID"];
     form: IForm;
-    data: Scalars['AWSJSON'];
-    createdAt: Scalars['AWSDateTime'];
+    data: Scalars["AWSJSON"];
+    createdAt: Scalars["AWSDateTime"];
 }
 export interface IFormEntryFilterInput {
     formId?: Maybe<IStringFilter>;
@@ -218,9 +218,9 @@ export interface IFormEntryFilterInput {
     criteria?: Maybe<Array<IFormEntryFilterInput>>;
 }
 export interface IFormEntrySansData {
-    id: Scalars['ID'];
-    formId: Scalars['ID'];
-    createdAt: Scalars['AWSDateTime'];
+    id: Scalars["ID"];
+    formId: Scalars["ID"];
+    createdAt: Scalars["AWSDateTime"];
 }
 export interface IFormEntrySortInput {
     createdAt?: Maybe<ISortOrder>;
@@ -246,15 +246,15 @@ export interface IFormSortInput {
     sortBy?: Maybe<Array<IFormSortInput>>;
 }
 export interface IFormVersion {
-    id: Scalars['ID'];
-    accountId: Scalars['ID'];
-    formId: Scalars['ID'];
-    ownerId: Scalars['ID'];
+    id: Scalars["ID"];
+    accountId: Scalars["ID"];
+    formId: Scalars["ID"];
+    ownerId: Scalars["ID"];
     ownedBy: IUser;
-    createdAt?: Maybe<Scalars['AWSDateTime']>;
-    displayName: Scalars['String'];
-    notes?: Maybe<Scalars['String']>;
-    formData: Scalars['AWSJSON'];
+    createdAt?: Maybe<Scalars["AWSDateTime"]>;
+    displayName: Scalars["String"];
+    notes?: Maybe<Scalars["String"]>;
+    formData: Scalars["AWSJSON"];
 }
 export interface IFormVersionFilterInput {
     accountId?: Maybe<IStringFilter>;
@@ -268,26 +268,26 @@ export interface IFormVersionSortInput {
     sortBy?: Maybe<Array<IFormVersionSortInput>>;
 }
 export interface IIntegration {
-    id: Scalars['ID'];
-    integrationTypeId: Scalars['ID'];
+    id: Scalars["ID"];
+    integrationTypeId: Scalars["ID"];
     integrationType: IIntegrationType;
-    ownerId: Scalars['ID'];
+    ownerId: Scalars["ID"];
     ownedBy: IUser;
-    accountId: Scalars['ID'];
+    accountId: Scalars["ID"];
     account: IAccount;
-    formId?: Maybe<Scalars['ID']>;
+    formId?: Maybe<Scalars["ID"]>;
     form?: Maybe<IForm>;
-    active: Scalars['Int'];
-    authType?: Maybe<Scalars['String']>;
-    auth?: Maybe<Scalars['AWSJSON']>;
-    target?: Maybe<Scalars['String']>;
-    method?: Maybe<Scalars['String']>;
-    lastExecuted?: Maybe<Scalars['AWSDateTime']>;
-    lastExecutionResult?: Maybe<Scalars['Int']>;
-    lastExecutionResultMessage?: Maybe<Scalars['String']>;
-    createdAt?: Maybe<Scalars['AWSDateTime']>;
-    updatedAt?: Maybe<Scalars['AWSDateTime']>;
-    isDeleted?: Maybe<Scalars['Int']>;
+    active: Scalars["Int"];
+    authType?: Maybe<Scalars["String"]>;
+    auth?: Maybe<Scalars["AWSJSON"]>;
+    target?: Maybe<Scalars["String"]>;
+    method?: Maybe<Scalars["String"]>;
+    lastExecuted?: Maybe<Scalars["AWSDateTime"]>;
+    lastExecutionResult?: Maybe<Scalars["Int"]>;
+    lastExecutionResultMessage?: Maybe<Scalars["String"]>;
+    createdAt?: Maybe<Scalars["AWSDateTime"]>;
+    updatedAt?: Maybe<Scalars["AWSDateTime"]>;
+    isDeleted?: Maybe<Scalars["Int"]>;
 }
 export interface IIntegrationFilterInput {
     ownerId?: Maybe<IStringFilter>;
@@ -308,15 +308,15 @@ export interface IIntegrationSortInput {
     sortBy?: Maybe<Array<IIntegrationSortInput>>;
 }
 export interface IIntegrationType {
-    id: Scalars['ID'];
-    ownerId: Scalars['ID'];
+    id: Scalars["ID"];
+    ownerId: Scalars["ID"];
     ownedBy: IUser;
-    planTypeId: Scalars['ID'];
+    planTypeId: Scalars["ID"];
     planType?: Maybe<IPlanType>;
-    name: Scalars['String'];
-    active: Scalars['Int'];
-    createdAt?: Maybe<Scalars['AWSDateTime']>;
-    updatedAt?: Maybe<Scalars['AWSDateTime']>;
+    name: Scalars["String"];
+    active: Scalars["Int"];
+    createdAt?: Maybe<Scalars["AWSDateTime"]>;
+    updatedAt?: Maybe<Scalars["AWSDateTime"]>;
 }
 export interface IIntegrationTypeFilterInput {
     ownerId?: Maybe<IStringFilter>;
@@ -336,7 +336,7 @@ export interface IIntegrationTypeSortInput {
 export interface IIntFilter {
     with?: Maybe<IFilterWith>;
     expression: INumericFilterExpression;
-    value?: Maybe<Array<Scalars['Int']>>;
+    value?: Maybe<Array<Scalars["Int"]>>;
 }
 export interface IMutation {
     addPlanType: IPlanType;
@@ -413,23 +413,23 @@ export interface IMutationDeleteFormArgs {
     input: IDeleteFormInput;
 }
 export interface IMutationDeletePlanTypeArgs {
-    planTypeId: Scalars['ID'];
+    planTypeId: Scalars["ID"];
 }
 export interface IMutationDeletePlanArgs {
-    accountId: Scalars['ID'];
-    planId: Scalars['ID'];
+    accountId: Scalars["ID"];
+    planId: Scalars["ID"];
 }
 export interface IMutationDeleteAccountArgs {
-    accountId: Scalars['ID'];
+    accountId: Scalars["ID"];
 }
 export interface IMutationDeleteUserArgs {
-    userId: Scalars['ID'];
+    userId: Scalars["ID"];
 }
 export interface IMutationDeleteIntegrationTypeArgs {
-    integrationTypeId: Scalars['ID'];
+    integrationTypeId: Scalars["ID"];
 }
 export interface IMutationDeleteIntegrationArgs {
-    integrationId: Scalars['ID'];
+    integrationId: Scalars["ID"];
 }
 export interface IMutationDeleteFormVersionArgs {
     input: IDeleteFormVersionInput;
@@ -451,24 +451,24 @@ export declare enum INumericFilterExpression {
     IsNotNull = "isNotNull"
 }
 export interface IOffsetLimit {
-    offset?: Maybe<Scalars['Int']>;
-    limit?: Maybe<Scalars['Int']>;
+    offset?: Maybe<Scalars["Int"]>;
+    limit?: Maybe<Scalars["Int"]>;
 }
 export interface IPlan {
-    id: Scalars['ID'];
-    accountId: Scalars['ID'];
+    id: Scalars["ID"];
+    accountId: Scalars["ID"];
     account: IAccount;
-    ownerId: Scalars['ID'];
+    ownerId: Scalars["ID"];
     ownedBy: IUser;
-    planTypeId: Scalars['ID'];
-    startDate: Scalars['AWSDateTime'];
-    endDate?: Maybe<Scalars['AWSDateTime']>;
-    active?: Maybe<Scalars['Int']>;
-    lastBillDate?: Maybe<Scalars['AWSDateTime']>;
-    createdAt?: Maybe<Scalars['AWSDateTime']>;
-    updatedAt?: Maybe<Scalars['AWSDateTime']>;
+    planTypeId: Scalars["ID"];
+    startDate: Scalars["AWSDateTime"];
+    endDate?: Maybe<Scalars["AWSDateTime"]>;
+    active?: Maybe<Scalars["Int"]>;
+    lastBillDate?: Maybe<Scalars["AWSDateTime"]>;
+    createdAt?: Maybe<Scalars["AWSDateTime"]>;
+    updatedAt?: Maybe<Scalars["AWSDateTime"]>;
     planType?: Maybe<IPlanType>;
-    isDeleted?: Maybe<Scalars['Int']>;
+    isDeleted?: Maybe<Scalars["Int"]>;
 }
 export interface IPlanFilterInput {
     accountId?: Maybe<IStringFilter>;
@@ -490,16 +490,16 @@ export interface IPlanSortInput {
     sortBy?: Maybe<Array<IPlanSortInput>>;
 }
 export interface IPlanType {
-    id: Scalars['ID'];
-    ownerId: Scalars['ID'];
+    id: Scalars["ID"];
+    ownerId: Scalars["ID"];
     ownedBy: IUser;
-    name: Scalars['String'];
-    cost: Scalars['Float'];
-    active: Scalars['Int'];
-    billingTerm: Scalars['String'];
-    createdAt?: Maybe<Scalars['AWSDateTime']>;
-    updatedAt?: Maybe<Scalars['AWSDateTime']>;
-    isDeleted?: Maybe<Scalars['Int']>;
+    name: Scalars["String"];
+    cost: Scalars["Float"];
+    active: Scalars["Int"];
+    billingTerm: Scalars["String"];
+    createdAt?: Maybe<Scalars["AWSDateTime"]>;
+    updatedAt?: Maybe<Scalars["AWSDateTime"]>;
+    isDeleted?: Maybe<Scalars["Int"]>;
 }
 export interface IPlanTypeFilterInput {
     ownerId?: Maybe<IStringFilter>;
@@ -541,34 +541,34 @@ export interface IQuery {
     listFormEntries?: Maybe<Array<Maybe<IFormEntry>>>;
 }
 export interface IQueryGetAccountArgs {
-    accountId: Scalars['ID'];
+    accountId: Scalars["ID"];
 }
 export interface IQueryGetUserArgs {
-    userId: Scalars['ID'];
+    userId: Scalars["ID"];
 }
 export interface IQueryGetPlanArgs {
-    planId: Scalars['String'];
+    planId: Scalars["String"];
 }
 export interface IQueryGetActiveAccountPlanArgs {
-    accountId: Scalars['String'];
+    accountId: Scalars["String"];
 }
 export interface IQueryGetPlanTypeArgs {
-    planTypeId: Scalars['String'];
+    planTypeId: Scalars["String"];
 }
 export interface IQueryGetFormArgs {
-    formId: Scalars['String'];
+    formId: Scalars["String"];
 }
 export interface IQueryGetFormVersionArgs {
-    versionId: Scalars['String'];
+    versionId: Scalars["String"];
 }
 export interface IQueryGetIntegrationTypeArgs {
-    integrationTypeId: Scalars['String'];
+    integrationTypeId: Scalars["String"];
 }
 export interface IQueryGetIntegrationArgs {
-    integrationId: Scalars['String'];
+    integrationId: Scalars["String"];
 }
 export interface IQueryGetFormEntryArgs {
-    formEntryId: Scalars['String'];
+    formEntryId: Scalars["String"];
 }
 export interface IQueryListAccountsArgs {
     offsetLimit?: Maybe<IOffsetLimit>;
@@ -622,7 +622,7 @@ export declare enum ISortOrder {
 export interface IStringFilter {
     with?: Maybe<IFilterWith>;
     expression: IStringFilterExpression;
-    value?: Maybe<Array<Scalars['String']>>;
+    value?: Maybe<Array<Scalars["String"]>>;
 }
 export declare enum IStringFilterExpression {
     Ne = "ne",
@@ -635,78 +635,78 @@ export declare enum IStringFilterExpression {
     In = "in"
 }
 export interface IUpdateAccountInput {
-    id: Scalars['ID'];
-    name?: Maybe<Scalars['String']>;
+    id: Scalars["ID"];
+    name?: Maybe<Scalars["String"]>;
 }
 export interface IUpdateFormInput {
-    id: Scalars['ID'];
-    currentVersionId?: Maybe<Scalars['ID']>;
-    name?: Maybe<Scalars['String']>;
-    description?: Maybe<Scalars['String']>;
-    startDate?: Maybe<Scalars['AWSDateTime']>;
-    endDate?: Maybe<Scalars['AWSDateTime']>;
-    redirectNotStarted?: Maybe<Scalars['AWSURL']>;
-    redirectHasEnded?: Maybe<Scalars['AWSURL']>;
-    isPaused?: Maybe<Scalars['Int']>;
+    id: Scalars["ID"];
+    currentVersionId?: Maybe<Scalars["ID"]>;
+    name?: Maybe<Scalars["String"]>;
+    description?: Maybe<Scalars["String"]>;
+    startDate?: Maybe<Scalars["AWSDateTime"]>;
+    endDate?: Maybe<Scalars["AWSDateTime"]>;
+    redirectNotStarted?: Maybe<Scalars["AWSURL"]>;
+    redirectHasEnded?: Maybe<Scalars["AWSURL"]>;
+    isPaused?: Maybe<Scalars["Int"]>;
 }
 export interface IUpdateIntegrationInput {
-    id: Scalars['ID'];
-    active?: Maybe<Scalars['Int']>;
-    authType?: Maybe<Scalars['String']>;
-    auth?: Maybe<Scalars['AWSJSON']>;
-    target?: Maybe<Scalars['String']>;
-    method?: Maybe<Scalars['String']>;
+    id: Scalars["ID"];
+    active?: Maybe<Scalars["Int"]>;
+    authType?: Maybe<Scalars["String"]>;
+    auth?: Maybe<Scalars["AWSJSON"]>;
+    target?: Maybe<Scalars["String"]>;
+    method?: Maybe<Scalars["String"]>;
 }
 export interface IUpdateIntegrationTypeInput {
-    id: Scalars['ID'];
-    name: Scalars['String'];
-    active?: Maybe<Scalars['Int']>;
+    id: Scalars["ID"];
+    name: Scalars["String"];
+    active?: Maybe<Scalars["Int"]>;
 }
 export interface IUpdateIntegrationTypeInputData {
-    active?: Maybe<Scalars['Int']>;
-    authType?: Maybe<Scalars['String']>;
-    auth?: Maybe<Scalars['AWSJSON']>;
-    target?: Maybe<Scalars['String']>;
-    method?: Maybe<Scalars['String']>;
+    active?: Maybe<Scalars["Int"]>;
+    authType?: Maybe<Scalars["String"]>;
+    auth?: Maybe<Scalars["AWSJSON"]>;
+    target?: Maybe<Scalars["String"]>;
+    method?: Maybe<Scalars["String"]>;
 }
 export interface IUpdatePlanInput {
-    planId: Scalars['ID'];
-    accountId: Scalars['ID'];
-    active: Scalars['Int'];
-    endDate?: Maybe<Scalars['AWSDateTime']>;
+    planId: Scalars["ID"];
+    accountId: Scalars["ID"];
+    active: Scalars["Int"];
+    endDate?: Maybe<Scalars["AWSDateTime"]>;
 }
 export interface IUpdatePlanTypeInput {
-    id: Scalars['ID'];
-    name?: Maybe<Scalars['String']>;
-    cost?: Maybe<Scalars['Float']>;
-    billingTerm?: Maybe<Scalars['String']>;
-    active?: Maybe<Scalars['Int']>;
+    id: Scalars["ID"];
+    name?: Maybe<Scalars["String"]>;
+    cost?: Maybe<Scalars["Float"]>;
+    billingTerm?: Maybe<Scalars["String"]>;
+    active?: Maybe<Scalars["Int"]>;
 }
 export interface IUpdateUserInput {
-    id: Scalars['ID'];
+    id: Scalars["ID"];
     data: IUpdateUserInputData;
 }
 export interface IUpdateUserInputData {
-    group: Scalars['String'];
-    given_name: Scalars['String'];
-    family_name: Scalars['String'];
-    phone_number?: Maybe<Scalars['AWSPhone']>;
+    group: Scalars["String"];
+    given_name: Scalars["String"];
+    family_name: Scalars["String"];
+    phone_number?: Maybe<Scalars["AWSPhone"]>;
 }
 export interface IUser {
-    id: Scalars['ID'];
-    ownerId?: Maybe<Scalars['ID']>;
+    id: Scalars["ID"];
+    ownerId?: Maybe<Scalars["ID"]>;
     ownedBy?: Maybe<IUser>;
-    accountId?: Maybe<Scalars['ID']>;
+    accountId?: Maybe<Scalars["ID"]>;
     account?: Maybe<IAccount>;
-    email: Scalars['String'];
-    userGroup: Scalars['String'];
-    given_name: Scalars['String'];
-    family_name: Scalars['String'];
-    phone_number?: Maybe<Scalars['AWSPhone']>;
-    createdAt?: Maybe<Scalars['AWSDateTime']>;
-    updatedAt?: Maybe<Scalars['AWSDateTime']>;
-    isDeleted?: Maybe<Scalars['Int']>;
-    numForms?: Maybe<Scalars['Int']>;
+    email: Scalars["String"];
+    userGroup: Scalars["String"];
+    given_name: Scalars["String"];
+    family_name: Scalars["String"];
+    phone_number?: Maybe<Scalars["AWSPhone"]>;
+    createdAt?: Maybe<Scalars["AWSDateTime"]>;
+    updatedAt?: Maybe<Scalars["AWSDateTime"]>;
+    isDeleted?: Maybe<Scalars["Int"]>;
+    numForms?: Maybe<Scalars["Int"]>;
 }
 export interface IUserFilterInput {
     accountId?: Maybe<IStringFilter>;
@@ -760,14 +760,20 @@ export declare type IFormFieldsFragment = {
     ownedBy: {} & IUserFieldsFragment;
     account: {} & IAccountFieldsFragment;
 };
+export declare type IPlanTypeFieldsFragment = {
+    id: string;
+    name: string;
+    cost: number;
+    billingTerm: string;
+};
 export declare type IPlanFieldsFragment = {
     id: string;
     accountId: string;
     ownerId: string;
     planTypeId: string;
     startDate: string;
-    account: {} & IAccountFieldsFragment;
     ownedBy: {} & IUserFieldsFragment;
+    planType: Maybe<{} & IPlanTypeFieldsFragment>;
 };
 export declare type IAddPlanTypeMutationVariables = {
     input?: Maybe<IAddPlanTypeInput>;
@@ -1294,7 +1300,7 @@ export declare type IDeleteFormMutation = {
     };
 };
 export declare type IDeletePlanTypeMutationVariables = {
-    planTypeId: Scalars['ID'];
+    planTypeId: Scalars["ID"];
 };
 export declare type IDeletePlanTypeMutation = {
     deletePlanType: {
@@ -1311,8 +1317,8 @@ export declare type IDeletePlanTypeMutation = {
     };
 };
 export declare type IDeletePlanMutationVariables = {
-    accountId: Scalars['ID'];
-    planId: Scalars['ID'];
+    accountId: Scalars["ID"];
+    planId: Scalars["ID"];
 };
 export declare type IDeletePlanMutation = {
     deletePlan: {
@@ -1343,7 +1349,7 @@ export declare type IDeletePlanMutation = {
     };
 };
 export declare type IDeleteAccountMutationVariables = {
-    accountId: Scalars['ID'];
+    accountId: Scalars["ID"];
 };
 export declare type IDeleteAccountMutation = {
     deleteAccount: {
@@ -1375,7 +1381,7 @@ export declare type IDeleteAccountMutation = {
     };
 };
 export declare type IDeleteUserMutationVariables = {
-    userId: Scalars['ID'];
+    userId: Scalars["ID"];
 };
 export declare type IDeleteUserMutation = {
     deleteUser: {
@@ -1396,7 +1402,7 @@ export declare type IDeleteUserMutation = {
     };
 };
 export declare type IDeleteIntegrationTypeMutationVariables = {
-    integrationTypeId: Scalars['ID'];
+    integrationTypeId: Scalars["ID"];
 };
 export declare type IDeleteIntegrationTypeMutation = {
     deleteIntegrationType: {
@@ -1422,7 +1428,7 @@ export declare type IDeleteIntegrationTypeMutation = {
     };
 };
 export declare type IDeleteIntegrationMutationVariables = {
-    integrationId: Scalars['ID'];
+    integrationId: Scalars["ID"];
 };
 export declare type IDeleteIntegrationMutation = {
     deleteIntegration: {
@@ -1482,7 +1488,7 @@ export declare type IAddFormEntryMutation = {
     };
 };
 export declare type IGetAccountQueryVariables = {
-    accountId: Scalars['ID'];
+    accountId: Scalars["ID"];
 };
 export declare type IGetAccountQuery = {
     getAccount: Maybe<{
@@ -1511,21 +1517,10 @@ export declare type IGetAccountQuery = {
         }>>>;
         ownedBy: {} & IUserFieldsFragment;
         plan: Maybe<{} & IPlanFieldsFragment>;
-        users: Maybe<Array<Maybe<{} & IUserFieldsFragment>>>;
-        forms: Maybe<Array<Maybe<{
-            id: string;
-            ownerId: string;
-            name: string;
-            description: string;
-            accountId: string;
-            createdAt: string;
-            ownedBy: {} & IUserFieldsFragment;
-            account: {} & IAccountFieldsFragment;
-        }>>>;
     }>;
 };
 export declare type IGetUserQueryVariables = {
-    userId: Scalars['ID'];
+    userId: Scalars["ID"];
 };
 export declare type IGetUserQuery = {
     getUser: Maybe<{
@@ -1546,7 +1541,7 @@ export declare type IGetUserQuery = {
     }>;
 };
 export declare type IGetPlanQueryVariables = {
-    planId: Scalars['String'];
+    planId: Scalars["String"];
 };
 export declare type IGetPlanQuery = {
     getPlan: Maybe<{
@@ -1577,7 +1572,7 @@ export declare type IGetPlanQuery = {
     }>;
 };
 export declare type IGetActiveAccountPlanQueryVariables = {
-    accountId: Scalars['String'];
+    accountId: Scalars["String"];
 };
 export declare type IGetActiveAccountPlanQuery = {
     getActiveAccountPlan: Maybe<{
@@ -1609,7 +1604,7 @@ export declare type IGetActiveAccountPlanQuery = {
     }>;
 };
 export declare type IGetPlanTypeQueryVariables = {
-    planTypeId: Scalars['String'];
+    planTypeId: Scalars["String"];
 };
 export declare type IGetPlanTypeQuery = {
     getPlanType: Maybe<{
@@ -1626,7 +1621,7 @@ export declare type IGetPlanTypeQuery = {
     }>;
 };
 export declare type IGetFormQueryVariables = {
-    formId: Scalars['String'];
+    formId: Scalars["String"];
 };
 export declare type IGetFormQuery = {
     getForm: Maybe<{
@@ -1668,7 +1663,7 @@ export declare type IGetFormQuery = {
     }>;
 };
 export declare type IGetFormVersionQueryVariables = {
-    versionId: Scalars['String'];
+    versionId: Scalars["String"];
 };
 export declare type IGetFormVersionQuery = {
     getFormVersion: Maybe<{
@@ -1684,7 +1679,7 @@ export declare type IGetFormVersionQuery = {
     }>;
 };
 export declare type IGetIntegrationTypeQueryVariables = {
-    integrationTypeId: Scalars['String'];
+    integrationTypeId: Scalars["String"];
 };
 export declare type IGetIntegrationTypeQuery = {
     getIntegrationType: Maybe<{
@@ -1710,7 +1705,7 @@ export declare type IGetIntegrationTypeQuery = {
     }>;
 };
 export declare type IGetIntegrationQueryVariables = {
-    integrationId: Scalars['String'];
+    integrationId: Scalars["String"];
 };
 export declare type IGetIntegrationQuery = {
     getIntegration: Maybe<{
@@ -1759,7 +1754,7 @@ export declare type IGetIntegrationQuery = {
     }>;
 };
 export declare type IGetFormEntryQueryVariables = {
-    formEntryId: Scalars['String'];
+    formEntryId: Scalars["String"];
 };
 export declare type IGetFormEntryQuery = {
     getFormEntry: Maybe<{
@@ -2053,22 +2048,22 @@ export declare type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {
 /** Mapping between all available schema types and the resolvers types */
 export declare type IResolversTypes = {
     Query: ResolverTypeWrapper<{}>;
-    ID: ResolverTypeWrapper<Scalars['ID']>;
+    ID: ResolverTypeWrapper<Scalars["ID"]>;
     Account: ResolverTypeWrapper<IAccount>;
-    String: ResolverTypeWrapper<Scalars['String']>;
-    Int: ResolverTypeWrapper<Scalars['Int']>;
+    String: ResolverTypeWrapper<Scalars["String"]>;
+    Int: ResolverTypeWrapper<Scalars["Int"]>;
     Address: ResolverTypeWrapper<IAddress>;
     AddressType: IAddressType;
-    AWSPhone: ResolverTypeWrapper<Scalars['AWSPhone']>;
+    AWSPhone: ResolverTypeWrapper<Scalars["AWSPhone"]>;
     User: ResolverTypeWrapper<IUser>;
-    AWSDateTime: ResolverTypeWrapper<Scalars['AWSDateTime']>;
+    AWSDateTime: ResolverTypeWrapper<Scalars["AWSDateTime"]>;
     Plan: ResolverTypeWrapper<IPlan>;
     PlanType: ResolverTypeWrapper<IPlanType>;
-    Float: ResolverTypeWrapper<Scalars['Float']>;
+    Float: ResolverTypeWrapper<Scalars["Float"]>;
     Form: ResolverTypeWrapper<IForm>;
     FormVersion: ResolverTypeWrapper<IFormVersion>;
-    AWSJSON: ResolverTypeWrapper<Scalars['AWSJSON']>;
-    AWSURL: ResolverTypeWrapper<Scalars['AWSURL']>;
+    AWSJSON: ResolverTypeWrapper<Scalars["AWSJSON"]>;
+    AWSURL: ResolverTypeWrapper<Scalars["AWSURL"]>;
     Integration: ResolverTypeWrapper<IIntegration>;
     IntegrationType: ResolverTypeWrapper<IIntegrationType>;
     FormEntry: ResolverTypeWrapper<IFormEntry>;
@@ -2119,7 +2114,7 @@ export declare type IResolversTypes = {
     DeleteFormVersionInput: IDeleteFormVersionInput;
     AddFormEntryInput: IAddFormEntryInput;
     FormEntrySansData: ResolverTypeWrapper<IFormEntrySansData>;
-    Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+    Boolean: ResolverTypeWrapper<Scalars["Boolean"]>;
     BooleanFilterExpression: IBooleanFilterExpression;
     UserGroup: IUserGroup;
     BooleanFilter: IBooleanFilter;
@@ -2129,22 +2124,22 @@ export declare type IResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export declare type IResolversParentTypes = {
     Query: {};
-    ID: Scalars['ID'];
+    ID: Scalars["ID"];
     Account: IAccount;
-    String: Scalars['String'];
-    Int: Scalars['Int'];
+    String: Scalars["String"];
+    Int: Scalars["Int"];
     Address: IAddress;
     AddressType: IAddressType;
-    AWSPhone: Scalars['AWSPhone'];
+    AWSPhone: Scalars["AWSPhone"];
     User: IUser;
-    AWSDateTime: Scalars['AWSDateTime'];
+    AWSDateTime: Scalars["AWSDateTime"];
     Plan: IPlan;
     PlanType: IPlanType;
-    Float: Scalars['Float'];
+    Float: Scalars["Float"];
     Form: IForm;
     FormVersion: IFormVersion;
-    AWSJSON: Scalars['AWSJSON'];
-    AWSURL: Scalars['AWSURL'];
+    AWSJSON: Scalars["AWSJSON"];
+    AWSURL: Scalars["AWSURL"];
     Integration: IIntegration;
     IntegrationType: IIntegrationType;
     FormEntry: IFormEntry;
@@ -2195,7 +2190,7 @@ export declare type IResolversParentTypes = {
     DeleteFormVersionInput: IDeleteFormVersionInput;
     AddFormEntryInput: IAddFormEntryInput;
     FormEntrySansData: IFormEntrySansData;
-    Boolean: Scalars['Boolean'];
+    Boolean: Scalars["Boolean"];
     BooleanFilterExpression: IBooleanFilterExpression;
     UserGroup: IUserGroup;
     BooleanFilter: IBooleanFilter;
@@ -2204,230 +2199,230 @@ export declare type IResolversParentTypes = {
 };
 export declare type IModelDirectiveResolver<Result, Parent, ContextType = any, Args = {}> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 export declare type IAws_Api_KeyDirectiveResolver<Result, Parent, ContextType = any, Args = {}> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
-export declare type IAccountResolvers<ContextType = any, ParentType extends IResolversParentTypes['Account'] = IResolversParentTypes['Account']> = {
-    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    name?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
-    addresses?: Resolver<Maybe<Array<Maybe<IResolversTypes['Address']>>>, ParentType, ContextType, IAccountAddressesArgs>;
-    website?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
-    taxId?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
-    ownerId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    ownedBy?: Resolver<IResolversTypes['User'], ParentType, ContextType>;
-    plan?: Resolver<Maybe<IResolversTypes['Plan']>, ParentType, ContextType>;
-    planId?: Resolver<Maybe<IResolversTypes['ID']>, ParentType, ContextType>;
-    createdAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    updatedAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    active?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
-    numForms?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
-    numUsers?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
-    users?: Resolver<Maybe<Array<Maybe<IResolversTypes['User']>>>, ParentType, ContextType, IAccountUsersArgs>;
-    forms?: Resolver<Maybe<Array<Maybe<IResolversTypes['Form']>>>, ParentType, ContextType, IAccountFormsArgs>;
+export declare type IAccountResolvers<ContextType = any, ParentType extends IResolversParentTypes["Account"] = IResolversParentTypes["Account"]> = {
+    id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    name?: Resolver<IResolversTypes["String"], ParentType, ContextType>;
+    addresses?: Resolver<Maybe<Array<Maybe<IResolversTypes["Address"]>>>, ParentType, ContextType, IAccountAddressesArgs>;
+    website?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>;
+    taxId?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>;
+    ownerId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    ownedBy?: Resolver<IResolversTypes["User"], ParentType, ContextType>;
+    plan?: Resolver<Maybe<IResolversTypes["Plan"]>, ParentType, ContextType>;
+    planId?: Resolver<Maybe<IResolversTypes["ID"]>, ParentType, ContextType>;
+    createdAt?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    updatedAt?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    active?: Resolver<Maybe<IResolversTypes["Int"]>, ParentType, ContextType>;
+    numForms?: Resolver<Maybe<IResolversTypes["Int"]>, ParentType, ContextType>;
+    numUsers?: Resolver<Maybe<IResolversTypes["Int"]>, ParentType, ContextType>;
+    users?: Resolver<Maybe<Array<Maybe<IResolversTypes["User"]>>>, ParentType, ContextType, IAccountUsersArgs>;
+    forms?: Resolver<Maybe<Array<Maybe<IResolversTypes["Form"]>>>, ParentType, ContextType, IAccountFormsArgs>;
 };
-export declare type IAddAddressInputResolvers<ContextType = any, ParentType extends IResolversParentTypes['AddAddressInput'] = IResolversParentTypes['AddAddressInput']> = {
-    name?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
-    addressee?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
-    addressType?: Resolver<IResolversTypes['AddressType'], ParentType, ContextType>;
-    phone_number?: Resolver<Maybe<IResolversTypes['AWSPhone']>, ParentType, ContextType>;
-    email?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
-    street?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
-    city?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
-    state?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
-    country?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
+export declare type IAddAddressInputResolvers<ContextType = any, ParentType extends IResolversParentTypes["AddAddressInput"] = IResolversParentTypes["AddAddressInput"]> = {
+    name?: Resolver<IResolversTypes["String"], ParentType, ContextType>;
+    addressee?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>;
+    addressType?: Resolver<IResolversTypes["AddressType"], ParentType, ContextType>;
+    phone_number?: Resolver<Maybe<IResolversTypes["AWSPhone"]>, ParentType, ContextType>;
+    email?: Resolver<IResolversTypes["String"], ParentType, ContextType>;
+    street?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>;
+    city?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>;
+    state?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>;
+    country?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>;
 };
-export declare type IAddressResolvers<ContextType = any, ParentType extends IResolversParentTypes['Address'] = IResolversParentTypes['Address']> = {
-    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    name?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
-    addressee?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
-    addressType?: Resolver<IResolversTypes['AddressType'], ParentType, ContextType>;
-    phone_number?: Resolver<Maybe<IResolversTypes['AWSPhone']>, ParentType, ContextType>;
-    email?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
-    street?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
-    city?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
-    state?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
-    country?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
+export declare type IAddressResolvers<ContextType = any, ParentType extends IResolversParentTypes["Address"] = IResolversParentTypes["Address"]> = {
+    id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    name?: Resolver<IResolversTypes["String"], ParentType, ContextType>;
+    addressee?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>;
+    addressType?: Resolver<IResolversTypes["AddressType"], ParentType, ContextType>;
+    phone_number?: Resolver<Maybe<IResolversTypes["AWSPhone"]>, ParentType, ContextType>;
+    email?: Resolver<IResolversTypes["String"], ParentType, ContextType>;
+    street?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>;
+    city?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>;
+    state?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>;
+    country?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>;
 };
-export interface IAwsDateTimeScalarConfig extends GraphQLScalarTypeConfig<IResolversTypes['AWSDateTime'], any> {
-    name: 'AWSDateTime';
+export interface IAwsDateTimeScalarConfig extends GraphQLScalarTypeConfig<IResolversTypes["AWSDateTime"], any> {
+    name: "AWSDateTime";
 }
-export interface IAwsjsonScalarConfig extends GraphQLScalarTypeConfig<IResolversTypes['AWSJSON'], any> {
-    name: 'AWSJSON';
+export interface IAwsjsonScalarConfig extends GraphQLScalarTypeConfig<IResolversTypes["AWSJSON"], any> {
+    name: "AWSJSON";
 }
-export interface IAwsPhoneScalarConfig extends GraphQLScalarTypeConfig<IResolversTypes['AWSPhone'], any> {
-    name: 'AWSPhone';
+export interface IAwsPhoneScalarConfig extends GraphQLScalarTypeConfig<IResolversTypes["AWSPhone"], any> {
+    name: "AWSPhone";
 }
-export interface IAwsurlScalarConfig extends GraphQLScalarTypeConfig<IResolversTypes['AWSURL'], any> {
-    name: 'AWSURL';
+export interface IAwsurlScalarConfig extends GraphQLScalarTypeConfig<IResolversTypes["AWSURL"], any> {
+    name: "AWSURL";
 }
-export declare type IFormResolvers<ContextType = any, ParentType extends IResolversParentTypes['Form'] = IResolversParentTypes['Form']> = {
-    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    ownerId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    name?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
-    description?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
-    versionId?: Resolver<Maybe<IResolversTypes['ID']>, ParentType, ContextType>;
-    versionActivatedDate?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    version?: Resolver<Maybe<IResolversTypes['FormVersion']>, ParentType, ContextType>;
-    ownedBy?: Resolver<IResolversTypes['User'], ParentType, ContextType>;
-    accountId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    account?: Resolver<IResolversTypes['Account'], ParentType, ContextType>;
-    createdAt?: Resolver<IResolversTypes['AWSDateTime'], ParentType, ContextType>;
-    updatedAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    startDate?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    endDate?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    isPaused?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
-    isDeleted?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
-    redirectNotStarted?: Resolver<Maybe<IResolversTypes['AWSURL']>, ParentType, ContextType>;
-    redirectHasEnded?: Resolver<Maybe<IResolversTypes['AWSURL']>, ParentType, ContextType>;
-    versions?: Resolver<Maybe<Array<Maybe<IResolversTypes['FormVersion']>>>, ParentType, ContextType, IFormVersionsArgs>;
-    integrations?: Resolver<Maybe<Array<Maybe<IResolversTypes['Integration']>>>, ParentType, ContextType, IFormIntegrationsArgs>;
-    numEntries?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
-    entries?: Resolver<Maybe<Array<Maybe<IResolversTypes['FormEntry']>>>, ParentType, ContextType, IFormEntriesArgs>;
+export declare type IFormResolvers<ContextType = any, ParentType extends IResolversParentTypes["Form"] = IResolversParentTypes["Form"]> = {
+    id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    ownerId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    name?: Resolver<IResolversTypes["String"], ParentType, ContextType>;
+    description?: Resolver<IResolversTypes["String"], ParentType, ContextType>;
+    versionId?: Resolver<Maybe<IResolversTypes["ID"]>, ParentType, ContextType>;
+    versionActivatedDate?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    version?: Resolver<Maybe<IResolversTypes["FormVersion"]>, ParentType, ContextType>;
+    ownedBy?: Resolver<IResolversTypes["User"], ParentType, ContextType>;
+    accountId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    account?: Resolver<IResolversTypes["Account"], ParentType, ContextType>;
+    createdAt?: Resolver<IResolversTypes["AWSDateTime"], ParentType, ContextType>;
+    updatedAt?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    startDate?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    endDate?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    isPaused?: Resolver<Maybe<IResolversTypes["Int"]>, ParentType, ContextType>;
+    isDeleted?: Resolver<Maybe<IResolversTypes["Int"]>, ParentType, ContextType>;
+    redirectNotStarted?: Resolver<Maybe<IResolversTypes["AWSURL"]>, ParentType, ContextType>;
+    redirectHasEnded?: Resolver<Maybe<IResolversTypes["AWSURL"]>, ParentType, ContextType>;
+    versions?: Resolver<Maybe<Array<Maybe<IResolversTypes["FormVersion"]>>>, ParentType, ContextType, IFormVersionsArgs>;
+    integrations?: Resolver<Maybe<Array<Maybe<IResolversTypes["Integration"]>>>, ParentType, ContextType, IFormIntegrationsArgs>;
+    numEntries?: Resolver<Maybe<IResolversTypes["Int"]>, ParentType, ContextType>;
+    entries?: Resolver<Maybe<Array<Maybe<IResolversTypes["FormEntry"]>>>, ParentType, ContextType, IFormEntriesArgs>;
 };
-export declare type IFormEntryResolvers<ContextType = any, ParentType extends IResolversParentTypes['FormEntry'] = IResolversParentTypes['FormEntry']> = {
-    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    accountId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    formId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    form?: Resolver<IResolversTypes['Form'], ParentType, ContextType>;
-    data?: Resolver<IResolversTypes['AWSJSON'], ParentType, ContextType>;
-    createdAt?: Resolver<IResolversTypes['AWSDateTime'], ParentType, ContextType>;
+export declare type IFormEntryResolvers<ContextType = any, ParentType extends IResolversParentTypes["FormEntry"] = IResolversParentTypes["FormEntry"]> = {
+    id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    accountId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    formId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    form?: Resolver<IResolversTypes["Form"], ParentType, ContextType>;
+    data?: Resolver<IResolversTypes["AWSJSON"], ParentType, ContextType>;
+    createdAt?: Resolver<IResolversTypes["AWSDateTime"], ParentType, ContextType>;
 };
-export declare type IFormEntrySansDataResolvers<ContextType = any, ParentType extends IResolversParentTypes['FormEntrySansData'] = IResolversParentTypes['FormEntrySansData']> = {
-    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    formId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    createdAt?: Resolver<IResolversTypes['AWSDateTime'], ParentType, ContextType>;
+export declare type IFormEntrySansDataResolvers<ContextType = any, ParentType extends IResolversParentTypes["FormEntrySansData"] = IResolversParentTypes["FormEntrySansData"]> = {
+    id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    formId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    createdAt?: Resolver<IResolversTypes["AWSDateTime"], ParentType, ContextType>;
 };
-export declare type IFormVersionResolvers<ContextType = any, ParentType extends IResolversParentTypes['FormVersion'] = IResolversParentTypes['FormVersion']> = {
-    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    accountId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    formId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    ownerId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    ownedBy?: Resolver<IResolversTypes['User'], ParentType, ContextType>;
-    createdAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    displayName?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
-    notes?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
-    formData?: Resolver<IResolversTypes['AWSJSON'], ParentType, ContextType>;
+export declare type IFormVersionResolvers<ContextType = any, ParentType extends IResolversParentTypes["FormVersion"] = IResolversParentTypes["FormVersion"]> = {
+    id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    accountId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    formId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    ownerId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    ownedBy?: Resolver<IResolversTypes["User"], ParentType, ContextType>;
+    createdAt?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    displayName?: Resolver<IResolversTypes["String"], ParentType, ContextType>;
+    notes?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>;
+    formData?: Resolver<IResolversTypes["AWSJSON"], ParentType, ContextType>;
 };
-export declare type IIntegrationResolvers<ContextType = any, ParentType extends IResolversParentTypes['Integration'] = IResolversParentTypes['Integration']> = {
-    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    integrationTypeId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    integrationType?: Resolver<IResolversTypes['IntegrationType'], ParentType, ContextType>;
-    ownerId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    ownedBy?: Resolver<IResolversTypes['User'], ParentType, ContextType>;
-    accountId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    account?: Resolver<IResolversTypes['Account'], ParentType, ContextType>;
-    formId?: Resolver<Maybe<IResolversTypes['ID']>, ParentType, ContextType>;
-    form?: Resolver<Maybe<IResolversTypes['Form']>, ParentType, ContextType>;
-    active?: Resolver<IResolversTypes['Int'], ParentType, ContextType>;
-    authType?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
-    auth?: Resolver<Maybe<IResolversTypes['AWSJSON']>, ParentType, ContextType>;
-    target?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
-    method?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
-    lastExecuted?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    lastExecutionResult?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
-    lastExecutionResultMessage?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
-    createdAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    updatedAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    isDeleted?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
+export declare type IIntegrationResolvers<ContextType = any, ParentType extends IResolversParentTypes["Integration"] = IResolversParentTypes["Integration"]> = {
+    id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    integrationTypeId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    integrationType?: Resolver<IResolversTypes["IntegrationType"], ParentType, ContextType>;
+    ownerId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    ownedBy?: Resolver<IResolversTypes["User"], ParentType, ContextType>;
+    accountId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    account?: Resolver<IResolversTypes["Account"], ParentType, ContextType>;
+    formId?: Resolver<Maybe<IResolversTypes["ID"]>, ParentType, ContextType>;
+    form?: Resolver<Maybe<IResolversTypes["Form"]>, ParentType, ContextType>;
+    active?: Resolver<IResolversTypes["Int"], ParentType, ContextType>;
+    authType?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>;
+    auth?: Resolver<Maybe<IResolversTypes["AWSJSON"]>, ParentType, ContextType>;
+    target?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>;
+    method?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>;
+    lastExecuted?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    lastExecutionResult?: Resolver<Maybe<IResolversTypes["Int"]>, ParentType, ContextType>;
+    lastExecutionResultMessage?: Resolver<Maybe<IResolversTypes["String"]>, ParentType, ContextType>;
+    createdAt?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    updatedAt?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    isDeleted?: Resolver<Maybe<IResolversTypes["Int"]>, ParentType, ContextType>;
 };
-export declare type IIntegrationTypeResolvers<ContextType = any, ParentType extends IResolversParentTypes['IntegrationType'] = IResolversParentTypes['IntegrationType']> = {
-    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    ownerId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    ownedBy?: Resolver<IResolversTypes['User'], ParentType, ContextType>;
-    planTypeId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    planType?: Resolver<Maybe<IResolversTypes['PlanType']>, ParentType, ContextType>;
-    name?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
-    active?: Resolver<IResolversTypes['Int'], ParentType, ContextType>;
-    createdAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    updatedAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+export declare type IIntegrationTypeResolvers<ContextType = any, ParentType extends IResolversParentTypes["IntegrationType"] = IResolversParentTypes["IntegrationType"]> = {
+    id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    ownerId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    ownedBy?: Resolver<IResolversTypes["User"], ParentType, ContextType>;
+    planTypeId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    planType?: Resolver<Maybe<IResolversTypes["PlanType"]>, ParentType, ContextType>;
+    name?: Resolver<IResolversTypes["String"], ParentType, ContextType>;
+    active?: Resolver<IResolversTypes["Int"], ParentType, ContextType>;
+    createdAt?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    updatedAt?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
 };
-export declare type IMutationResolvers<ContextType = any, ParentType extends IResolversParentTypes['Mutation'] = IResolversParentTypes['Mutation']> = {
-    addPlanType?: Resolver<IResolversTypes['PlanType'], ParentType, ContextType, IMutationAddPlanTypeArgs>;
-    addPlan?: Resolver<IResolversTypes['Plan'], ParentType, ContextType, IMutationAddPlanArgs>;
-    addIntegrationType?: Resolver<IResolversTypes['IntegrationType'], ParentType, ContextType, IMutationAddIntegrationTypeArgs>;
-    addIntegration?: Resolver<IResolversTypes['Integration'], ParentType, ContextType, IMutationAddIntegrationArgs>;
-    addForm?: Resolver<IResolversTypes['Form'], ParentType, ContextType, RequireFields<IMutationAddFormArgs, 'input'>>;
-    addFormVersion?: Resolver<IResolversTypes['Form'], ParentType, ContextType, RequireFields<IMutationAddFormVersionArgs, 'input'>>;
-    attachFormVersion?: Resolver<IResolversTypes['Form'], ParentType, ContextType, RequireFields<IMutationAttachFormVersionArgs, 'input'>>;
-    updatePlanType?: Resolver<IResolversTypes['PlanType'], ParentType, ContextType, IMutationUpdatePlanTypeArgs>;
-    updatePlan?: Resolver<IResolversTypes['Plan'], ParentType, ContextType, IMutationUpdatePlanArgs>;
-    updateAccount?: Resolver<IResolversTypes['Account'], ParentType, ContextType, IMutationUpdateAccountArgs>;
-    updateAccountPlan?: Resolver<IResolversTypes['Account'], ParentType, ContextType, IMutationUpdateAccountPlanArgs>;
-    updateUser?: Resolver<IResolversTypes['User'], ParentType, ContextType, IMutationUpdateUserArgs>;
-    updateIntegrationType?: Resolver<IResolversTypes['IntegrationType'], ParentType, ContextType, IMutationUpdateIntegrationTypeArgs>;
-    updateIntegration?: Resolver<IResolversTypes['Integration'], ParentType, ContextType, IMutationUpdateIntegrationArgs>;
-    updateForm?: Resolver<IResolversTypes['Form'], ParentType, ContextType, IMutationUpdateFormArgs>;
-    deleteForm?: Resolver<IResolversTypes['Form'], ParentType, ContextType, RequireFields<IMutationDeleteFormArgs, 'input'>>;
-    deletePlanType?: Resolver<IResolversTypes['PlanType'], ParentType, ContextType, RequireFields<IMutationDeletePlanTypeArgs, 'planTypeId'>>;
-    deletePlan?: Resolver<IResolversTypes['Plan'], ParentType, ContextType, RequireFields<IMutationDeletePlanArgs, 'accountId' | 'planId'>>;
-    deleteAccount?: Resolver<IResolversTypes['Account'], ParentType, ContextType, RequireFields<IMutationDeleteAccountArgs, 'accountId'>>;
-    deleteUser?: Resolver<IResolversTypes['User'], ParentType, ContextType, RequireFields<IMutationDeleteUserArgs, 'userId'>>;
-    deleteIntegrationType?: Resolver<IResolversTypes['IntegrationType'], ParentType, ContextType, RequireFields<IMutationDeleteIntegrationTypeArgs, 'integrationTypeId'>>;
-    deleteIntegration?: Resolver<IResolversTypes['Integration'], ParentType, ContextType, RequireFields<IMutationDeleteIntegrationArgs, 'integrationId'>>;
-    deleteFormVersion?: Resolver<IResolversTypes['FormVersion'], ParentType, ContextType, RequireFields<IMutationDeleteFormVersionArgs, 'input'>>;
-    addFormEntry?: Resolver<IResolversTypes['FormEntrySansData'], ParentType, ContextType, RequireFields<IMutationAddFormEntryArgs, 'input'>>;
+export declare type IMutationResolvers<ContextType = any, ParentType extends IResolversParentTypes["Mutation"] = IResolversParentTypes["Mutation"]> = {
+    addPlanType?: Resolver<IResolversTypes["PlanType"], ParentType, ContextType, IMutationAddPlanTypeArgs>;
+    addPlan?: Resolver<IResolversTypes["Plan"], ParentType, ContextType, IMutationAddPlanArgs>;
+    addIntegrationType?: Resolver<IResolversTypes["IntegrationType"], ParentType, ContextType, IMutationAddIntegrationTypeArgs>;
+    addIntegration?: Resolver<IResolversTypes["Integration"], ParentType, ContextType, IMutationAddIntegrationArgs>;
+    addForm?: Resolver<IResolversTypes["Form"], ParentType, ContextType, RequireFields<IMutationAddFormArgs, "input">>;
+    addFormVersion?: Resolver<IResolversTypes["Form"], ParentType, ContextType, RequireFields<IMutationAddFormVersionArgs, "input">>;
+    attachFormVersion?: Resolver<IResolversTypes["Form"], ParentType, ContextType, RequireFields<IMutationAttachFormVersionArgs, "input">>;
+    updatePlanType?: Resolver<IResolversTypes["PlanType"], ParentType, ContextType, IMutationUpdatePlanTypeArgs>;
+    updatePlan?: Resolver<IResolversTypes["Plan"], ParentType, ContextType, IMutationUpdatePlanArgs>;
+    updateAccount?: Resolver<IResolversTypes["Account"], ParentType, ContextType, IMutationUpdateAccountArgs>;
+    updateAccountPlan?: Resolver<IResolversTypes["Account"], ParentType, ContextType, IMutationUpdateAccountPlanArgs>;
+    updateUser?: Resolver<IResolversTypes["User"], ParentType, ContextType, IMutationUpdateUserArgs>;
+    updateIntegrationType?: Resolver<IResolversTypes["IntegrationType"], ParentType, ContextType, IMutationUpdateIntegrationTypeArgs>;
+    updateIntegration?: Resolver<IResolversTypes["Integration"], ParentType, ContextType, IMutationUpdateIntegrationArgs>;
+    updateForm?: Resolver<IResolversTypes["Form"], ParentType, ContextType, IMutationUpdateFormArgs>;
+    deleteForm?: Resolver<IResolversTypes["Form"], ParentType, ContextType, RequireFields<IMutationDeleteFormArgs, "input">>;
+    deletePlanType?: Resolver<IResolversTypes["PlanType"], ParentType, ContextType, RequireFields<IMutationDeletePlanTypeArgs, "planTypeId">>;
+    deletePlan?: Resolver<IResolversTypes["Plan"], ParentType, ContextType, RequireFields<IMutationDeletePlanArgs, "accountId" | "planId">>;
+    deleteAccount?: Resolver<IResolversTypes["Account"], ParentType, ContextType, RequireFields<IMutationDeleteAccountArgs, "accountId">>;
+    deleteUser?: Resolver<IResolversTypes["User"], ParentType, ContextType, RequireFields<IMutationDeleteUserArgs, "userId">>;
+    deleteIntegrationType?: Resolver<IResolversTypes["IntegrationType"], ParentType, ContextType, RequireFields<IMutationDeleteIntegrationTypeArgs, "integrationTypeId">>;
+    deleteIntegration?: Resolver<IResolversTypes["Integration"], ParentType, ContextType, RequireFields<IMutationDeleteIntegrationArgs, "integrationId">>;
+    deleteFormVersion?: Resolver<IResolversTypes["FormVersion"], ParentType, ContextType, RequireFields<IMutationDeleteFormVersionArgs, "input">>;
+    addFormEntry?: Resolver<IResolversTypes["FormEntrySansData"], ParentType, ContextType, RequireFields<IMutationAddFormEntryArgs, "input">>;
 };
-export declare type IPlanResolvers<ContextType = any, ParentType extends IResolversParentTypes['Plan'] = IResolversParentTypes['Plan']> = {
-    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    accountId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    account?: Resolver<IResolversTypes['Account'], ParentType, ContextType>;
-    ownerId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    ownedBy?: Resolver<IResolversTypes['User'], ParentType, ContextType>;
-    planTypeId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    startDate?: Resolver<IResolversTypes['AWSDateTime'], ParentType, ContextType>;
-    endDate?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    active?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
-    lastBillDate?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    createdAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    updatedAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    planType?: Resolver<Maybe<IResolversTypes['PlanType']>, ParentType, ContextType>;
-    isDeleted?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
+export declare type IPlanResolvers<ContextType = any, ParentType extends IResolversParentTypes["Plan"] = IResolversParentTypes["Plan"]> = {
+    id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    accountId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    account?: Resolver<IResolversTypes["Account"], ParentType, ContextType>;
+    ownerId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    ownedBy?: Resolver<IResolversTypes["User"], ParentType, ContextType>;
+    planTypeId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    startDate?: Resolver<IResolversTypes["AWSDateTime"], ParentType, ContextType>;
+    endDate?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    active?: Resolver<Maybe<IResolversTypes["Int"]>, ParentType, ContextType>;
+    lastBillDate?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    createdAt?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    updatedAt?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    planType?: Resolver<Maybe<IResolversTypes["PlanType"]>, ParentType, ContextType>;
+    isDeleted?: Resolver<Maybe<IResolversTypes["Int"]>, ParentType, ContextType>;
 };
-export declare type IPlanTypeResolvers<ContextType = any, ParentType extends IResolversParentTypes['PlanType'] = IResolversParentTypes['PlanType']> = {
-    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    ownerId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    ownedBy?: Resolver<IResolversTypes['User'], ParentType, ContextType>;
-    name?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
-    cost?: Resolver<IResolversTypes['Float'], ParentType, ContextType>;
-    active?: Resolver<IResolversTypes['Int'], ParentType, ContextType>;
-    billingTerm?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
-    createdAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    updatedAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    isDeleted?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
+export declare type IPlanTypeResolvers<ContextType = any, ParentType extends IResolversParentTypes["PlanType"] = IResolversParentTypes["PlanType"]> = {
+    id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    ownerId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    ownedBy?: Resolver<IResolversTypes["User"], ParentType, ContextType>;
+    name?: Resolver<IResolversTypes["String"], ParentType, ContextType>;
+    cost?: Resolver<IResolversTypes["Float"], ParentType, ContextType>;
+    active?: Resolver<IResolversTypes["Int"], ParentType, ContextType>;
+    billingTerm?: Resolver<IResolversTypes["String"], ParentType, ContextType>;
+    createdAt?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    updatedAt?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    isDeleted?: Resolver<Maybe<IResolversTypes["Int"]>, ParentType, ContextType>;
 };
-export declare type IQueryResolvers<ContextType = any, ParentType extends IResolversParentTypes['Query'] = IResolversParentTypes['Query']> = {
-    getAccount?: Resolver<Maybe<IResolversTypes['Account']>, ParentType, ContextType, RequireFields<IQueryGetAccountArgs, 'accountId'>>;
-    getUser?: Resolver<Maybe<IResolversTypes['User']>, ParentType, ContextType, RequireFields<IQueryGetUserArgs, 'userId'>>;
-    getPlan?: Resolver<Maybe<IResolversTypes['Plan']>, ParentType, ContextType, RequireFields<IQueryGetPlanArgs, 'planId'>>;
-    getActiveAccountPlan?: Resolver<Maybe<IResolversTypes['Plan']>, ParentType, ContextType, RequireFields<IQueryGetActiveAccountPlanArgs, 'accountId'>>;
-    getPlanType?: Resolver<Maybe<IResolversTypes['PlanType']>, ParentType, ContextType, RequireFields<IQueryGetPlanTypeArgs, 'planTypeId'>>;
-    getForm?: Resolver<Maybe<IResolversTypes['Form']>, ParentType, ContextType, RequireFields<IQueryGetFormArgs, 'formId'>>;
-    getFormVersion?: Resolver<Maybe<IResolversTypes['FormVersion']>, ParentType, ContextType, RequireFields<IQueryGetFormVersionArgs, 'versionId'>>;
-    getIntegrationType?: Resolver<Maybe<IResolversTypes['IntegrationType']>, ParentType, ContextType, RequireFields<IQueryGetIntegrationTypeArgs, 'integrationTypeId'>>;
-    getIntegration?: Resolver<Maybe<IResolversTypes['Integration']>, ParentType, ContextType, RequireFields<IQueryGetIntegrationArgs, 'integrationId'>>;
-    getFormEntry?: Resolver<Maybe<IResolversTypes['FormEntry']>, ParentType, ContextType, RequireFields<IQueryGetFormEntryArgs, 'formEntryId'>>;
-    listAccounts?: Resolver<Maybe<Array<Maybe<IResolversTypes['Account']>>>, ParentType, ContextType, IQueryListAccountsArgs>;
-    listUsers?: Resolver<Maybe<Array<Maybe<IResolversTypes['User']>>>, ParentType, ContextType, IQueryListUsersArgs>;
-    listPlans?: Resolver<Maybe<Array<Maybe<IResolversTypes['Plan']>>>, ParentType, ContextType, IQueryListPlansArgs>;
-    listPlanTypes?: Resolver<Maybe<Array<Maybe<IResolversTypes['PlanType']>>>, ParentType, ContextType, IQueryListPlanTypesArgs>;
-    listForms?: Resolver<Maybe<Array<Maybe<IResolversTypes['Form']>>>, ParentType, ContextType, IQueryListFormsArgs>;
-    listFormVersions?: Resolver<Maybe<Array<Maybe<IResolversTypes['FormVersion']>>>, ParentType, ContextType, IQueryListFormVersionsArgs>;
-    listIntegrationTypes?: Resolver<Maybe<Array<Maybe<IResolversTypes['IntegrationType']>>>, ParentType, ContextType, IQueryListIntegrationTypesArgs>;
-    listIntegrations?: Resolver<Maybe<Array<Maybe<IResolversTypes['Integration']>>>, ParentType, ContextType, IQueryListIntegrationsArgs>;
-    listFormEntries?: Resolver<Maybe<Array<Maybe<IResolversTypes['FormEntry']>>>, ParentType, ContextType, IQueryListFormEntriesArgs>;
+export declare type IQueryResolvers<ContextType = any, ParentType extends IResolversParentTypes["Query"] = IResolversParentTypes["Query"]> = {
+    getAccount?: Resolver<Maybe<IResolversTypes["Account"]>, ParentType, ContextType, RequireFields<IQueryGetAccountArgs, "accountId">>;
+    getUser?: Resolver<Maybe<IResolversTypes["User"]>, ParentType, ContextType, RequireFields<IQueryGetUserArgs, "userId">>;
+    getPlan?: Resolver<Maybe<IResolversTypes["Plan"]>, ParentType, ContextType, RequireFields<IQueryGetPlanArgs, "planId">>;
+    getActiveAccountPlan?: Resolver<Maybe<IResolversTypes["Plan"]>, ParentType, ContextType, RequireFields<IQueryGetActiveAccountPlanArgs, "accountId">>;
+    getPlanType?: Resolver<Maybe<IResolversTypes["PlanType"]>, ParentType, ContextType, RequireFields<IQueryGetPlanTypeArgs, "planTypeId">>;
+    getForm?: Resolver<Maybe<IResolversTypes["Form"]>, ParentType, ContextType, RequireFields<IQueryGetFormArgs, "formId">>;
+    getFormVersion?: Resolver<Maybe<IResolversTypes["FormVersion"]>, ParentType, ContextType, RequireFields<IQueryGetFormVersionArgs, "versionId">>;
+    getIntegrationType?: Resolver<Maybe<IResolversTypes["IntegrationType"]>, ParentType, ContextType, RequireFields<IQueryGetIntegrationTypeArgs, "integrationTypeId">>;
+    getIntegration?: Resolver<Maybe<IResolversTypes["Integration"]>, ParentType, ContextType, RequireFields<IQueryGetIntegrationArgs, "integrationId">>;
+    getFormEntry?: Resolver<Maybe<IResolversTypes["FormEntry"]>, ParentType, ContextType, RequireFields<IQueryGetFormEntryArgs, "formEntryId">>;
+    listAccounts?: Resolver<Maybe<Array<Maybe<IResolversTypes["Account"]>>>, ParentType, ContextType, IQueryListAccountsArgs>;
+    listUsers?: Resolver<Maybe<Array<Maybe<IResolversTypes["User"]>>>, ParentType, ContextType, IQueryListUsersArgs>;
+    listPlans?: Resolver<Maybe<Array<Maybe<IResolversTypes["Plan"]>>>, ParentType, ContextType, IQueryListPlansArgs>;
+    listPlanTypes?: Resolver<Maybe<Array<Maybe<IResolversTypes["PlanType"]>>>, ParentType, ContextType, IQueryListPlanTypesArgs>;
+    listForms?: Resolver<Maybe<Array<Maybe<IResolversTypes["Form"]>>>, ParentType, ContextType, IQueryListFormsArgs>;
+    listFormVersions?: Resolver<Maybe<Array<Maybe<IResolversTypes["FormVersion"]>>>, ParentType, ContextType, IQueryListFormVersionsArgs>;
+    listIntegrationTypes?: Resolver<Maybe<Array<Maybe<IResolversTypes["IntegrationType"]>>>, ParentType, ContextType, IQueryListIntegrationTypesArgs>;
+    listIntegrations?: Resolver<Maybe<Array<Maybe<IResolversTypes["Integration"]>>>, ParentType, ContextType, IQueryListIntegrationsArgs>;
+    listFormEntries?: Resolver<Maybe<Array<Maybe<IResolversTypes["FormEntry"]>>>, ParentType, ContextType, IQueryListFormEntriesArgs>;
 };
-export declare type IUserResolvers<ContextType = any, ParentType extends IResolversParentTypes['User'] = IResolversParentTypes['User']> = {
-    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
-    ownerId?: Resolver<Maybe<IResolversTypes['ID']>, ParentType, ContextType>;
-    ownedBy?: Resolver<Maybe<IResolversTypes['User']>, ParentType, ContextType>;
-    accountId?: Resolver<Maybe<IResolversTypes['ID']>, ParentType, ContextType>;
-    account?: Resolver<Maybe<IResolversTypes['Account']>, ParentType, ContextType>;
-    email?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
-    userGroup?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
-    given_name?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
-    family_name?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
-    phone_number?: Resolver<Maybe<IResolversTypes['AWSPhone']>, ParentType, ContextType>;
-    createdAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    updatedAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    isDeleted?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
-    numForms?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
+export declare type IUserResolvers<ContextType = any, ParentType extends IResolversParentTypes["User"] = IResolversParentTypes["User"]> = {
+    id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    ownerId?: Resolver<Maybe<IResolversTypes["ID"]>, ParentType, ContextType>;
+    ownedBy?: Resolver<Maybe<IResolversTypes["User"]>, ParentType, ContextType>;
+    accountId?: Resolver<Maybe<IResolversTypes["ID"]>, ParentType, ContextType>;
+    account?: Resolver<Maybe<IResolversTypes["Account"]>, ParentType, ContextType>;
+    email?: Resolver<IResolversTypes["String"], ParentType, ContextType>;
+    userGroup?: Resolver<IResolversTypes["String"], ParentType, ContextType>;
+    given_name?: Resolver<IResolversTypes["String"], ParentType, ContextType>;
+    family_name?: Resolver<IResolversTypes["String"], ParentType, ContextType>;
+    phone_number?: Resolver<Maybe<IResolversTypes["AWSPhone"]>, ParentType, ContextType>;
+    createdAt?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    updatedAt?: Resolver<Maybe<IResolversTypes["AWSDateTime"]>, ParentType, ContextType>;
+    isDeleted?: Resolver<Maybe<IResolversTypes["Int"]>, ParentType, ContextType>;
+    numForms?: Resolver<Maybe<IResolversTypes["Int"]>, ParentType, ContextType>;
 };
 export declare type IResolvers<ContextType = any> = {
     Account?: IAccountResolvers<ContextType>;
@@ -2456,6 +2451,7 @@ export declare type IDirectiveResolvers<ContextType = any> = {
 export declare const UserFields: any;
 export declare const AccountFields: any;
 export declare const FormFields: any;
+export declare const PlanTypeFields: any;
 export declare const PlanFields: any;
 export declare const AddPlanType: any;
 export declare const AddPlan: any;
