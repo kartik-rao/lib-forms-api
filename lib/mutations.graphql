@@ -2,20 +2,7 @@ mutation AddPlanType($input: AddPlanTypeInput) {
     addPlanType(input: $input) {
       id
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       name
       cost
       active
@@ -44,20 +31,7 @@ mutation AddPlan($input: AddPlanInput) {
         numUsers
       }
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       planTypeId
       startDate
       endDate
@@ -84,20 +58,7 @@ mutation AddIntegrationType($input: AddIntegrationTypeInput) {
     addIntegrationType(input: $input) {
       id
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       planTypeId
       planType {
         id
@@ -131,25 +92,10 @@ mutation AddIntegration($input: AddIntegrationInput) {
         updatedAt
       }
       ownerId
+      ownedBy {...userFields}
       accountId
       formId
-      form {
-        id
-        ownerId
-        name
-        description
-        versionId
-        versionActivatedDate
-        accountId
-        createdAt
-        updatedAt
-        startDate
-        endDate
-        isPaused
-        isDeleted
-        redirectNotStarted
-        redirectHasEnded
-      }
+      form {...formFields}
       active
       authType
       auth
@@ -170,46 +116,9 @@ mutation AddForm($input: AddFormInput!) {
       ownerId
       name
       description
-      versionId
-      versionActivatedDate
-      version {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        formData
-      }
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       accountId
-      account {
-        id
-        name
-        website
-        taxId
-        ownerId
-        planId
-        createdAt
-        updatedAt
-        active
-        numForms
-        numUsers
-      }
+      account {...accountFields}
       createdAt
       updatedAt
       startDate
@@ -218,40 +127,6 @@ mutation AddForm($input: AddFormInput!) {
       isDeleted
       redirectNotStarted
       redirectHasEnded
-      versions {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        formData
-      }
-      integrations {
-        id
-        integrationTypeId
-        ownerId
-        accountId
-        formId
-        active
-        authType
-        auth
-        target
-        method
-        lastExecuted
-        lastExecutionResult
-        lastExecutionResultMessage
-        createdAt
-        updatedAt
-        isDeleted
-      }
-      entries {
-        id
-        formId
-        data
-        createdAt
-      }
     }
   }
 
@@ -272,40 +147,11 @@ mutation AddFormVersion($input: AddFormVersionInput!) {
         displayName
         notes
         formData
-        ownedBy {
-          id
-          email
-          given_name
-          family_name
-        }
+        ownedBy {...userFields}
       }
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-      }
+      ownedBy {...userFields}
       accountId
-      account {
-        id
-        name
-        website
-        taxId
-        ownerId
-        planId
-        createdAt
-        updatedAt
-        active
-        numForms
-        numUsers
-      }
+      account {...accountFields}
       createdAt
       updatedAt
       startDate
@@ -323,30 +169,6 @@ mutation AddFormVersion($input: AddFormVersionInput!) {
         displayName
         notes
         formData
-      }
-      integrations {
-        id
-        integrationTypeId
-        ownerId
-        accountId
-        formId
-        active
-        authType
-        auth
-        target
-        method
-        lastExecuted
-        lastExecutionResult
-        lastExecutionResultMessage
-        createdAt
-        updatedAt
-        isDeleted
-      }
-      entries {
-        id
-        formId
-        data
-        createdAt
       }
     }
   }
@@ -369,17 +191,9 @@ mutation AttachFormVersion($input: AttachFormVersionInput!) {
         notes
         formData
       }
-      ownedBy {
-        id
-        email
-        given_name
-        family_name
-      }
+      ownedBy {...userFields}
       accountId
-      account {
-        id
-        name
-      }
+      account {...accountFields}
       createdAt
       updatedAt
       startDate
@@ -390,7 +204,7 @@ mutation AttachFormVersion($input: AttachFormVersionInput!) {
       redirectHasEnded
       versions {
         id
-        ownedBy {email given_name family_name}
+        ownedBy {...userFields}
         createdAt
         displayName
         notes
@@ -402,20 +216,7 @@ mutation UpdatePlanType($input: UpdatePlanTypeInput) {
     updatePlanType(input: $input) {
       id
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       name
       cost
       active
@@ -430,34 +231,9 @@ mutation UpdatePlan($input: UpdatePlanInput) {
     updatePlan(input: $input) {
       id
       accountId
-      account {
-        id
-        name
-        website
-        taxId
-        ownerId
-        planId
-        createdAt
-        updatedAt
-        active
-        numForms
-        numUsers
-      }
+      account {...accountFields}
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       planTypeId
       startDate
       endDate
@@ -499,20 +275,7 @@ mutation UpdateAccount($input: UpdateAccountInput) {
       website
       taxId
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       plan {
         id
         accountId
@@ -532,37 +295,6 @@ mutation UpdateAccount($input: UpdateAccountInput) {
       active
       numForms
       numUsers
-      users {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
-      forms {
-        id
-        ownerId
-        name
-        description
-        versionId
-        versionActivatedDate
-        accountId
-        createdAt
-        updatedAt
-        startDate
-        endDate
-        isPaused
-        isDeleted
-        redirectNotStarted
-        redirectHasEnded
-      }
     }
   }
 
@@ -570,35 +302,10 @@ mutation UpdateAccountPlan($input: AddPlanInput) {
     updateAccountPlan(input: $input) {
       id
       name
-      addresses {
-        id
-        name
-        addressee
-        addressType
-        phone_number
-        email
-        street
-        city
-        state
-        country
-      }
       website
       taxId
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       plan {
         id
         accountId
@@ -618,37 +325,6 @@ mutation UpdateAccountPlan($input: AddPlanInput) {
       active
       numForms
       numUsers
-      users {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
-      forms {
-        id
-        ownerId
-        name
-        description
-        versionId
-        versionActivatedDate
-        accountId
-        createdAt
-        updatedAt
-        startDate
-        endDate
-        isPaused
-        isDeleted
-        redirectNotStarted
-        redirectHasEnded
-      }
     }
   }
 
@@ -656,34 +332,9 @@ mutation UpdateUser($input: UpdateUserInput) {
     updateUser(input: $input) {
       id
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       accountId
-      account {
-        id
-        name
-        website
-        taxId
-        ownerId
-        planId
-        createdAt
-        updatedAt
-        active
-        numForms
-        numUsers
-      }
+      account {...accountFields}
       email
       userGroup
       given_name
@@ -700,20 +351,7 @@ mutation UpdateIntegrationType($input: UpdateIntegrationTypeInput) {
     updateIntegrationType(input: $input) {
       id
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       planTypeId
       planType {
         id
@@ -749,23 +387,6 @@ mutation UpdateIntegration($input: UpdateIntegrationInput) {
       ownerId
       accountId
       formId
-      form {
-        id
-        ownerId
-        name
-        description
-        versionId
-        versionActivatedDate
-        accountId
-        createdAt
-        updatedAt
-        startDate
-        endDate
-        isPaused
-        isDeleted
-        redirectNotStarted
-        redirectHasEnded
-      }
       active
       authType
       auth
@@ -798,31 +419,9 @@ mutation UpdateForm($input: UpdateFormInput) {
         notes
         formData
       }
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-      }
+      ownedBy {...userFields}
       accountId
-      account {
-        id
-        name
-        website
-        taxId
-        ownerId
-        planId
-        createdAt
-        updatedAt
-        active
-      }
+      account {...accountFields}
       createdAt
       updatedAt
       startDate
@@ -839,7 +438,7 @@ mutation UpdateForm($input: UpdateFormInput) {
         createdAt
         displayName
         notes
-        ownedBy {email given_name family_name}
+        ownedBy {...userFields}
       }
     }
   }
@@ -862,34 +461,9 @@ mutation DeleteForm($input: DeleteFormInput!) {
         notes
         formData
       }
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       accountId
-      account {
-        id
-        name
-        website
-        taxId
-        ownerId
-        planId
-        createdAt
-        updatedAt
-        active
-        numForms
-        numUsers
-      }
+      account {...accountFields}
       createdAt
       updatedAt
       startDate
@@ -939,20 +513,7 @@ mutation DeletePlanType($planTypeId: ID!) {
     deletePlanType(planTypeId: $planTypeId) {
       id
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       name
       cost
       active
@@ -967,34 +528,9 @@ mutation DeletePlan($accountId: ID!, $planId: ID!) {
     deletePlan(accountId: $accountId, planId: $planId) {
       id
       accountId
-      account {
-        id
-        name
-        website
-        taxId
-        ownerId
-        planId
-        createdAt
-        updatedAt
-        active
-        numForms
-        numUsers
-      }
+      account {...accountFields}
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       planTypeId
       startDate
       endDate
@@ -1021,35 +557,10 @@ mutation DeleteAccount($accountId: ID!) {
     deleteAccount(accountId: $accountId) {
       id
       name
-      addresses {
-        id
-        name
-        addressee
-        addressType
-        phone_number
-        email
-        street
-        city
-        state
-        country
-      }
       website
       taxId
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       plan {
         id
         accountId
@@ -1069,37 +580,6 @@ mutation DeleteAccount($accountId: ID!) {
       active
       numForms
       numUsers
-      users {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
-      forms {
-        id
-        ownerId
-        name
-        description
-        versionId
-        versionActivatedDate
-        accountId
-        createdAt
-        updatedAt
-        startDate
-        endDate
-        isPaused
-        isDeleted
-        redirectNotStarted
-        redirectHasEnded
-      }
     }
   }
 
@@ -1107,34 +587,9 @@ mutation DeleteUser($userId: ID!) {
     deleteUser(userId: $userId) {
       id
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       accountId
-      account {
-        id
-        name
-        website
-        taxId
-        ownerId
-        planId
-        createdAt
-        updatedAt
-        active
-        numForms
-        numUsers
-      }
+      account {...accountFields}
       email
       userGroup
       given_name
@@ -1151,20 +606,7 @@ mutation DeleteIntegrationType($integrationTypeId: ID!) {
     deleteIntegrationType(integrationTypeId: $integrationTypeId) {
       id
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       planTypeId
       planType {
         id
@@ -1198,25 +640,10 @@ mutation DeleteIntegration($integrationId: ID!) {
         updatedAt
       }
       ownerId
+      ownedBy {...userFields}
       accountId
+      account {...accountFields}
       formId
-      form {
-        id
-        ownerId
-        name
-        description
-        versionId
-        versionActivatedDate
-        accountId
-        createdAt
-        updatedAt
-        startDate
-        endDate
-        isPaused
-        isDeleted
-        redirectNotStarted
-        redirectHasEnded
-      }
       active
       authType
       auth
@@ -1237,20 +664,7 @@ mutation DeleteFormVersion($input: DeleteFormVersionInput!) {
       accountId
       formId
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       createdAt
       displayName
       notes

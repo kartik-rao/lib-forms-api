@@ -17,24 +17,13 @@ query GetAccount($accountId: ID!) {
       website
       taxId
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       plan {
         id
         accountId
+        account {...accountFields}
         ownerId
+        ownedBy {...userFields}
         planTypeId
         startDate
         endDate
@@ -50,37 +39,16 @@ query GetAccount($accountId: ID!) {
       active
       numForms
       numUsers
-      users {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      users {...userFields}
       forms {
         id
         ownerId
         name
         description
-        versionId
-        versionActivatedDate
         accountId
         createdAt
-        updatedAt
-        startDate
-        endDate
-        isPaused
-        isDeleted
-        redirectNotStarted
-        redirectHasEnded
-        numEntries
+        ownedBy {...userFields}
+        account {...accountFields}
       }
     }
   }
@@ -88,34 +56,9 @@ query GetUser($userId: ID!) {
     getUser(userId: $userId) {
       id
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       accountId
-      account {
-        id
-        name
-        website
-        taxId
-        ownerId
-        planId
-        createdAt
-        updatedAt
-        active
-        numForms
-        numUsers
-      }
+      account {...accountFields}
       email
       userGroup
       given_name
@@ -131,34 +74,9 @@ query GetPlan($planId: String!) {
     getPlan(planId: $planId) {
       id
       accountId
-      account {
-        id
-        name
-        website
-        taxId
-        ownerId
-        planId
-        createdAt
-        updatedAt
-        active
-        numForms
-        numUsers
-      }
+      account {...accountFields}
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       planTypeId
       startDate
       endDate
@@ -184,34 +102,9 @@ query GetActiveAccountPlan($accountId: String!) {
     getActiveAccountPlan(accountId: $accountId) {
       id
       accountId
-      account {
-        id
-        name
-        website
-        taxId
-        ownerId
-        planId
-        createdAt
-        updatedAt
-        active
-        numForms
-        numUsers
-      }
+      account {...accountFields}
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       planTypeId
       startDate
       endDate
@@ -222,6 +115,7 @@ query GetActiveAccountPlan($accountId: String!) {
       planType {
         id
         ownerId
+        ownedBy {...userFields}
         name
         cost
         active
@@ -237,20 +131,7 @@ query GetPlanType($planTypeId: String!) {
     getPlanType(planTypeId: $planTypeId) {
       id
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       name
       cost
       active
@@ -277,22 +158,11 @@ query GetForm($formId: String!) {
         displayName
         notes
         formData
+        ownedBy {...userFields}
       }
-      ownedBy {
-        id
-        email
-        userGroup
-        given_name
-        family_name
-      }
+      ownedBy {...userFields}
       accountId
-      account {
-        id
-        name
-        createdAt
-        updatedAt
-        active
-      }
+      account {...accountFields}
       createdAt
       updatedAt
       startDate
@@ -303,7 +173,7 @@ query GetForm($formId: String!) {
       redirectHasEnded
       versions {
         id
-        ownedBy {given_name family_name email}
+        ownedBy {...userFields}
         createdAt
         displayName
         notes
@@ -316,20 +186,7 @@ query GetFormVersion($versionId: String!) {
       accountId
       formId
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       createdAt
       displayName
       notes
@@ -340,20 +197,7 @@ query GetIntegrationType($integrationTypeId: String!) {
     getIntegrationType(integrationTypeId: $integrationTypeId) {
       id
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       planTypeId
       planType {
         id
@@ -467,20 +311,7 @@ query ListAccounts(
       website
       taxId
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       plan {
         id
         accountId
@@ -493,12 +324,7 @@ query ListAccounts(
         createdAt
         updatedAt
         isDeleted
-        ownedBy {
-          id
-          email
-          given_name
-          family_name
-        }
+        ownedBy {...userFields}
       }
       planId
       createdAt
@@ -506,20 +332,7 @@ query ListAccounts(
       active
       numForms
       numUsers
-      users {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      users {...userFields}
       forms {
         id
         ownerId
@@ -682,27 +495,14 @@ query ListForms(
       versionActivatedDate
       version {
         id
-        createdAt
-        ownedBy {
-          id
-          email
-          given_name
-          family_name
-        }
         displayName
+        createdAt
+        ownedBy {...userFields}
         notes
       }
-      ownedBy {
-        id
-        email
-        given_name
-        family_name
-      }
+      ownedBy {...userFields}
       accountId
-      account {
-        id
-        name
-      }
+      account {...accountFields}
       createdAt
       updatedAt
       startDate
@@ -723,13 +523,7 @@ query ListFormVersions(
       accountId
       formId
       ownerId
-      ownedBy {
-        id
-        email
-        userGroup
-        given_name
-        family_name
-      }
+      ownedBy {...userFields}
       createdAt
       displayName
       notes
@@ -748,20 +542,7 @@ query ListIntegrationTypes(
     ) {
       id
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       planTypeId
       planType {
         id
@@ -800,23 +581,7 @@ query ListIntegrations(
       ownerId
       accountId
       formId
-      form {
-        id
-        ownerId
-        name
-        description
-        versionId
-        versionActivatedDate
-        accountId
-        createdAt
-        updatedAt
-        startDate
-        endDate
-        isPaused
-        isDeleted
-        redirectNotStarted
-        redirectHasEnded
-      }
+      form {...formFields}
       active
       authType
       auth
@@ -839,23 +604,7 @@ query ListFormEntries(
       id
       accountId
       formId
-      form {
-        id
-        ownerId
-        name
-        description
-        versionId
-        versionActivatedDate
-        accountId
-        createdAt
-        updatedAt
-        startDate
-        endDate
-        isPaused
-        isDeleted
-        redirectNotStarted
-        redirectHasEnded
-      }
+      form {...formFields}
       data
       createdAt
     }
