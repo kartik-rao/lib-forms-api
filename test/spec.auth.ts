@@ -21,7 +21,7 @@ const SSM = {
     AccountViewer : "/app/formsli/dev/tenantAccountViewer",
 }
 
-var credentials = new AWS.SharedIniFileCredentials({profile: 'fl-infrastructure-dev'});
+var credentials = new AWS.SharedIniFileCredentials({profile: 'fl-infrastructure'});
 AWS.config.credentials = credentials;
 AWS.config.region = config['Region'];
 let UserPool = new AWS.CognitoIdentityServiceProvider();
@@ -132,14 +132,16 @@ describe("Auth", () => {
                     fail(err);
                     return;
                 }
+
                 let attrs = {}
                 attributes.forEach((attr) => {
                     attrs[attr["Name"]] = attr["Value"];
                 });
-                expect(attrs['custom:environment']).toBe('dev', "custom:environment should be 'dev'");
-                expect(attrs['custom:group']).toBe('AccountAdmin', "custom:group should be 'AccountAdmin'");
+
+                expect(attrs['custom:environment']).toBe('dev', "custom:environment should be 'dev' - Check PostConfirmationTrigger");
+                expect(attrs['custom:group']).toBe('AccountAdmin', "custom:group should be 'AccountAdmin'  - Check PostConfirmationTrigger");
                 expect(attrs['custom:tenantName']).toEqual(TestTenantName);
-                expect(attrs['custom:tenantId']).toBeDefined("custom:tenantId should be set");
+                expect(attrs['custom:tenantId']).toBeDefined("custom:tenantId should be set  - Check PostConfirmationTrigger");
                 expect(attrs['email_verified']).toBeTruthy();
                 tenantId = attrs['custom:tenantId'];
                 done();
@@ -166,7 +168,7 @@ describe("Auth", () => {
                 let token = session.getIdToken().getJwtToken();
 
                 let invitePayload = {
-                    "custom:group" : "Viewer",
+                    "custom:group" : "AccountViewer",
                     "custom:source": admin.getUsername(), // this is sub not email
                     family_name: TestTenantName,
                     given_name:"Viewer",
@@ -199,7 +201,7 @@ describe("Auth", () => {
                 });
 
                 expect(attrs['custom:environment']).toBe('dev');
-                expect(attrs['custom:group']).toBe('Viewer');
+                expect(attrs['custom:group']).toBe('AccountViewer');
                 expect(attrs['custom:tenantId']).toEqual(tenantId);
                 expect(attrs['custom:source']).toEqual(accAdmin.userSub);
                 expect(attrs['custom:tenantName']).toEqual(TestTenantName);

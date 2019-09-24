@@ -55,7 +55,7 @@ describe("Account", () => {
             hasErrors && done.fail(errors[0].message);
             expect(parsed).toBeDefined();
             expect(parsed.id).toEqual(tenantId);
-            expect(parsed.name).toEqual(tenantName);
+            expect(parsed.name).toContain(tenantName);
             expect(parsed.ownedBy).toBeDefined("Must include subfield ownedBy")
             expect(parsed.numForms).toBeDefined("Must include subfield numForms")
             expect(parsed.numUsers).toBeDefined("Must include subfield numUsers")
