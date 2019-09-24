@@ -17,3 +17,9 @@ Resources:
       Name: "/${self:provider.stage}/formsli/graphql/api/key"
       Value: { Fn::GetAtt: [GraphQlApiKeyDefault, ApiKey] }
       Type: String
+  ssmAppsyncApiEndpoint:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/graphql/api/endpoint"
+      Value: !Select [2, !Split ['/', !GetAtt 'GraphQlApi.GraphQLUrl']]
+      Type: String

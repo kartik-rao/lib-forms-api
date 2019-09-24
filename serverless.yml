@@ -3,6 +3,11 @@ service: formsli
 frameworkVersion: '>=1.5.0 <2.0.0'
 provider:
   name: aws
+  logs:
+    restApi:
+        enableAccessLogging: true
+        level: INFO
+        dataTrace: true
   runtime: nodejs10.x
   tracing: true
   stage: ${opt:stage, 'dev'}
@@ -27,11 +32,17 @@ provider:
     sqs_fn_integration : ${self:service}-${self:provider.stage}-integration
   profile: fl-infrastructure
   environment:
+    prefix_dev: "dev-"
+    prefix_staging: "staging-"
+    prefix_production: ""
     region         : ${self:provider.region}
     hostedZoneId   : Z3CMAQR65ETWUL
+    certArn        : "arn:aws:acm:ap-northeast-1:286358943194:certificate/999afdb8-6c01-4f47-86ca-edbfddb3daa3"
+    usEastCertArn  : "arn:aws:acm:us-east-1:286358943194:certificate/8e043316-5cf7-467c-b453-159d3cf3d68e"
     rootDomain     : ${opt:domain, 'forms.li'}
     appDomain      : "app.${self:provider.environment.rootDomain}"
     apiDomain      : "api.${self:provider.environment.rootDomain}"
+    gqlDomain      : "graph.${self:provider.environment.rootDomain}"
     staticDomain   : "static.${self:provider.environment.rootDomain}"
     sftpDomain     : "sftp.${self:provider.environment.rootDomain}"
     environment    : ${self:provider.stage}
@@ -92,6 +103,7 @@ plugins:
   - serverless-pseudo-parameters
   - serverless-iam-roles-per-function
   - serverless-plugin-tracing
+  # - serverless-plugin-aws-alerts
   - serverless-domain-manager
   - serverless-appsync-plugin
   - '@anttiviljami/serverless-stack-output'
@@ -103,8 +115,26 @@ resources:
   - ${file(resources/sqs.yml)}
   - ${file(resources/sftp.yml)}
   - ${file(resources/ssm.yml)}
+  - ${file(resources/appsync-distribution.yml)}
 
 custom:
+  alerts:
+    dashboards: true
+    stages:
+      - dev # Disable later
+      - staging
+      - production
+    topics:
+      alarm:
+        topic: ${self:service}-${self:provider.stage}-alerts-alarm
+        notifications:
+          - protocol: email
+            endpoint: infrastructure.${self:provider.stage}@forms.li
+    alarms:
+      - functionErrors
+      - functionThrottles
+      - functionInvocations
+      - functionDuration
   serverless-iam-roles-per-function:
     defaultInherit: true
   customDomain:
@@ -394,22 +424,3 @@ functions:
           - cognito-idp:AdminCreateUser
           - cognito-idp:AdminGetUser
         Resource: "${self:provider.environment.userPoolArn}"
-
-Outputs:
-  GraphQlApi:
-    Description: "The ARN of the GraphQL API"
-    Value: { Ref: GraphQlApi }
-    Export:
-      Name: graphql-api-arn
-
-  GraphQlApiUrl:
-    Description: "The GraphQL API Endpoint URL"
-    Value: { Fn::GetAtt: [GraphQlApi, GraphQLUrl] }
-    Export:
-      Name: graphql-api-url
-
-  GraphQlApiId:
-    Description: "The Appsync GraphQL API ID"
-    Value: { Fn::GetAtt: [GraphQlApi, ApiId] }
-    Export:
-      Name: graphql-api-id
