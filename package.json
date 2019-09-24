@@ -1,5 +1,5 @@
 {
-  "name": "lib-forms-api",
+  "name": "@kartikrao/lib-forms-api",
   "version": "1.2.1",
   "description": "GraphQL API for forms app data",
   "main": "lib/index.js",
@@ -13,7 +13,7 @@
     "test": "ts-node -T --project ./tsconfig.test.json node_modules/jasmine/bin/jasmine --config=./jasmine.json",
     "codegen": "graphql-codegen",
     "karma": "karma start",
-    "build": "cross-env NODE_ENV=development npm run codegen && tsc -p tsconfig.lib.json && cp src/graphql/*.graphql lib/",
+    "build": "npm run codegen && tsc -p tsconfig.lib.json && cp src/graphql/*.graphql lib/",
     "preversion": "echo \"Skip preversion\"",
     "version": "npm run build && git add -A lib",
     "postversion": "git push && git push --tags",
