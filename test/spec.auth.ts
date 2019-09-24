@@ -211,7 +211,7 @@ describe("Auth", () => {
                 console.error(error);
                 fail(error);
             }
-        });
+        }, 15000);
 
         it("User login details", async () =>{
             const emails = await mailSlurp.getEmails(accViewerInbox.id, { minCount: 1 });
