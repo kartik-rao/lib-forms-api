@@ -272,6 +272,12 @@ mutation AddFormVersion($input: AddFormVersionInput!) {
         displayName
         notes
         formData
+        ownedBy {
+          id
+          email
+          given_name
+          family_name
+        }
       }
       ownedBy {
         id
@@ -285,7 +291,6 @@ mutation AddFormVersion($input: AddFormVersionInput!) {
         createdAt
         updatedAt
         isDeleted
-        numForms
       }
       accountId
       account {
