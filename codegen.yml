@@ -1,11 +1,15 @@
-schema: 
+schema:
   - client-schema.graphql
   - schema.graphql
+documents:
+  - src/graphql/queries.graphql
+  - src/graphql/mutations.graphql
 generates:
-  lib/index.d.ts:
+  src/graphql/index.ts:
     - typescript
     - typescript-operations
 config:
+  declarationKind: 'interface'
   scalars:
     AWSJSON  : String
     AWSPhone : String

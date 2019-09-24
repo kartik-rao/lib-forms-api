@@ -5,7 +5,7 @@ const { CheckerPlugin } = require('awesome-typescript-loader');
 module.exports = {
     mode: env,
     entry: {
-        main: path.join(__dirname, 'src/api.graphql.ts')
+        main: path.join(__dirname, 'src/graphql/index.ts')
     },
     target: 'web',
     module: {
@@ -28,7 +28,7 @@ module.exports = {
                     }
                 },
                 exclude: /node_modules/
-            },
+            }
         ]
     },
     output: {
