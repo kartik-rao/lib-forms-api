@@ -7,9 +7,14 @@ documents:
   - src/graphql/mutations.graphql
 generates:
   src/graphql/index.ts:
-    - typescript
-    - typescript-operations
-    - typescript-resolvers
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-resolvers
+      - typescript-document-nodes
+    hooks:
+      afterOneFileWrite:
+        - prettier --write
 config:
   preResolveTypes: true
   typesPrefix: I

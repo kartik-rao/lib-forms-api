@@ -176,9 +176,6 @@ mutation AddFormVersion($input: AddFormVersionInput!) {
 mutation AttachFormVersion($input: AttachFormVersionInput!) {
     attachFormVersion(input: $input) {
       id
-      ownerId
-      name
-      description
       versionId
       versionActivatedDate
       version {
@@ -190,25 +187,9 @@ mutation AttachFormVersion($input: AttachFormVersionInput!) {
         displayName
         notes
         formData
-      }
-      ownedBy {...userFields}
-      accountId
-      account {...accountFields}
-      createdAt
-      updatedAt
-      startDate
-      endDate
-      isPaused
-      isDeleted
-      redirectNotStarted
-      redirectHasEnded
-      versions {
-        id
         ownedBy {...userFields}
-        createdAt
-        displayName
-        notes
       }
+      updatedAt
     }
   }
 

@@ -6,14 +6,11 @@
         "lib": ["es6", "dom"],
         "module": "commonjs",
         "moduleResolution": "node",
-        "esModuleInterop" : true,
-        "typeRoots": [
-            "src/types",
-            "node_modules/@types"
-        ]
+        "esModuleInterop" : true
     },
     "include": [
-        "src/*", "src/types/aws-xray-sdk.d.ts"
+        "src/*", 
+        "src/types/aws-xray-sdk.d.ts"
     ],
     "exclude": [
         "node_modules"

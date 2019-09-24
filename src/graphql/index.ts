@@ -987,13 +987,9 @@ export type IAttachFormVersionMutationVariables = {
 };
 
 
-export type IAttachFormVersionMutation = { attachFormVersion: { id: string, ownerId: string, name: string, description: string, versionId: Maybe<string>, versionActivatedDate: Maybe<string>, accountId: string, createdAt: string, updatedAt: Maybe<string>, startDate: Maybe<string>, endDate: Maybe<string>, isPaused: Maybe<number>, isDeleted: Maybe<number>, redirectNotStarted: Maybe<string>, redirectHasEnded: Maybe<string>, version: Maybe<{ id: string, accountId: string, formId: string, ownerId: string, createdAt: Maybe<string>, displayName: string, notes: Maybe<string>, formData: string }>, ownedBy: {  }
-      & IUserFieldsFragment
-    , account: {  }
-      & IAccountFieldsFragment
-    , versions: Maybe<Array<Maybe<{ id: string, createdAt: Maybe<string>, displayName: string, notes: Maybe<string>, ownedBy: {  }
+export type IAttachFormVersionMutation = { attachFormVersion: { id: string, versionId: Maybe<string>, versionActivatedDate: Maybe<string>, updatedAt: Maybe<string>, version: Maybe<{ id: string, accountId: string, formId: string, ownerId: string, createdAt: Maybe<string>, displayName: string, notes: Maybe<string>, formData: string, ownedBy: {  }
         & IUserFieldsFragment
-       }>>> } };
+       }> } };
 
 export type IUpdatePlanTypeMutationVariables = {
   input?: Maybe<IUpdatePlanTypeInput>
@@ -1874,3 +1870,1406 @@ export type IDirectiveResolvers<ContextType = any> = {
   aws_api_key?: IAws_Api_KeyDirectiveResolver<any, any, ContextType>,
 };
 
+import gql from 'graphql-tag';
+export const UserFields = gql`
+    fragment userFields on User {
+  id
+  email
+  userGroup
+  given_name
+  family_name
+  createdAt
+  updatedAt
+}
+    `;
+export const AccountFields = gql`
+    fragment accountFields on Account {
+  id
+  name
+  ownerId
+  ownedBy {
+    ...userFields
+  }
+}
+    ${UserFields}`;
+export const FormFields = gql`
+    fragment formFields on Form {
+  id
+  ownerId
+  ownedBy {
+    ...userFields
+  }
+  description
+  accountId
+  account {
+    ...accountFields
+  }
+  createdAt
+}
+    ${UserFields}
+${AccountFields}`;
+export const PlanFields = gql`
+    fragment planFields on Plan {
+  id
+  accountId
+  account {
+    ...accountFields
+  }
+  ownerId
+  ownedBy {
+    ...userFields
+  }
+  planTypeId
+  startDate
+}
+    ${AccountFields}
+${UserFields}`;
+export const AddPlanType = gql`
+    mutation AddPlanType($input: AddPlanTypeInput) {
+  addPlanType(input: $input) {
+    id
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    name
+    cost
+    active
+    billingTerm
+    createdAt
+    updatedAt
+    isDeleted
+  }
+}
+    ${UserFields}`;
+export const AddPlan = gql`
+    mutation AddPlan($input: AddPlanInput) {
+  addPlan(input: $input) {
+    id
+    accountId
+    account {
+      id
+      name
+      website
+      taxId
+      ownerId
+      planId
+      createdAt
+      updatedAt
+      active
+      numForms
+      numUsers
+    }
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    planTypeId
+    startDate
+    endDate
+    active
+    lastBillDate
+    createdAt
+    updatedAt
+    planType {
+      id
+      ownerId
+      name
+      cost
+      active
+      billingTerm
+      createdAt
+      updatedAt
+      isDeleted
+    }
+    isDeleted
+  }
+}
+    ${UserFields}`;
+export const AddIntegrationType = gql`
+    mutation AddIntegrationType($input: AddIntegrationTypeInput) {
+  addIntegrationType(input: $input) {
+    id
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    planTypeId
+    planType {
+      id
+      ownerId
+      name
+      cost
+      active
+      billingTerm
+      createdAt
+      updatedAt
+      isDeleted
+    }
+    name
+    active
+    createdAt
+    updatedAt
+  }
+}
+    ${UserFields}`;
+export const AddIntegration = gql`
+    mutation AddIntegration($input: AddIntegrationInput) {
+  addIntegration(input: $input) {
+    id
+    integrationTypeId
+    integrationType {
+      id
+      ownerId
+      planTypeId
+      name
+      active
+      createdAt
+      updatedAt
+    }
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    accountId
+    formId
+    form {
+      ...formFields
+    }
+    active
+    authType
+    auth
+    target
+    method
+    lastExecuted
+    lastExecutionResult
+    lastExecutionResultMessage
+    createdAt
+    updatedAt
+    isDeleted
+  }
+}
+    ${UserFields}
+${FormFields}`;
+export const AddForm = gql`
+    mutation AddForm($input: AddFormInput!) {
+  addForm(input: $input) {
+    id
+    ownerId
+    name
+    description
+    ownedBy {
+      ...userFields
+    }
+    accountId
+    account {
+      ...accountFields
+    }
+    createdAt
+    updatedAt
+    startDate
+    endDate
+    isPaused
+    isDeleted
+    redirectNotStarted
+    redirectHasEnded
+  }
+}
+    ${UserFields}
+${AccountFields}`;
+export const AddFormVersion = gql`
+    mutation AddFormVersion($input: AddFormVersionInput!) {
+  addFormVersion(input: $input) {
+    id
+    ownerId
+    name
+    description
+    versionId
+    versionActivatedDate
+    version {
+      id
+      accountId
+      formId
+      ownerId
+      createdAt
+      displayName
+      notes
+      formData
+      ownedBy {
+        ...userFields
+      }
+    }
+    ownedBy {
+      ...userFields
+    }
+    accountId
+    account {
+      ...accountFields
+    }
+    createdAt
+    updatedAt
+    startDate
+    endDate
+    isPaused
+    isDeleted
+    redirectNotStarted
+    redirectHasEnded
+    versions {
+      id
+      accountId
+      formId
+      ownerId
+      createdAt
+      displayName
+      notes
+      ownedBy {
+        ...userFields
+      }
+    }
+  }
+}
+    ${UserFields}
+${AccountFields}`;
+export const AttachFormVersion = gql`
+    mutation AttachFormVersion($input: AttachFormVersionInput!) {
+  attachFormVersion(input: $input) {
+    id
+    versionId
+    versionActivatedDate
+    version {
+      id
+      accountId
+      formId
+      ownerId
+      createdAt
+      displayName
+      notes
+      formData
+      ownedBy {
+        ...userFields
+      }
+    }
+    updatedAt
+  }
+}
+    ${UserFields}`;
+export const UpdatePlanType = gql`
+    mutation UpdatePlanType($input: UpdatePlanTypeInput) {
+  updatePlanType(input: $input) {
+    id
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    name
+    cost
+    active
+    billingTerm
+    createdAt
+    updatedAt
+    isDeleted
+  }
+}
+    ${UserFields}`;
+export const UpdatePlan = gql`
+    mutation UpdatePlan($input: UpdatePlanInput) {
+  updatePlan(input: $input) {
+    id
+    accountId
+    account {
+      ...accountFields
+    }
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    planTypeId
+    startDate
+    endDate
+    active
+    lastBillDate
+    createdAt
+    updatedAt
+    planType {
+      id
+      ownerId
+      name
+      cost
+      active
+      billingTerm
+      createdAt
+      updatedAt
+      isDeleted
+    }
+    isDeleted
+  }
+}
+    ${AccountFields}
+${UserFields}`;
+export const UpdateAccount = gql`
+    mutation UpdateAccount($input: UpdateAccountInput) {
+  updateAccount(input: $input) {
+    id
+    name
+    addresses {
+      id
+      name
+      addressee
+      addressType
+      phone_number
+      email
+      street
+      city
+      state
+      country
+    }
+    website
+    taxId
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    plan {
+      id
+      accountId
+      ownerId
+      planTypeId
+      startDate
+      endDate
+      active
+      lastBillDate
+      createdAt
+      updatedAt
+      isDeleted
+    }
+    planId
+    createdAt
+    updatedAt
+    active
+    numForms
+    numUsers
+  }
+}
+    ${UserFields}`;
+export const UpdateAccountPlan = gql`
+    mutation UpdateAccountPlan($input: AddPlanInput) {
+  updateAccountPlan(input: $input) {
+    id
+    name
+    website
+    taxId
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    plan {
+      id
+      accountId
+      ownerId
+      planTypeId
+      startDate
+      endDate
+      active
+      lastBillDate
+      createdAt
+      updatedAt
+      isDeleted
+    }
+    planId
+    createdAt
+    updatedAt
+    active
+    numForms
+    numUsers
+  }
+}
+    ${UserFields}`;
+export const UpdateUser = gql`
+    mutation UpdateUser($input: UpdateUserInput) {
+  updateUser(input: $input) {
+    id
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    accountId
+    account {
+      ...accountFields
+    }
+    email
+    userGroup
+    given_name
+    family_name
+    phone_number
+    createdAt
+    updatedAt
+    isDeleted
+    numForms
+  }
+}
+    ${UserFields}
+${AccountFields}`;
+export const UpdateIntegrationType = gql`
+    mutation UpdateIntegrationType($input: UpdateIntegrationTypeInput) {
+  updateIntegrationType(input: $input) {
+    id
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    planTypeId
+    planType {
+      id
+      ownerId
+      name
+      cost
+      active
+      billingTerm
+      createdAt
+      updatedAt
+      isDeleted
+    }
+    name
+    active
+    createdAt
+    updatedAt
+  }
+}
+    ${UserFields}`;
+export const UpdateIntegration = gql`
+    mutation UpdateIntegration($input: UpdateIntegrationInput) {
+  updateIntegration(input: $input) {
+    id
+    integrationTypeId
+    integrationType {
+      id
+      ownerId
+      planTypeId
+      name
+      active
+      createdAt
+      updatedAt
+    }
+    ownerId
+    accountId
+    formId
+    active
+    authType
+    auth
+    target
+    method
+    lastExecuted
+    lastExecutionResult
+    lastExecutionResultMessage
+    createdAt
+    updatedAt
+    isDeleted
+  }
+}
+    `;
+export const UpdateForm = gql`
+    mutation UpdateForm($input: UpdateFormInput) {
+  updateForm(input: $input) {
+    id
+    ownerId
+    name
+    description
+    versionId
+    versionActivatedDate
+    version {
+      id
+      accountId
+      formId
+      ownerId
+      createdAt
+      displayName
+      notes
+      formData
+    }
+    ownedBy {
+      ...userFields
+    }
+    accountId
+    account {
+      ...accountFields
+    }
+    createdAt
+    updatedAt
+    startDate
+    endDate
+    isPaused
+    isDeleted
+    redirectNotStarted
+    redirectHasEnded
+    versions {
+      id
+      accountId
+      formId
+      ownerId
+      createdAt
+      displayName
+      notes
+      ownedBy {
+        ...userFields
+      }
+    }
+  }
+}
+    ${UserFields}
+${AccountFields}`;
+export const DeleteForm = gql`
+    mutation DeleteForm($input: DeleteFormInput!) {
+  deleteForm(input: $input) {
+    id
+    ownerId
+    name
+    description
+    versionId
+    versionActivatedDate
+    version {
+      id
+      accountId
+      formId
+      ownerId
+      createdAt
+      displayName
+      notes
+      formData
+    }
+    ownedBy {
+      ...userFields
+    }
+    accountId
+    account {
+      ...accountFields
+    }
+    createdAt
+    updatedAt
+    startDate
+    endDate
+    isPaused
+    isDeleted
+    redirectNotStarted
+    redirectHasEnded
+    versions {
+      id
+      accountId
+      formId
+      ownerId
+      createdAt
+      displayName
+      notes
+      formData
+    }
+    integrations {
+      id
+      integrationTypeId
+      ownerId
+      accountId
+      formId
+      active
+      authType
+      auth
+      target
+      method
+      lastExecuted
+      lastExecutionResult
+      lastExecutionResultMessage
+      createdAt
+      updatedAt
+      isDeleted
+    }
+    entries {
+      id
+      formId
+      data
+      createdAt
+    }
+  }
+}
+    ${UserFields}
+${AccountFields}`;
+export const DeletePlanType = gql`
+    mutation DeletePlanType($planTypeId: ID!) {
+  deletePlanType(planTypeId: $planTypeId) {
+    id
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    name
+    cost
+    active
+    billingTerm
+    createdAt
+    updatedAt
+    isDeleted
+  }
+}
+    ${UserFields}`;
+export const DeletePlan = gql`
+    mutation DeletePlan($accountId: ID!, $planId: ID!) {
+  deletePlan(accountId: $accountId, planId: $planId) {
+    id
+    accountId
+    account {
+      ...accountFields
+    }
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    planTypeId
+    startDate
+    endDate
+    active
+    lastBillDate
+    createdAt
+    updatedAt
+    planType {
+      id
+      ownerId
+      name
+      cost
+      active
+      billingTerm
+      createdAt
+      updatedAt
+      isDeleted
+    }
+    isDeleted
+  }
+}
+    ${AccountFields}
+${UserFields}`;
+export const DeleteAccount = gql`
+    mutation DeleteAccount($accountId: ID!) {
+  deleteAccount(accountId: $accountId) {
+    id
+    name
+    website
+    taxId
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    plan {
+      id
+      accountId
+      ownerId
+      planTypeId
+      startDate
+      endDate
+      active
+      lastBillDate
+      createdAt
+      updatedAt
+      isDeleted
+    }
+    planId
+    createdAt
+    updatedAt
+    active
+    numForms
+    numUsers
+  }
+}
+    ${UserFields}`;
+export const DeleteUser = gql`
+    mutation DeleteUser($userId: ID!) {
+  deleteUser(userId: $userId) {
+    id
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    accountId
+    account {
+      ...accountFields
+    }
+    email
+    userGroup
+    given_name
+    family_name
+    phone_number
+    createdAt
+    updatedAt
+    isDeleted
+    numForms
+  }
+}
+    ${UserFields}
+${AccountFields}`;
+export const DeleteIntegrationType = gql`
+    mutation DeleteIntegrationType($integrationTypeId: ID!) {
+  deleteIntegrationType(integrationTypeId: $integrationTypeId) {
+    id
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    planTypeId
+    planType {
+      id
+      ownerId
+      name
+      cost
+      active
+      billingTerm
+      createdAt
+      updatedAt
+      isDeleted
+    }
+    name
+    active
+    createdAt
+    updatedAt
+  }
+}
+    ${UserFields}`;
+export const DeleteIntegration = gql`
+    mutation DeleteIntegration($integrationId: ID!) {
+  deleteIntegration(integrationId: $integrationId) {
+    id
+    integrationTypeId
+    integrationType {
+      id
+      ownerId
+      planTypeId
+      name
+      active
+      createdAt
+      updatedAt
+    }
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    accountId
+    account {
+      ...accountFields
+    }
+    formId
+    active
+    authType
+    auth
+    target
+    method
+    lastExecuted
+    lastExecutionResult
+    lastExecutionResultMessage
+    createdAt
+    updatedAt
+    isDeleted
+  }
+}
+    ${UserFields}
+${AccountFields}`;
+export const DeleteFormVersion = gql`
+    mutation DeleteFormVersion($input: DeleteFormVersionInput!) {
+  deleteFormVersion(input: $input) {
+    id
+    accountId
+    formId
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    createdAt
+    displayName
+    notes
+    formData
+  }
+}
+    ${UserFields}`;
+export const AddFormEntry = gql`
+    mutation AddFormEntry($input: AddFormEntryInput!) {
+  addFormEntry(input: $input) {
+    id
+    formId
+    createdAt
+  }
+}
+    `;
+export const GetAccount = gql`
+    query GetAccount($accountId: ID!) {
+  getAccount(accountId: $accountId) {
+    id
+    name
+    addresses {
+      id
+      name
+      addressee
+      addressType
+      phone_number
+      email
+      street
+      city
+      state
+      country
+    }
+    website
+    taxId
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    plan {
+      ...planFields
+    }
+    planId
+    createdAt
+    updatedAt
+    active
+    numForms
+    numUsers
+    users {
+      ...userFields
+    }
+    forms {
+      id
+      ownerId
+      name
+      description
+      accountId
+      createdAt
+      ownedBy {
+        ...userFields
+      }
+      account {
+        ...accountFields
+      }
+    }
+  }
+}
+    ${UserFields}
+${PlanFields}
+${AccountFields}`;
+export const GetUser = gql`
+    query GetUser($userId: ID!) {
+  getUser(userId: $userId) {
+    id
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    accountId
+    account {
+      ...accountFields
+    }
+    email
+    userGroup
+    given_name
+    family_name
+    phone_number
+    createdAt
+    updatedAt
+    isDeleted
+    numForms
+  }
+}
+    ${UserFields}
+${AccountFields}`;
+export const GetPlan = gql`
+    query GetPlan($planId: String!) {
+  getPlan(planId: $planId) {
+    id
+    accountId
+    account {
+      ...accountFields
+    }
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    planTypeId
+    startDate
+    endDate
+    active
+    lastBillDate
+    createdAt
+    updatedAt
+    planType {
+      id
+      ownerId
+      name
+      cost
+      active
+      billingTerm
+      createdAt
+      updatedAt
+      isDeleted
+    }
+    isDeleted
+  }
+}
+    ${AccountFields}
+${UserFields}`;
+export const GetActiveAccountPlan = gql`
+    query GetActiveAccountPlan($accountId: String!) {
+  getActiveAccountPlan(accountId: $accountId) {
+    id
+    accountId
+    account {
+      ...accountFields
+    }
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    planTypeId
+    startDate
+    endDate
+    active
+    lastBillDate
+    createdAt
+    updatedAt
+    planType {
+      id
+      ownerId
+      ownedBy {
+        ...userFields
+      }
+      name
+      cost
+      active
+      billingTerm
+      createdAt
+      updatedAt
+      isDeleted
+    }
+    isDeleted
+  }
+}
+    ${AccountFields}
+${UserFields}`;
+export const GetPlanType = gql`
+    query GetPlanType($planTypeId: String!) {
+  getPlanType(planTypeId: $planTypeId) {
+    id
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    name
+    cost
+    active
+    billingTerm
+    createdAt
+    updatedAt
+    isDeleted
+  }
+}
+    ${UserFields}`;
+export const GetForm = gql`
+    query GetForm($formId: String!) {
+  getForm(formId: $formId) {
+    id
+    ownerId
+    name
+    description
+    versionId
+    versionActivatedDate
+    version {
+      id
+      accountId
+      formId
+      ownerId
+      createdAt
+      displayName
+      notes
+      formData
+      ownedBy {
+        ...userFields
+      }
+    }
+    ownedBy {
+      ...userFields
+    }
+    accountId
+    account {
+      ...accountFields
+    }
+    createdAt
+    updatedAt
+    startDate
+    endDate
+    isPaused
+    isDeleted
+    redirectNotStarted
+    redirectHasEnded
+    versions {
+      id
+      createdAt
+      displayName
+      notes
+      ownedBy {
+        ...userFields
+      }
+    }
+  }
+}
+    ${UserFields}
+${AccountFields}`;
+export const GetFormVersion = gql`
+    query GetFormVersion($versionId: String!) {
+  getFormVersion(versionId: $versionId) {
+    id
+    accountId
+    formId
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    createdAt
+    displayName
+    notes
+    formData
+  }
+}
+    ${UserFields}`;
+export const GetIntegrationType = gql`
+    query GetIntegrationType($integrationTypeId: String!) {
+  getIntegrationType(integrationTypeId: $integrationTypeId) {
+    id
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    planTypeId
+    planType {
+      id
+      ownerId
+      name
+      cost
+      active
+      billingTerm
+      createdAt
+      updatedAt
+      isDeleted
+    }
+    name
+    active
+    createdAt
+    updatedAt
+  }
+}
+    ${UserFields}`;
+export const GetIntegration = gql`
+    query GetIntegration($integrationId: String!) {
+  getIntegration(integrationId: $integrationId) {
+    id
+    integrationTypeId
+    integrationType {
+      id
+      ownerId
+      planTypeId
+      name
+      active
+      createdAt
+      updatedAt
+    }
+    ownerId
+    accountId
+    formId
+    form {
+      id
+      ownerId
+      name
+      description
+      versionId
+      versionActivatedDate
+      accountId
+      createdAt
+      updatedAt
+      startDate
+      endDate
+      isPaused
+      isDeleted
+      redirectNotStarted
+      redirectHasEnded
+    }
+    active
+    authType
+    auth
+    target
+    method
+    lastExecuted
+    lastExecutionResult
+    lastExecutionResultMessage
+    createdAt
+    updatedAt
+    isDeleted
+  }
+}
+    `;
+export const GetFormEntry = gql`
+    query GetFormEntry($formEntryId: String!) {
+  getFormEntry(formEntryId: $formEntryId) {
+    id
+    accountId
+    formId
+    form {
+      id
+      ownerId
+      name
+      description
+      versionId
+      versionActivatedDate
+      accountId
+      createdAt
+      updatedAt
+      startDate
+      endDate
+      isPaused
+      isDeleted
+      redirectNotStarted
+      redirectHasEnded
+    }
+    data
+    createdAt
+  }
+}
+    `;
+export const ListAccounts = gql`
+    query ListAccounts($offsetLimit: OffsetLimit, $filter: AccountFilterInput, $sort: AccountSortInput) {
+  listAccounts(offsetLimit: $offsetLimit, filter: $filter, sort: $sort) {
+    id
+    name
+    addresses {
+      id
+      name
+      addressee
+      addressType
+      phone_number
+      email
+      street
+      city
+      state
+      country
+    }
+    website
+    taxId
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    plan {
+      ...planFields
+    }
+    planId
+    createdAt
+    updatedAt
+    active
+    numForms
+    numUsers
+  }
+}
+    ${UserFields}
+${PlanFields}`;
+export const ListUsers = gql`
+    query ListUsers($offsetLimit: OffsetLimit, $filter: UserFilterInput, $sort: UserSortInput) {
+  listUsers(offsetLimit: $offsetLimit, filter: $filter, sort: $sort) {
+    id
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    accountId
+    account {
+      ...accountFields
+    }
+    email
+    userGroup
+    given_name
+    family_name
+    phone_number
+    createdAt
+    updatedAt
+    isDeleted
+  }
+}
+    ${UserFields}
+${AccountFields}`;
+export const ListPlans = gql`
+    query ListPlans($offsetLimit: OffsetLimit, $filter: PlanFilterInput, $sort: PlanSortInput) {
+  listPlans(offsetLimit: $offsetLimit, filter: $filter, sort: $sort) {
+    id
+    accountId
+    account {
+      ...accountFields
+    }
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    planTypeId
+    startDate
+    endDate
+    active
+    lastBillDate
+    createdAt
+    updatedAt
+    planType {
+      id
+      ownerId
+      name
+      cost
+      active
+      billingTerm
+      createdAt
+      updatedAt
+      isDeleted
+    }
+    isDeleted
+  }
+}
+    ${AccountFields}
+${UserFields}`;
+export const ListPlanTypes = gql`
+    query ListPlanTypes($offsetLimit: OffsetLimit, $filter: PlanTypeFilterInput, $sort: PlanTypeSortInput) {
+  listPlanTypes(offsetLimit: $offsetLimit, filter: $filter, sort: $sort) {
+    id
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    name
+    cost
+    active
+    billingTerm
+    createdAt
+    updatedAt
+    isDeleted
+  }
+}
+    ${UserFields}`;
+export const ListForms = gql`
+    query ListForms($offsetLimit: OffsetLimit, $filter: FormFilterInput, $sort: FormSortInput) {
+  listForms(offsetLimit: $offsetLimit, filter: $filter, sort: $sort) {
+    id
+    ownerId
+    name
+    description
+    versionId
+    versionActivatedDate
+    version {
+      id
+      accountId
+      displayName
+      createdAt
+      ownedBy {
+        ...userFields
+      }
+      notes
+    }
+    ownedBy {
+      ...userFields
+    }
+    accountId
+    account {
+      ...accountFields
+    }
+    createdAt
+    updatedAt
+    startDate
+    endDate
+    isPaused
+    isDeleted
+    redirectNotStarted
+    redirectHasEnded
+  }
+}
+    ${UserFields}
+${AccountFields}`;
+export const ListFormVersions = gql`
+    query ListFormVersions($offsetLimit: OffsetLimit, $filter: FormVersionFilterInput, $sort: FormVersionSortInput) {
+  listFormVersions(offsetLimit: $offsetLimit, filter: $filter, sort: $sort) {
+    id
+    accountId
+    formId
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    createdAt
+    displayName
+    notes
+  }
+}
+    ${UserFields}`;
+export const ListIntegrationTypes = gql`
+    query ListIntegrationTypes($offsetLimit: OffsetLimit, $filter: IntegrationTypeFilterInput, $sort: IntegrationTypeSortInput) {
+  listIntegrationTypes(offsetLimit: $offsetLimit, filter: $filter, sort: $sort) {
+    id
+    ownerId
+    ownedBy {
+      ...userFields
+    }
+    planTypeId
+    planType {
+      id
+      ownerId
+      name
+      cost
+      active
+      billingTerm
+      createdAt
+      updatedAt
+      isDeleted
+    }
+    name
+    active
+    createdAt
+    updatedAt
+  }
+}
+    ${UserFields}`;
+export const ListIntegrations = gql`
+    query ListIntegrations($offsetLimit: OffsetLimit, $filter: IntegrationFilterInput, $sort: IntegrationSortInput) {
+  listIntegrations(offsetLimit: $offsetLimit, filter: $filter, sort: $sort) {
+    id
+    integrationTypeId
+    integrationType {
+      id
+      ownerId
+      planTypeId
+      name
+      active
+      createdAt
+      updatedAt
+    }
+    ownerId
+    accountId
+    formId
+    form {
+      ...formFields
+    }
+    active
+    authType
+    auth
+    target
+    method
+    lastExecuted
+    lastExecutionResult
+    lastExecutionResultMessage
+    createdAt
+    updatedAt
+    isDeleted
+  }
+}
+    ${FormFields}`;
+export const ListFormEntries = gql`
+    query ListFormEntries($offsetLimit: OffsetLimit, $filter: FormEntryFilterInput, $sort: FormEntrySortInput) {
+  listFormEntries(offsetLimit: $offsetLimit, filter: $filter, sort: $sort) {
+    id
+    accountId
+    formId
+    form {
+      ...formFields
+    }
+    data
+    createdAt
+  }
+}
+    ${FormFields}`;
