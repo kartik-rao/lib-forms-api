@@ -18,21 +18,7 @@ query GetAccount($accountId: ID!) {
       taxId
       ownerId
       ownedBy {...userFields}
-      plan {
-        id
-        accountId
-        account {...accountFields}
-        ownerId
-        ownedBy {...userFields}
-        planTypeId
-        startDate
-        endDate
-        active
-        lastBillDate
-        createdAt
-        updatedAt
-        isDeleted
-      }
+      plan {...planFields}
       planId
       createdAt
       updatedAt
@@ -51,7 +37,8 @@ query GetAccount($accountId: ID!) {
         account {...accountFields}
       }
     }
-  }
+}
+
 query GetUser($userId: ID!) {
     getUser(userId: $userId) {
       id
@@ -69,7 +56,8 @@ query GetUser($userId: ID!) {
       isDeleted
       numForms
     }
-  }
+}
+
 query GetPlan($planId: String!) {
     getPlan(planId: $planId) {
       id
@@ -97,7 +85,8 @@ query GetPlan($planId: String!) {
       }
       isDeleted
     }
-  }
+}
+
 query GetActiveAccountPlan($accountId: String!) {
     getActiveAccountPlan(accountId: $accountId) {
       id
@@ -126,7 +115,8 @@ query GetActiveAccountPlan($accountId: String!) {
       }
       isDeleted
     }
-  }
+}
+
 query GetPlanType($planTypeId: String!) {
     getPlanType(planTypeId: $planTypeId) {
       id
@@ -140,7 +130,8 @@ query GetPlanType($planTypeId: String!) {
       updatedAt
       isDeleted
     }
-  }
+}
+
 query GetForm($formId: String!) {
     getForm(formId: $formId) {
       id
@@ -179,7 +170,8 @@ query GetForm($formId: String!) {
         notes
       }
     }
-  }
+}
+
 query GetFormVersion($versionId: String!) {
     getFormVersion(versionId: $versionId) {
       id
@@ -192,7 +184,8 @@ query GetFormVersion($versionId: String!) {
       notes
       formData
     }
-  }
+}
+
 query GetIntegrationType($integrationTypeId: String!) {
     getIntegrationType(integrationTypeId: $integrationTypeId) {
       id
@@ -215,7 +208,8 @@ query GetIntegrationType($integrationTypeId: String!) {
       createdAt
       updatedAt
     }
-  }
+}
+
 query GetIntegration($integrationId: String!) {
     getIntegration(integrationId: $integrationId) {
       id
@@ -261,7 +255,8 @@ query GetIntegration($integrationId: String!) {
       updatedAt
       isDeleted
     }
-  }
+}
+
 query GetFormEntry($formEntryId: String!) {
     getFormEntry(formEntryId: $formEntryId) {
       id
@@ -287,7 +282,8 @@ query GetFormEntry($formEntryId: String!) {
       data
       createdAt
     }
-  }
+}
+
 query ListAccounts(
     $offsetLimit: OffsetLimit
     $filter: AccountFilterInput
@@ -312,46 +308,16 @@ query ListAccounts(
       taxId
       ownerId
       ownedBy {...userFields}
-      plan {
-        id
-        accountId
-        ownerId
-        planTypeId
-        startDate
-        endDate
-        active
-        lastBillDate
-        createdAt
-        updatedAt
-        isDeleted
-        ownedBy {...userFields}
-      }
+      plan {...planFields}
       planId
       createdAt
       updatedAt
       active
       numForms
       numUsers
-      users {...userFields}
-      forms {
-        id
-        ownerId
-        name
-        description
-        versionId
-        versionActivatedDate
-        accountId
-        createdAt
-        updatedAt
-        startDate
-        endDate
-        isPaused
-        isDeleted
-        redirectNotStarted
-        redirectHasEnded
-      }
     }
-  }
+}
+
 query ListUsers(
     $offsetLimit: OffsetLimit
     $filter: UserFilterInput
@@ -360,30 +326,9 @@ query ListUsers(
     listUsers(offsetLimit: $offsetLimit, filter: $filter, sort: $sort) {
       id
       ownerId
-      ownedBy {
-        id
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       accountId
-      account {
-        id
-        name
-        website
-        taxId
-        ownerId
-        planId
-        createdAt
-        updatedAt
-        active
-      }
+      account {...accountFields}
       email
       userGroup
       given_name
@@ -393,7 +338,8 @@ query ListUsers(
       updatedAt
       isDeleted
     }
-  }
+}
+
 query ListPlans(
     $offsetLimit: OffsetLimit
     $filter: PlanFilterInput
@@ -402,34 +348,9 @@ query ListPlans(
     listPlans(offsetLimit: $offsetLimit, filter: $filter, sort: $sort) {
       id
       accountId
-      account {
-        id
-        name
-        website
-        taxId
-        ownerId
-        planId
-        createdAt
-        updatedAt
-        active
-        numForms
-        numUsers
-      }
+      account {...accountFields}
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-        numForms
-      }
+      ownedBy {...userFields}
       planTypeId
       startDate
       endDate
@@ -450,7 +371,8 @@ query ListPlans(
       }
       isDeleted
     }
-  }
+}
+
 query ListPlanTypes(
     $offsetLimit: OffsetLimit
     $filter: PlanTypeFilterInput
@@ -459,19 +381,7 @@ query ListPlanTypes(
     listPlanTypes(offsetLimit: $offsetLimit, filter: $filter, sort: $sort) {
       id
       ownerId
-      ownedBy {
-        id
-        ownerId
-        accountId
-        email
-        userGroup
-        given_name
-        family_name
-        phone_number
-        createdAt
-        updatedAt
-        isDeleted
-      }
+      ownedBy {...userFields}
       name
       cost
       active
@@ -480,7 +390,8 @@ query ListPlanTypes(
       updatedAt
       isDeleted
     }
-  }
+}
+
 query ListForms(
     $offsetLimit: OffsetLimit
     $filter: FormFilterInput
@@ -495,6 +406,7 @@ query ListForms(
       versionActivatedDate
       version {
         id
+        accountId
         displayName
         createdAt
         ownedBy {...userFields}
@@ -512,7 +424,8 @@ query ListForms(
       redirectNotStarted
       redirectHasEnded
     }
-  }
+}
+
 query ListFormVersions(
     $offsetLimit: OffsetLimit
     $filter: FormVersionFilterInput
@@ -527,9 +440,9 @@ query ListFormVersions(
       createdAt
       displayName
       notes
-      formData
     }
-  }
+}
+
 query ListIntegrationTypes(
     $offsetLimit: OffsetLimit
     $filter: IntegrationTypeFilterInput
@@ -560,7 +473,8 @@ query ListIntegrationTypes(
       createdAt
       updatedAt
     }
-  }
+}
+
 query ListIntegrations(
     $offsetLimit: OffsetLimit
     $filter: IntegrationFilterInput
@@ -594,7 +508,8 @@ query ListIntegrations(
       updatedAt
       isDeleted
     }
-  }
+}
+
 query ListFormEntries(
     $offsetLimit: OffsetLimit
     $filter: FormEntryFilterInput

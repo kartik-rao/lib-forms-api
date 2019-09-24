@@ -24,3 +24,13 @@ fragment formFields on Form {
   account {...accountFields}
   createdAt
 }
+
+fragment planFields on Plan {
+  id
+  accountId
+  account {...accountFields}
+  ownerId
+  ownedBy {...userFields}
+  planTypeId
+  startDate
+}
