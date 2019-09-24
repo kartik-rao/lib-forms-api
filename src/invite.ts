@@ -20,6 +20,8 @@ const CORS_HEADERS = {
     "Content-Type": "application/json"
 }
 
+const AllowedGroups = ['AccountAdmin', 'AccountEditor', 'AccountViewer'];
+
 /**
 "custom:region": "ap-southeast-2",
 "sub": "51538dda-c557-49d7-b8b4-d28650ba2c92",
@@ -86,6 +88,7 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
         console.warn(`${ServiceName} - invite.handle - payload["custom:source"] did not match claims["sub"]`);
     }
 
+    let ownerId = claims["sub"];
     let accountId = claims["custom:tenantId"];
     let group = payload["custom:group"];
 
@@ -93,9 +96,13 @@ export const handle = async (event : AWSLambda.APIGatewayEvent, context : AWSLam
         group = 'AccountAdmin';
     }
 
-    let ownerId = claims["sub"];
+    if(!group || AllowedGroups.indexOf(group) == -1) {
+        console.error(new Error(`InvalidGroup - [${group}]`));
+        callback(null, {statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({message: `InvalidGroup - [${group}]`})});
+        return;
+    }
 
-    if (!payload.email || !payload.given_name || !payload.family_name || !group) {
+    if (!payload.email || !payload.given_name || !payload.family_name) {
         console.error(new Error("InvalidPayload"));
         callback(null, {statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({"message": "Invalid payload"})});
     } else {
