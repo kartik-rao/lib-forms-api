@@ -1,6 +1,6 @@
 {
   "name": "lib-forms-api",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "GraphQL API for forms app data",
   "main": "lib/index.js",
   "scripts": {
@@ -20,7 +20,6 @@
     "release": "npm version patch && npm publish",
     "release:minor": "npm version minor && npm publish",
     "release:major": "npm version major && npm publish"
-
   },
   "author": "Kartik Rao",
   "license": "UNLICENSED",
