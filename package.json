@@ -3,6 +3,11 @@
   "version": "1.2.2",
   "description": "GraphQL API for forms app data",
   "main": "lib/index.js",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/kartik-rao/lib-forms-api.git"
+  },
+  "files": ["lib/**/*"],
   "scripts": {
     "info": "cross-env NODE_ENV=development node_modules/.bin/sls info --stage dev --region ap-northeast-1 --aws-profile fl-infrastructure",
     "compile": "cross-env \"SLS_DEBUG=*\" NODE_ENV=development node_modules/.bin/sls package --stage dev --region ap-northeast-1 --aws-profile fl-infrastructure",
