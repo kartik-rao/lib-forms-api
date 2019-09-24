@@ -1,7 +1,5 @@
 #serverless.yml
 service: formsli
-# package:
-#   individually: true
 frameworkVersion: '>=1.5.0 <2.0.0'
 provider:
   name: aws
@@ -9,9 +7,9 @@ provider:
   tracing: true
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'ap-northeast-1'}
-  memorySize: 2048
+  memorySize: 512
   timeout: 30
-  logRetentionInDays: 14
+  logRetentionInDays: 7
   tags:
     service: ${self:service}
     region: ${self:provider.region}
@@ -165,7 +163,7 @@ functions:
     handler: src/sqs_fn_firehose.handle
     reservedConcurrency: 10
     events:
-      - sqs: 
+      - sqs:
           arn:
             Fn::GetAtt:
               - FirehoseQueue
@@ -177,13 +175,13 @@ functions:
           - sqs:ReceiveMessage
           - sqs:DeleteMessage
           - sqs:GetQueueAttributes
-        Resource : 
+        Resource :
           - { Fn::GetAtt: [FirehoseQueue, Arn] }
       - Effect: Allow
         Action:
           - firehose:putRecord
           - firehose:putRecordBatch
-        Resource : 
+        Resource :
           - "*"
       - Effect: "Allow"
         Action:
@@ -191,12 +189,12 @@ functions:
           - "iam:getRole"
         Resource:
           - { Fn::GetAtt: [KinesisAccessRole, Arn] }
-  sqs_fn_appsync: 
-    name: ${self:pvider.functions.sqs_fn_appsync} 
+  sqs_fn_appsync:
+    name: ${self:provider.functions.sqs_fn_appsync}
     handler: src/sqs_fn_appsync.handle
     reservedConcurrency: 10
     events:
-      - sqs: 
+      - sqs:
           arn:
             Fn::GetAtt:
               - EntryQueue
@@ -208,7 +206,7 @@ functions:
           - sqs:ReceiveMessage
           - sqs:DeleteMessage
           - sqs:GetQueueAttributes
-        Resource : 
+        Resource :
           - { Fn::GetAtt: [EntryQueue, Arn] }
       - Effect: "Allow"
         Action:
@@ -246,7 +244,7 @@ functions:
           - firehose:listDeliveryStreams
           - firehose:createDeliveryStream
           - firehose:describeDeliveryStream
-        Resource : 
+        Resource :
           - "*"
       - Effect: "Allow"
         Action:
@@ -308,7 +306,7 @@ functions:
         Action:
           - sqs:SendMessage
           - sqs:ListQueues
-        Resource : 
+        Resource :
           - { Fn::GetAtt: [EntryQueue, Arn] }
           - { Fn::GetAtt: [AnalyticsQueue, Arn] }
           - { Fn::GetAtt: [IntegrationQueue, Arn] }
@@ -325,10 +323,6 @@ functions:
     name: ${self:provider.functions.postconfirmation}
     handler: src/postconfirmation.handle
     events:
-      - http:
-          path: /postconfirm
-          method: post
-          cors: true
       - cognitoUserPool:
           pool: fl-${self:provider.stage}-userpool
           trigger: PostConfirmation
@@ -338,7 +332,7 @@ functions:
         Action:
           - ses:SendEmail
           - ses:SendRawEmail
-        Resource: 
+        Resource:
           - "*"
         Condition:
           StringLike:
