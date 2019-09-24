@@ -33,6 +33,13 @@ enum StringFilterExpression {
   in
 }
 
+enum UserGroup {
+  Admin
+  AccountAdmin
+  AccountEditor
+  AccountViewer
+}
+
 input DateFilter {
   with  : FilterWith
   expression: NumericFilterExpression!
