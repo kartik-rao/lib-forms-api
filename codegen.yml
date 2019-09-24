@@ -2,6 +2,7 @@ schema:
   - client-schema.graphql
   - schema.graphql
 documents:
+  - src/graphql/fragments.graphql
   - src/graphql/queries.graphql
   - src/graphql/mutations.graphql
 generates:

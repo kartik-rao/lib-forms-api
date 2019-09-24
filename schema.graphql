@@ -513,11 +513,13 @@ input UpdateIntegrationTypeInput {
 type Integration @model {
   id: ID!
   integrationTypeId: ID!
-  integrationType: IntegrationType
+  integrationType: IntegrationType!
   ownerId: ID!
+  ownedBy: User!
   accountId: ID!
-  formId: ID!
-  form: Form!
+  account: Account!
+  formId: ID
+  form: Form
   active: Int!
   authType: String
   auth: AWSJSON
