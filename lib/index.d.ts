@@ -1030,6 +1030,12 @@ export declare type IAddFormVersionMutation = {
             displayName: string;
             notes: Maybe<string>;
             formData: string;
+            ownedBy: {
+                id: string;
+                email: string;
+                given_name: string;
+                family_name: string;
+            };
         }>;
         ownedBy: {
             id: string;
@@ -1043,7 +1049,6 @@ export declare type IAddFormVersionMutation = {
             createdAt: Maybe<string>;
             updatedAt: Maybe<string>;
             isDeleted: Maybe<number>;
-            numForms: Maybe<number>;
         };
         account: {
             id: string;
@@ -2590,6 +2595,12 @@ export declare type IListAccountsQuery = {
             createdAt: Maybe<string>;
             updatedAt: Maybe<string>;
             isDeleted: Maybe<number>;
+            ownedBy: {
+                id: string;
+                email: string;
+                given_name: string;
+                family_name: string;
+            };
         }>;
         users: Maybe<Array<Maybe<{
             id: string;
@@ -2753,7 +2764,6 @@ export declare type IListPlanTypesQuery = {
             createdAt: Maybe<string>;
             updatedAt: Maybe<string>;
             isDeleted: Maybe<number>;
-            numForms: Maybe<number>;
         };
     }>>>;
 };
@@ -2784,6 +2794,12 @@ export declare type IListFormsQuery = {
             createdAt: Maybe<string>;
             displayName: string;
             notes: Maybe<string>;
+            ownedBy: {
+                id: string;
+                email: string;
+                given_name: string;
+                family_name: string;
+            };
         }>;
         ownedBy: {
             id: string;

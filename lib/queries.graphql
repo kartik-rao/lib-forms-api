@@ -493,6 +493,12 @@ query ListAccounts(
         createdAt
         updatedAt
         isDeleted
+        ownedBy {
+          id
+          email
+          given_name
+          family_name
+        }
       }
       planId
       createdAt
@@ -652,7 +658,6 @@ query ListPlanTypes(
         createdAt
         updatedAt
         isDeleted
-        numForms
       }
       name
       cost
@@ -678,6 +683,12 @@ query ListForms(
       version {
         id
         createdAt
+        ownedBy {
+          id
+          email
+          given_name
+          family_name
+        }
         displayName
         notes
       }
