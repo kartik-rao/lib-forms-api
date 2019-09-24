@@ -17,54 +17,52 @@ export interface Scalars {
     AWSJSON: string;
     AWSURL: string;
 }
-export interface Account {
-    __typename?: 'Account';
+export interface IAccount {
     id: Scalars['ID'];
     name: Scalars['String'];
-    addresses?: Maybe<Array<Maybe<Address>>>;
+    addresses?: Maybe<Array<Maybe<IAddress>>>;
     website?: Maybe<Scalars['String']>;
     taxId?: Maybe<Scalars['String']>;
     ownerId: Scalars['ID'];
-    ownedBy: User;
-    plan?: Maybe<Plan>;
+    ownedBy: IUser;
+    plan?: Maybe<IPlan>;
     planId?: Maybe<Scalars['ID']>;
     createdAt?: Maybe<Scalars['AWSDateTime']>;
     updatedAt?: Maybe<Scalars['AWSDateTime']>;
     active?: Maybe<Scalars['Int']>;
     numForms?: Maybe<Scalars['Int']>;
     numUsers?: Maybe<Scalars['Int']>;
-    users?: Maybe<Array<Maybe<User>>>;
-    forms?: Maybe<Array<Maybe<Form>>>;
+    users?: Maybe<Array<Maybe<IUser>>>;
+    forms?: Maybe<Array<Maybe<IForm>>>;
 }
-export interface AccountAddressesArgs {
+export interface IAccountAddressesArgs {
     limit?: Maybe<Scalars['Int']>;
 }
-export interface AccountUsersArgs {
+export interface IAccountUsersArgs {
     limit?: Maybe<Scalars['Int']>;
 }
-export interface AccountFormsArgs {
+export interface IAccountFormsArgs {
     limit?: Maybe<Scalars['Int']>;
 }
-export interface AccountFilterInput {
-    name?: Maybe<StringFilter>;
-    createdAt?: Maybe<DateFilter>;
-    updatedAt?: Maybe<DateFilter>;
-    planId?: Maybe<StringFilter>;
-    active?: Maybe<IntFilter>;
-    criteria?: Maybe<Array<AccountFilterInput>>;
+export interface IAccountFilterInput {
+    name?: Maybe<IStringFilter>;
+    createdAt?: Maybe<IDateFilter>;
+    updatedAt?: Maybe<IDateFilter>;
+    planId?: Maybe<IStringFilter>;
+    active?: Maybe<IIntFilter>;
+    criteria?: Maybe<Array<IAccountFilterInput>>;
 }
-export interface AccountSortInput {
-    name?: Maybe<SortOrder>;
-    createdAt?: Maybe<SortOrder>;
-    updatedAt?: Maybe<SortOrder>;
-    planId?: Maybe<SortOrder>;
-    sortBy?: Maybe<Array<AccountSortInput>>;
+export interface IAccountSortInput {
+    name?: Maybe<ISortOrder>;
+    createdAt?: Maybe<ISortOrder>;
+    updatedAt?: Maybe<ISortOrder>;
+    planId?: Maybe<ISortOrder>;
+    sortBy?: Maybe<Array<IAccountSortInput>>;
 }
-export interface AddAddressInput {
-    __typename?: 'AddAddressInput';
+export interface IAddAddressInput {
     name: Scalars['String'];
     addressee?: Maybe<Scalars['String']>;
-    addressType: AddressType;
+    addressType: IAddressType;
     phone_number?: Maybe<Scalars['AWSPhone']>;
     email: Scalars['String'];
     street?: Maybe<Scalars['String']>;
@@ -72,13 +70,13 @@ export interface AddAddressInput {
     state?: Maybe<Scalars['String']>;
     country?: Maybe<Scalars['String']>;
 }
-export interface AddFormEntryInput {
+export interface IAddFormEntryInput {
     id: Scalars['ID'];
     accountId: Scalars['ID'];
     formId: Scalars['ID'];
     data: Scalars['AWSJSON'];
 }
-export interface AddFormInput {
+export interface IAddFormInput {
     accountId: Scalars['ID'];
     name: Scalars['String'];
     description: Scalars['String'];
@@ -86,14 +84,14 @@ export interface AddFormInput {
     endsAt?: Maybe<Scalars['AWSDateTime']>;
     isPaused?: Maybe<Scalars['Int']>;
 }
-export interface AddFormVersionInput {
+export interface IAddFormVersionInput {
     accountId: Scalars['ID'];
     formId: Scalars['ID'];
     displayName: Scalars['String'];
     notes: Scalars['String'];
     formData: Scalars['AWSJSON'];
 }
-export interface AddIntegrationInput {
+export interface IAddIntegrationInput {
     integrationTypeId: Scalars['ID'];
     accountId: Scalars['ID'];
     formId: Scalars['ID'];
@@ -103,28 +101,27 @@ export interface AddIntegrationInput {
     target?: Maybe<Scalars['String']>;
     method?: Maybe<Scalars['String']>;
 }
-export interface AddIntegrationTypeInput {
+export interface IAddIntegrationTypeInput {
     name: Scalars['String'];
     active?: Maybe<Scalars['Int']>;
 }
-export interface AddPlanInput {
+export interface IAddPlanInput {
     accountId: Scalars['ID'];
     planTypeId: Scalars['ID'];
     endDate?: Maybe<Scalars['AWSDateTime']>;
     active?: Maybe<Scalars['Int']>;
 }
-export interface AddPlanTypeInput {
+export interface IAddPlanTypeInput {
     name: Scalars['String'];
     cost: Scalars['Float'];
     billingTerm: Scalars['String'];
     active: Scalars['Int'];
 }
-export interface Address {
-    __typename?: 'Address';
+export interface IAddress {
     id: Scalars['ID'];
     name: Scalars['String'];
     addressee?: Maybe<Scalars['String']>;
-    addressType: AddressType;
+    addressType: IAddressType;
     phone_number?: Maybe<Scalars['AWSPhone']>;
     email: Scalars['String'];
     street?: Maybe<Scalars['String']>;
@@ -132,59 +129,58 @@ export interface Address {
     state?: Maybe<Scalars['String']>;
     country?: Maybe<Scalars['String']>;
 }
-export declare enum AddressType {
+export declare enum IAddressType {
     Billing = "BILLING",
     Contact = "CONTACT"
 }
-export interface AttachFormVersionInput {
+export interface IAttachFormVersionInput {
     formId: Scalars['ID'];
     versionId: Scalars['ID'];
     accountId: Scalars['ID'];
 }
-export interface BooleanFilter {
-    with?: Maybe<FilterWith>;
-    expression: BooleanFilterExpression;
+export interface IBooleanFilter {
+    with?: Maybe<IFilterWith>;
+    expression: IBooleanFilterExpression;
     value?: Maybe<Array<Scalars['Boolean']>>;
 }
-export declare enum BooleanFilterExpression {
+export declare enum IBooleanFilterExpression {
     Ne = "ne",
     Eq = "eq"
 }
-export interface DateFilter {
-    with?: Maybe<FilterWith>;
-    expression: NumericFilterExpression;
+export interface IDateFilter {
+    with?: Maybe<IFilterWith>;
+    expression: INumericFilterExpression;
     value?: Maybe<Array<Scalars['AWSDateTime']>>;
 }
-export interface DeleteFormInput {
+export interface IDeleteFormInput {
     id: Scalars['ID'];
     accountId: Scalars['ID'];
 }
-export interface DeleteFormVersionInput {
+export interface IDeleteFormVersionInput {
     accountId: Scalars['ID'];
     formId: Scalars['ID'];
     versionId: Scalars['ID'];
 }
-export declare enum FilterWith {
+export declare enum IFilterWith {
     And = "AND",
     Or = "OR"
 }
-export interface FloatFilter {
-    with?: Maybe<FilterWith>;
-    expression: NumericFilterExpression;
+export interface IFloatFilter {
+    with?: Maybe<IFilterWith>;
+    expression: INumericFilterExpression;
     value?: Maybe<Array<Scalars['Float']>>;
 }
-export interface Form {
-    __typename?: 'Form';
+export interface IForm {
     id: Scalars['ID'];
     ownerId: Scalars['ID'];
     name: Scalars['String'];
     description: Scalars['String'];
     versionId?: Maybe<Scalars['ID']>;
     versionActivatedDate?: Maybe<Scalars['AWSDateTime']>;
-    version?: Maybe<FormVersion>;
-    ownedBy: User;
+    version?: Maybe<IFormVersion>;
+    ownedBy: IUser;
     accountId: Scalars['ID'];
-    account: Account;
+    account: IAccount;
     createdAt: Scalars['AWSDateTime'];
     updatedAt?: Maybe<Scalars['AWSDateTime']>;
     startDate?: Maybe<Scalars['AWSDateTime']>;
@@ -193,96 +189,92 @@ export interface Form {
     isDeleted?: Maybe<Scalars['Int']>;
     redirectNotStarted?: Maybe<Scalars['AWSURL']>;
     redirectHasEnded?: Maybe<Scalars['AWSURL']>;
-    versions?: Maybe<Array<Maybe<FormVersion>>>;
-    integrations?: Maybe<Array<Maybe<Integration>>>;
+    versions?: Maybe<Array<Maybe<IFormVersion>>>;
+    integrations?: Maybe<Array<Maybe<IIntegration>>>;
     numEntries?: Maybe<Scalars['Int']>;
-    entries?: Maybe<Array<Maybe<FormEntry>>>;
+    entries?: Maybe<Array<Maybe<IFormEntry>>>;
 }
-export interface FormVersionsArgs {
+export interface IFormVersionsArgs {
     limit?: Maybe<Scalars['Int']>;
 }
-export interface FormIntegrationsArgs {
+export interface IFormIntegrationsArgs {
     limit?: Maybe<Scalars['Int']>;
 }
-export interface FormEntriesArgs {
+export interface IFormEntriesArgs {
     limit?: Maybe<Scalars['Int']>;
 }
-export interface FormEntry {
-    __typename?: 'FormEntry';
+export interface IFormEntry {
     id: Scalars['ID'];
     accountId: Scalars['ID'];
     formId: Scalars['ID'];
-    form: Form;
+    form: IForm;
     data: Scalars['AWSJSON'];
     createdAt: Scalars['AWSDateTime'];
 }
-export interface FormEntryFilterInput {
-    formId?: Maybe<StringFilter>;
-    createdAt?: Maybe<DateFilter>;
-    accountId?: Maybe<StringFilter>;
-    criteria?: Maybe<Array<FormEntryFilterInput>>;
+export interface IFormEntryFilterInput {
+    formId?: Maybe<IStringFilter>;
+    createdAt?: Maybe<IDateFilter>;
+    accountId?: Maybe<IStringFilter>;
+    criteria?: Maybe<Array<IFormEntryFilterInput>>;
 }
-export interface FormEntrySansData {
-    __typename?: 'FormEntrySansData';
+export interface IFormEntrySansData {
     id: Scalars['ID'];
     formId: Scalars['ID'];
     createdAt: Scalars['AWSDateTime'];
 }
-export interface FormEntrySortInput {
-    createdAt?: Maybe<SortOrder>;
+export interface IFormEntrySortInput {
+    createdAt?: Maybe<ISortOrder>;
 }
-export interface FormFilterInput {
-    name?: Maybe<StringFilter>;
-    ownerId?: Maybe<StringFilter>;
-    accountId?: Maybe<StringFilter>;
-    createdAt?: Maybe<DateFilter>;
-    updatedAt?: Maybe<DateFilter>;
-    startsAt?: Maybe<DateFilter>;
-    endsAt?: Maybe<DateFilter>;
-    isPaused?: Maybe<IntFilter>;
-    isDeleted?: Maybe<IntFilter>;
-    criteria?: Maybe<Array<FormFilterInput>>;
+export interface IFormFilterInput {
+    name?: Maybe<IStringFilter>;
+    ownerId?: Maybe<IStringFilter>;
+    accountId?: Maybe<IStringFilter>;
+    createdAt?: Maybe<IDateFilter>;
+    updatedAt?: Maybe<IDateFilter>;
+    startsAt?: Maybe<IDateFilter>;
+    endsAt?: Maybe<IDateFilter>;
+    isPaused?: Maybe<IIntFilter>;
+    isDeleted?: Maybe<IIntFilter>;
+    criteria?: Maybe<Array<IFormFilterInput>>;
 }
-export interface FormSortInput {
-    name?: Maybe<SortOrder>;
-    createdAt?: Maybe<SortOrder>;
-    updatedAt?: Maybe<SortOrder>;
-    startsAt?: Maybe<SortOrder>;
-    endsAt?: Maybe<SortOrder>;
-    sortBy?: Maybe<Array<FormSortInput>>;
+export interface IFormSortInput {
+    name?: Maybe<ISortOrder>;
+    createdAt?: Maybe<ISortOrder>;
+    updatedAt?: Maybe<ISortOrder>;
+    startsAt?: Maybe<ISortOrder>;
+    endsAt?: Maybe<ISortOrder>;
+    sortBy?: Maybe<Array<IFormSortInput>>;
 }
-export interface FormVersion {
-    __typename?: 'FormVersion';
+export interface IFormVersion {
     id: Scalars['ID'];
     accountId: Scalars['ID'];
     formId: Scalars['ID'];
     ownerId: Scalars['ID'];
-    ownedBy: User;
+    ownedBy: IUser;
     createdAt?: Maybe<Scalars['AWSDateTime']>;
     displayName: Scalars['String'];
     notes?: Maybe<Scalars['String']>;
     formData: Scalars['AWSJSON'];
 }
-export interface FormVersionFilterInput {
-    accountId?: Maybe<StringFilter>;
-    formId?: Maybe<StringFilter>;
-    ownerId?: Maybe<StringFilter>;
-    createdAt?: Maybe<DateFilter>;
-    criteria?: Maybe<Array<FormVersionFilterInput>>;
+export interface IFormVersionFilterInput {
+    accountId?: Maybe<IStringFilter>;
+    formId?: Maybe<IStringFilter>;
+    ownerId?: Maybe<IStringFilter>;
+    createdAt?: Maybe<IDateFilter>;
+    criteria?: Maybe<Array<IFormVersionFilterInput>>;
 }
-export interface FormVersionSortInput {
-    createdAt?: Maybe<SortOrder>;
-    sortBy?: Maybe<Array<FormVersionSortInput>>;
+export interface IFormVersionSortInput {
+    createdAt?: Maybe<ISortOrder>;
+    sortBy?: Maybe<Array<IFormVersionSortInput>>;
 }
-export interface Integration {
-    __typename?: 'Integration';
+export interface IIntegration {
     id: Scalars['ID'];
     integrationTypeId: Scalars['ID'];
-    integrationType?: Maybe<IntegrationType>;
+    integrationType?: Maybe<IIntegrationType>;
     ownerId: Scalars['ID'];
     accountId: Scalars['ID'];
     formId: Scalars['ID'];
-    form: Form;
+    form: IForm;
     active: Scalars['Int'];
     authType?: Maybe<Scalars['String']>;
     auth?: Maybe<Scalars['AWSJSON']>;
@@ -295,157 +287,155 @@ export interface Integration {
     updatedAt?: Maybe<Scalars['AWSDateTime']>;
     isDeleted?: Maybe<Scalars['Int']>;
 }
-export interface IntegrationFilterInput {
-    ownerId?: Maybe<StringFilter>;
-    accountId?: Maybe<StringFilter>;
-    formId?: Maybe<StringFilter>;
-    active?: Maybe<IntFilter>;
-    isDeleted?: Maybe<IntFilter>;
-    lastExecuted?: Maybe<DateFilter>;
-    lastExecutionResult?: Maybe<IntFilter>;
-    createdAt?: Maybe<DateFilter>;
-    updatedAt?: Maybe<DateFilter>;
-    criteria?: Maybe<Array<IntegrationFilterInput>>;
+export interface IIntegrationFilterInput {
+    ownerId?: Maybe<IStringFilter>;
+    accountId?: Maybe<IStringFilter>;
+    formId?: Maybe<IStringFilter>;
+    active?: Maybe<IIntFilter>;
+    isDeleted?: Maybe<IIntFilter>;
+    lastExecuted?: Maybe<IDateFilter>;
+    lastExecutionResult?: Maybe<IIntFilter>;
+    createdAt?: Maybe<IDateFilter>;
+    updatedAt?: Maybe<IDateFilter>;
+    criteria?: Maybe<Array<IIntegrationFilterInput>>;
 }
-export interface IntegrationSortInput {
-    lastExecuted?: Maybe<SortOrder>;
-    createdAt?: Maybe<SortOrder>;
-    updatedAt?: Maybe<SortOrder>;
-    sortBy?: Maybe<Array<IntegrationSortInput>>;
+export interface IIntegrationSortInput {
+    lastExecuted?: Maybe<ISortOrder>;
+    createdAt?: Maybe<ISortOrder>;
+    updatedAt?: Maybe<ISortOrder>;
+    sortBy?: Maybe<Array<IIntegrationSortInput>>;
 }
-export interface IntegrationType {
-    __typename?: 'IntegrationType';
+export interface IIntegrationType {
     id: Scalars['ID'];
     ownerId: Scalars['ID'];
-    ownedBy: User;
+    ownedBy: IUser;
     planTypeId: Scalars['ID'];
-    planType?: Maybe<PlanType>;
+    planType?: Maybe<IPlanType>;
     name: Scalars['String'];
     active: Scalars['Int'];
     createdAt?: Maybe<Scalars['AWSDateTime']>;
     updatedAt?: Maybe<Scalars['AWSDateTime']>;
 }
-export interface IntegrationTypeFilterInput {
-    ownerId?: Maybe<StringFilter>;
-    planTypeId?: Maybe<StringFilter>;
-    name?: Maybe<StringFilter>;
-    createdAt?: Maybe<DateFilter>;
-    updatedAt?: Maybe<DateFilter>;
-    active?: Maybe<IntFilter>;
-    criteria?: Maybe<Array<IntegrationTypeFilterInput>>;
+export interface IIntegrationTypeFilterInput {
+    ownerId?: Maybe<IStringFilter>;
+    planTypeId?: Maybe<IStringFilter>;
+    name?: Maybe<IStringFilter>;
+    createdAt?: Maybe<IDateFilter>;
+    updatedAt?: Maybe<IDateFilter>;
+    active?: Maybe<IIntFilter>;
+    criteria?: Maybe<Array<IIntegrationTypeFilterInput>>;
 }
-export interface IntegrationTypeSortInput {
-    name?: Maybe<SortOrder>;
-    createdAt?: Maybe<SortOrder>;
-    updatedAt?: Maybe<SortOrder>;
-    sortBy?: Maybe<Array<IntegrationTypeSortInput>>;
+export interface IIntegrationTypeSortInput {
+    name?: Maybe<ISortOrder>;
+    createdAt?: Maybe<ISortOrder>;
+    updatedAt?: Maybe<ISortOrder>;
+    sortBy?: Maybe<Array<IIntegrationTypeSortInput>>;
 }
-export interface IntFilter {
-    with?: Maybe<FilterWith>;
-    expression: NumericFilterExpression;
+export interface IIntFilter {
+    with?: Maybe<IFilterWith>;
+    expression: INumericFilterExpression;
     value?: Maybe<Array<Scalars['Int']>>;
 }
-export interface Mutation {
-    __typename?: 'Mutation';
-    addPlanType: PlanType;
-    addPlan: Plan;
-    addIntegrationType: IntegrationType;
-    addIntegration: Integration;
-    addForm: Form;
-    addFormVersion: Form;
-    attachFormVersion: Form;
-    updatePlanType: PlanType;
-    updatePlan: Plan;
-    updateAccount: Account;
-    updateAccountPlan: Account;
-    updateUser: User;
-    updateIntegrationType: IntegrationType;
-    updateIntegration: Integration;
-    updateForm: Form;
-    deleteForm: Form;
-    deletePlanType: PlanType;
-    deletePlan: Plan;
-    deleteAccount: Account;
-    deleteUser: User;
-    deleteIntegrationType: IntegrationType;
-    deleteIntegration: Integration;
-    deleteFormVersion: FormVersion;
-    addFormEntry: FormEntrySansData;
+export interface IMutation {
+    addPlanType: IPlanType;
+    addPlan: IPlan;
+    addIntegrationType: IIntegrationType;
+    addIntegration: IIntegration;
+    addForm: IForm;
+    addFormVersion: IForm;
+    attachFormVersion: IForm;
+    updatePlanType: IPlanType;
+    updatePlan: IPlan;
+    updateAccount: IAccount;
+    updateAccountPlan: IAccount;
+    updateUser: IUser;
+    updateIntegrationType: IIntegrationType;
+    updateIntegration: IIntegration;
+    updateForm: IForm;
+    deleteForm: IForm;
+    deletePlanType: IPlanType;
+    deletePlan: IPlan;
+    deleteAccount: IAccount;
+    deleteUser: IUser;
+    deleteIntegrationType: IIntegrationType;
+    deleteIntegration: IIntegration;
+    deleteFormVersion: IFormVersion;
+    addFormEntry: IFormEntrySansData;
 }
-export interface MutationAddPlanTypeArgs {
-    input?: Maybe<AddPlanTypeInput>;
+export interface IMutationAddPlanTypeArgs {
+    input?: Maybe<IAddPlanTypeInput>;
 }
-export interface MutationAddPlanArgs {
-    input?: Maybe<AddPlanInput>;
+export interface IMutationAddPlanArgs {
+    input?: Maybe<IAddPlanInput>;
 }
-export interface MutationAddIntegrationTypeArgs {
-    input?: Maybe<AddIntegrationTypeInput>;
+export interface IMutationAddIntegrationTypeArgs {
+    input?: Maybe<IAddIntegrationTypeInput>;
 }
-export interface MutationAddIntegrationArgs {
-    input?: Maybe<AddIntegrationInput>;
+export interface IMutationAddIntegrationArgs {
+    input?: Maybe<IAddIntegrationInput>;
 }
-export interface MutationAddFormArgs {
-    input: AddFormInput;
+export interface IMutationAddFormArgs {
+    input: IAddFormInput;
 }
-export interface MutationAddFormVersionArgs {
-    input: AddFormVersionInput;
+export interface IMutationAddFormVersionArgs {
+    input: IAddFormVersionInput;
 }
-export interface MutationAttachFormVersionArgs {
-    input: AttachFormVersionInput;
+export interface IMutationAttachFormVersionArgs {
+    input: IAttachFormVersionInput;
 }
-export interface MutationUpdatePlanTypeArgs {
-    input?: Maybe<UpdatePlanTypeInput>;
+export interface IMutationUpdatePlanTypeArgs {
+    input?: Maybe<IUpdatePlanTypeInput>;
 }
-export interface MutationUpdatePlanArgs {
-    input?: Maybe<UpdatePlanInput>;
+export interface IMutationUpdatePlanArgs {
+    input?: Maybe<IUpdatePlanInput>;
 }
-export interface MutationUpdateAccountArgs {
-    input?: Maybe<UpdateAccountInput>;
+export interface IMutationUpdateAccountArgs {
+    input?: Maybe<IUpdateAccountInput>;
 }
-export interface MutationUpdateAccountPlanArgs {
-    input?: Maybe<AddPlanInput>;
+export interface IMutationUpdateAccountPlanArgs {
+    input?: Maybe<IAddPlanInput>;
 }
-export interface MutationUpdateUserArgs {
-    input?: Maybe<UpdateUserInput>;
+export interface IMutationUpdateUserArgs {
+    input?: Maybe<IUpdateUserInput>;
 }
-export interface MutationUpdateIntegrationTypeArgs {
-    input?: Maybe<UpdateIntegrationTypeInput>;
+export interface IMutationUpdateIntegrationTypeArgs {
+    input?: Maybe<IUpdateIntegrationTypeInput>;
 }
-export interface MutationUpdateIntegrationArgs {
-    input?: Maybe<UpdateIntegrationInput>;
+export interface IMutationUpdateIntegrationArgs {
+    input?: Maybe<IUpdateIntegrationInput>;
 }
-export interface MutationUpdateFormArgs {
-    input?: Maybe<UpdateFormInput>;
+export interface IMutationUpdateFormArgs {
+    input?: Maybe<IUpdateFormInput>;
 }
-export interface MutationDeleteFormArgs {
-    input: DeleteFormInput;
+export interface IMutationDeleteFormArgs {
+    input: IDeleteFormInput;
 }
-export interface MutationDeletePlanTypeArgs {
+export interface IMutationDeletePlanTypeArgs {
     planTypeId: Scalars['ID'];
 }
-export interface MutationDeletePlanArgs {
+export interface IMutationDeletePlanArgs {
     accountId: Scalars['ID'];
     planId: Scalars['ID'];
 }
-export interface MutationDeleteAccountArgs {
+export interface IMutationDeleteAccountArgs {
     accountId: Scalars['ID'];
 }
-export interface MutationDeleteUserArgs {
+export interface IMutationDeleteUserArgs {
     userId: Scalars['ID'];
 }
-export interface MutationDeleteIntegrationTypeArgs {
+export interface IMutationDeleteIntegrationTypeArgs {
     integrationTypeId: Scalars['ID'];
 }
-export interface MutationDeleteIntegrationArgs {
+export interface IMutationDeleteIntegrationArgs {
     integrationId: Scalars['ID'];
 }
-export interface MutationDeleteFormVersionArgs {
-    input: DeleteFormVersionInput;
+export interface IMutationDeleteFormVersionArgs {
+    input: IDeleteFormVersionInput;
 }
-export interface MutationAddFormEntryArgs {
-    input: AddFormEntryInput;
+export interface IMutationAddFormEntryArgs {
+    input: IAddFormEntryInput;
 }
-export declare enum NumericFilterExpression {
+export declare enum INumericFilterExpression {
     In = "in",
     Ne = "ne",
     Eq = "eq",
@@ -458,17 +448,16 @@ export declare enum NumericFilterExpression {
     IsNull = "isNull",
     IsNotNull = "isNotNull"
 }
-export interface OffsetLimit {
+export interface IOffsetLimit {
     offset?: Maybe<Scalars['Int']>;
     limit?: Maybe<Scalars['Int']>;
 }
-export interface Plan {
-    __typename?: 'Plan';
+export interface IPlan {
     id: Scalars['ID'];
     accountId: Scalars['ID'];
-    account: Account;
+    account: IAccount;
     ownerId: Scalars['ID'];
-    ownedBy: User;
+    ownedBy: IUser;
     planTypeId: Scalars['ID'];
     startDate: Scalars['AWSDateTime'];
     endDate?: Maybe<Scalars['AWSDateTime']>;
@@ -476,33 +465,32 @@ export interface Plan {
     lastBillDate?: Maybe<Scalars['AWSDateTime']>;
     createdAt?: Maybe<Scalars['AWSDateTime']>;
     updatedAt?: Maybe<Scalars['AWSDateTime']>;
-    planType?: Maybe<PlanType>;
+    planType?: Maybe<IPlanType>;
     isDeleted?: Maybe<Scalars['Int']>;
 }
-export interface PlanFilterInput {
-    accountId?: Maybe<StringFilter>;
-    ownerId?: Maybe<StringFilter>;
-    planTypeId?: Maybe<StringFilter>;
-    lastBillDate?: Maybe<DateFilter>;
-    createdAt?: Maybe<DateFilter>;
-    updatedAt?: Maybe<DateFilter>;
-    startDate?: Maybe<DateFilter>;
-    endDate?: Maybe<DateFilter>;
-    criteria?: Maybe<Array<PlanFilterInput>>;
+export interface IPlanFilterInput {
+    accountId?: Maybe<IStringFilter>;
+    ownerId?: Maybe<IStringFilter>;
+    planTypeId?: Maybe<IStringFilter>;
+    lastBillDate?: Maybe<IDateFilter>;
+    createdAt?: Maybe<IDateFilter>;
+    updatedAt?: Maybe<IDateFilter>;
+    startDate?: Maybe<IDateFilter>;
+    endDate?: Maybe<IDateFilter>;
+    criteria?: Maybe<Array<IPlanFilterInput>>;
 }
-export interface PlanSortInput {
-    createdAt?: Maybe<SortOrder>;
-    updatedAt?: Maybe<SortOrder>;
-    lastBillDate?: Maybe<SortOrder>;
-    startDate?: Maybe<SortOrder>;
-    endDate?: Maybe<SortOrder>;
-    sortBy?: Maybe<Array<PlanSortInput>>;
+export interface IPlanSortInput {
+    createdAt?: Maybe<ISortOrder>;
+    updatedAt?: Maybe<ISortOrder>;
+    lastBillDate?: Maybe<ISortOrder>;
+    startDate?: Maybe<ISortOrder>;
+    endDate?: Maybe<ISortOrder>;
+    sortBy?: Maybe<Array<IPlanSortInput>>;
 }
-export interface PlanType {
-    __typename?: 'PlanType';
+export interface IPlanType {
     id: Scalars['ID'];
     ownerId: Scalars['ID'];
-    ownedBy: User;
+    ownedBy: IUser;
     name: Scalars['String'];
     cost: Scalars['Float'];
     active: Scalars['Int'];
@@ -511,131 +499,130 @@ export interface PlanType {
     updatedAt?: Maybe<Scalars['AWSDateTime']>;
     isDeleted?: Maybe<Scalars['Int']>;
 }
-export interface PlanTypeFilterInput {
-    ownerId?: Maybe<StringFilter>;
-    cost?: Maybe<FloatFilter>;
-    billingTerm?: Maybe<StringFilter>;
-    name?: Maybe<StringFilter>;
-    createdAt?: Maybe<DateFilter>;
-    updatedAt?: Maybe<DateFilter>;
-    isDeleted?: Maybe<IntFilter>;
-    criteria?: Maybe<Array<PlanTypeFilterInput>>;
+export interface IPlanTypeFilterInput {
+    ownerId?: Maybe<IStringFilter>;
+    cost?: Maybe<IFloatFilter>;
+    billingTerm?: Maybe<IStringFilter>;
+    name?: Maybe<IStringFilter>;
+    createdAt?: Maybe<IDateFilter>;
+    updatedAt?: Maybe<IDateFilter>;
+    isDeleted?: Maybe<IIntFilter>;
+    criteria?: Maybe<Array<IPlanTypeFilterInput>>;
 }
-export interface PlanTypeSortInput {
-    name?: Maybe<SortOrder>;
-    billingTerm?: Maybe<SortOrder>;
-    cost?: Maybe<SortOrder>;
-    createdAt?: Maybe<SortOrder>;
-    updatedAt?: Maybe<SortOrder>;
-    sortBy?: Maybe<Array<PlanTypeSortInput>>;
+export interface IPlanTypeSortInput {
+    name?: Maybe<ISortOrder>;
+    billingTerm?: Maybe<ISortOrder>;
+    cost?: Maybe<ISortOrder>;
+    createdAt?: Maybe<ISortOrder>;
+    updatedAt?: Maybe<ISortOrder>;
+    sortBy?: Maybe<Array<IPlanTypeSortInput>>;
 }
-export interface Query {
-    __typename?: 'Query';
-    getAccount?: Maybe<Account>;
-    getUser?: Maybe<User>;
-    getPlan?: Maybe<Plan>;
-    getActiveAccountPlan?: Maybe<Plan>;
-    getPlanType?: Maybe<PlanType>;
-    getForm?: Maybe<Form>;
-    getFormVersion?: Maybe<FormVersion>;
-    getIntegrationType?: Maybe<IntegrationType>;
-    getIntegration?: Maybe<Integration>;
-    getFormEntry?: Maybe<FormEntry>;
-    listAccounts?: Maybe<Array<Maybe<Account>>>;
-    listUsers?: Maybe<Array<Maybe<User>>>;
-    listPlans?: Maybe<Array<Maybe<Plan>>>;
-    listPlanTypes?: Maybe<Array<Maybe<PlanType>>>;
-    listForms?: Maybe<Array<Maybe<Form>>>;
-    listFormVersions?: Maybe<Array<Maybe<FormVersion>>>;
-    listIntegrationTypes?: Maybe<Array<Maybe<IntegrationType>>>;
-    listIntegrations?: Maybe<Array<Maybe<Integration>>>;
-    listFormEntries?: Maybe<Array<Maybe<FormEntry>>>;
+export interface IQuery {
+    getAccount?: Maybe<IAccount>;
+    getUser?: Maybe<IUser>;
+    getPlan?: Maybe<IPlan>;
+    getActiveAccountPlan?: Maybe<IPlan>;
+    getPlanType?: Maybe<IPlanType>;
+    getForm?: Maybe<IForm>;
+    getFormVersion?: Maybe<IFormVersion>;
+    getIntegrationType?: Maybe<IIntegrationType>;
+    getIntegration?: Maybe<IIntegration>;
+    getFormEntry?: Maybe<IFormEntry>;
+    listAccounts?: Maybe<Array<Maybe<IAccount>>>;
+    listUsers?: Maybe<Array<Maybe<IUser>>>;
+    listPlans?: Maybe<Array<Maybe<IPlan>>>;
+    listPlanTypes?: Maybe<Array<Maybe<IPlanType>>>;
+    listForms?: Maybe<Array<Maybe<IForm>>>;
+    listFormVersions?: Maybe<Array<Maybe<IFormVersion>>>;
+    listIntegrationTypes?: Maybe<Array<Maybe<IIntegrationType>>>;
+    listIntegrations?: Maybe<Array<Maybe<IIntegration>>>;
+    listFormEntries?: Maybe<Array<Maybe<IFormEntry>>>;
 }
-export interface QueryGetAccountArgs {
+export interface IQueryGetAccountArgs {
     accountId: Scalars['ID'];
 }
-export interface QueryGetUserArgs {
+export interface IQueryGetUserArgs {
     userId: Scalars['ID'];
 }
-export interface QueryGetPlanArgs {
+export interface IQueryGetPlanArgs {
     planId: Scalars['String'];
 }
-export interface QueryGetActiveAccountPlanArgs {
+export interface IQueryGetActiveAccountPlanArgs {
     accountId: Scalars['String'];
 }
-export interface QueryGetPlanTypeArgs {
+export interface IQueryGetPlanTypeArgs {
     planTypeId: Scalars['String'];
 }
-export interface QueryGetFormArgs {
+export interface IQueryGetFormArgs {
     formId: Scalars['String'];
 }
-export interface QueryGetFormVersionArgs {
+export interface IQueryGetFormVersionArgs {
     versionId: Scalars['String'];
 }
-export interface QueryGetIntegrationTypeArgs {
+export interface IQueryGetIntegrationTypeArgs {
     integrationTypeId: Scalars['String'];
 }
-export interface QueryGetIntegrationArgs {
+export interface IQueryGetIntegrationArgs {
     integrationId: Scalars['String'];
 }
-export interface QueryGetFormEntryArgs {
+export interface IQueryGetFormEntryArgs {
     formEntryId: Scalars['String'];
 }
-export interface QueryListAccountsArgs {
-    offsetLimit?: Maybe<OffsetLimit>;
-    filter?: Maybe<AccountFilterInput>;
-    sort?: Maybe<AccountSortInput>;
+export interface IQueryListAccountsArgs {
+    offsetLimit?: Maybe<IOffsetLimit>;
+    filter?: Maybe<IAccountFilterInput>;
+    sort?: Maybe<IAccountSortInput>;
 }
-export interface QueryListUsersArgs {
-    offsetLimit?: Maybe<OffsetLimit>;
-    filter?: Maybe<UserFilterInput>;
-    sort?: Maybe<UserSortInput>;
+export interface IQueryListUsersArgs {
+    offsetLimit?: Maybe<IOffsetLimit>;
+    filter?: Maybe<IUserFilterInput>;
+    sort?: Maybe<IUserSortInput>;
 }
-export interface QueryListPlansArgs {
-    offsetLimit?: Maybe<OffsetLimit>;
-    filter?: Maybe<PlanFilterInput>;
-    sort?: Maybe<PlanSortInput>;
+export interface IQueryListPlansArgs {
+    offsetLimit?: Maybe<IOffsetLimit>;
+    filter?: Maybe<IPlanFilterInput>;
+    sort?: Maybe<IPlanSortInput>;
 }
-export interface QueryListPlanTypesArgs {
-    offsetLimit?: Maybe<OffsetLimit>;
-    filter?: Maybe<PlanTypeFilterInput>;
-    sort?: Maybe<PlanTypeSortInput>;
+export interface IQueryListPlanTypesArgs {
+    offsetLimit?: Maybe<IOffsetLimit>;
+    filter?: Maybe<IPlanTypeFilterInput>;
+    sort?: Maybe<IPlanTypeSortInput>;
 }
-export interface QueryListFormsArgs {
-    offsetLimit?: Maybe<OffsetLimit>;
-    filter?: Maybe<FormFilterInput>;
-    sort?: Maybe<FormSortInput>;
+export interface IQueryListFormsArgs {
+    offsetLimit?: Maybe<IOffsetLimit>;
+    filter?: Maybe<IFormFilterInput>;
+    sort?: Maybe<IFormSortInput>;
 }
-export interface QueryListFormVersionsArgs {
-    offsetLimit?: Maybe<OffsetLimit>;
-    filter?: Maybe<FormVersionFilterInput>;
-    sort?: Maybe<FormVersionSortInput>;
+export interface IQueryListFormVersionsArgs {
+    offsetLimit?: Maybe<IOffsetLimit>;
+    filter?: Maybe<IFormVersionFilterInput>;
+    sort?: Maybe<IFormVersionSortInput>;
 }
-export interface QueryListIntegrationTypesArgs {
-    offsetLimit?: Maybe<OffsetLimit>;
-    filter?: Maybe<IntegrationTypeFilterInput>;
-    sort?: Maybe<IntegrationTypeSortInput>;
+export interface IQueryListIntegrationTypesArgs {
+    offsetLimit?: Maybe<IOffsetLimit>;
+    filter?: Maybe<IIntegrationTypeFilterInput>;
+    sort?: Maybe<IIntegrationTypeSortInput>;
 }
-export interface QueryListIntegrationsArgs {
-    offsetLimit?: Maybe<OffsetLimit>;
-    filter?: Maybe<IntegrationFilterInput>;
-    sort?: Maybe<IntegrationSortInput>;
+export interface IQueryListIntegrationsArgs {
+    offsetLimit?: Maybe<IOffsetLimit>;
+    filter?: Maybe<IIntegrationFilterInput>;
+    sort?: Maybe<IIntegrationSortInput>;
 }
-export interface QueryListFormEntriesArgs {
-    offsetLimit?: Maybe<OffsetLimit>;
-    filter?: Maybe<FormEntryFilterInput>;
-    sort?: Maybe<FormEntrySortInput>;
+export interface IQueryListFormEntriesArgs {
+    offsetLimit?: Maybe<IOffsetLimit>;
+    filter?: Maybe<IFormEntryFilterInput>;
+    sort?: Maybe<IFormEntrySortInput>;
 }
-export declare enum SortOrder {
+export declare enum ISortOrder {
     Asc = "asc",
     Desc = "desc"
 }
-export interface StringFilter {
-    with?: Maybe<FilterWith>;
-    expression: StringFilterExpression;
+export interface IStringFilter {
+    with?: Maybe<IFilterWith>;
+    expression: IStringFilterExpression;
     value?: Maybe<Array<Scalars['String']>>;
 }
-export declare enum StringFilterExpression {
+export declare enum IStringFilterExpression {
     Ne = "ne",
     Eq = "eq",
     Contains = "contains",
@@ -645,11 +632,11 @@ export declare enum StringFilterExpression {
     IsNotNull = "isNotNull",
     In = "in"
 }
-export interface UpdateAccountInput {
+export interface IUpdateAccountInput {
     id: Scalars['ID'];
     name?: Maybe<Scalars['String']>;
 }
-export interface UpdateFormInput {
+export interface IUpdateFormInput {
     id: Scalars['ID'];
     currentVersionId?: Maybe<Scalars['ID']>;
     name?: Maybe<Scalars['String']>;
@@ -660,7 +647,7 @@ export interface UpdateFormInput {
     redirectHasEnded?: Maybe<Scalars['AWSURL']>;
     isPaused?: Maybe<Scalars['Int']>;
 }
-export interface UpdateIntegrationInput {
+export interface IUpdateIntegrationInput {
     id: Scalars['ID'];
     active?: Maybe<Scalars['Int']>;
     authType?: Maybe<Scalars['String']>;
@@ -668,48 +655,47 @@ export interface UpdateIntegrationInput {
     target?: Maybe<Scalars['String']>;
     method?: Maybe<Scalars['String']>;
 }
-export interface UpdateIntegrationTypeInput {
+export interface IUpdateIntegrationTypeInput {
     id: Scalars['ID'];
     name: Scalars['String'];
     active?: Maybe<Scalars['Int']>;
 }
-export interface UpdateIntegrationTypeInputData {
+export interface IUpdateIntegrationTypeInputData {
     active?: Maybe<Scalars['Int']>;
     authType?: Maybe<Scalars['String']>;
     auth?: Maybe<Scalars['AWSJSON']>;
     target?: Maybe<Scalars['String']>;
     method?: Maybe<Scalars['String']>;
 }
-export interface UpdatePlanInput {
+export interface IUpdatePlanInput {
     planId: Scalars['ID'];
     accountId: Scalars['ID'];
     active: Scalars['Int'];
     endDate?: Maybe<Scalars['AWSDateTime']>;
 }
-export interface UpdatePlanTypeInput {
+export interface IUpdatePlanTypeInput {
     id: Scalars['ID'];
     name?: Maybe<Scalars['String']>;
     cost?: Maybe<Scalars['Float']>;
     billingTerm?: Maybe<Scalars['String']>;
     active?: Maybe<Scalars['Int']>;
 }
-export interface UpdateUserInput {
+export interface IUpdateUserInput {
     id: Scalars['ID'];
-    data: UpdateUserInputData;
+    data: IUpdateUserInputData;
 }
-export interface UpdateUserInputData {
+export interface IUpdateUserInputData {
     group: Scalars['String'];
     given_name: Scalars['String'];
     family_name: Scalars['String'];
     phone_number?: Maybe<Scalars['AWSPhone']>;
 }
-export interface User {
-    __typename?: 'User';
+export interface IUser {
     id: Scalars['ID'];
     ownerId?: Maybe<Scalars['ID']>;
-    ownedBy?: Maybe<User>;
+    ownedBy?: Maybe<IUser>;
     accountId?: Maybe<Scalars['ID']>;
-    account?: Maybe<Account>;
+    account?: Maybe<IAccount>;
     email: Scalars['String'];
     userGroup: Scalars['String'];
     given_name: Scalars['String'];
@@ -720,879 +706,473 @@ export interface User {
     isDeleted?: Maybe<Scalars['Int']>;
     numForms?: Maybe<Scalars['Int']>;
 }
-export interface UserFilterInput {
-    accountId?: Maybe<StringFilter>;
-    ownerId?: Maybe<StringFilter>;
-    email?: Maybe<StringFilter>;
-    userGroup?: Maybe<StringFilter>;
-    given_name?: Maybe<StringFilter>;
-    family_name?: Maybe<StringFilter>;
-    createdAt?: Maybe<DateFilter>;
-    updatedAt?: Maybe<DateFilter>;
-    isDeleted?: Maybe<IntFilter>;
-    criteria?: Maybe<Array<UserFilterInput>>;
+export interface IUserFilterInput {
+    accountId?: Maybe<IStringFilter>;
+    ownerId?: Maybe<IStringFilter>;
+    email?: Maybe<IStringFilter>;
+    userGroup?: Maybe<IStringFilter>;
+    given_name?: Maybe<IStringFilter>;
+    family_name?: Maybe<IStringFilter>;
+    createdAt?: Maybe<IDateFilter>;
+    updatedAt?: Maybe<IDateFilter>;
+    isDeleted?: Maybe<IIntFilter>;
+    criteria?: Maybe<Array<IUserFilterInput>>;
 }
-export declare enum UserGroup {
+export declare enum IUserGroup {
     Admin = "Admin",
     AccountAdmin = "AccountAdmin",
     AccountEditor = "AccountEditor",
     AccountViewer = "AccountViewer"
 }
-export interface UserSortInput {
-    accountId?: Maybe<SortOrder>;
-    email?: Maybe<SortOrder>;
-    given_name?: Maybe<SortOrder>;
-    family_name?: Maybe<SortOrder>;
-    userGroup?: Maybe<SortOrder>;
-    createdAt?: Maybe<SortOrder>;
-    updatedAt?: Maybe<SortOrder>;
-    sortBy?: Maybe<Array<UserSortInput>>;
+export interface IUserSortInput {
+    accountId?: Maybe<ISortOrder>;
+    email?: Maybe<ISortOrder>;
+    given_name?: Maybe<ISortOrder>;
+    family_name?: Maybe<ISortOrder>;
+    userGroup?: Maybe<ISortOrder>;
+    createdAt?: Maybe<ISortOrder>;
+    updatedAt?: Maybe<ISortOrder>;
+    sortBy?: Maybe<Array<IUserSortInput>>;
 }
-export declare type AddPlanTypeMutationVariables = {
-    input?: Maybe<AddPlanTypeInput>;
+export declare type IAddPlanTypeMutationVariables = {
+    input?: Maybe<IAddPlanTypeInput>;
 };
-export declare type AddPlanTypeMutation = ({
-    __typename?: 'Mutation';
-} & {
-    addPlanType: ({
-        __typename?: 'PlanType';
-    } & Pick<PlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
+export declare type IAddPlanTypeMutation = {
+    addPlanType: (Pick<IPlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
     });
-});
-export declare type AddPlanMutationVariables = {
-    input?: Maybe<AddPlanInput>;
 };
-export declare type AddPlanMutation = ({
-    __typename?: 'Mutation';
-} & {
-    addPlan: ({
-        __typename?: 'Plan';
-    } & Pick<Plan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
-        account: ({
-            __typename?: 'Account';
-        } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>);
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        planType: Maybe<({
-            __typename?: 'PlanType';
-        } & Pick<PlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>;
+export declare type IAddPlanMutationVariables = {
+    input?: Maybe<IAddPlanInput>;
+};
+export declare type IAddPlanMutation = {
+    addPlan: (Pick<IPlan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
+        account: Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>;
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        planType: Maybe<Pick<IPlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>>;
     });
-});
-export declare type AddIntegrationTypeMutationVariables = {
-    input?: Maybe<AddIntegrationTypeInput>;
 };
-export declare type AddIntegrationTypeMutation = ({
-    __typename?: 'Mutation';
-} & {
-    addIntegrationType: ({
-        __typename?: 'IntegrationType';
-    } & Pick<IntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'> & {
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        planType: Maybe<({
-            __typename?: 'PlanType';
-        } & Pick<PlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>;
+export declare type IAddIntegrationTypeMutationVariables = {
+    input?: Maybe<IAddIntegrationTypeInput>;
+};
+export declare type IAddIntegrationTypeMutation = {
+    addIntegrationType: (Pick<IIntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'> & {
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        planType: Maybe<Pick<IPlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>>;
     });
-});
-export declare type AddIntegrationMutationVariables = {
-    input?: Maybe<AddIntegrationInput>;
 };
-export declare type AddIntegrationMutation = ({
-    __typename?: 'Mutation';
-} & {
-    addIntegration: ({
-        __typename?: 'Integration';
-    } & Pick<Integration, 'id' | 'integrationTypeId' | 'ownerId' | 'accountId' | 'formId' | 'active' | 'authType' | 'auth' | 'target' | 'method' | 'lastExecuted' | 'lastExecutionResult' | 'lastExecutionResultMessage' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
-        integrationType: Maybe<({
-            __typename?: 'IntegrationType';
-        } & Pick<IntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'>)>;
-        form: ({
-            __typename?: 'Form';
-        } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>);
+export declare type IAddIntegrationMutationVariables = {
+    input?: Maybe<IAddIntegrationInput>;
+};
+export declare type IAddIntegrationMutation = {
+    addIntegration: (Pick<IIntegration, 'id' | 'integrationTypeId' | 'ownerId' | 'accountId' | 'formId' | 'active' | 'authType' | 'auth' | 'target' | 'method' | 'lastExecuted' | 'lastExecutionResult' | 'lastExecutionResultMessage' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
+        integrationType: Maybe<Pick<IIntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'>>;
+        form: Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>;
     });
-});
-export declare type AddFormMutationVariables = {
-    input: AddFormInput;
 };
-export declare type AddFormMutation = ({
-    __typename?: 'Mutation';
-} & {
-    addForm: ({
-        __typename?: 'Form';
-    } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'> & {
-        version: Maybe<({
-            __typename?: 'FormVersion';
-        } & Pick<FormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'>)>;
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        account: ({
-            __typename?: 'Account';
-        } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>);
-        versions: Maybe<Array<Maybe<({
-            __typename?: 'FormVersion';
-        } & Pick<FormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'>)>>>;
-        integrations: Maybe<Array<Maybe<({
-            __typename?: 'Integration';
-        } & Pick<Integration, 'id' | 'integrationTypeId' | 'ownerId' | 'accountId' | 'formId' | 'active' | 'authType' | 'auth' | 'target' | 'method' | 'lastExecuted' | 'lastExecutionResult' | 'lastExecutionResultMessage' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>>>;
-        entries: Maybe<Array<Maybe<({
-            __typename?: 'FormEntry';
-        } & Pick<FormEntry, 'id' | 'formId' | 'data' | 'createdAt'>)>>>;
+export declare type IAddFormMutationVariables = {
+    input: IAddFormInput;
+};
+export declare type IAddFormMutation = {
+    addForm: (Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'> & {
+        version: Maybe<Pick<IFormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'>>;
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        account: Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>;
+        versions: Maybe<Array<Maybe<Pick<IFormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'>>>>;
+        integrations: Maybe<Array<Maybe<Pick<IIntegration, 'id' | 'integrationTypeId' | 'ownerId' | 'accountId' | 'formId' | 'active' | 'authType' | 'auth' | 'target' | 'method' | 'lastExecuted' | 'lastExecutionResult' | 'lastExecutionResultMessage' | 'createdAt' | 'updatedAt' | 'isDeleted'>>>>;
+        entries: Maybe<Array<Maybe<Pick<IFormEntry, 'id' | 'formId' | 'data' | 'createdAt'>>>>;
     });
-});
-export declare type AddFormVersionMutationVariables = {
-    input: AddFormVersionInput;
 };
-export declare type AddFormVersionMutation = ({
-    __typename?: 'Mutation';
-} & {
-    addFormVersion: ({
-        __typename?: 'Form';
-    } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'> & {
-        version: Maybe<({
-            __typename?: 'FormVersion';
-        } & Pick<FormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'>)>;
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        account: ({
-            __typename?: 'Account';
-        } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>);
-        versions: Maybe<Array<Maybe<({
-            __typename?: 'FormVersion';
-        } & Pick<FormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'>)>>>;
-        integrations: Maybe<Array<Maybe<({
-            __typename?: 'Integration';
-        } & Pick<Integration, 'id' | 'integrationTypeId' | 'ownerId' | 'accountId' | 'formId' | 'active' | 'authType' | 'auth' | 'target' | 'method' | 'lastExecuted' | 'lastExecutionResult' | 'lastExecutionResultMessage' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>>>;
-        entries: Maybe<Array<Maybe<({
-            __typename?: 'FormEntry';
-        } & Pick<FormEntry, 'id' | 'formId' | 'data' | 'createdAt'>)>>>;
+export declare type IAddFormVersionMutationVariables = {
+    input: IAddFormVersionInput;
+};
+export declare type IAddFormVersionMutation = {
+    addFormVersion: (Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'> & {
+        version: Maybe<Pick<IFormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'>>;
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        account: Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>;
+        versions: Maybe<Array<Maybe<Pick<IFormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'>>>>;
+        integrations: Maybe<Array<Maybe<Pick<IIntegration, 'id' | 'integrationTypeId' | 'ownerId' | 'accountId' | 'formId' | 'active' | 'authType' | 'auth' | 'target' | 'method' | 'lastExecuted' | 'lastExecutionResult' | 'lastExecutionResultMessage' | 'createdAt' | 'updatedAt' | 'isDeleted'>>>>;
+        entries: Maybe<Array<Maybe<Pick<IFormEntry, 'id' | 'formId' | 'data' | 'createdAt'>>>>;
     });
-});
-export declare type AttachFormVersionMutationVariables = {
-    input: AttachFormVersionInput;
 };
-export declare type AttachFormVersionMutation = ({
-    __typename?: 'Mutation';
-} & {
-    attachFormVersion: ({
-        __typename?: 'Form';
-    } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'> & {
-        version: Maybe<({
-            __typename?: 'FormVersion';
-        } & Pick<FormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'>)>;
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'email' | 'given_name' | 'family_name'>);
-        account: ({
-            __typename?: 'Account';
-        } & Pick<Account, 'id' | 'name'>);
-        versions: Maybe<Array<Maybe<({
-            __typename?: 'FormVersion';
-        } & Pick<FormVersion, 'id' | 'createdAt' | 'displayName' | 'notes'> & {
-            ownedBy: ({
-                __typename?: 'User';
-            } & Pick<User, 'email' | 'given_name' | 'family_name'>);
+export declare type IAttachFormVersionMutationVariables = {
+    input: IAttachFormVersionInput;
+};
+export declare type IAttachFormVersionMutation = {
+    attachFormVersion: (Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'> & {
+        version: Maybe<Pick<IFormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'>>;
+        ownedBy: Pick<IUser, 'id' | 'email' | 'given_name' | 'family_name'>;
+        account: Pick<IAccount, 'id' | 'name'>;
+        versions: Maybe<Array<Maybe<(Pick<IFormVersion, 'id' | 'createdAt' | 'displayName' | 'notes'> & {
+            ownedBy: Pick<IUser, 'email' | 'given_name' | 'family_name'>;
         })>>>;
     });
-});
-export declare type UpdatePlanTypeMutationVariables = {
-    input?: Maybe<UpdatePlanTypeInput>;
 };
-export declare type UpdatePlanTypeMutation = ({
-    __typename?: 'Mutation';
-} & {
-    updatePlanType: ({
-        __typename?: 'PlanType';
-    } & Pick<PlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
+export declare type IUpdatePlanTypeMutationVariables = {
+    input?: Maybe<IUpdatePlanTypeInput>;
+};
+export declare type IUpdatePlanTypeMutation = {
+    updatePlanType: (Pick<IPlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
     });
-});
-export declare type UpdatePlanMutationVariables = {
-    input?: Maybe<UpdatePlanInput>;
 };
-export declare type UpdatePlanMutation = ({
-    __typename?: 'Mutation';
-} & {
-    updatePlan: ({
-        __typename?: 'Plan';
-    } & Pick<Plan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
-        account: ({
-            __typename?: 'Account';
-        } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>);
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        planType: Maybe<({
-            __typename?: 'PlanType';
-        } & Pick<PlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>;
+export declare type IUpdatePlanMutationVariables = {
+    input?: Maybe<IUpdatePlanInput>;
+};
+export declare type IUpdatePlanMutation = {
+    updatePlan: (Pick<IPlan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
+        account: Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>;
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        planType: Maybe<Pick<IPlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>>;
     });
-});
-export declare type UpdateAccountMutationVariables = {
-    input?: Maybe<UpdateAccountInput>;
 };
-export declare type UpdateAccountMutation = ({
-    __typename?: 'Mutation';
-} & {
-    updateAccount: ({
-        __typename?: 'Account';
-    } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'> & {
-        addresses: Maybe<Array<Maybe<({
-            __typename?: 'Address';
-        } & Pick<Address, 'id' | 'name' | 'addressee' | 'addressType' | 'phone_number' | 'email' | 'street' | 'city' | 'state' | 'country'>)>>>;
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        plan: Maybe<({
-            __typename?: 'Plan';
-        } & Pick<Plan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>;
-        users: Maybe<Array<Maybe<({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>)>>>;
-        forms: Maybe<Array<Maybe<({
-            __typename?: 'Form';
-        } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>)>>>;
+export declare type IUpdateAccountMutationVariables = {
+    input?: Maybe<IUpdateAccountInput>;
+};
+export declare type IUpdateAccountMutation = {
+    updateAccount: (Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'> & {
+        addresses: Maybe<Array<Maybe<Pick<IAddress, 'id' | 'name' | 'addressee' | 'addressType' | 'phone_number' | 'email' | 'street' | 'city' | 'state' | 'country'>>>>;
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        plan: Maybe<Pick<IPlan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'>>;
+        users: Maybe<Array<Maybe<Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>>>>;
+        forms: Maybe<Array<Maybe<Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>>>>;
     });
-});
-export declare type UpdateAccountPlanMutationVariables = {
-    input?: Maybe<AddPlanInput>;
 };
-export declare type UpdateAccountPlanMutation = ({
-    __typename?: 'Mutation';
-} & {
-    updateAccountPlan: ({
-        __typename?: 'Account';
-    } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'> & {
-        addresses: Maybe<Array<Maybe<({
-            __typename?: 'Address';
-        } & Pick<Address, 'id' | 'name' | 'addressee' | 'addressType' | 'phone_number' | 'email' | 'street' | 'city' | 'state' | 'country'>)>>>;
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        plan: Maybe<({
-            __typename?: 'Plan';
-        } & Pick<Plan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>;
-        users: Maybe<Array<Maybe<({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>)>>>;
-        forms: Maybe<Array<Maybe<({
-            __typename?: 'Form';
-        } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>)>>>;
+export declare type IUpdateAccountPlanMutationVariables = {
+    input?: Maybe<IAddPlanInput>;
+};
+export declare type IUpdateAccountPlanMutation = {
+    updateAccountPlan: (Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'> & {
+        addresses: Maybe<Array<Maybe<Pick<IAddress, 'id' | 'name' | 'addressee' | 'addressType' | 'phone_number' | 'email' | 'street' | 'city' | 'state' | 'country'>>>>;
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        plan: Maybe<Pick<IPlan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'>>;
+        users: Maybe<Array<Maybe<Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>>>>;
+        forms: Maybe<Array<Maybe<Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>>>>;
     });
-});
-export declare type UpdateUserMutationVariables = {
-    input?: Maybe<UpdateUserInput>;
 };
-export declare type UpdateUserMutation = ({
-    __typename?: 'Mutation';
-} & {
-    updateUser: ({
-        __typename?: 'User';
-    } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'> & {
-        ownedBy: Maybe<({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>)>;
-        account: Maybe<({
-            __typename?: 'Account';
-        } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>)>;
+export declare type IUpdateUserMutationVariables = {
+    input?: Maybe<IUpdateUserInput>;
+};
+export declare type IUpdateUserMutation = {
+    updateUser: (Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'> & {
+        ownedBy: Maybe<Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>>;
+        account: Maybe<Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>>;
     });
-});
-export declare type UpdateIntegrationTypeMutationVariables = {
-    input?: Maybe<UpdateIntegrationTypeInput>;
 };
-export declare type UpdateIntegrationTypeMutation = ({
-    __typename?: 'Mutation';
-} & {
-    updateIntegrationType: ({
-        __typename?: 'IntegrationType';
-    } & Pick<IntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'> & {
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        planType: Maybe<({
-            __typename?: 'PlanType';
-        } & Pick<PlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>;
+export declare type IUpdateIntegrationTypeMutationVariables = {
+    input?: Maybe<IUpdateIntegrationTypeInput>;
+};
+export declare type IUpdateIntegrationTypeMutation = {
+    updateIntegrationType: (Pick<IIntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'> & {
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        planType: Maybe<Pick<IPlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>>;
     });
-});
-export declare type UpdateIntegrationMutationVariables = {
-    input?: Maybe<UpdateIntegrationInput>;
 };
-export declare type UpdateIntegrationMutation = ({
-    __typename?: 'Mutation';
-} & {
-    updateIntegration: ({
-        __typename?: 'Integration';
-    } & Pick<Integration, 'id' | 'integrationTypeId' | 'ownerId' | 'accountId' | 'formId' | 'active' | 'authType' | 'auth' | 'target' | 'method' | 'lastExecuted' | 'lastExecutionResult' | 'lastExecutionResultMessage' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
-        integrationType: Maybe<({
-            __typename?: 'IntegrationType';
-        } & Pick<IntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'>)>;
-        form: ({
-            __typename?: 'Form';
-        } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>);
+export declare type IUpdateIntegrationMutationVariables = {
+    input?: Maybe<IUpdateIntegrationInput>;
+};
+export declare type IUpdateIntegrationMutation = {
+    updateIntegration: (Pick<IIntegration, 'id' | 'integrationTypeId' | 'ownerId' | 'accountId' | 'formId' | 'active' | 'authType' | 'auth' | 'target' | 'method' | 'lastExecuted' | 'lastExecutionResult' | 'lastExecutionResultMessage' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
+        integrationType: Maybe<Pick<IIntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'>>;
+        form: Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>;
     });
-});
-export declare type UpdateFormMutationVariables = {
-    input?: Maybe<UpdateFormInput>;
 };
-export declare type UpdateFormMutation = ({
-    __typename?: 'Mutation';
-} & {
-    updateForm: ({
-        __typename?: 'Form';
-    } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'> & {
-        version: Maybe<({
-            __typename?: 'FormVersion';
-        } & Pick<FormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'>)>;
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted'>);
-        account: ({
-            __typename?: 'Account';
-        } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active'>);
-        versions: Maybe<Array<Maybe<({
-            __typename?: 'FormVersion';
-        } & Pick<FormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes'> & {
-            ownedBy: ({
-                __typename?: 'User';
-            } & Pick<User, 'email' | 'given_name' | 'family_name'>);
+export declare type IUpdateFormMutationVariables = {
+    input?: Maybe<IUpdateFormInput>;
+};
+export declare type IUpdateFormMutation = {
+    updateForm: (Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'> & {
+        version: Maybe<Pick<IFormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'>>;
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted'>;
+        account: Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active'>;
+        versions: Maybe<Array<Maybe<(Pick<IFormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes'> & {
+            ownedBy: Pick<IUser, 'email' | 'given_name' | 'family_name'>;
         })>>>;
     });
-});
-export declare type DeleteFormMutationVariables = {
-    input: DeleteFormInput;
 };
-export declare type DeleteFormMutation = ({
-    __typename?: 'Mutation';
-} & {
-    deleteForm: ({
-        __typename?: 'Form';
-    } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'> & {
-        version: Maybe<({
-            __typename?: 'FormVersion';
-        } & Pick<FormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'>)>;
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        account: ({
-            __typename?: 'Account';
-        } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>);
-        versions: Maybe<Array<Maybe<({
-            __typename?: 'FormVersion';
-        } & Pick<FormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'>)>>>;
-        integrations: Maybe<Array<Maybe<({
-            __typename?: 'Integration';
-        } & Pick<Integration, 'id' | 'integrationTypeId' | 'ownerId' | 'accountId' | 'formId' | 'active' | 'authType' | 'auth' | 'target' | 'method' | 'lastExecuted' | 'lastExecutionResult' | 'lastExecutionResultMessage' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>>>;
-        entries: Maybe<Array<Maybe<({
-            __typename?: 'FormEntry';
-        } & Pick<FormEntry, 'id' | 'formId' | 'data' | 'createdAt'>)>>>;
+export declare type IDeleteFormMutationVariables = {
+    input: IDeleteFormInput;
+};
+export declare type IDeleteFormMutation = {
+    deleteForm: (Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'> & {
+        version: Maybe<Pick<IFormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'>>;
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        account: Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>;
+        versions: Maybe<Array<Maybe<Pick<IFormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'>>>>;
+        integrations: Maybe<Array<Maybe<Pick<IIntegration, 'id' | 'integrationTypeId' | 'ownerId' | 'accountId' | 'formId' | 'active' | 'authType' | 'auth' | 'target' | 'method' | 'lastExecuted' | 'lastExecutionResult' | 'lastExecutionResultMessage' | 'createdAt' | 'updatedAt' | 'isDeleted'>>>>;
+        entries: Maybe<Array<Maybe<Pick<IFormEntry, 'id' | 'formId' | 'data' | 'createdAt'>>>>;
     });
-});
-export declare type DeletePlanTypeMutationVariables = {
+};
+export declare type IDeletePlanTypeMutationVariables = {
     planTypeId: Scalars['ID'];
 };
-export declare type DeletePlanTypeMutation = ({
-    __typename?: 'Mutation';
-} & {
-    deletePlanType: ({
-        __typename?: 'PlanType';
-    } & Pick<PlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
+export declare type IDeletePlanTypeMutation = {
+    deletePlanType: (Pick<IPlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
     });
-});
-export declare type DeletePlanMutationVariables = {
+};
+export declare type IDeletePlanMutationVariables = {
     accountId: Scalars['ID'];
     planId: Scalars['ID'];
 };
-export declare type DeletePlanMutation = ({
-    __typename?: 'Mutation';
-} & {
-    deletePlan: ({
-        __typename?: 'Plan';
-    } & Pick<Plan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
-        account: ({
-            __typename?: 'Account';
-        } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>);
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        planType: Maybe<({
-            __typename?: 'PlanType';
-        } & Pick<PlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>;
+export declare type IDeletePlanMutation = {
+    deletePlan: (Pick<IPlan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
+        account: Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>;
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        planType: Maybe<Pick<IPlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>>;
     });
-});
-export declare type DeleteAccountMutationVariables = {
+};
+export declare type IDeleteAccountMutationVariables = {
     accountId: Scalars['ID'];
 };
-export declare type DeleteAccountMutation = ({
-    __typename?: 'Mutation';
-} & {
-    deleteAccount: ({
-        __typename?: 'Account';
-    } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'> & {
-        addresses: Maybe<Array<Maybe<({
-            __typename?: 'Address';
-        } & Pick<Address, 'id' | 'name' | 'addressee' | 'addressType' | 'phone_number' | 'email' | 'street' | 'city' | 'state' | 'country'>)>>>;
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        plan: Maybe<({
-            __typename?: 'Plan';
-        } & Pick<Plan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>;
-        users: Maybe<Array<Maybe<({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>)>>>;
-        forms: Maybe<Array<Maybe<({
-            __typename?: 'Form';
-        } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>)>>>;
+export declare type IDeleteAccountMutation = {
+    deleteAccount: (Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'> & {
+        addresses: Maybe<Array<Maybe<Pick<IAddress, 'id' | 'name' | 'addressee' | 'addressType' | 'phone_number' | 'email' | 'street' | 'city' | 'state' | 'country'>>>>;
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        plan: Maybe<Pick<IPlan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'>>;
+        users: Maybe<Array<Maybe<Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>>>>;
+        forms: Maybe<Array<Maybe<Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>>>>;
     });
-});
-export declare type DeleteUserMutationVariables = {
+};
+export declare type IDeleteUserMutationVariables = {
     userId: Scalars['ID'];
 };
-export declare type DeleteUserMutation = ({
-    __typename?: 'Mutation';
-} & {
-    deleteUser: ({
-        __typename?: 'User';
-    } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'> & {
-        ownedBy: Maybe<({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>)>;
-        account: Maybe<({
-            __typename?: 'Account';
-        } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>)>;
+export declare type IDeleteUserMutation = {
+    deleteUser: (Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'> & {
+        ownedBy: Maybe<Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>>;
+        account: Maybe<Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>>;
     });
-});
-export declare type DeleteIntegrationTypeMutationVariables = {
+};
+export declare type IDeleteIntegrationTypeMutationVariables = {
     integrationTypeId: Scalars['ID'];
 };
-export declare type DeleteIntegrationTypeMutation = ({
-    __typename?: 'Mutation';
-} & {
-    deleteIntegrationType: ({
-        __typename?: 'IntegrationType';
-    } & Pick<IntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'> & {
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        planType: Maybe<({
-            __typename?: 'PlanType';
-        } & Pick<PlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>;
+export declare type IDeleteIntegrationTypeMutation = {
+    deleteIntegrationType: (Pick<IIntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'> & {
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        planType: Maybe<Pick<IPlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>>;
     });
-});
-export declare type DeleteIntegrationMutationVariables = {
+};
+export declare type IDeleteIntegrationMutationVariables = {
     integrationId: Scalars['ID'];
 };
-export declare type DeleteIntegrationMutation = ({
-    __typename?: 'Mutation';
-} & {
-    deleteIntegration: ({
-        __typename?: 'Integration';
-    } & Pick<Integration, 'id' | 'integrationTypeId' | 'ownerId' | 'accountId' | 'formId' | 'active' | 'authType' | 'auth' | 'target' | 'method' | 'lastExecuted' | 'lastExecutionResult' | 'lastExecutionResultMessage' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
-        integrationType: Maybe<({
-            __typename?: 'IntegrationType';
-        } & Pick<IntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'>)>;
-        form: ({
-            __typename?: 'Form';
-        } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>);
+export declare type IDeleteIntegrationMutation = {
+    deleteIntegration: (Pick<IIntegration, 'id' | 'integrationTypeId' | 'ownerId' | 'accountId' | 'formId' | 'active' | 'authType' | 'auth' | 'target' | 'method' | 'lastExecuted' | 'lastExecutionResult' | 'lastExecutionResultMessage' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
+        integrationType: Maybe<Pick<IIntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'>>;
+        form: Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>;
     });
-});
-export declare type DeleteFormVersionMutationVariables = {
-    input: DeleteFormVersionInput;
 };
-export declare type DeleteFormVersionMutation = ({
-    __typename?: 'Mutation';
-} & {
-    deleteFormVersion: ({
-        __typename?: 'FormVersion';
-    } & Pick<FormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'> & {
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
+export declare type IDeleteFormVersionMutationVariables = {
+    input: IDeleteFormVersionInput;
+};
+export declare type IDeleteFormVersionMutation = {
+    deleteFormVersion: (Pick<IFormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'> & {
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
     });
-});
-export declare type AddFormEntryMutationVariables = {
-    input: AddFormEntryInput;
 };
-export declare type AddFormEntryMutation = ({
-    __typename?: 'Mutation';
-} & {
-    addFormEntry: ({
-        __typename?: 'FormEntrySansData';
-    } & Pick<FormEntrySansData, 'id' | 'formId' | 'createdAt'>);
-});
-export declare type GetAccountQueryVariables = {
+export declare type IAddFormEntryMutationVariables = {
+    input: IAddFormEntryInput;
+};
+export declare type IAddFormEntryMutation = {
+    addFormEntry: Pick<IFormEntrySansData, 'id' | 'formId' | 'createdAt'>;
+};
+export declare type IGetAccountQueryVariables = {
     accountId: Scalars['ID'];
 };
-export declare type GetAccountQuery = ({
-    __typename?: 'Query';
-} & {
-    getAccount: Maybe<({
-        __typename?: 'Account';
-    } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'> & {
-        addresses: Maybe<Array<Maybe<({
-            __typename?: 'Address';
-        } & Pick<Address, 'id' | 'name' | 'addressee' | 'addressType' | 'phone_number' | 'email' | 'street' | 'city' | 'state' | 'country'>)>>>;
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        plan: Maybe<({
-            __typename?: 'Plan';
-        } & Pick<Plan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>;
-        users: Maybe<Array<Maybe<({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>)>>>;
-        forms: Maybe<Array<Maybe<({
-            __typename?: 'Form';
-        } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded' | 'numEntries'>)>>>;
+export declare type IGetAccountQuery = {
+    getAccount: Maybe<(Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'> & {
+        addresses: Maybe<Array<Maybe<Pick<IAddress, 'id' | 'name' | 'addressee' | 'addressType' | 'phone_number' | 'email' | 'street' | 'city' | 'state' | 'country'>>>>;
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        plan: Maybe<Pick<IPlan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'>>;
+        users: Maybe<Array<Maybe<Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>>>>;
+        forms: Maybe<Array<Maybe<Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded' | 'numEntries'>>>>;
     })>;
-});
-export declare type GetUserQueryVariables = {
+};
+export declare type IGetUserQueryVariables = {
     userId: Scalars['ID'];
 };
-export declare type GetUserQuery = ({
-    __typename?: 'Query';
-} & {
-    getUser: Maybe<({
-        __typename?: 'User';
-    } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'> & {
-        ownedBy: Maybe<({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>)>;
-        account: Maybe<({
-            __typename?: 'Account';
-        } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>)>;
+export declare type IGetUserQuery = {
+    getUser: Maybe<(Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'> & {
+        ownedBy: Maybe<Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>>;
+        account: Maybe<Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>>;
     })>;
-});
-export declare type GetPlanQueryVariables = {
+};
+export declare type IGetPlanQueryVariables = {
     planId: Scalars['String'];
 };
-export declare type GetPlanQuery = ({
-    __typename?: 'Query';
-} & {
-    getPlan: Maybe<({
-        __typename?: 'Plan';
-    } & Pick<Plan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
-        account: ({
-            __typename?: 'Account';
-        } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>);
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        planType: Maybe<({
-            __typename?: 'PlanType';
-        } & Pick<PlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>;
+export declare type IGetPlanQuery = {
+    getPlan: Maybe<(Pick<IPlan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
+        account: Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>;
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        planType: Maybe<Pick<IPlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>>;
     })>;
-});
-export declare type GetActiveAccountPlanQueryVariables = {
+};
+export declare type IGetActiveAccountPlanQueryVariables = {
     accountId: Scalars['String'];
 };
-export declare type GetActiveAccountPlanQuery = ({
-    __typename?: 'Query';
-} & {
-    getActiveAccountPlan: Maybe<({
-        __typename?: 'Plan';
-    } & Pick<Plan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
-        account: ({
-            __typename?: 'Account';
-        } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>);
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        planType: Maybe<({
-            __typename?: 'PlanType';
-        } & Pick<PlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>;
+export declare type IGetActiveAccountPlanQuery = {
+    getActiveAccountPlan: Maybe<(Pick<IPlan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
+        account: Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>;
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        planType: Maybe<Pick<IPlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>>;
     })>;
-});
-export declare type GetPlanTypeQueryVariables = {
+};
+export declare type IGetPlanTypeQueryVariables = {
     planTypeId: Scalars['String'];
 };
-export declare type GetPlanTypeQuery = ({
-    __typename?: 'Query';
-} & {
-    getPlanType: Maybe<({
-        __typename?: 'PlanType';
-    } & Pick<PlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
+export declare type IGetPlanTypeQuery = {
+    getPlanType: Maybe<(Pick<IPlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
     })>;
-});
-export declare type GetFormQueryVariables = {
+};
+export declare type IGetFormQueryVariables = {
     formId: Scalars['String'];
 };
-export declare type GetFormQuery = ({
-    __typename?: 'Query';
-} & {
-    getForm: Maybe<({
-        __typename?: 'Form';
-    } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'> & {
-        version: Maybe<({
-            __typename?: 'FormVersion';
-        } & Pick<FormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'>)>;
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'email' | 'userGroup' | 'given_name' | 'family_name'>);
-        account: ({
-            __typename?: 'Account';
-        } & Pick<Account, 'id' | 'name' | 'createdAt' | 'updatedAt' | 'active'>);
-        versions: Maybe<Array<Maybe<({
-            __typename?: 'FormVersion';
-        } & Pick<FormVersion, 'id' | 'createdAt' | 'displayName' | 'notes'> & {
-            ownedBy: ({
-                __typename?: 'User';
-            } & Pick<User, 'given_name' | 'family_name' | 'email'>);
+export declare type IGetFormQuery = {
+    getForm: Maybe<(Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'> & {
+        version: Maybe<Pick<IFormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'>>;
+        ownedBy: Pick<IUser, 'id' | 'email' | 'userGroup' | 'given_name' | 'family_name'>;
+        account: Pick<IAccount, 'id' | 'name' | 'createdAt' | 'updatedAt' | 'active'>;
+        versions: Maybe<Array<Maybe<(Pick<IFormVersion, 'id' | 'createdAt' | 'displayName' | 'notes'> & {
+            ownedBy: Pick<IUser, 'given_name' | 'family_name' | 'email'>;
         })>>>;
     })>;
-});
-export declare type GetFormVersionQueryVariables = {
+};
+export declare type IGetFormVersionQueryVariables = {
     versionId: Scalars['String'];
 };
-export declare type GetFormVersionQuery = ({
-    __typename?: 'Query';
-} & {
-    getFormVersion: Maybe<({
-        __typename?: 'FormVersion';
-    } & Pick<FormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'> & {
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
+export declare type IGetFormVersionQuery = {
+    getFormVersion: Maybe<(Pick<IFormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'> & {
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
     })>;
-});
-export declare type GetIntegrationTypeQueryVariables = {
+};
+export declare type IGetIntegrationTypeQueryVariables = {
     integrationTypeId: Scalars['String'];
 };
-export declare type GetIntegrationTypeQuery = ({
-    __typename?: 'Query';
-} & {
-    getIntegrationType: Maybe<({
-        __typename?: 'IntegrationType';
-    } & Pick<IntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'> & {
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        planType: Maybe<({
-            __typename?: 'PlanType';
-        } & Pick<PlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>;
+export declare type IGetIntegrationTypeQuery = {
+    getIntegrationType: Maybe<(Pick<IIntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'> & {
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        planType: Maybe<Pick<IPlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>>;
     })>;
-});
-export declare type GetIntegrationQueryVariables = {
+};
+export declare type IGetIntegrationQueryVariables = {
     integrationId: Scalars['String'];
 };
-export declare type GetIntegrationQuery = ({
-    __typename?: 'Query';
-} & {
-    getIntegration: Maybe<({
-        __typename?: 'Integration';
-    } & Pick<Integration, 'id' | 'integrationTypeId' | 'ownerId' | 'accountId' | 'formId' | 'active' | 'authType' | 'auth' | 'target' | 'method' | 'lastExecuted' | 'lastExecutionResult' | 'lastExecutionResultMessage' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
-        integrationType: Maybe<({
-            __typename?: 'IntegrationType';
-        } & Pick<IntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'>)>;
-        form: ({
-            __typename?: 'Form';
-        } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>);
+export declare type IGetIntegrationQuery = {
+    getIntegration: Maybe<(Pick<IIntegration, 'id' | 'integrationTypeId' | 'ownerId' | 'accountId' | 'formId' | 'active' | 'authType' | 'auth' | 'target' | 'method' | 'lastExecuted' | 'lastExecutionResult' | 'lastExecutionResultMessage' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
+        integrationType: Maybe<Pick<IIntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'>>;
+        form: Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>;
     })>;
-});
-export declare type GetFormEntryQueryVariables = {
+};
+export declare type IGetFormEntryQueryVariables = {
     formEntryId: Scalars['String'];
 };
-export declare type GetFormEntryQuery = ({
-    __typename?: 'Query';
-} & {
-    getFormEntry: Maybe<({
-        __typename?: 'FormEntry';
-    } & Pick<FormEntry, 'id' | 'accountId' | 'formId' | 'data' | 'createdAt'> & {
-        form: ({
-            __typename?: 'Form';
-        } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>);
+export declare type IGetFormEntryQuery = {
+    getFormEntry: Maybe<(Pick<IFormEntry, 'id' | 'accountId' | 'formId' | 'data' | 'createdAt'> & {
+        form: Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>;
     })>;
-});
-export declare type ListAccountsQueryVariables = {
-    offsetLimit?: Maybe<OffsetLimit>;
-    filter?: Maybe<AccountFilterInput>;
-    sort?: Maybe<AccountSortInput>;
 };
-export declare type ListAccountsQuery = ({
-    __typename?: 'Query';
-} & {
-    listAccounts: Maybe<Array<Maybe<({
-        __typename?: 'Account';
-    } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'> & {
-        addresses: Maybe<Array<Maybe<({
-            __typename?: 'Address';
-        } & Pick<Address, 'id' | 'name' | 'addressee' | 'addressType' | 'phone_number' | 'email' | 'street' | 'city' | 'state' | 'country'>)>>>;
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        plan: Maybe<({
-            __typename?: 'Plan';
-        } & Pick<Plan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>;
-        users: Maybe<Array<Maybe<({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>)>>>;
-        forms: Maybe<Array<Maybe<({
-            __typename?: 'Form';
-        } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>)>>>;
-    })>>>;
-});
-export declare type ListUsersQueryVariables = {
-    offsetLimit?: Maybe<OffsetLimit>;
-    filter?: Maybe<UserFilterInput>;
-    sort?: Maybe<UserSortInput>;
+export declare type IListAccountsQueryVariables = {
+    offsetLimit?: Maybe<IOffsetLimit>;
+    filter?: Maybe<IAccountFilterInput>;
+    sort?: Maybe<IAccountSortInput>;
 };
-export declare type ListUsersQuery = ({
-    __typename?: 'Query';
-} & {
-    listUsers: Maybe<Array<Maybe<({
-        __typename?: 'User';
-    } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
-        ownedBy: Maybe<({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>)>;
-        account: Maybe<({
-            __typename?: 'Account';
-        } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active'>)>;
+export declare type IListAccountsQuery = {
+    listAccounts: Maybe<Array<Maybe<(Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'> & {
+        addresses: Maybe<Array<Maybe<Pick<IAddress, 'id' | 'name' | 'addressee' | 'addressType' | 'phone_number' | 'email' | 'street' | 'city' | 'state' | 'country'>>>>;
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        plan: Maybe<Pick<IPlan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'>>;
+        users: Maybe<Array<Maybe<Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>>>>;
+        forms: Maybe<Array<Maybe<Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>>>>;
     })>>>;
-});
-export declare type ListPlansQueryVariables = {
-    offsetLimit?: Maybe<OffsetLimit>;
-    filter?: Maybe<PlanFilterInput>;
-    sort?: Maybe<PlanSortInput>;
 };
-export declare type ListPlansQuery = ({
-    __typename?: 'Query';
-} & {
-    listPlans: Maybe<Array<Maybe<({
-        __typename?: 'Plan';
-    } & Pick<Plan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
-        account: ({
-            __typename?: 'Account';
-        } & Pick<Account, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>);
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        planType: Maybe<({
-            __typename?: 'PlanType';
-        } & Pick<PlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>;
-    })>>>;
-});
-export declare type ListPlanTypesQueryVariables = {
-    offsetLimit?: Maybe<OffsetLimit>;
-    filter?: Maybe<PlanTypeFilterInput>;
-    sort?: Maybe<PlanTypeSortInput>;
+export declare type IListUsersQueryVariables = {
+    offsetLimit?: Maybe<IOffsetLimit>;
+    filter?: Maybe<IUserFilterInput>;
+    sort?: Maybe<IUserSortInput>;
 };
-export declare type ListPlanTypesQuery = ({
-    __typename?: 'Query';
-} & {
-    listPlanTypes: Maybe<Array<Maybe<({
-        __typename?: 'PlanType';
-    } & Pick<PlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
+export declare type IListUsersQuery = {
+    listUsers: Maybe<Array<Maybe<(Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
+        ownedBy: Maybe<Pick<IUser, 'id' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>>;
+        account: Maybe<Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active'>>;
     })>>>;
-});
-export declare type ListFormsQueryVariables = {
-    offsetLimit?: Maybe<OffsetLimit>;
-    filter?: Maybe<FormFilterInput>;
-    sort?: Maybe<FormSortInput>;
 };
-export declare type ListFormsQuery = ({
-    __typename?: 'Query';
-} & {
-    listForms: Maybe<Array<Maybe<({
-        __typename?: 'Form';
-    } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'> & {
-        version: Maybe<({
-            __typename?: 'FormVersion';
-        } & Pick<FormVersion, 'id' | 'createdAt' | 'displayName' | 'notes'>)>;
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'email' | 'given_name' | 'family_name'>);
-        account: ({
-            __typename?: 'Account';
-        } & Pick<Account, 'id' | 'name'>);
-    })>>>;
-});
-export declare type ListFormVersionsQueryVariables = {
-    offsetLimit?: Maybe<OffsetLimit>;
-    filter?: Maybe<FormVersionFilterInput>;
-    sort?: Maybe<FormVersionSortInput>;
+export declare type IListPlansQueryVariables = {
+    offsetLimit?: Maybe<IOffsetLimit>;
+    filter?: Maybe<IPlanFilterInput>;
+    sort?: Maybe<IPlanSortInput>;
 };
-export declare type ListFormVersionsQuery = ({
-    __typename?: 'Query';
-} & {
-    listFormVersions: Maybe<Array<Maybe<({
-        __typename?: 'FormVersion';
-    } & Pick<FormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'> & {
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'email' | 'userGroup' | 'given_name' | 'family_name'>);
+export declare type IListPlansQuery = {
+    listPlans: Maybe<Array<Maybe<(Pick<IPlan, 'id' | 'accountId' | 'ownerId' | 'planTypeId' | 'startDate' | 'endDate' | 'active' | 'lastBillDate' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
+        account: Pick<IAccount, 'id' | 'name' | 'website' | 'taxId' | 'ownerId' | 'planId' | 'createdAt' | 'updatedAt' | 'active' | 'numForms' | 'numUsers'>;
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        planType: Maybe<Pick<IPlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>>;
     })>>>;
-});
-export declare type ListIntegrationTypesQueryVariables = {
-    offsetLimit?: Maybe<OffsetLimit>;
-    filter?: Maybe<IntegrationTypeFilterInput>;
-    sort?: Maybe<IntegrationTypeSortInput>;
 };
-export declare type ListIntegrationTypesQuery = ({
-    __typename?: 'Query';
-} & {
-    listIntegrationTypes: Maybe<Array<Maybe<({
-        __typename?: 'IntegrationType';
-    } & Pick<IntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'> & {
-        ownedBy: ({
-            __typename?: 'User';
-        } & Pick<User, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>);
-        planType: Maybe<({
-            __typename?: 'PlanType';
-        } & Pick<PlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>)>;
-    })>>>;
-});
-export declare type ListIntegrationsQueryVariables = {
-    offsetLimit?: Maybe<OffsetLimit>;
-    filter?: Maybe<IntegrationFilterInput>;
-    sort?: Maybe<IntegrationSortInput>;
+export declare type IListPlanTypesQueryVariables = {
+    offsetLimit?: Maybe<IOffsetLimit>;
+    filter?: Maybe<IPlanTypeFilterInput>;
+    sort?: Maybe<IPlanTypeSortInput>;
 };
-export declare type ListIntegrationsQuery = ({
-    __typename?: 'Query';
-} & {
-    listIntegrations: Maybe<Array<Maybe<({
-        __typename?: 'Integration';
-    } & Pick<Integration, 'id' | 'integrationTypeId' | 'ownerId' | 'accountId' | 'formId' | 'active' | 'authType' | 'auth' | 'target' | 'method' | 'lastExecuted' | 'lastExecutionResult' | 'lastExecutionResultMessage' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
-        integrationType: Maybe<({
-            __typename?: 'IntegrationType';
-        } & Pick<IntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'>)>;
-        form: ({
-            __typename?: 'Form';
-        } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>);
+export declare type IListPlanTypesQuery = {
+    listPlanTypes: Maybe<Array<Maybe<(Pick<IPlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
     })>>>;
-});
-export declare type ListFormEntriesQueryVariables = {
-    offsetLimit?: Maybe<OffsetLimit>;
-    filter?: Maybe<FormEntryFilterInput>;
-    sort?: Maybe<FormEntrySortInput>;
 };
-export declare type ListFormEntriesQuery = ({
-    __typename?: 'Query';
-} & {
-    listFormEntries: Maybe<Array<Maybe<({
-        __typename?: 'FormEntry';
-    } & Pick<FormEntry, 'id' | 'accountId' | 'formId' | 'data' | 'createdAt'> & {
-        form: ({
-            __typename?: 'Form';
-        } & Pick<Form, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>);
+export declare type IListFormsQueryVariables = {
+    offsetLimit?: Maybe<IOffsetLimit>;
+    filter?: Maybe<IFormFilterInput>;
+    sort?: Maybe<IFormSortInput>;
+};
+export declare type IListFormsQuery = {
+    listForms: Maybe<Array<Maybe<(Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'> & {
+        version: Maybe<Pick<IFormVersion, 'id' | 'createdAt' | 'displayName' | 'notes'>>;
+        ownedBy: Pick<IUser, 'id' | 'email' | 'given_name' | 'family_name'>;
+        account: Pick<IAccount, 'id' | 'name'>;
     })>>>;
-});
+};
+export declare type IListFormVersionsQueryVariables = {
+    offsetLimit?: Maybe<IOffsetLimit>;
+    filter?: Maybe<IFormVersionFilterInput>;
+    sort?: Maybe<IFormVersionSortInput>;
+};
+export declare type IListFormVersionsQuery = {
+    listFormVersions: Maybe<Array<Maybe<(Pick<IFormVersion, 'id' | 'accountId' | 'formId' | 'ownerId' | 'createdAt' | 'displayName' | 'notes' | 'formData'> & {
+        ownedBy: Pick<IUser, 'id' | 'email' | 'userGroup' | 'given_name' | 'family_name'>;
+    })>>>;
+};
+export declare type IListIntegrationTypesQueryVariables = {
+    offsetLimit?: Maybe<IOffsetLimit>;
+    filter?: Maybe<IIntegrationTypeFilterInput>;
+    sort?: Maybe<IIntegrationTypeSortInput>;
+};
+export declare type IListIntegrationTypesQuery = {
+    listIntegrationTypes: Maybe<Array<Maybe<(Pick<IIntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'> & {
+        ownedBy: Pick<IUser, 'id' | 'ownerId' | 'accountId' | 'email' | 'userGroup' | 'given_name' | 'family_name' | 'phone_number' | 'createdAt' | 'updatedAt' | 'isDeleted' | 'numForms'>;
+        planType: Maybe<Pick<IPlanType, 'id' | 'ownerId' | 'name' | 'cost' | 'active' | 'billingTerm' | 'createdAt' | 'updatedAt' | 'isDeleted'>>;
+    })>>>;
+};
+export declare type IListIntegrationsQueryVariables = {
+    offsetLimit?: Maybe<IOffsetLimit>;
+    filter?: Maybe<IIntegrationFilterInput>;
+    sort?: Maybe<IIntegrationSortInput>;
+};
+export declare type IListIntegrationsQuery = {
+    listIntegrations: Maybe<Array<Maybe<(Pick<IIntegration, 'id' | 'integrationTypeId' | 'ownerId' | 'accountId' | 'formId' | 'active' | 'authType' | 'auth' | 'target' | 'method' | 'lastExecuted' | 'lastExecutionResult' | 'lastExecutionResultMessage' | 'createdAt' | 'updatedAt' | 'isDeleted'> & {
+        integrationType: Maybe<Pick<IIntegrationType, 'id' | 'ownerId' | 'planTypeId' | 'name' | 'active' | 'createdAt' | 'updatedAt'>>;
+        form: Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>;
+    })>>>;
+};
+export declare type IListFormEntriesQueryVariables = {
+    offsetLimit?: Maybe<IOffsetLimit>;
+    filter?: Maybe<IFormEntryFilterInput>;
+    sort?: Maybe<IFormEntrySortInput>;
+};
+export declare type IListFormEntriesQuery = {
+    listFormEntries: Maybe<Array<Maybe<(Pick<IFormEntry, 'id' | 'accountId' | 'formId' | 'data' | 'createdAt'> & {
+        form: Pick<IForm, 'id' | 'ownerId' | 'name' | 'description' | 'versionId' | 'versionActivatedDate' | 'accountId' | 'createdAt' | 'updatedAt' | 'startDate' | 'endDate' | 'isPaused' | 'isDeleted' | 'redirectNotStarted' | 'redirectHasEnded'>;
+    })>>>;
+};
 export declare type ResolverTypeWrapper<T> = Promise<T> | T;
 export declare type ResolverFn<TResult, TParent, TContext, TArgs> = (parent: TParent, args: TArgs, context: TContext, info: GraphQLResolveInfo) => Promise<TResult> | TResult;
 export declare type StitchingResolver<TResult, TParent, TContext, TArgs> = {
@@ -1620,413 +1200,403 @@ export declare type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (parent
 export declare type NextResolverFn<T> = () => Promise<T>;
 export declare type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs = {}> = (next: NextResolverFn<TResult>, parent: TParent, args: TArgs, context: TContext, info: GraphQLResolveInfo) => TResult | Promise<TResult>;
 /** Mapping between all available schema types and the resolvers types */
-export declare type ResolversTypes = {
+export declare type IResolversTypes = {
     Query: ResolverTypeWrapper<{}>;
     ID: ResolverTypeWrapper<Scalars['ID']>;
-    Account: ResolverTypeWrapper<Account>;
+    Account: ResolverTypeWrapper<IAccount>;
     String: ResolverTypeWrapper<Scalars['String']>;
     Int: ResolverTypeWrapper<Scalars['Int']>;
-    Address: ResolverTypeWrapper<Address>;
-    AddressType: AddressType;
+    Address: ResolverTypeWrapper<IAddress>;
+    AddressType: IAddressType;
     AWSPhone: ResolverTypeWrapper<Scalars['AWSPhone']>;
-    User: ResolverTypeWrapper<User>;
+    User: ResolverTypeWrapper<IUser>;
     AWSDateTime: ResolverTypeWrapper<Scalars['AWSDateTime']>;
-    Plan: ResolverTypeWrapper<Plan>;
-    PlanType: ResolverTypeWrapper<PlanType>;
+    Plan: ResolverTypeWrapper<IPlan>;
+    PlanType: ResolverTypeWrapper<IPlanType>;
     Float: ResolverTypeWrapper<Scalars['Float']>;
-    Form: ResolverTypeWrapper<Form>;
-    FormVersion: ResolverTypeWrapper<FormVersion>;
+    Form: ResolverTypeWrapper<IForm>;
+    FormVersion: ResolverTypeWrapper<IFormVersion>;
     AWSJSON: ResolverTypeWrapper<Scalars['AWSJSON']>;
     AWSURL: ResolverTypeWrapper<Scalars['AWSURL']>;
-    Integration: ResolverTypeWrapper<Integration>;
-    IntegrationType: ResolverTypeWrapper<IntegrationType>;
-    FormEntry: ResolverTypeWrapper<FormEntry>;
-    OffsetLimit: OffsetLimit;
-    AccountFilterInput: AccountFilterInput;
-    StringFilter: StringFilter;
-    FilterWith: FilterWith;
-    StringFilterExpression: StringFilterExpression;
-    DateFilter: DateFilter;
-    NumericFilterExpression: NumericFilterExpression;
-    IntFilter: IntFilter;
-    AccountSortInput: AccountSortInput;
-    SortOrder: SortOrder;
-    UserFilterInput: UserFilterInput;
-    UserSortInput: UserSortInput;
-    PlanFilterInput: PlanFilterInput;
-    PlanSortInput: PlanSortInput;
-    PlanTypeFilterInput: PlanTypeFilterInput;
-    FloatFilter: FloatFilter;
-    PlanTypeSortInput: PlanTypeSortInput;
-    FormFilterInput: FormFilterInput;
-    FormSortInput: FormSortInput;
-    FormVersionFilterInput: FormVersionFilterInput;
-    FormVersionSortInput: FormVersionSortInput;
-    IntegrationTypeFilterInput: IntegrationTypeFilterInput;
-    IntegrationTypeSortInput: IntegrationTypeSortInput;
-    IntegrationFilterInput: IntegrationFilterInput;
-    IntegrationSortInput: IntegrationSortInput;
-    FormEntryFilterInput: FormEntryFilterInput;
-    FormEntrySortInput: FormEntrySortInput;
+    Integration: ResolverTypeWrapper<IIntegration>;
+    IntegrationType: ResolverTypeWrapper<IIntegrationType>;
+    FormEntry: ResolverTypeWrapper<IFormEntry>;
+    OffsetLimit: IOffsetLimit;
+    AccountFilterInput: IAccountFilterInput;
+    StringFilter: IStringFilter;
+    FilterWith: IFilterWith;
+    StringFilterExpression: IStringFilterExpression;
+    DateFilter: IDateFilter;
+    NumericFilterExpression: INumericFilterExpression;
+    IntFilter: IIntFilter;
+    AccountSortInput: IAccountSortInput;
+    SortOrder: ISortOrder;
+    UserFilterInput: IUserFilterInput;
+    UserSortInput: IUserSortInput;
+    PlanFilterInput: IPlanFilterInput;
+    PlanSortInput: IPlanSortInput;
+    PlanTypeFilterInput: IPlanTypeFilterInput;
+    FloatFilter: IFloatFilter;
+    PlanTypeSortInput: IPlanTypeSortInput;
+    FormFilterInput: IFormFilterInput;
+    FormSortInput: IFormSortInput;
+    FormVersionFilterInput: IFormVersionFilterInput;
+    FormVersionSortInput: IFormVersionSortInput;
+    IntegrationTypeFilterInput: IIntegrationTypeFilterInput;
+    IntegrationTypeSortInput: IIntegrationTypeSortInput;
+    IntegrationFilterInput: IIntegrationFilterInput;
+    IntegrationSortInput: IIntegrationSortInput;
+    FormEntryFilterInput: IFormEntryFilterInput;
+    FormEntrySortInput: IFormEntrySortInput;
     Mutation: ResolverTypeWrapper<{}>;
-    AddPlanTypeInput: AddPlanTypeInput;
-    AddPlanInput: AddPlanInput;
-    AddIntegrationTypeInput: AddIntegrationTypeInput;
-    AddIntegrationInput: AddIntegrationInput;
-    AddFormInput: AddFormInput;
-    AddFormVersionInput: AddFormVersionInput;
-    AttachFormVersionInput: AttachFormVersionInput;
-    UpdatePlanTypeInput: UpdatePlanTypeInput;
-    UpdatePlanInput: UpdatePlanInput;
-    UpdateAccountInput: UpdateAccountInput;
-    UpdateUserInput: UpdateUserInput;
-    UpdateUserInputData: UpdateUserInputData;
-    UpdateIntegrationTypeInput: UpdateIntegrationTypeInput;
-    UpdateIntegrationInput: UpdateIntegrationInput;
-    UpdateFormInput: UpdateFormInput;
-    DeleteFormInput: DeleteFormInput;
-    DeleteFormVersionInput: DeleteFormVersionInput;
-    AddFormEntryInput: AddFormEntryInput;
-    FormEntrySansData: ResolverTypeWrapper<FormEntrySansData>;
+    AddPlanTypeInput: IAddPlanTypeInput;
+    AddPlanInput: IAddPlanInput;
+    AddIntegrationTypeInput: IAddIntegrationTypeInput;
+    AddIntegrationInput: IAddIntegrationInput;
+    AddFormInput: IAddFormInput;
+    AddFormVersionInput: IAddFormVersionInput;
+    AttachFormVersionInput: IAttachFormVersionInput;
+    UpdatePlanTypeInput: IUpdatePlanTypeInput;
+    UpdatePlanInput: IUpdatePlanInput;
+    UpdateAccountInput: IUpdateAccountInput;
+    UpdateUserInput: IUpdateUserInput;
+    UpdateUserInputData: IUpdateUserInputData;
+    UpdateIntegrationTypeInput: IUpdateIntegrationTypeInput;
+    UpdateIntegrationInput: IUpdateIntegrationInput;
+    UpdateFormInput: IUpdateFormInput;
+    DeleteFormInput: IDeleteFormInput;
+    DeleteFormVersionInput: IDeleteFormVersionInput;
+    AddFormEntryInput: IAddFormEntryInput;
+    FormEntrySansData: ResolverTypeWrapper<IFormEntrySansData>;
     Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-    BooleanFilterExpression: BooleanFilterExpression;
-    UserGroup: UserGroup;
-    BooleanFilter: BooleanFilter;
-    AddAddressInput: ResolverTypeWrapper<AddAddressInput>;
-    UpdateIntegrationTypeInputData: UpdateIntegrationTypeInputData;
+    BooleanFilterExpression: IBooleanFilterExpression;
+    UserGroup: IUserGroup;
+    BooleanFilter: IBooleanFilter;
+    AddAddressInput: ResolverTypeWrapper<IAddAddressInput>;
+    UpdateIntegrationTypeInputData: IUpdateIntegrationTypeInputData;
 };
 /** Mapping between all available schema types and the resolvers parents */
-export declare type ResolversParentTypes = {
+export declare type IResolversParentTypes = {
     Query: {};
     ID: Scalars['ID'];
-    Account: Account;
+    Account: IAccount;
     String: Scalars['String'];
     Int: Scalars['Int'];
-    Address: Address;
-    AddressType: AddressType;
+    Address: IAddress;
+    AddressType: IAddressType;
     AWSPhone: Scalars['AWSPhone'];
-    User: User;
+    User: IUser;
     AWSDateTime: Scalars['AWSDateTime'];
-    Plan: Plan;
-    PlanType: PlanType;
+    Plan: IPlan;
+    PlanType: IPlanType;
     Float: Scalars['Float'];
-    Form: Form;
-    FormVersion: FormVersion;
+    Form: IForm;
+    FormVersion: IFormVersion;
     AWSJSON: Scalars['AWSJSON'];
     AWSURL: Scalars['AWSURL'];
-    Integration: Integration;
-    IntegrationType: IntegrationType;
-    FormEntry: FormEntry;
-    OffsetLimit: OffsetLimit;
-    AccountFilterInput: AccountFilterInput;
-    StringFilter: StringFilter;
-    FilterWith: FilterWith;
-    StringFilterExpression: StringFilterExpression;
-    DateFilter: DateFilter;
-    NumericFilterExpression: NumericFilterExpression;
-    IntFilter: IntFilter;
-    AccountSortInput: AccountSortInput;
-    SortOrder: SortOrder;
-    UserFilterInput: UserFilterInput;
-    UserSortInput: UserSortInput;
-    PlanFilterInput: PlanFilterInput;
-    PlanSortInput: PlanSortInput;
-    PlanTypeFilterInput: PlanTypeFilterInput;
-    FloatFilter: FloatFilter;
-    PlanTypeSortInput: PlanTypeSortInput;
-    FormFilterInput: FormFilterInput;
-    FormSortInput: FormSortInput;
-    FormVersionFilterInput: FormVersionFilterInput;
-    FormVersionSortInput: FormVersionSortInput;
-    IntegrationTypeFilterInput: IntegrationTypeFilterInput;
-    IntegrationTypeSortInput: IntegrationTypeSortInput;
-    IntegrationFilterInput: IntegrationFilterInput;
-    IntegrationSortInput: IntegrationSortInput;
-    FormEntryFilterInput: FormEntryFilterInput;
-    FormEntrySortInput: FormEntrySortInput;
+    Integration: IIntegration;
+    IntegrationType: IIntegrationType;
+    FormEntry: IFormEntry;
+    OffsetLimit: IOffsetLimit;
+    AccountFilterInput: IAccountFilterInput;
+    StringFilter: IStringFilter;
+    FilterWith: IFilterWith;
+    StringFilterExpression: IStringFilterExpression;
+    DateFilter: IDateFilter;
+    NumericFilterExpression: INumericFilterExpression;
+    IntFilter: IIntFilter;
+    AccountSortInput: IAccountSortInput;
+    SortOrder: ISortOrder;
+    UserFilterInput: IUserFilterInput;
+    UserSortInput: IUserSortInput;
+    PlanFilterInput: IPlanFilterInput;
+    PlanSortInput: IPlanSortInput;
+    PlanTypeFilterInput: IPlanTypeFilterInput;
+    FloatFilter: IFloatFilter;
+    PlanTypeSortInput: IPlanTypeSortInput;
+    FormFilterInput: IFormFilterInput;
+    FormSortInput: IFormSortInput;
+    FormVersionFilterInput: IFormVersionFilterInput;
+    FormVersionSortInput: IFormVersionSortInput;
+    IntegrationTypeFilterInput: IIntegrationTypeFilterInput;
+    IntegrationTypeSortInput: IIntegrationTypeSortInput;
+    IntegrationFilterInput: IIntegrationFilterInput;
+    IntegrationSortInput: IIntegrationSortInput;
+    FormEntryFilterInput: IFormEntryFilterInput;
+    FormEntrySortInput: IFormEntrySortInput;
     Mutation: {};
-    AddPlanTypeInput: AddPlanTypeInput;
-    AddPlanInput: AddPlanInput;
-    AddIntegrationTypeInput: AddIntegrationTypeInput;
-    AddIntegrationInput: AddIntegrationInput;
-    AddFormInput: AddFormInput;
-    AddFormVersionInput: AddFormVersionInput;
-    AttachFormVersionInput: AttachFormVersionInput;
-    UpdatePlanTypeInput: UpdatePlanTypeInput;
-    UpdatePlanInput: UpdatePlanInput;
-    UpdateAccountInput: UpdateAccountInput;
-    UpdateUserInput: UpdateUserInput;
-    UpdateUserInputData: UpdateUserInputData;
-    UpdateIntegrationTypeInput: UpdateIntegrationTypeInput;
-    UpdateIntegrationInput: UpdateIntegrationInput;
-    UpdateFormInput: UpdateFormInput;
-    DeleteFormInput: DeleteFormInput;
-    DeleteFormVersionInput: DeleteFormVersionInput;
-    AddFormEntryInput: AddFormEntryInput;
-    FormEntrySansData: FormEntrySansData;
+    AddPlanTypeInput: IAddPlanTypeInput;
+    AddPlanInput: IAddPlanInput;
+    AddIntegrationTypeInput: IAddIntegrationTypeInput;
+    AddIntegrationInput: IAddIntegrationInput;
+    AddFormInput: IAddFormInput;
+    AddFormVersionInput: IAddFormVersionInput;
+    AttachFormVersionInput: IAttachFormVersionInput;
+    UpdatePlanTypeInput: IUpdatePlanTypeInput;
+    UpdatePlanInput: IUpdatePlanInput;
+    UpdateAccountInput: IUpdateAccountInput;
+    UpdateUserInput: IUpdateUserInput;
+    UpdateUserInputData: IUpdateUserInputData;
+    UpdateIntegrationTypeInput: IUpdateIntegrationTypeInput;
+    UpdateIntegrationInput: IUpdateIntegrationInput;
+    UpdateFormInput: IUpdateFormInput;
+    DeleteFormInput: IDeleteFormInput;
+    DeleteFormVersionInput: IDeleteFormVersionInput;
+    AddFormEntryInput: IAddFormEntryInput;
+    FormEntrySansData: IFormEntrySansData;
     Boolean: Scalars['Boolean'];
-    BooleanFilterExpression: BooleanFilterExpression;
-    UserGroup: UserGroup;
-    BooleanFilter: BooleanFilter;
-    AddAddressInput: AddAddressInput;
-    UpdateIntegrationTypeInputData: UpdateIntegrationTypeInputData;
+    BooleanFilterExpression: IBooleanFilterExpression;
+    UserGroup: IUserGroup;
+    BooleanFilter: IBooleanFilter;
+    AddAddressInput: IAddAddressInput;
+    UpdateIntegrationTypeInputData: IUpdateIntegrationTypeInputData;
 };
-export declare type ModelDirectiveResolver<Result, Parent, ContextType = any, Args = {}> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
-export declare type Aws_Api_KeyDirectiveResolver<Result, Parent, ContextType = any, Args = {}> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
-export declare type AccountResolvers<ContextType = any, ParentType extends ResolversParentTypes['Account'] = ResolversParentTypes['Account']> = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-    addresses?: Resolver<Maybe<Array<Maybe<ResolversTypes['Address']>>>, ParentType, ContextType, AccountAddressesArgs>;
-    website?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-    taxId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-    ownerId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    ownedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-    plan?: Resolver<Maybe<ResolversTypes['Plan']>, ParentType, ContextType>;
-    planId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-    createdAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    updatedAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    active?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-    numForms?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-    numUsers?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-    users?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType, AccountUsersArgs>;
-    forms?: Resolver<Maybe<Array<Maybe<ResolversTypes['Form']>>>, ParentType, ContextType, AccountFormsArgs>;
+export declare type IModelDirectiveResolver<Result, Parent, ContextType = any, Args = {}> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+export declare type IAws_Api_KeyDirectiveResolver<Result, Parent, ContextType = any, Args = {}> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+export declare type IAccountResolvers<ContextType = any, ParentType extends IResolversParentTypes['Account'] = IResolversParentTypes['Account']> = {
+    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    name?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
+    addresses?: Resolver<Maybe<Array<Maybe<IResolversTypes['Address']>>>, ParentType, ContextType, IAccountAddressesArgs>;
+    website?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
+    taxId?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
+    ownerId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    ownedBy?: Resolver<IResolversTypes['User'], ParentType, ContextType>;
+    plan?: Resolver<Maybe<IResolversTypes['Plan']>, ParentType, ContextType>;
+    planId?: Resolver<Maybe<IResolversTypes['ID']>, ParentType, ContextType>;
+    createdAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    updatedAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    active?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
+    numForms?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
+    numUsers?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
+    users?: Resolver<Maybe<Array<Maybe<IResolversTypes['User']>>>, ParentType, ContextType, IAccountUsersArgs>;
+    forms?: Resolver<Maybe<Array<Maybe<IResolversTypes['Form']>>>, ParentType, ContextType, IAccountFormsArgs>;
 };
-export declare type AddAddressInputResolvers<ContextType = any, ParentType extends ResolversParentTypes['AddAddressInput'] = ResolversParentTypes['AddAddressInput']> = {
-    name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-    addressee?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-    addressType?: Resolver<ResolversTypes['AddressType'], ParentType, ContextType>;
-    phone_number?: Resolver<Maybe<ResolversTypes['AWSPhone']>, ParentType, ContextType>;
-    email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-    street?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-    city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-    state?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-    country?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+export declare type IAddAddressInputResolvers<ContextType = any, ParentType extends IResolversParentTypes['AddAddressInput'] = IResolversParentTypes['AddAddressInput']> = {
+    name?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
+    addressee?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
+    addressType?: Resolver<IResolversTypes['AddressType'], ParentType, ContextType>;
+    phone_number?: Resolver<Maybe<IResolversTypes['AWSPhone']>, ParentType, ContextType>;
+    email?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
+    street?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
+    city?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
+    state?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
+    country?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
 };
-export declare type AddressResolvers<ContextType = any, ParentType extends ResolversParentTypes['Address'] = ResolversParentTypes['Address']> = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-    addressee?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-    addressType?: Resolver<ResolversTypes['AddressType'], ParentType, ContextType>;
-    phone_number?: Resolver<Maybe<ResolversTypes['AWSPhone']>, ParentType, ContextType>;
-    email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-    street?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-    city?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-    state?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-    country?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+export declare type IAddressResolvers<ContextType = any, ParentType extends IResolversParentTypes['Address'] = IResolversParentTypes['Address']> = {
+    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    name?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
+    addressee?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
+    addressType?: Resolver<IResolversTypes['AddressType'], ParentType, ContextType>;
+    phone_number?: Resolver<Maybe<IResolversTypes['AWSPhone']>, ParentType, ContextType>;
+    email?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
+    street?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
+    city?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
+    state?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
+    country?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
 };
-export interface AwsDateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['AWSDateTime'], any> {
+export interface IAwsDateTimeScalarConfig extends GraphQLScalarTypeConfig<IResolversTypes['AWSDateTime'], any> {
     name: 'AWSDateTime';
 }
-export interface AwsjsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['AWSJSON'], any> {
+export interface IAwsjsonScalarConfig extends GraphQLScalarTypeConfig<IResolversTypes['AWSJSON'], any> {
     name: 'AWSJSON';
 }
-export interface AwsPhoneScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['AWSPhone'], any> {
+export interface IAwsPhoneScalarConfig extends GraphQLScalarTypeConfig<IResolversTypes['AWSPhone'], any> {
     name: 'AWSPhone';
 }
-export interface AwsurlScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['AWSURL'], any> {
+export interface IAwsurlScalarConfig extends GraphQLScalarTypeConfig<IResolversTypes['AWSURL'], any> {
     name: 'AWSURL';
 }
-export declare type FormResolvers<ContextType = any, ParentType extends ResolversParentTypes['Form'] = ResolversParentTypes['Form']> = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    ownerId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-    description?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-    versionId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-    versionActivatedDate?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    version?: Resolver<Maybe<ResolversTypes['FormVersion']>, ParentType, ContextType>;
-    ownedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-    accountId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    account?: Resolver<ResolversTypes['Account'], ParentType, ContextType>;
-    createdAt?: Resolver<ResolversTypes['AWSDateTime'], ParentType, ContextType>;
-    updatedAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    startDate?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    endDate?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    isPaused?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-    isDeleted?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-    redirectNotStarted?: Resolver<Maybe<ResolversTypes['AWSURL']>, ParentType, ContextType>;
-    redirectHasEnded?: Resolver<Maybe<ResolversTypes['AWSURL']>, ParentType, ContextType>;
-    versions?: Resolver<Maybe<Array<Maybe<ResolversTypes['FormVersion']>>>, ParentType, ContextType, FormVersionsArgs>;
-    integrations?: Resolver<Maybe<Array<Maybe<ResolversTypes['Integration']>>>, ParentType, ContextType, FormIntegrationsArgs>;
-    numEntries?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-    entries?: Resolver<Maybe<Array<Maybe<ResolversTypes['FormEntry']>>>, ParentType, ContextType, FormEntriesArgs>;
+export declare type IFormResolvers<ContextType = any, ParentType extends IResolversParentTypes['Form'] = IResolversParentTypes['Form']> = {
+    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    ownerId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    name?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
+    description?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
+    versionId?: Resolver<Maybe<IResolversTypes['ID']>, ParentType, ContextType>;
+    versionActivatedDate?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    version?: Resolver<Maybe<IResolversTypes['FormVersion']>, ParentType, ContextType>;
+    ownedBy?: Resolver<IResolversTypes['User'], ParentType, ContextType>;
+    accountId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    account?: Resolver<IResolversTypes['Account'], ParentType, ContextType>;
+    createdAt?: Resolver<IResolversTypes['AWSDateTime'], ParentType, ContextType>;
+    updatedAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    startDate?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    endDate?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    isPaused?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
+    isDeleted?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
+    redirectNotStarted?: Resolver<Maybe<IResolversTypes['AWSURL']>, ParentType, ContextType>;
+    redirectHasEnded?: Resolver<Maybe<IResolversTypes['AWSURL']>, ParentType, ContextType>;
+    versions?: Resolver<Maybe<Array<Maybe<IResolversTypes['FormVersion']>>>, ParentType, ContextType, IFormVersionsArgs>;
+    integrations?: Resolver<Maybe<Array<Maybe<IResolversTypes['Integration']>>>, ParentType, ContextType, IFormIntegrationsArgs>;
+    numEntries?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
+    entries?: Resolver<Maybe<Array<Maybe<IResolversTypes['FormEntry']>>>, ParentType, ContextType, IFormEntriesArgs>;
 };
-export declare type FormEntryResolvers<ContextType = any, ParentType extends ResolversParentTypes['FormEntry'] = ResolversParentTypes['FormEntry']> = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    accountId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    formId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    form?: Resolver<ResolversTypes['Form'], ParentType, ContextType>;
-    data?: Resolver<ResolversTypes['AWSJSON'], ParentType, ContextType>;
-    createdAt?: Resolver<ResolversTypes['AWSDateTime'], ParentType, ContextType>;
+export declare type IFormEntryResolvers<ContextType = any, ParentType extends IResolversParentTypes['FormEntry'] = IResolversParentTypes['FormEntry']> = {
+    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    accountId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    formId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    form?: Resolver<IResolversTypes['Form'], ParentType, ContextType>;
+    data?: Resolver<IResolversTypes['AWSJSON'], ParentType, ContextType>;
+    createdAt?: Resolver<IResolversTypes['AWSDateTime'], ParentType, ContextType>;
 };
-export declare type FormEntrySansDataResolvers<ContextType = any, ParentType extends ResolversParentTypes['FormEntrySansData'] = ResolversParentTypes['FormEntrySansData']> = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    formId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    createdAt?: Resolver<ResolversTypes['AWSDateTime'], ParentType, ContextType>;
+export declare type IFormEntrySansDataResolvers<ContextType = any, ParentType extends IResolversParentTypes['FormEntrySansData'] = IResolversParentTypes['FormEntrySansData']> = {
+    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    formId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    createdAt?: Resolver<IResolversTypes['AWSDateTime'], ParentType, ContextType>;
 };
-export declare type FormVersionResolvers<ContextType = any, ParentType extends ResolversParentTypes['FormVersion'] = ResolversParentTypes['FormVersion']> = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    accountId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    formId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    ownerId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    ownedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-    createdAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-    notes?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-    formData?: Resolver<ResolversTypes['AWSJSON'], ParentType, ContextType>;
+export declare type IFormVersionResolvers<ContextType = any, ParentType extends IResolversParentTypes['FormVersion'] = IResolversParentTypes['FormVersion']> = {
+    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    accountId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    formId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    ownerId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    ownedBy?: Resolver<IResolversTypes['User'], ParentType, ContextType>;
+    createdAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    displayName?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
+    notes?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
+    formData?: Resolver<IResolversTypes['AWSJSON'], ParentType, ContextType>;
 };
-export declare type IntegrationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Integration'] = ResolversParentTypes['Integration']> = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    integrationTypeId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    integrationType?: Resolver<Maybe<ResolversTypes['IntegrationType']>, ParentType, ContextType>;
-    ownerId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    accountId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    formId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    form?: Resolver<ResolversTypes['Form'], ParentType, ContextType>;
-    active?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-    authType?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-    auth?: Resolver<Maybe<ResolversTypes['AWSJSON']>, ParentType, ContextType>;
-    target?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-    method?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-    lastExecuted?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    lastExecutionResult?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-    lastExecutionResultMessage?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-    createdAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    updatedAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    isDeleted?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+export declare type IIntegrationResolvers<ContextType = any, ParentType extends IResolversParentTypes['Integration'] = IResolversParentTypes['Integration']> = {
+    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    integrationTypeId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    integrationType?: Resolver<Maybe<IResolversTypes['IntegrationType']>, ParentType, ContextType>;
+    ownerId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    accountId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    formId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    form?: Resolver<IResolversTypes['Form'], ParentType, ContextType>;
+    active?: Resolver<IResolversTypes['Int'], ParentType, ContextType>;
+    authType?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
+    auth?: Resolver<Maybe<IResolversTypes['AWSJSON']>, ParentType, ContextType>;
+    target?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
+    method?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
+    lastExecuted?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    lastExecutionResult?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
+    lastExecutionResultMessage?: Resolver<Maybe<IResolversTypes['String']>, ParentType, ContextType>;
+    createdAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    updatedAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    isDeleted?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
 };
-export declare type IntegrationTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['IntegrationType'] = ResolversParentTypes['IntegrationType']> = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    ownerId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    ownedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-    planTypeId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    planType?: Resolver<Maybe<ResolversTypes['PlanType']>, ParentType, ContextType>;
-    name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-    active?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-    createdAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    updatedAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+export declare type IIntegrationTypeResolvers<ContextType = any, ParentType extends IResolversParentTypes['IntegrationType'] = IResolversParentTypes['IntegrationType']> = {
+    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    ownerId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    ownedBy?: Resolver<IResolversTypes['User'], ParentType, ContextType>;
+    planTypeId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    planType?: Resolver<Maybe<IResolversTypes['PlanType']>, ParentType, ContextType>;
+    name?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
+    active?: Resolver<IResolversTypes['Int'], ParentType, ContextType>;
+    createdAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    updatedAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
 };
-export declare type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-    addPlanType?: Resolver<ResolversTypes['PlanType'], ParentType, ContextType, MutationAddPlanTypeArgs>;
-    addPlan?: Resolver<ResolversTypes['Plan'], ParentType, ContextType, MutationAddPlanArgs>;
-    addIntegrationType?: Resolver<ResolversTypes['IntegrationType'], ParentType, ContextType, MutationAddIntegrationTypeArgs>;
-    addIntegration?: Resolver<ResolversTypes['Integration'], ParentType, ContextType, MutationAddIntegrationArgs>;
-    addForm?: Resolver<ResolversTypes['Form'], ParentType, ContextType, RequireFields<MutationAddFormArgs, 'input'>>;
-    addFormVersion?: Resolver<ResolversTypes['Form'], ParentType, ContextType, RequireFields<MutationAddFormVersionArgs, 'input'>>;
-    attachFormVersion?: Resolver<ResolversTypes['Form'], ParentType, ContextType, RequireFields<MutationAttachFormVersionArgs, 'input'>>;
-    updatePlanType?: Resolver<ResolversTypes['PlanType'], ParentType, ContextType, MutationUpdatePlanTypeArgs>;
-    updatePlan?: Resolver<ResolversTypes['Plan'], ParentType, ContextType, MutationUpdatePlanArgs>;
-    updateAccount?: Resolver<ResolversTypes['Account'], ParentType, ContextType, MutationUpdateAccountArgs>;
-    updateAccountPlan?: Resolver<ResolversTypes['Account'], ParentType, ContextType, MutationUpdateAccountPlanArgs>;
-    updateUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, MutationUpdateUserArgs>;
-    updateIntegrationType?: Resolver<ResolversTypes['IntegrationType'], ParentType, ContextType, MutationUpdateIntegrationTypeArgs>;
-    updateIntegration?: Resolver<ResolversTypes['Integration'], ParentType, ContextType, MutationUpdateIntegrationArgs>;
-    updateForm?: Resolver<ResolversTypes['Form'], ParentType, ContextType, MutationUpdateFormArgs>;
-    deleteForm?: Resolver<ResolversTypes['Form'], ParentType, ContextType, RequireFields<MutationDeleteFormArgs, 'input'>>;
-    deletePlanType?: Resolver<ResolversTypes['PlanType'], ParentType, ContextType, RequireFields<MutationDeletePlanTypeArgs, 'planTypeId'>>;
-    deletePlan?: Resolver<ResolversTypes['Plan'], ParentType, ContextType, RequireFields<MutationDeletePlanArgs, 'accountId' | 'planId'>>;
-    deleteAccount?: Resolver<ResolversTypes['Account'], ParentType, ContextType, RequireFields<MutationDeleteAccountArgs, 'accountId'>>;
-    deleteUser?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationDeleteUserArgs, 'userId'>>;
-    deleteIntegrationType?: Resolver<ResolversTypes['IntegrationType'], ParentType, ContextType, RequireFields<MutationDeleteIntegrationTypeArgs, 'integrationTypeId'>>;
-    deleteIntegration?: Resolver<ResolversTypes['Integration'], ParentType, ContextType, RequireFields<MutationDeleteIntegrationArgs, 'integrationId'>>;
-    deleteFormVersion?: Resolver<ResolversTypes['FormVersion'], ParentType, ContextType, RequireFields<MutationDeleteFormVersionArgs, 'input'>>;
-    addFormEntry?: Resolver<ResolversTypes['FormEntrySansData'], ParentType, ContextType, RequireFields<MutationAddFormEntryArgs, 'input'>>;
+export declare type IMutationResolvers<ContextType = any, ParentType extends IResolversParentTypes['Mutation'] = IResolversParentTypes['Mutation']> = {
+    addPlanType?: Resolver<IResolversTypes['PlanType'], ParentType, ContextType, IMutationAddPlanTypeArgs>;
+    addPlan?: Resolver<IResolversTypes['Plan'], ParentType, ContextType, IMutationAddPlanArgs>;
+    addIntegrationType?: Resolver<IResolversTypes['IntegrationType'], ParentType, ContextType, IMutationAddIntegrationTypeArgs>;
+    addIntegration?: Resolver<IResolversTypes['Integration'], ParentType, ContextType, IMutationAddIntegrationArgs>;
+    addForm?: Resolver<IResolversTypes['Form'], ParentType, ContextType, RequireFields<IMutationAddFormArgs, 'input'>>;
+    addFormVersion?: Resolver<IResolversTypes['Form'], ParentType, ContextType, RequireFields<IMutationAddFormVersionArgs, 'input'>>;
+    attachFormVersion?: Resolver<IResolversTypes['Form'], ParentType, ContextType, RequireFields<IMutationAttachFormVersionArgs, 'input'>>;
+    updatePlanType?: Resolver<IResolversTypes['PlanType'], ParentType, ContextType, IMutationUpdatePlanTypeArgs>;
+    updatePlan?: Resolver<IResolversTypes['Plan'], ParentType, ContextType, IMutationUpdatePlanArgs>;
+    updateAccount?: Resolver<IResolversTypes['Account'], ParentType, ContextType, IMutationUpdateAccountArgs>;
+    updateAccountPlan?: Resolver<IResolversTypes['Account'], ParentType, ContextType, IMutationUpdateAccountPlanArgs>;
+    updateUser?: Resolver<IResolversTypes['User'], ParentType, ContextType, IMutationUpdateUserArgs>;
+    updateIntegrationType?: Resolver<IResolversTypes['IntegrationType'], ParentType, ContextType, IMutationUpdateIntegrationTypeArgs>;
+    updateIntegration?: Resolver<IResolversTypes['Integration'], ParentType, ContextType, IMutationUpdateIntegrationArgs>;
+    updateForm?: Resolver<IResolversTypes['Form'], ParentType, ContextType, IMutationUpdateFormArgs>;
+    deleteForm?: Resolver<IResolversTypes['Form'], ParentType, ContextType, RequireFields<IMutationDeleteFormArgs, 'input'>>;
+    deletePlanType?: Resolver<IResolversTypes['PlanType'], ParentType, ContextType, RequireFields<IMutationDeletePlanTypeArgs, 'planTypeId'>>;
+    deletePlan?: Resolver<IResolversTypes['Plan'], ParentType, ContextType, RequireFields<IMutationDeletePlanArgs, 'accountId' | 'planId'>>;
+    deleteAccount?: Resolver<IResolversTypes['Account'], ParentType, ContextType, RequireFields<IMutationDeleteAccountArgs, 'accountId'>>;
+    deleteUser?: Resolver<IResolversTypes['User'], ParentType, ContextType, RequireFields<IMutationDeleteUserArgs, 'userId'>>;
+    deleteIntegrationType?: Resolver<IResolversTypes['IntegrationType'], ParentType, ContextType, RequireFields<IMutationDeleteIntegrationTypeArgs, 'integrationTypeId'>>;
+    deleteIntegration?: Resolver<IResolversTypes['Integration'], ParentType, ContextType, RequireFields<IMutationDeleteIntegrationArgs, 'integrationId'>>;
+    deleteFormVersion?: Resolver<IResolversTypes['FormVersion'], ParentType, ContextType, RequireFields<IMutationDeleteFormVersionArgs, 'input'>>;
+    addFormEntry?: Resolver<IResolversTypes['FormEntrySansData'], ParentType, ContextType, RequireFields<IMutationAddFormEntryArgs, 'input'>>;
 };
-export declare type PlanResolvers<ContextType = any, ParentType extends ResolversParentTypes['Plan'] = ResolversParentTypes['Plan']> = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    accountId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    account?: Resolver<ResolversTypes['Account'], ParentType, ContextType>;
-    ownerId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    ownedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-    planTypeId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    startDate?: Resolver<ResolversTypes['AWSDateTime'], ParentType, ContextType>;
-    endDate?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    active?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-    lastBillDate?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    createdAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    updatedAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    planType?: Resolver<Maybe<ResolversTypes['PlanType']>, ParentType, ContextType>;
-    isDeleted?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+export declare type IPlanResolvers<ContextType = any, ParentType extends IResolversParentTypes['Plan'] = IResolversParentTypes['Plan']> = {
+    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    accountId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    account?: Resolver<IResolversTypes['Account'], ParentType, ContextType>;
+    ownerId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    ownedBy?: Resolver<IResolversTypes['User'], ParentType, ContextType>;
+    planTypeId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    startDate?: Resolver<IResolversTypes['AWSDateTime'], ParentType, ContextType>;
+    endDate?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    active?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
+    lastBillDate?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    createdAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    updatedAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    planType?: Resolver<Maybe<IResolversTypes['PlanType']>, ParentType, ContextType>;
+    isDeleted?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
 };
-export declare type PlanTypeResolvers<ContextType = any, ParentType extends ResolversParentTypes['PlanType'] = ResolversParentTypes['PlanType']> = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    ownerId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    ownedBy?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-    name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-    cost?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
-    active?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-    billingTerm?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-    createdAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    updatedAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    isDeleted?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+export declare type IPlanTypeResolvers<ContextType = any, ParentType extends IResolversParentTypes['PlanType'] = IResolversParentTypes['PlanType']> = {
+    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    ownerId?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    ownedBy?: Resolver<IResolversTypes['User'], ParentType, ContextType>;
+    name?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
+    cost?: Resolver<IResolversTypes['Float'], ParentType, ContextType>;
+    active?: Resolver<IResolversTypes['Int'], ParentType, ContextType>;
+    billingTerm?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
+    createdAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    updatedAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    isDeleted?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
 };
-export declare type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-    getAccount?: Resolver<Maybe<ResolversTypes['Account']>, ParentType, ContextType, RequireFields<QueryGetAccountArgs, 'accountId'>>;
-    getUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryGetUserArgs, 'userId'>>;
-    getPlan?: Resolver<Maybe<ResolversTypes['Plan']>, ParentType, ContextType, RequireFields<QueryGetPlanArgs, 'planId'>>;
-    getActiveAccountPlan?: Resolver<Maybe<ResolversTypes['Plan']>, ParentType, ContextType, RequireFields<QueryGetActiveAccountPlanArgs, 'accountId'>>;
-    getPlanType?: Resolver<Maybe<ResolversTypes['PlanType']>, ParentType, ContextType, RequireFields<QueryGetPlanTypeArgs, 'planTypeId'>>;
-    getForm?: Resolver<Maybe<ResolversTypes['Form']>, ParentType, ContextType, RequireFields<QueryGetFormArgs, 'formId'>>;
-    getFormVersion?: Resolver<Maybe<ResolversTypes['FormVersion']>, ParentType, ContextType, RequireFields<QueryGetFormVersionArgs, 'versionId'>>;
-    getIntegrationType?: Resolver<Maybe<ResolversTypes['IntegrationType']>, ParentType, ContextType, RequireFields<QueryGetIntegrationTypeArgs, 'integrationTypeId'>>;
-    getIntegration?: Resolver<Maybe<ResolversTypes['Integration']>, ParentType, ContextType, RequireFields<QueryGetIntegrationArgs, 'integrationId'>>;
-    getFormEntry?: Resolver<Maybe<ResolversTypes['FormEntry']>, ParentType, ContextType, RequireFields<QueryGetFormEntryArgs, 'formEntryId'>>;
-    listAccounts?: Resolver<Maybe<Array<Maybe<ResolversTypes['Account']>>>, ParentType, ContextType, QueryListAccountsArgs>;
-    listUsers?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType, QueryListUsersArgs>;
-    listPlans?: Resolver<Maybe<Array<Maybe<ResolversTypes['Plan']>>>, ParentType, ContextType, QueryListPlansArgs>;
-    listPlanTypes?: Resolver<Maybe<Array<Maybe<ResolversTypes['PlanType']>>>, ParentType, ContextType, QueryListPlanTypesArgs>;
-    listForms?: Resolver<Maybe<Array<Maybe<ResolversTypes['Form']>>>, ParentType, ContextType, QueryListFormsArgs>;
-    listFormVersions?: Resolver<Maybe<Array<Maybe<ResolversTypes['FormVersion']>>>, ParentType, ContextType, QueryListFormVersionsArgs>;
-    listIntegrationTypes?: Resolver<Maybe<Array<Maybe<ResolversTypes['IntegrationType']>>>, ParentType, ContextType, QueryListIntegrationTypesArgs>;
-    listIntegrations?: Resolver<Maybe<Array<Maybe<ResolversTypes['Integration']>>>, ParentType, ContextType, QueryListIntegrationsArgs>;
-    listFormEntries?: Resolver<Maybe<Array<Maybe<ResolversTypes['FormEntry']>>>, ParentType, ContextType, QueryListFormEntriesArgs>;
+export declare type IQueryResolvers<ContextType = any, ParentType extends IResolversParentTypes['Query'] = IResolversParentTypes['Query']> = {
+    getAccount?: Resolver<Maybe<IResolversTypes['Account']>, ParentType, ContextType, RequireFields<IQueryGetAccountArgs, 'accountId'>>;
+    getUser?: Resolver<Maybe<IResolversTypes['User']>, ParentType, ContextType, RequireFields<IQueryGetUserArgs, 'userId'>>;
+    getPlan?: Resolver<Maybe<IResolversTypes['Plan']>, ParentType, ContextType, RequireFields<IQueryGetPlanArgs, 'planId'>>;
+    getActiveAccountPlan?: Resolver<Maybe<IResolversTypes['Plan']>, ParentType, ContextType, RequireFields<IQueryGetActiveAccountPlanArgs, 'accountId'>>;
+    getPlanType?: Resolver<Maybe<IResolversTypes['PlanType']>, ParentType, ContextType, RequireFields<IQueryGetPlanTypeArgs, 'planTypeId'>>;
+    getForm?: Resolver<Maybe<IResolversTypes['Form']>, ParentType, ContextType, RequireFields<IQueryGetFormArgs, 'formId'>>;
+    getFormVersion?: Resolver<Maybe<IResolversTypes['FormVersion']>, ParentType, ContextType, RequireFields<IQueryGetFormVersionArgs, 'versionId'>>;
+    getIntegrationType?: Resolver<Maybe<IResolversTypes['IntegrationType']>, ParentType, ContextType, RequireFields<IQueryGetIntegrationTypeArgs, 'integrationTypeId'>>;
+    getIntegration?: Resolver<Maybe<IResolversTypes['Integration']>, ParentType, ContextType, RequireFields<IQueryGetIntegrationArgs, 'integrationId'>>;
+    getFormEntry?: Resolver<Maybe<IResolversTypes['FormEntry']>, ParentType, ContextType, RequireFields<IQueryGetFormEntryArgs, 'formEntryId'>>;
+    listAccounts?: Resolver<Maybe<Array<Maybe<IResolversTypes['Account']>>>, ParentType, ContextType, IQueryListAccountsArgs>;
+    listUsers?: Resolver<Maybe<Array<Maybe<IResolversTypes['User']>>>, ParentType, ContextType, IQueryListUsersArgs>;
+    listPlans?: Resolver<Maybe<Array<Maybe<IResolversTypes['Plan']>>>, ParentType, ContextType, IQueryListPlansArgs>;
+    listPlanTypes?: Resolver<Maybe<Array<Maybe<IResolversTypes['PlanType']>>>, ParentType, ContextType, IQueryListPlanTypesArgs>;
+    listForms?: Resolver<Maybe<Array<Maybe<IResolversTypes['Form']>>>, ParentType, ContextType, IQueryListFormsArgs>;
+    listFormVersions?: Resolver<Maybe<Array<Maybe<IResolversTypes['FormVersion']>>>, ParentType, ContextType, IQueryListFormVersionsArgs>;
+    listIntegrationTypes?: Resolver<Maybe<Array<Maybe<IResolversTypes['IntegrationType']>>>, ParentType, ContextType, IQueryListIntegrationTypesArgs>;
+    listIntegrations?: Resolver<Maybe<Array<Maybe<IResolversTypes['Integration']>>>, ParentType, ContextType, IQueryListIntegrationsArgs>;
+    listFormEntries?: Resolver<Maybe<Array<Maybe<IResolversTypes['FormEntry']>>>, ParentType, ContextType, IQueryListFormEntriesArgs>;
 };
-export declare type UserResolvers<ContextType = any, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-    id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-    ownerId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-    ownedBy?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
-    accountId?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType>;
-    account?: Resolver<Maybe<ResolversTypes['Account']>, ParentType, ContextType>;
-    email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-    userGroup?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-    given_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-    family_name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-    phone_number?: Resolver<Maybe<ResolversTypes['AWSPhone']>, ParentType, ContextType>;
-    createdAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    updatedAt?: Resolver<Maybe<ResolversTypes['AWSDateTime']>, ParentType, ContextType>;
-    isDeleted?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
-    numForms?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+export declare type IUserResolvers<ContextType = any, ParentType extends IResolversParentTypes['User'] = IResolversParentTypes['User']> = {
+    id?: Resolver<IResolversTypes['ID'], ParentType, ContextType>;
+    ownerId?: Resolver<Maybe<IResolversTypes['ID']>, ParentType, ContextType>;
+    ownedBy?: Resolver<Maybe<IResolversTypes['User']>, ParentType, ContextType>;
+    accountId?: Resolver<Maybe<IResolversTypes['ID']>, ParentType, ContextType>;
+    account?: Resolver<Maybe<IResolversTypes['Account']>, ParentType, ContextType>;
+    email?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
+    userGroup?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
+    given_name?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
+    family_name?: Resolver<IResolversTypes['String'], ParentType, ContextType>;
+    phone_number?: Resolver<Maybe<IResolversTypes['AWSPhone']>, ParentType, ContextType>;
+    createdAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    updatedAt?: Resolver<Maybe<IResolversTypes['AWSDateTime']>, ParentType, ContextType>;
+    isDeleted?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
+    numForms?: Resolver<Maybe<IResolversTypes['Int']>, ParentType, ContextType>;
 };
-export declare type Resolvers<ContextType = any> = {
-    Account?: AccountResolvers<ContextType>;
-    AddAddressInput?: AddAddressInputResolvers<ContextType>;
-    Address?: AddressResolvers<ContextType>;
+export declare type IResolvers<ContextType = any> = {
+    Account?: IAccountResolvers<ContextType>;
+    AddAddressInput?: IAddAddressInputResolvers<ContextType>;
+    Address?: IAddressResolvers<ContextType>;
     AWSDateTime?: GraphQLScalarType;
     AWSJSON?: GraphQLScalarType;
     AWSPhone?: GraphQLScalarType;
     AWSURL?: GraphQLScalarType;
-    Form?: FormResolvers<ContextType>;
-    FormEntry?: FormEntryResolvers<ContextType>;
-    FormEntrySansData?: FormEntrySansDataResolvers<ContextType>;
-    FormVersion?: FormVersionResolvers<ContextType>;
-    Integration?: IntegrationResolvers<ContextType>;
-    IntegrationType?: IntegrationTypeResolvers<ContextType>;
-    Mutation?: MutationResolvers<ContextType>;
-    Plan?: PlanResolvers<ContextType>;
-    PlanType?: PlanTypeResolvers<ContextType>;
-    Query?: QueryResolvers<ContextType>;
-    User?: UserResolvers<ContextType>;
+    Form?: IFormResolvers<ContextType>;
+    FormEntry?: IFormEntryResolvers<ContextType>;
+    FormEntrySansData?: IFormEntrySansDataResolvers<ContextType>;
+    FormVersion?: IFormVersionResolvers<ContextType>;
+    Integration?: IIntegrationResolvers<ContextType>;
+    IntegrationType?: IIntegrationTypeResolvers<ContextType>;
+    Mutation?: IMutationResolvers<ContextType>;
+    Plan?: IPlanResolvers<ContextType>;
+    PlanType?: IPlanTypeResolvers<ContextType>;
+    Query?: IQueryResolvers<ContextType>;
+    User?: IUserResolvers<ContextType>;
 };
-/**
- * @deprecated
- * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
-*/
-export declare type IResolvers<ContextType = any> = Resolvers<ContextType>;
-export declare type DirectiveResolvers<ContextType = any> = {
-    model?: ModelDirectiveResolver<any, any, ContextType>;
-    aws_api_key?: Aws_Api_KeyDirectiveResolver<any, any, ContextType>;
+export declare type IDirectiveResolvers<ContextType = any> = {
+    model?: IModelDirectiveResolver<any, any, ContextType>;
+    aws_api_key?: IAws_Api_KeyDirectiveResolver<any, any, ContextType>;
 };
-/**
-* @deprecated
-* Use "DirectiveResolvers" root object instead. If you wish to get "IDirectiveResolvers", add "typesPrefix: I" to your config.
-*/
-export declare type IDirectiveResolvers<ContextType = any> = DirectiveResolvers<ContextType>;
