@@ -1,0 +1,31 @@
+$util.qr($ctx.stash.paths.add("FormVersion_delete_REQ.vtl"))
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments.input)
+
+#set($isAllowed = false)
+#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))
+    #set($isAllowed = true)
+#end
+
+#if($isAllowed)
+    #set($now = "${util.time.nowISO8601()}")
+    $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("id", $args.versionId))
+    $util.qr($ctx.stash.request.put("itemType", 'FormVersion'))
+    $util.qr($ctx.stash.put("operation", 'delete'))
+    {
+        "version": "2018-05-29",
+        "statements": [
+            "SELECT * FROM FormVersion WHERE id=:versionId",
+            "DELETE FROM FormVersion WHERE NOT EXISTS(SELECT NULL FROM Form f WHERE id=:formId and accountId=:accountId and f.versionId=:versionId) AND id=:versionId"
+        ],
+        "variableMap": {
+            ":versionId": "${args.versionId}",
+            ":accountId" : "${args.accountId}",
+            ":formId": "${args.formId}"
+        }
+    }
+#else
+    $util.error("User [${identity.callerId}] cannot execute [DELETE] on [FormVersion]", "Unauthorized")
+#end
+

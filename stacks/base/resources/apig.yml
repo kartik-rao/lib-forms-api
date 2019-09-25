@@ -1,0 +1,83 @@
+Resources:
+  IamRoleLambdaExecution:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:  "lambda.amazonaws.com"
+            Action:
+              - sts:AssumeRole
+      Path: "/"
+      RoleName: { "Fn::Join": [ "-", [ "${self:service}", "${self:provider.stage}", "${self:provider.region}", "lambdaRole" ] ] }
+      Policies:
+        - PolicyName: "${self:provider.environment.namePrefix}-role-lambda"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "tag:GetResources"
+                  - "secretsmanager:CreateSecret"
+                  - "secretsmanager:ListSecrets"
+                  - "secretsmanager:GetRandomPassword"
+                  - "logs:CreateLogGroup"
+                  - "logs:CreateLogStream"
+                  - "logs:PutLogEvents"
+                  - "xray:PutTelemetryRecords"
+                  - "xray:PutTraceSegments"
+                Resource:
+                  - "*"
+              - Effect: "Allow"
+                Action:
+                  - "ssm:GetParameter"
+                  - "ssm:GetParameters"
+                  - "ssm:GetParametersByPath"
+                Resource:
+                  - "arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:provider.stage}/formsli/*"
+  ApiGatewayRestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: ${self:provider.environment.namePrefix}apig
+      Description: ${self:provider.stage} ${self:service} api gateway
+  MyApiGatewayAuthorizer:
+    Type: AWS::ApiGateway::Authorizer
+    Properties:
+      AuthorizerResultTtlInSeconds: 300
+      IdentitySource: method.request.header.Authorization
+      Name: MyCognitoAuthorizer
+      RestApiId:
+          Ref: ApiGatewayRestApi
+      Type: COGNITO_USER_POOLS
+      ProviderARNs:
+          - ${ssm:/${self:provider.stage}/formsli/cognito/userpool/arn}
+  # /form (references the API Gateway as parent) - Used for form related apis
+  ApiGatewayResourceForm:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: { Ref: "ApiGatewayRestApi" }
+      ParentId: { Fn::GetAtt: "ApiGatewayRestApi.RootResourceId" }
+      PathPart: form
+  # /form (references the API Gateway as parent) - Used for form related apis
+  ApiGatewayResourceStream:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: { Ref: "ApiGatewayRestApi" }
+      ParentId: { Fn::GetAtt: "ApiGatewayRestApi.RootResourceId" }
+      PathPart: stream
+  # /user (references the API Gateway as parent) - Used for invite etc.
+  ApiGatewayResourceUser:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: { Ref: "ApiGatewayRestApi" }
+      ParentId: { Fn::GetAtt: "ApiGatewayRestApi.RootResourceId" }
+      PathPart: user
+  # /servers (references the API Gateway as parent) - Used for SFTP
+  ApiGatewayResourceServers:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: { Ref: "ApiGatewayRestApi" }
+      ParentId: { Fn::GetAtt: "ApiGatewayRestApi.RootResourceId" }
+      PathPart: servers

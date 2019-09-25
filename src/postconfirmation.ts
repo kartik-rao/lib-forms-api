@@ -10,6 +10,7 @@ import { AdminGetUserRequest } from "aws-sdk/clients/cognitoidentityserviceprovi
 
 const uuid = require('uuid/v4');
 
+const DatabaseName = process.env.databaseName;
 const DBClusterArn = process.env.dbClusterArn;
 const DBSecretARN = process.env.dbClusterSecretArn;
 const ServiceName  = process.env.serviceName;
@@ -25,7 +26,7 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
     let userId = userAttributes.sub;
     let userPool = new AWS.CognitoIdentityServiceProvider();
     const rdsCommonParams = {
-        database: ServiceName,
+        database: DatabaseName,
         resourceArn: DBClusterArn,
         secretArn: DBSecretARN
     };
@@ -136,7 +137,7 @@ export const handle = async (event : CognitoUserPoolTriggerEvent, context : any,
 
             console.log(`${ServiceName} - AccountAdmin initiated flow - RDS.Insert user=[${userId}] tenant=[${accountId}] group=[${group}]`);
             const addUserSQL:AWS.RDSDataService.ExecuteStatementRequest = {
-                database: ServiceName,
+                database: DatabaseName,
                 resourceArn: DBClusterArn,
                 secretArn: DBSecretARN,
                 sql: `INSERT INTO User(id, ownerId, userGroup, accountId, email, phone_number, given_name, family_name)

@@ -1,0 +1,172 @@
+Resources:
+  ssmAppName:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/app/name"
+      Description : Application Name
+      Value: formsli
+      Type: String
+  ssmPrefixKey:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/prefix/key"
+      Description : Stage-App prefix for SSM keys
+      Value: ${self:provider.environment.ssmKeyPrefix}
+      Type: String
+  ssmRootDomain:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/domain/tld"
+      Description: Application TLD
+      Value: ${self:provider.environment.rootDomain}
+      Type: String
+  ssmPrefixDomain:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/prefix/domain"
+      Description: Stage based domain prefix
+      Value: ${self:provider.environment.domain_prefix}
+      Type: String
+  ssmPrefixName:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/prefix/name"
+      Description: Stage based AWS resource name prefix
+      Value: ${self:provider.environment.namePrefix}
+      Type: String
+  ssmRootApigRestApiId:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/apig/restApiId"
+      Description: API Gateway Rest Api Id
+      Value:  
+        Ref: ApiGatewayRestApi
+      Type: String
+  ssmRootApigRootResource:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/apig/rootResourceId"
+      Description: API Gateway root resource id for paths to inherit from
+      Value:  { Fn::GetAtt: [ApiGatewayRestApi, RootResourceId] }
+      Type: String
+  ssmRootApigAuthorizerId:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/apig/authorizerId"
+      Description: API Gateway cognito authorizer id
+      Value: 
+        Ref: MyApiGatewayAuthorizer
+      Type: String
+  ssmApigResourceForm:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/apig/resource/form"
+      Description: API Gateway resource for /form paths
+      Value:  
+        Ref: ApiGatewayResourceForm
+      Type: String
+  ssmApigResourceStream:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/apig/resource/stream"
+      Description: API Gateway resource for /stream paths
+      Value:  
+        Ref: ApiGatewayResourceStream
+      Type: String
+  ssmApigResourceUser:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/apig/resource/user"
+      Description: API Gateway resource for /user paths
+      Value:  
+        Ref: ApiGatewayResourceUser
+      Type: String
+  ssmApigResourceServers:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/apig/resource/server"
+      Description: API Gateway resource for /server path, used by AWS Transfer
+      Value:  
+        Ref: ApiGatewayResourceServers
+      Type: String
+  ssmSftpServerId:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/sftp/id"
+      Description: AWS Transfer ServerId
+      Value: { Fn::GetAtt: [SftpServer, ServerId] }
+      Type: String
+  ssmSftpServerArn:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/sftp/arn"
+      Description: AWS Transfer Server Arn
+      Value: { Fn::GetAtt: [SftpServer, Arn] }
+      Type: String
+  ssmSftpUserRoleArn:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/sftp/userRoleArn"
+      Description: AWS Transfer User Role Arn
+      Value:  { Fn::GetAtt: [SftpUserRole, Arn] }
+      Type: String
+  ssmEntryQueueArn:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/queue/entry/arn"
+      Description: Entry Queue Arn
+      Value: { Fn::GetAtt: [EntryQueue, Arn] }
+      Type: String
+  ssmAnalyticsQueueArn:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/queue/analytics/arn"
+      Description: Analytics Queue Arn
+      Value: { Fn::GetAtt: [AnalyticsQueue, Arn] }
+      Type: String
+  ssmIntegrationQueueArn:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/queue/integration/arn"
+      Description: Integration Queue Arn
+      Value: { Fn::GetAtt: [IntegrationQueue, Arn] }
+      Type: String
+  ssmFirehoseQueueArn:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/queue/firehose/arn"
+      Description: Firehose Queue Arn
+      Value: { Fn::GetAtt: [FirehoseQueue, Arn] }
+      Type: String
+  ssmEntryQueueUrl:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/queue/entry/url"
+      Description: Entry Queue Url
+      Value: 
+        Ref: EntryQueue
+      Type: String
+  ssmAnalyticsQueueUrl:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/queue/analytics/url"
+      Description: Analytics Queue Url
+      Value: 
+        Ref: AnalyticsQueue
+      Type: String
+  ssmIntegrationQueueUrl:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/queue/integration/url"
+      Description: Integration Queue Url
+      Value: 
+        Ref: IntegrationQueue
+      Type: String
+  ssmFirehoseQueueUrl:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/queue/firehose/url"
+      Description: Firehose Queue Url
+      Value: 
+        Ref: FirehoseQueue
+      Type: String

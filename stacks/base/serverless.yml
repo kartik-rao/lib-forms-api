@@ -1,0 +1,47 @@
+#serverless.yml
+service: formsli-base
+frameworkVersion: '>=1.5.0 <2.0.0'
+provider:
+  name: aws
+  runtime: nodejs10.x
+  tracing: true
+  stage: ${opt:stage}
+  region: ${opt:region}
+  memorySize: 512
+  timeout: 30
+  logRetentionInDays: 7
+  tags:
+    stage  : ${self:provider.stage}
+    service: ${self:service}
+    region : ${self:provider.region}
+    stack  : base
+  environment:
+    namePrefix  : "${self:provider.stage}-formsli-"
+    ssmKeyPrefix: "${self:provider.stage}/formsli"
+    rootDomain  : ${opt:domain, 'forms.li'}
+    domain_prefix_dev: "dev-"
+    domain_prefix_staging: "staging-"
+    domain_prefix_production: ""
+    domain_prefix  : ${self:provider.environment.domain_prefix_${self:provider.stage}}
+    sftpDomain     : "${self:provider.environment.domain_prefix}sftp.${self:provider.environment.rootDomain}"
+    hostedZoneId   : Z3CMAQR65ETWUL
+    s3_user_bucket : ${ssm:/${self:provider.stage}/formsli/s3/buckets/user/id}
+    sqs_entry          : ${self:provider.environment.namePrefix}entry-queue
+    sqs_firehose       : ${self:provider.environment.namePrefix}firehose-queue
+    sqs_integration    : ${self:provider.environment.namePrefix}integration-queue
+    sqs_analytics      : ${self:provider.environment.namePrefix}analytics-queue
+plugins:
+  - serverless-pseudo-parameters
+  - '@anttiviljami/serverless-stack-output'
+
+resources:
+  - ${file(resources/cognito.yml)}
+  - ${file(resources/apig.yml)}
+  - ${file(resources/sftp.yml)}
+  - ${file(resources/sqs.yml)}
+  - ${file(resources/ssm.yml)}
+
+custom:
+  # Stack Output Plugin
+  output:
+    file: outputs/stack.${self:provider.stage}.json # toml, yaml, yml, and json format is available

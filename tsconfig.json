@@ -10,7 +10,7 @@
     },
     "include": [
         "src/*", 
-        "src/types/aws-xray-sdk.d.ts"
+        "types/aws-xray-sdk.d.ts"
     ],
     "exclude": [
         "node_modules"

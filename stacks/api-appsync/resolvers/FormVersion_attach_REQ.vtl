@@ -1,0 +1,32 @@
+$util.qr($ctx.stash.paths.add("FormVersion_attach_REQ.vtl"))
+#set($args=$ctx.arguments.input)
+#set($identity=$ctx.stash.identity)
+
+#set($isAllowed = false)
+#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))
+    #set($isAllowed = true)
+#end
+
+#if($isAllowed)
+    #set($now = "${util.time.nowISO8601()}")
+    $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("id", $args.formId))
+    $util.qr($ctx.stash.request.put("itemType", 'Form'))
+    $util.qr($ctx.stash.put("operation", 'post'))
+    {
+        "version": "2018-05-29",
+        "statements": [
+            "UPDATE Form SET versionId=:versionId, updatedAt=:updatedAt, versionActivatedDate=:versionActivatedDate WHERE id=:formId AND accountId=:accountId",
+            "SELECT * FROM Form WHERE id=:formId"
+        ],
+        "variableMap" : {
+            ":versionId": "${args.versionId}",
+            ":updatedAt": "${now}",
+            ":formId"   : "${args.formId}",
+            ":accountId": "${args.accountId}",
+            ":versionActivatedDate" : "${now}"
+        }
+    }
+#else
+    $util.error("User [${identity.callerId}] cannot execute [POST] on [Form]", "Unauthorized")
+#end

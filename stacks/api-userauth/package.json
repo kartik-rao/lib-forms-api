@@ -1,0 +1,36 @@
+{
+  "name": "lib-forms-api-userauth",
+  "version": "1.0.0",
+  "description": "Cognito triggers and user authentication lambdas",
+  "main": "index.js",
+  "scripts": {
+    "info": "cross-env \"SLS_DEBUG=*\" NODE_ENV=development node_modules/.bin/sls info -c ./serverless.yml --aws-s3-accelerate --stage dev --region ap-northeast-1 --aws-profile fl-infrastructure",
+    "deploy": "cross-env NODE_ENV=development node_modules/.bin/sls deploy -c ./serverless.yml --aws-s3-accelerate -v --stage dev --region ap-northeast-1 --aws-profile fl-infrastructure",
+    "remove": "cross-env NODE_ENV=development node_modules/.bin/sls remove -c ./serverless.yml -v --stage dev --region ap-northeast-1 --aws-profile fl-infrastructure",
+    "deploy:debug": "cross-env \"SLS_DEBUG=*\" NODE_ENV=development node_modules/.bin/sls deploy  -c ./serverless.yml --aws-s3-accelerate -v --stage dev --region ap-northeast-1 --aws-profile fl-infrastructure"
+  },
+  "author": "Kartik Rao",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@anttiviljami/serverless-stack-output": "^0.3.1",
+    "@types/aws-lambda": "^8.10.33",
+    "@types/node": "^12.7.7",
+    "serverless": "^1.51.0",
+    "serverless-domain-manager": "^3.3.0",
+    "serverless-iam-roles-per-function": "^2.0.2",
+    "serverless-plugin-aws-alerts": "^1.4.0",
+    "serverless-plugin-tracing": "^2.0.0",
+    "serverless-pseudo-parameters": "^2.4.0",
+    "serverless-webpack": "^5.3.1",
+    "ts-loader": "^6.1.2",
+    "typescript": "^3.6.3",
+    "webpack": "^4.41.0",
+    "webpack-node-externals": "^1.7.2"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.535.0",
+    "aws-xray-sdk": "^2.3.6",
+    "short-uuid": "^3.1.1",
+    "source-map-support": "^0.5.13"
+  }
+}

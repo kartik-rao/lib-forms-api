@@ -1,0 +1,63 @@
+Resources:
+  EntryDLQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: "${self:provider.environment.sqs_entry}-dl"
+  EntryQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      VisibilityTimeout: 120
+      QueueName: ${self:provider.environment.sqs_entry}
+      RedrivePolicy:
+        maxReceiveCount: 3
+        deadLetterTargetArn : { Fn::GetAtt: [EntryDLQueue, Arn] }
+  FirehoseDLQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: "${self:provider.environment.sqs_firehose}-dl"
+  FirehoseQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      VisibilityTimeout: 120
+      QueueName: ${self:provider.environment.sqs_firehose}
+      RedrivePolicy:
+        maxReceiveCount: 3
+        deadLetterTargetArn : { Fn::GetAtt: [FirehoseDLQueue, Arn] }
+  AnalyticsDLQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: "${self:provider.environment.sqs_analytics}-dl"
+  AnalyticsQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      VisibilityTimeout: 120
+      QueueName: ${self:provider.environment.sqs_analytics}
+      RedrivePolicy:
+        maxReceiveCount: 3
+        deadLetterTargetArn : { Fn::GetAtt: [AnalyticsDLQueue, Arn] }
+  IntegrationDLQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: "${self:provider.environment.sqs_integration}-dl"
+  IntegrationQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      VisibilityTimeout: 300
+      QueueName: ${self:provider.environment.sqs_integration}
+      RedrivePolicy:
+        maxReceiveCount: 3
+        deadLetterTargetArn : { Fn::GetAtt: [IntegrationDLQueue, Arn] }
+# Print out the queue names
+Outputs:
+  FirehoseQueue:
+    Value:
+      Ref: FirehoseQueue
+  EntryQueue:
+    Value:
+      Ref: EntryQueue
+  IntegrationQueue:
+    Value:
+      Ref: IntegrationQueue
+  AnalyticsQueue:
+    Value:
+      Ref: AnalyticsQueue

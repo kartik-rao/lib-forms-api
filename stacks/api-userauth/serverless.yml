@@ -1,0 +1,212 @@
+#serverless.yml
+service: formsli-auth
+frameworkVersion: '>=1.5.0 <2.0.0'
+provider:
+  profile: fl-infrastructure
+  name: aws
+  stage: ${opt:stage, 'dev'}
+  runtime: nodejs10.x
+  region: ${opt:region, 'ap-northeast-1'}
+  apiGateway:
+    restApiId: ${ssm:/${self:provider.stage}/formsli/apig/restApiId}
+    restApiRootResourceId: ${ssm:/${self:provider.stage}/formsli/apig/rootResourceId}
+    restApiResources: 
+      /servers: ${ssm:/${self:provider.stage}/formsli/apig/resource/server}
+      /user: ${ssm:/${self:provider.stage}/formsli/apig/resource/user}
+  logs:
+    restApi:
+      enableAccessLogging: true
+      level: INFO
+      dataTrace: true
+  tracing: true
+  memorySize: 512
+  timeout: 30
+  logRetentionInDays: 7
+  tags:
+    stage  : ${self:provider.stage}
+    service: ${self:service}
+    region : ${self:provider.region}
+    stack  : api-userauth
+  functions:
+    postconfirmation: ${self:service}-${self:provider.stage}-postconf
+    invite        : ${self:service}-${self:provider.stage}-invite
+    authftp       : ${self:service}-${self:provider.stage}-authftp
+  environment:
+    region          : ${self:provider.region}
+    environment     : ${self:provider.stage}
+    serviceName     : ${self:service}
+    databaseName    : "formsli"
+    userPoolId      : ${ssm:/${self:provider.stage}/formsli/cognito/userpool/id}
+    userPoolArn     : ${ssm:/${self:provider.stage}/formsli/cognito/userpool/arn}
+    userPoolClientId: ${ssm:/${self:provider.stage}/formsli/cognito/userpool/clientId}
+    dbClusterId     : ${ssm:/${self:provider.stage}/formsli/rds/id}
+    dbClusterArn    : "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:${self:provider.environment.dbClusterId}"
+    dbClusterSecretArn : ${ssm:/${self:provider.stage}/formsli/rds/password/secret}
+    s3_user_bucket     : ${ssm:/${self:provider.stage}/formsli/s3/buckets/user/id}
+    sftp_server_id     : ${ssm:/${self:provider.stage}/formsli/sftp/id}
+    sftp_server_arn    : ${ssm:/${self:provider.stage}/formsli/sftp/arn}
+    sftp_role_arn      : ${ssm:/${self:provider.stage}/formsli/sftp/userRoleArn}
+    domain_prefix      : ${ssm:/${self:provider.stage}/formsli/prefix/domain}
+    rootDomain         : ${ssm:/${self:provider.stage}/formsli/domain/tld}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "tag:GetResources"
+        - "secretsmanager:CreateSecret"
+        - "secretsmanager:ListSecrets"
+        - "secretsmanager:GetRandomPassword"
+        - "logs:CreateLogGroup"
+        - "logs:CreateLogStream"
+        - "logs:PutLogEvents"
+        - "xray:PutTelemetryRecords"
+        - "xray:PutTraceSegments"
+      Resource:
+        - "*"
+    - Effect: "Allow"
+      Action:
+        - "ssm:GetParameter"
+        - "ssm:GetParameters"
+        - "ssm:GetParametersByPath"
+      Resource:
+        - "arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:provider.stage}/formsli/*"
+
+plugins:
+  - serverless-webpack
+  - serverless-pseudo-parameters
+  - serverless-iam-roles-per-function
+  - serverless-domain-manager
+  - serverless-plugin-tracing
+  - serverless-plugin-aws-alerts
+  - '@anttiviljami/serverless-stack-output'
+
+custom:
+  # API Gateway custom domain
+  customDomain:
+    DependsOn: ApiGatewayApiKey1
+    domainName: "${self:provider.stage}-api.forms.li"
+    certificateName: "*.forms.li"
+    stage: ${self:provider.stage}
+    createRoute53Record: true
+    endpointType: 'regional'
+    securityPolicy: tls_1_2
+  alerts:
+    dashboards: true
+    stages:
+      - dev # Disable later
+      - staging
+      - production
+    topics:
+      alarm:
+        topic: ${self:service}-${self:provider.stage}-alerts-alarm
+        notifications:
+          - protocol: email
+            endpoint: infrastructure.${self:provider.stage}@forms.li
+    alarms:
+      - functionErrors
+      - functionThrottles
+      - functionInvocations
+      - functionDuration
+  serverless-iam-roles-per-function:
+    defaultInherit: true
+  # Stack Output Plugin
+  output:
+    file: outputs/stack.${self:provider.stage}.json # toml, yaml, yml, and json format is available
+  # Servlerless Webpack (for functions)
+  packagePath: './package.json'
+  webpack:
+    webpackConfig: 'webpack.config.js'   # Name of webpack configuration file
+    packager: 'npm'   # Packager that will be used to package your external modules
+    includeModules:
+      forceInclude:
+        - source-map-support
+functions:
+  authftp :
+    name: ${self:provider.functions.authftp}
+    handler: functions/authftp.handle
+    events:
+      - http:
+          path  : /servers/{serverId}/users/{username}/config
+          method: get
+          cors  : true
+          authorizer: aws_iam
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - cognito-idp:AdminGetUser
+          - cognito-idp:AdminInitiateAuth
+        Resource: "${self:provider.environment.userPoolArn}"
+  postConfirmation:
+    name: ${self:provider.functions.postconfirmation}
+    handler: functions/postconfirmation.handle
+    events:
+      - cognitoUserPool:
+          pool: fl-${self:provider.stage}-userpool
+          trigger: PostConfirmation
+          existing: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - ses:SendEmail
+          - ses:SendRawEmail
+        Resource:
+          - "*"
+        Condition:
+          StringLike:
+            ses:FromAddress:
+              - "*@forms.li"
+      - Effect: "Allow"
+        Action:
+          - "secretsmanager:GetSecretValue"
+        Resource:
+          - "arn:aws:secretsmanager:ap-northeast-1:#{AWS::AccountId}:secret:/${self:provider.stage}/formsli/rds/*"
+      - Effect: "Allow"
+        Action:
+          - "rds-data:BatchExecuteStatement"
+          - "rds-data:BeginTransaction"
+          - "rds-data:CommitTransaction"
+          - "rds-data:ExecuteStatement"
+          - "rds-data:RollbackTransaction"
+        Resource:
+          - "${self:provider.environment.dbClusterArn}"
+          - "${self:provider.environment.dbClusterArn}:*"
+      - Effect: Allow
+        Action:
+          - cognito-idp:AdminAddUserToGroup
+          - cognito-idp:AdminUpdateUserAttributes
+          - cognito-idp:AdminGetUser
+        Resource: "${self:provider.environment.userPoolArn}"
+  invite:
+    name: ${self:provider.functions.invite}
+    handler: functions/invite.handle
+    events:
+      - http:
+          path: /user/invite
+          method: post
+          cors: true
+          authorizer:
+            type: COGNITO_USER_POOLS
+            authorizerId:
+              ${ssm:/${self:provider.stage}/formsli/apig/authorizerId}
+            claims:
+              - email
+              - username
+              - custom:tenantId
+              - custom:group
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "secretsmanager:GetSecretValue"
+        Resource:
+          - "arn:aws:secretsmanager:ap-northeast-1:#{AWS::AccountId}:secret:/${self:provider.stage}/formsli/rds/*"
+      - Effect: "Allow"
+        Action:
+          - "rds-data:ExecuteStatement"
+        Resource:
+          - "${self:provider.environment.dbClusterArn}"
+          - "${self:provider.environment.dbClusterArn}:*"
+      - Effect: Allow
+        Action:
+          - cognito-idp:AdminAddUserToGroup
+          - cognito-idp:AdminCreateUser
+          - cognito-idp:AdminGetUser
+        Resource: "${self:provider.environment.userPoolArn}"

@@ -1,0 +1,24 @@
+$util.qr($ctx.stash.paths.add("PlanType_update_REQ.vtl"))
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments.input)
+
+#set($isAllowed = false)
+#if($identity.isAdmin == true)
+    #set($isAllowed = true)
+#end
+
+#if($isAllowed == true)
+    #set($request = $args)
+    $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("itemType", 'PlanType'))
+    $util.qr($ctx.stash.put("operation", 'put'))
+    {
+        "version": "2018-05-29",
+        "statements": [
+            "UPDATE PlanType SET updatedAt='${util.time.nowISO8601()}' #if($args.name) , `name`='${args.name}' #end #if($args.billingTerm) , billingTerm='${args.billingTerm}' #end #if(!$util.isNull($args.cost)) , cost=${args.cost} #end #if(!$util.isNull($args.active)) , active=${args.active} #end WHERE id='${args.id}'",
+            "SELECT * FROM PlanType WHERE id ='${args.id}'"
+        ]
+    }
+#else
+    $util.error("User [${ctx.stash.identity.callerId}] cannot execute [PUT] on [PlanType]", "Unauthorized")
+#end

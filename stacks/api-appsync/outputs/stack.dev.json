@@ -1,0 +1,6 @@
+{
+  "GraphQlApiUrl": "https://bke6pcak6zbbvdiarcuets2jze.appsync-api.ap-northeast-1.amazonaws.com/graphql",
+  "GraphQlApiKeyDefault": "da2-cuyd6n5zfvaedksxgq64v4ne2i",
+  "ServerlessDeploymentBucketAccelerated": "true",
+  "ServerlessDeploymentBucketName": "formsli-graphql-dev-serverlessdeploymentbucket-blg7pfx1z3ji"
+}

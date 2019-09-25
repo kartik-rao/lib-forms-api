@@ -1,0 +1,2114 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "ServerlessDeploymentBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        },
+        "AccelerateConfiguration": {
+          "AccelerationStatus": "Enabled"
+        }
+      }
+    },
+    "AppSyncRDSRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": "dev-formsli-appsync-iam-role",
+        "ManagedPolicyArns": [
+          {
+            "Ref": "AppSyncRDSPolicy"
+          }
+        ],
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Principal": {
+                "Service": [
+                  "appsync.amazonaws.com"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "DependsOn": [
+        "AppSyncRDSPolicy"
+      ]
+    },
+    "AppSyncRDSPolicy": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "Allow AWS AppSync to access RDS.",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "rds-data:InsertItems",
+                "rds-data:GetItems",
+                "rds-data:UpdateItems",
+                "rds-data:DeleteItems",
+                "rds-data:ExecuteSql",
+                "rds-data:BatchExecuteStatement",
+                "rds-data:BeginTransaction",
+                "rds-data:CommitTransaction",
+                "rds-data:ExecuteStatement",
+                "rds-data:RollbackTransaction",
+                "tag:GetResources"
+              ],
+              "Resource": [
+                {
+                  "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
+                },
+                {
+                  "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev:*"
+                }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "secretsmanager:GetSecretValue",
+                "secretsmanager:CreateSecret",
+                "secretsmanager:ListSecrets",
+                "secretsmanager:GetRandomPassword"
+              ],
+              "Resource": [
+                {
+                  "Fn::Sub": "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:/dev/formsli/rds/*"
+                }
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": "tag:GetResources",
+              "Resource": [
+                "*"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "AppSyncCloudWatchRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": "dev-formsli-appsync-logging-iam-role",
+        "ManagedPolicyArns": [
+          {
+            "Ref": "AppSyncCloudWatchPolicy"
+          }
+        ],
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "sts:AssumeRole"
+              ],
+              "Principal": {
+                "Service": [
+                  "appsync.amazonaws.com"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "DependsOn": [
+        "AppSyncCloudWatchPolicy"
+      ]
+    },
+    "AppSyncCloudWatchPolicy": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "Description": "Allow AWS AppSync to write logs",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Resource": "*"
+            }
+          ]
+        }
+      }
+    },
+    "AppsyncCloudfrontDistribution": {
+      "Type": "AWS::CloudFront::Distribution",
+      "DependsOn": [
+        "GraphQlApi"
+      ],
+      "Properties": {
+        "DistributionConfig": {
+          "Enabled": true,
+          "HttpVersion": "http2",
+          "Origins": [
+            {
+              "DomainName": {
+                "Fn::Select": [
+                  2,
+                  {
+                    "Fn::Split": [
+                      "/",
+                      {
+                        "Fn::GetAtt": [
+                          "GraphQlApi",
+                          "GraphQLUrl"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "Id": {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              },
+              "CustomOriginConfig": {
+                "HTTPPort": 80,
+                "HTTPSPort": 443,
+                "OriginKeepaliveTimeout": 60,
+                "OriginReadTimeout": 60,
+                "OriginProtocolPolicy": "https-only",
+                "OriginSSLProtocols": [
+                  "TLSv1",
+                  "TLSv1.1",
+                  "TLSv1.2"
+                ]
+              }
+            }
+          ],
+          "Aliases": [
+            "dev-graph.forms.li"
+          ],
+          "DefaultCacheBehavior": {
+            "AllowedMethods": [
+              "HEAD",
+              "DELETE",
+              "POST",
+              "GET",
+              "OPTIONS",
+              "PUT",
+              "PATCH"
+            ],
+            "ForwardedValues": {
+              "QueryString": false,
+              "Headers": [
+                "Authorization"
+              ]
+            },
+            "SmoothStreaming": false,
+            "Compress": true,
+            "TargetOriginId": {
+              "Fn::GetAtt": [
+                "GraphQlApi",
+                "ApiId"
+              ]
+            },
+            "ViewerProtocolPolicy": "redirect-to-https"
+          },
+          "ViewerCertificate": {
+            "SslSupportMethod": "sni-only",
+            "MinimumProtocolVersion": "TLSv1.1_2016",
+            "AcmCertificateArn": "arn:aws:acm:us-east-1:286358943194:certificate/8e043316-5cf7-467c-b453-159d3cf3d68e"
+          }
+        }
+      }
+    },
+    "ssmAppsyncApiId": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/dev/formsli/graphql/api/id",
+        "Value": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Type": "String"
+      }
+    },
+    "ssmAppsyncUrl": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/dev/formsli/graphql/api/url",
+        "Value": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "GraphQLUrl"
+          ]
+        },
+        "Type": "String"
+      }
+    },
+    "ssmAppsyncApiKey": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/dev/formsli/graphql/api/key",
+        "Value": {
+          "Fn::GetAtt": [
+            "GraphQlApiKeyDefault",
+            "ApiKey"
+          ]
+        },
+        "Type": "String"
+      }
+    },
+    "ssmAppsyncApiEndpoint": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/dev/formsli/graphql/api/endpoint",
+        "Value": {
+          "Fn::Select": [
+            2,
+            {
+              "Fn::Split": [
+                "/",
+                {
+                  "Fn::GetAtt": [
+                    "GraphQlApi",
+                    "GraphQLUrl"
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "Type": "String"
+      }
+    },
+    "AppsyncDnsRecord": {
+      "Type": "AWS::Route53::RecordSetGroup",
+      "Properties": {
+        "HostedZoneId": "Z3CMAQR65ETWUL",
+        "RecordSets": [
+          {
+            "Name": "dev-graph.forms.li",
+            "Type": "A",
+            "AliasTarget": {
+              "HostedZoneId": "Z2FDTNDATAQYW2",
+              "DNSName": {
+                "Fn::GetAtt": [
+                  "AppsyncCloudfrontDistribution",
+                  "DomainName"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    },
+    "GraphQlApi": {
+      "Type": "AWS::AppSync::GraphQLApi",
+      "Properties": {
+        "Name": "dev-formsli-graphql",
+        "AuthenticationType": "AMAZON_COGNITO_USER_POOLS",
+        "AdditionalAuthenticationProviders": [
+          {
+            "AuthenticationType": "API_KEY"
+          }
+        ],
+        "UserPoolConfig": {
+          "AwsRegion": "ap-northeast-1",
+          "UserPoolId": "ap-northeast-1_Q798Nsl33",
+          "DefaultAction": "ALLOW"
+        },
+        "LogConfig": {
+          "CloudWatchLogsRoleArn": {
+            "Fn::GetAtt": [
+              "AppSyncCloudWatchRole",
+              "Arn"
+            ]
+          },
+          "FieldLogLevel": "ALL"
+        }
+      }
+    },
+    "GraphQlApiLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": {
+          "Fn::Join": [
+            "/",
+            [
+              "/aws/appsync/apis",
+              {
+                "Fn::GetAtt": [
+                  "GraphQlApi",
+                  "ApiId"
+                ]
+              }
+            ]
+          ]
+        },
+        "RetentionInDays": 7
+      }
+    },
+    "GraphQlApiKeyDefault": {
+      "Type": "AWS::AppSync::ApiKey",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Description": "serverless-appsync-plugin: AppSync API Key for GraphQlApiKeyDefault",
+        "Expires": 1600945058
+      }
+    },
+    "GraphQlSchema": {
+      "Type": "AWS::AppSync::GraphQLSchema",
+      "Properties": {
+        "Definition": "enum FilterWith {\n  AND\n  OR\n}\n\nenum NumericFilterExpression {\n  in\n  ne\n  eq\n  le\n  lt\n  ge\n  gt\n  between\n  notBetween\n  isNull\n  isNotNull\n}\n\nenum BooleanFilterExpression {\n  ne\n  eq\n}\n\nenum StringFilterExpression {\n  ne\n  eq\n  contains\n  notContains\n  startsWith\n  isNull\n  isNotNull\n  in\n}\n\nenum UserGroup {\n  Admin\n  AccountAdmin\n  AccountEditor\n  AccountViewer\n}\n\ninput DateFilter {\n  with  : FilterWith\n  expression: NumericFilterExpression!\n  value: [AWSDateTime!]\n}\n\ninput BooleanFilter {\n  with  : FilterWith\n  expression: BooleanFilterExpression!\n  value: [Boolean!]\n}\n\ninput FloatFilter {\n  with  : FilterWith\n  expression: NumericFilterExpression!\n  value: [Float!]\n}\n\n\ninput IntFilter {\n  with  : FilterWith\n  expression: NumericFilterExpression!\n  value: [Int!]\n}\n\ninput StringFilter {\n  with  : FilterWith\n  expression: StringFilterExpression!\n  value: [String!]\n}\n\ninput AccountFilterInput {\n  name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  planId: StringFilter\n  active: IntFilter\n  criteria: [AccountFilterInput!]\n}\n\nenum SortOrder { asc desc }\n\ninput AccountSortInput {\n  name: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  planId: SortOrder\n  sortBy: [AccountSortInput!]\n}\n\ninput UserFilterInput {\n  accountId: StringFilter\n  ownerId: StringFilter\n  email: StringFilter\n  userGroup: StringFilter\n  given_name: StringFilter\n  family_name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  isDeleted: IntFilter\n  criteria: [UserFilterInput!]\n}\n\ninput UserSortInput {\n  accountId: SortOrder\n  email: SortOrder\n  given_name: SortOrder\n  family_name: SortOrder\n  userGroup: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [UserSortInput!]\n}\n\ninput PlanTypeFilterInput {\n  ownerId: StringFilter\n  cost: FloatFilter\n  billingTerm: StringFilter\n  name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  isDeleted: IntFilter\n  criteria: [PlanTypeFilterInput!]\n}\n\ninput PlanTypeSortInput {\n  name: SortOrder\n  billingTerm: SortOrder\n  cost: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [PlanTypeSortInput!]\n}\n\ninput IntegrationTypeFilterInput {\n  ownerId: StringFilter\n  planTypeId: StringFilter\n  name: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  active: IntFilter\n  criteria: [IntegrationTypeFilterInput!]\n}\n\ninput IntegrationTypeSortInput {\n  name: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [IntegrationTypeSortInput!]\n}\n\ninput IntegrationFilterInput {\n  ownerId: StringFilter\n  accountId: StringFilter\n  formId: StringFilter\n  active: IntFilter\n  isDeleted: IntFilter\n  lastExecuted: DateFilter\n  lastExecutionResult: IntFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  criteria: [IntegrationFilterInput!]\n}\n\ninput IntegrationSortInput {\n  lastExecuted: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  sortBy: [IntegrationSortInput!]\n}\n\ninput FormFilterInput {\n  name: StringFilter\n  ownerId: StringFilter\n  accountId: StringFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  startsAt: DateFilter\n  endsAt: DateFilter\n  isPaused: IntFilter\n  isDeleted: IntFilter\n  criteria: [FormFilterInput!]\n}\n\ninput FormSortInput {\n  name: SortOrder\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  startsAt: SortOrder\n  endsAt: SortOrder\n  sortBy: [FormSortInput!]\n}\n\ninput PlanFilterInput {\n  accountId: StringFilter\n  ownerId: StringFilter\n  planTypeId: StringFilter\n  lastBillDate: DateFilter\n  createdAt: DateFilter\n  updatedAt: DateFilter\n  startDate: DateFilter\n  endDate: DateFilter\n  criteria: [PlanFilterInput!]\n}\n\ninput PlanSortInput {\n  createdAt: SortOrder\n  updatedAt: SortOrder\n  lastBillDate: SortOrder\n  startDate: SortOrder\n  endDate: SortOrder\n  sortBy: [PlanSortInput!]\n}\n\ntype FormEntry @model {\n  id: ID!\n  accountId: ID!\n  formId: ID!\n  form: Form!\n  data: AWSJSON!\n  createdAt: AWSDateTime!\n}\n\ninput FormEntryFilterInput {\n  formId: StringFilter\n  createdAt: DateFilter\n  accountId: StringFilter\n  criteria: [FormEntryFilterInput!]\n}\n\ninput FormEntrySortInput {\n  createdAt: SortOrder\n}\n\ntype FormEntrySansData @aws_api_key {\n  id: ID!\n  formId: ID!\n  createdAt: AWSDateTime!\n}\n\ninput AddFormEntryInput {\n  id: ID!\n  accountId: ID!\n  formId: ID!\n  data: AWSJSON!\n}\n\ntype FormVersion @model {\n  id: ID!\n  accountId: ID!\n  formId: ID!\n  ownerId: ID!\n  ownedBy: User!\n  createdAt: AWSDateTime\n  displayName: String!\n  notes: String\n  formData: AWSJSON!\n}\n\ninput FormVersionFilterInput {\n  accountId: StringFilter\n  formId: StringFilter\n  ownerId: StringFilter\n  createdAt: DateFilter\n  criteria: [FormVersionFilterInput!]\n}\n\ninput FormVersionSortInput {\n  createdAt: SortOrder\n  sortBy: [FormVersionSortInput!]\n}\n\ninput AddFormVersionInput {\n  accountId: ID!\n  formId: ID!\n  displayName: String!\n  notes: String!\n  formData: AWSJSON!\n}\n\ninput AttachFormVersionInput {\n  formId: ID!\n  versionId: ID!\n  accountId: ID!\n}\n\ninput DeleteFormVersionInput {\n  accountId: ID!\n  formId: ID!\n  versionId: ID!\n}\n\ntype Form @model  {\n  id: ID!\n  ownerId: ID!\n  name: String!\n  description: String!\n  versionId: ID\n  versionActivatedDate: AWSDateTime\n  version: FormVersion\n  ownedBy: User!\n  accountId: ID!\n  account: Account!\n  createdAt: AWSDateTime!\n  updatedAt: AWSDateTime\n  startDate: AWSDateTime\n  endDate: AWSDateTime\n  isPaused: Int\n  isDeleted: Int\n  redirectNotStarted: AWSURL\n  redirectHasEnded : AWSURL\n  versions(limit: Int): [FormVersion]\n  integrations(limit: Int): [Integration]\n  numEntries: Int\n  entries(limit: Int): [FormEntry]\n}\n\n\ninput AddFormInput {\n  accountId: ID!\n  name: String!\n  description: String!\n  startsAt: AWSDateTime\n  endsAt: AWSDateTime\n  isPaused: Int\n}\n\ninput UpdateFormInput {\n  id: ID!\n  currentVersionId: ID\n  name: String\n  description: String\n  startDate: AWSDateTime\n  endDate: AWSDateTime\n  redirectNotStarted: AWSURL\n  redirectHasEnded : AWSURL\n  isPaused: Int\n}\n\ninput DeleteFormInput {\n  id: ID!\n  accountId: ID!\n}\n\ntype User @model {\n  id: ID!\n  ownerId: ID\n  ownedBy: User\n  accountId: ID\n  account: Account\n  email: String!\n  userGroup: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Int\n  numForms: Int\n}\n\n\ninput UpdateUserInputData {\n  group: String!\n  given_name: String!\n  family_name: String!\n  phone_number: AWSPhone\n}\n\ninput UpdateUserInput {\n  id: ID!\n  data: UpdateUserInputData!\n}\n\nenum AddressType {\n  BILLING\n  CONTACT\n}\n\ntype Address @model {\n  id: ID!\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype AddAddressInput {\n  name: String!\n  addressee: String\n  addressType: AddressType!\n  phone_number: AWSPhone\n  email: String!\n  street: String\n  city: String\n  state: String\n  country: String\n}\n\ntype Account @model {\n  id: ID!\n  name: String!\n  addresses(limit: Int): [Address]\n  website: String\n  taxId: String\n  ownerId: ID!\n  ownedBy: User!\n  plan : Plan\n  planId: ID\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  active: Int\n  numForms: Int\n  numUsers: Int\n  users(limit: Int): [User]\n  forms(limit: Int): [Form]\n}\n\ninput UpdateAccountInput {\n  id: ID!\n  name: String\n}\ntype PlanType @model {\n  id: ID!\n  ownerId: ID!\n  ownedBy: User!\n  name: String!\n  cost: Float!\n  active: Int!\n  billingTerm: String!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Int\n}\n\ninput AddPlanTypeInput {\n  name: String!\n  cost: Float!\n  billingTerm: String!\n  active: Int!\n}\n\ninput UpdatePlanTypeInput {\n  id: ID!\n  name: String\n  cost: Float\n  billingTerm: String\n  active: Int\n}\n\ntype Plan @model {\n  id: ID!\n  accountId: ID!\n  account: Account!\n  ownerId: ID!\n  ownedBy: User!\n  planTypeId: ID!\n  startDate: AWSDateTime!\n  endDate: AWSDateTime\n  active: Int\n  lastBillDate: AWSDateTime\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  planType: PlanType\n  isDeleted: Int\n}\n\ninput AddPlanInput {\n  accountId: ID!\n  planTypeId: ID!\n  endDate: AWSDateTime\n  active: Int\n}\n\ninput UpdatePlanInput {\n  planId: ID!\n  accountId: ID!\n  active: Int!\n  endDate: AWSDateTime\n}\n\ntype IntegrationType @model {\n  id: ID!\n  ownerId: ID!\n  ownedBy: User!\n  planTypeId: ID!\n  planType: PlanType\n  name: String!\n  active: Int!\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n}\n\n\ninput AddIntegrationTypeInput {\n  name: String!\n  active: Int\n}\n\ninput UpdateIntegrationTypeInput {\n  id: ID!\n  name: String!\n  active: Int\n}\n\ntype Integration @model {\n  id: ID!\n  integrationTypeId: ID!\n  integrationType: IntegrationType!\n  ownerId: ID!\n  ownedBy: User!\n  accountId: ID!\n  account: Account!\n  formId: ID\n  form: Form\n  active: Int!\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n  lastExecuted: AWSDateTime\n  lastExecutionResult: Int\n  lastExecutionResultMessage: String\n  createdAt: AWSDateTime\n  updatedAt: AWSDateTime\n  isDeleted: Int\n}\n\n\ninput AddIntegrationInput {\n  integrationTypeId: ID!\n  accountId: ID!\n  formId: ID!\n  active: Int\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationTypeInputData {\n  active: Int\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput UpdateIntegrationInput {\n  id: ID!\n  active: Int\n  authType: String\n  auth: AWSJSON\n  target: String\n  method: String\n}\n\ninput OffsetLimit {\n  offset: Int\n  limit: Int\n}\n\ntype Query {\n  getAccount(accountId: ID!): Account\n  getUser(userId: ID!): User\n  getPlan(planId: String!): Plan\n  getActiveAccountPlan(accountId: String!): Plan\n  getPlanType(planTypeId: String!): PlanType\n  getForm(formId: String!) : Form\n  getFormVersion(versionId: String!) : FormVersion\n  getIntegrationType(integrationTypeId: String!): IntegrationType\n  getIntegration(integrationId: String!): Integration\n  getFormEntry(formEntryId: String!): FormEntry\n  listAccounts(offsetLimit: OffsetLimit, filter: AccountFilterInput, sort: AccountSortInput): [Account]\n  listUsers(offsetLimit: OffsetLimit, filter: UserFilterInput, sort: UserSortInput) : [User]\n  listPlans(offsetLimit: OffsetLimit, filter: PlanFilterInput, sort: PlanSortInput): [Plan]\n  listPlanTypes(offsetLimit: OffsetLimit, filter: PlanTypeFilterInput, sort: PlanTypeSortInput): [PlanType]\n  listForms(offsetLimit: OffsetLimit, filter: FormFilterInput, sort: FormSortInput) : [Form]\n  listFormVersions(offsetLimit: OffsetLimit, filter: FormVersionFilterInput, sort: FormVersionSortInput) : [FormVersion]\n  listIntegrationTypes(offsetLimit: OffsetLimit, filter: IntegrationTypeFilterInput, sort: IntegrationTypeSortInput): [IntegrationType]\n  listIntegrations(offsetLimit: OffsetLimit, filter: IntegrationFilterInput, sort: IntegrationSortInput): [Integration]\n  listFormEntries(offsetLimit: OffsetLimit, filter: FormEntryFilterInput, sort: FormEntrySortInput) : [FormEntry]\n}\n\ntype Mutation {\n  addPlanType(input: AddPlanTypeInput): PlanType!\n  addPlan(input: AddPlanInput): Plan!\n  addIntegrationType(input: AddIntegrationTypeInput): IntegrationType!\n  addIntegration(input: AddIntegrationInput): Integration!\n  addForm(input: AddFormInput!): Form!\n  addFormVersion(input: AddFormVersionInput!): Form!\n  attachFormVersion(input: AttachFormVersionInput!) : Form!\n\n  updatePlanType(input: UpdatePlanTypeInput): PlanType!\n  updatePlan(input: UpdatePlanInput): Plan!\n  updateAccount(input: UpdateAccountInput): Account!\n  updateAccountPlan(input: AddPlanInput): Account!\n  updateUser(input: UpdateUserInput): User!\n  updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!\n  updateIntegration(input: UpdateIntegrationInput): Integration!\n  updateForm(input: UpdateFormInput): Form!\n\n  deleteForm(input: DeleteFormInput!): Form!\n  deletePlanType(planTypeId: ID!): PlanType!\n  deletePlan(accountId: ID!, planId: ID!): Plan!\n  deleteAccount(accountId: ID!): Account!\n  deleteUser(userId: ID!): User!\n  deleteIntegrationType(integrationTypeId: ID!): IntegrationType!\n  deleteIntegration(integrationId: ID!): Integration!\n  deleteFormVersion(input: DeleteFormVersionInput!): FormVersion!\n  addFormEntry(input: AddFormEntryInput!): FormEntrySansData!\n  @aws_api_key\n}\n\nschema {\n  query: Query\n  mutation: Mutation\n}",
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        }
+      }
+    },
+    "GraphQlDsAppData": {
+      "Type": "AWS::AppSync::DataSource",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "AppData",
+        "Description": "RDS source for formsli",
+        "Type": "RELATIONAL_DATABASE",
+        "ServiceRoleArn": {
+          "Fn::GetAtt": [
+            "AppSyncRDSRole",
+            "Arn"
+          ]
+        },
+        "RelationalDatabaseConfig": {
+          "RdsHttpEndpointConfig": {
+            "AwsRegion": "ap-northeast-1",
+            "DbClusterIdentifier": {
+              "Fn::Join": [
+                ":",
+                [
+                  "arn",
+                  "aws",
+                  "rds",
+                  "ap-northeast-1",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  "cluster",
+                  "fl-rds-cluster-dev"
+                ]
+              ]
+            },
+            "DatabaseName": "formsli",
+            "AwsSecretStoreArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX"
+          },
+          "RelationalDatabaseSourceType": "RDS_HTTP_ENDPOINT"
+        }
+      }
+    },
+    "GraphQlFunctionConfigurationFNparseFilter": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNparseFilter",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Common_FN_parseFilter_REQ.vtl\"))\n#set($args=$ctx.arguments)\n#set($identity=$ctx.stash.identity)\n#set($expmap = {\n  \"ne\" : \"!=\",\n  \"eq\" : \"=\",\n  \"le\" : \"<=\",\n  \"lt\" : \"<\",\n  \"ge\" : \">=\",\n  \"gt\" : \">\"\n})\n\n#if($args.sort && $args.sort.sortBy)\n    #set($sort = \"\")\n    #foreach($sortBy in $args.sort.sortBy)\n        #foreach($col in $sortBy.keySet())\n            #set($order=$sortBy[$col])\n            #set($clause=\"${col} ${order}\")\n            #set($suffix=\"\")\n            #if($foreach.hasNext)\n                #set($suffix=\",\")\n            #end\n            #set($sort=\"${sort} ${clause}${suffix}\")\n        #end\n    #end\n    #set($sort = \"ORDER BY ${sort}\")\n#end\n$util.qr($ctx.stash.put(\"sortExpression\", $sort))\n\n#if($args.filter && $args.filter.criteria)\n    #set($filter = \"\")\n    #foreach($criteria in $args.filter.criteria)\n        #foreach($col in $criteria.keySet())\n            #set($entry=$criteria[$col])\n            #set($values=$entry.value)\n            #if($col == \"accountId\" && !$identity.isAdmin)\n                $values.set(0, $identity.tenantId)\n            #end\n            #set($with=\"\")\n            #set($clause=\"\")\n            #if($foreach.hasNext)\n                #set($with=$entry.with)\n            #end\n            #if($entry.expression == 'contains')\n                #set($clause=\"${col} LIKE '%${values[0]}%' ${with}\")\n            #elseif($entry.expression == 'notContains')\n                #set($clause=\"${col} NOT LIKE '%${values[0]}%' ${with}\")\n            #elseif($entry.expression == 'startsWith')\n                #set($clause=\"${col} LIKE '${values[0]}%' ${with}\")\n            #elseif($entry.expression == 'between')\n                #set($clause=\"${col} BETWEEN ${values[0]} AND ${values[1]} ${with}\")\n            #elseif($entry.expression == 'notBetween')\n                #set($clause=\"${col} NOT BETWEEN ${values[0]} AND ${values[1]} ${with}\")\n            #elseif($entry.expression == 'isNull')\n                #set($clause=\"${col} IS NULL ${with}\")\n            #elseif($entry.expression == 'isNotNull')\n                #set($clause=\"${col} IS NOT NULL ${with}\")\n            #elseif($entry.expression == 'in')\n                #set($clause=\"${col} IN (${values[0]}) ${with}\")\n            #else\n                #set($exp=$expmap.get($entry.expression))\n                #set($clause=\"${col} ${exp} '${values[0]}' ${with}\")\n            #end\n            #set($filter=\"${filter} ${clause}\")\n        #end\n    #end\n    #set($filter = \"WHERE ${filter}\")\n#end\n$util.qr($ctx.stash.put(\"filterExpression\", $filter))\n#return",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Common_FN_parseFilter_RES.vtl\"))\n#return",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNgetAccount": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNgetAccount",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Account_get_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n\n#set($isAllowed = false)\n#if($identity.tenantId == $args.accountId || $identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Account'))\n    $util.qr($ctx.stash.put(\"operation\", 'get'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"SELECT * FROM Account WHERE id='${args.accountId}'\"\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [GET] on Account[${args.accountId}]\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_GET.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.error(\"${request.itemType} [${request.id}] not found\", 'NotFound')\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNlistAccounts": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNlistAccounts",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Account_list_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#if($identity.isAdmin == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Account'))\n    $util.qr($ctx.stash.put(\"operation\", 'list'))\n    #set($limits = $util.defaultIfNull($args.offsetLimit, {\"offset\":0,\"limit\":50}))\n    $util.qr($limits.put(\"offset\", $util.defaultIfNull($args.offsetLimit.offset, 0)))\n    $util.qr($limits.put(\"limit\", $util.defaultIfNull($args.offsetLimit.limit, 50)))\n    $util.qr($ctx.stash.put(\"limits\", $limits))\n    #set($filter = $util.defaultIfNull($ctx.stash.filterExpression, \"\"))\n    #set($sort = $util.defaultIfNull($ctx.stash.sortExpression, \"\"))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"SELECT * FROM Account ${filter} ${sort} LIMIT ${limits.offset}, ${limits.limit}\"\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute LIST on Account\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_list_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$utils.toJson($utils.rds.toJsonObject($ctx.result)[0])",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNlistUsers": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNlistUsers",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"User_list_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n$util.qr($ctx.stash.put(\"request\", $args))\n$util.qr($ctx.stash.request.put(\"itemType\", 'User'))\n$util.qr($ctx.stash.put(\"operation\", 'list'))\n#set($limits = $util.defaultIfNull($args.offsetLimit, {\"offset\":0,\"limit\":50}))\n$util.qr($limits.put(\"offset\", $util.defaultIfNull($args.offsetLimit.offset, 0)))\n$util.qr($limits.put(\"limit\", $util.defaultIfNull($args.offsetLimit.limit, 50)))\n$util.qr($ctx.stash.put(\"limits\", $limits))\n#set($sort = $util.defaultIfNull($ctx.stash.sortExpression, \"\"))\n#if($ctx.stash.filterExpression)\n    #if(!$identity.isAdmin)\n        #if($ctx.stash.filterExpression.indexOf('accountId') == -1 && !$identity.isAdmin)\n            #set($filter=\"${ctx.stash.filterExpression} AND accountId = '${identity.tenantId}'\")\n        #end\n    #else\n        #set($filter=$ctx.stash.filterExpression)\n    #end\n#else\n    #if(!$identity.isAdmin)\n        #set($filter = \"WHERE accountId = '${identity.tenantId}'\")\n    #else\n        #set($filter = \"\")\n    #end\n#end\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM User ${filter} ${sort} LIMIT ${limits.offset}, ${limits.limit}\"\n    ]\n}\n",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_list_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$utils.toJson($utils.rds.toJsonObject($ctx.result)[0])",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNupdateAccount": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNupdateAccount",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "## Only allow admin and account admin to update account\n$util.qr($ctx.stash.paths.add(\"Account_update_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = $identity.isAdmin == true || ($identity.isAccountAdmin == true && $args.accountId == $identity.tenantId))\n#if($isAllowed == true)\n    #set($request = $args)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Account'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"UPDATE Account SET updatedAt='${util.time.nowISO8601()}' #if($args.name) , `name`='${args.name}' #end WHERE id='${args.id}'\",\n            \"SELECT * FROM Account WHERE id ='${args.id}'\"\n        ]\n    }\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [PUT] on [Account]\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_upsert_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNupdateAccountPlan": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNupdateAccountPlan",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "## Only allow admin and account admin to update account\n## This must run after FN_createPlan\n$util.qr($ctx.stash.paths.put(\"Account_plan_update_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n#set($isAllowed = $identity.isAdmin == true || ($identity.isAccountAdmin == true && $args.accountId == $identity.tenantId))\n\n#if($isAllowed == true)\n    #set($request = $args)\n    $util.qr($request.put(\"itemType\", 'Account'))\n    $util.qr($ctx.stash.put(\"request\", $request))\n    $util.qr($ctx.stash.put(\"operation\", 'update'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"CALL changeAccountPlan('$args.accountId', '$ctx.prev.result.id', '${util.time.nowISO8601()}')\"\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [${ctx.stash.operation}] on [${args.accountId}]\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_GET.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.error(\"${request.itemType} [${request.id}] not found\", 'NotFound')\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNgetUser": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNgetUser",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"User_get_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n## Only allow admin and account admin to get other users\n#set($isAllowed = $identity.isAdmin == true || $identity.isAccountAdmin == true || $args.userId == $identity.callerId)\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $args.userId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'User'))\n    $util.qr($ctx.stash.put(\"operation\", 'get'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            #if(!$identity.isAdmin)\n                \"SELECT * FROM User WHERE id='${args.userId}' AND accountId='${identity.tenantId}'\"\n            #else\n                \"SELECT * FROM User WHERE id='${args.userId}'\"\n            #end\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [GET] on User[${args.userId}]\", \"Unauthorized\")\n#end\n",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_GET.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.error(\"${request.itemType} [${request.id}] not found\", 'NotFound')\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNdeletePlanType": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNdeletePlanType",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"PlanType_delete_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#set($isAllowed = false)\n#if($identity.isAdmin)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'PlanType'))\n    $util.qr($ctx.stash.put(\"operation\", 'delete'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"SELECT * FROM PlanType WHERE id ='${args.planTypeId}'\",\n            \"UPDATE PlanType SET isDeleted=1, active=0, updatedAt='${util.time.nowISO8601()}' WHERE id='${args.planTypeId}'\",\n        ],\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [DELETE] on PlanType[${args.planTypeId}]\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_delete_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.error(\"${request.itemType} [${request.id}] not found\", 'NotFound')\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNupdatePlanType": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNupdatePlanType",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"PlanType_update_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    #set($request = $args)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'PlanType'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"UPDATE PlanType SET updatedAt='${util.time.nowISO8601()}' #if($args.name) , `name`='${args.name}' #end #if($args.billingTerm) , billingTerm='${args.billingTerm}' #end #if(!$util.isNull($args.cost)) , cost=${args.cost} #end #if(!$util.isNull($args.active)) , active=${args.active} #end WHERE id='${args.id}'\",\n            \"SELECT * FROM PlanType WHERE id ='${args.id}'\"\n        ]\n    }\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [PUT] on [PlanType]\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_upsert_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNaddPlanType": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNaddPlanType",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"PlanType_add_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'PlanType'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    #set($id = $util.autoId())\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"INSERT INTO PlanType(id, `name`, cost, billingTerm, active, ownerId, isDeleted, createdAt) VALUES(:id, :name, :cost, :billingTerm, :active, :ownerId, :isDeleted, :createdAt)\",\n            \"SELECT * FROM PlanType WHERE id = :id\"\n        ],\n        \"variableMap\": {\n            \":id\": \"${id}\",\n            \":name\": \"${args.name}\",\n            \":cost\": \"${args.cost}\",\n            \":billingTerm\": \"${args.billingTerm}\",\n            \":active\": $args.active,\n            \":ownerId\": \"${identity.callerId}\",\n            \":isDeleted\": 0,\n            \":createdAt\": \"${util.time.nowISO8601()}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on [Plantype]\", \"Unauthorized\")\n#end\n",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_upsert_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNgetPlanType": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNgetPlanType",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"PlanType_delete_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n$util.qr($ctx.stash.put(\"request\", $args))\n$util.qr($ctx.stash.request.put(\"itemType\", 'PlanType'))\n$util.qr($ctx.stash.put(\"operation\", 'get'))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        #if(!$identity.isAdmin)\n            \"SELECT * FROM PlanType WHERE id='${args.planTypeId}' AND active=1 AND isDeleted=0\"\n        #else\n            \"SELECT * FROM PlanType WHERE id='${args.planTypeId}'\"\n        #end\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_GET.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.error(\"${request.itemType} [${request.id}] not found\", 'NotFound')\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNlistPlanTypes": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNlistPlanTypes",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"PlanType_list_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#if($identity.isAdmin == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'PlanType'))\n    $util.qr($ctx.stash.put(\"operation\", 'list'))\n    #set($limits = $util.defaultIfNull($args.offsetLimit, {\"offset\":0,\"limit\":50}))\n    $util.qr($limits.put(\"offset\", $util.defaultIfNull($args.offsetLimit.offset, 0)))\n    $util.qr($limits.put(\"limit\", $util.defaultIfNull($args.offsetLimit.limit, 50)))\n    $util.qr($ctx.stash.put(\"limits\", $limits))\n    #set($sort = $util.defaultIfNull($ctx.stash.sortExpression, \"\"))\n    {\n        \"statements\": [\n            #if(!$identity.isAdmin)\n                \"SELECT * FROM PlanType WHERE active=1 ${sort} LIMIT ${limits.offset}, ${limits.limit}\"\n            #else\n                \"SELECT * FROM PlanType ${sort} LIMIT ${limits.offset}, ${limits.limit}\"\n            #end\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [${LIST}] on PlanType\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_list_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$utils.toJson($utils.rds.toJsonObject($ctx.result)[0])",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNcreatePlan": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNcreatePlan",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Plan_add_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if(($identity.isAccountAdmin == true && $identity.tenantId == $args.accountId) || $identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Plan'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    #set($id = $util.autoId())\n    #set($now = \"${util.time.nowISO8601()}\")\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"INSERT INTO Plan(id, accountId, ownerId, planTypeId, startDate, createdAt) VALUES(:id, :accountId, :ownerId, :planTypeId, :startDate, :createdAt)\",\n            \"SELECT * FROM Plan WHERE id='${id}'\"\n        ],\n        \"variableMap\": {\n            \":id\": \"${id}\",\n            \":accountId\": \"${args.accountId}\",\n            \":ownerId\": \"${identity.callerId}\",\n            \":planTypeId\": \"${args.planTypeId}\",\n            \":startDate\": \"${now}\",\n            \":active\": 1,\n            \":createdAt\": \"${now}\"\n        }\n    }\n#else\n    $util.error(\"User [${ctx.stash.identity.callerId}] cannot execute [PUT] on [Plan]\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_upsert_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNupdatePlan": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNupdatePlan",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Plan_update_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    #set($request = $args)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Plan'))\n    $util.qr($ctx.stash.request.put(\"id\", $args.planId))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"UPDATE Plan SET updatedAt=:isotime #if($args.endDate) , endDate=:endDate #end #if(!$util.isNull($args.active)) , active=:active #end WHERE id=:id AND accountId= :accountId\",\n            \"SELECT * FROM Plan WHERE id=:id\"\n        ],\n        \"variableMap\": {\n            \":id\"       : \"${args.planId}\",\n            \":endDate\"  : \"${args.endDate}\",\n            \":accountId\": \"${args.accountId}\",\n            \":active\"   : $args.active,\n            \":isotime\"  : \"${util.time.nowISO8601()}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on Plan[${ctx.stash.request.id}]\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_upsert_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNdeletePlan": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNdeletePlan",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Plan_delete_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#set($isAllowed = false)\n#if($identity.isAdmin || $identity.isAccountAdmin == true && $identity.tenantId == $args.accountId)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Plan'))\n    $util.qr($ctx.stash.request.put(\"id\", $args.planId))\n    $util.qr($ctx.stash.put(\"operation\", 'delete'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"SELECT * FROM Plan WHERE id ='${args.planId}'\",\n            \"UPDATE Plan SET isDeleted=1, active=0, endDate=:isotime, updatedAt=:isotime WHERE id='${args.planId}' AND accountId='${args.accountId}'\",\n        ],\n        \"variableMap\": {\n            \":isotime\" : \"${util.time.nowISO8601()}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [DELETE] on Plan[${args.planId}]\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_delete_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.error(\"${request.itemType} [${request.id}] not found\", 'NotFound')\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNgetPlan": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNgetPlan",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Plan_get_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Plan'))\n    $util.qr($ctx.stash.put(\"operation\", 'get'))\n    {\n        \"statements\": [\n            #if(!$identity.isAdmin)\n                \"SELECT * FROM Plan WHERE id='${args.planId}' AND accountId='${identity.tenantId}'\"\n            #else\n                \"SELECT * FROM Plan WHERE id='${args.planId}'\"\n            #end\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [GET] on Plan[${args.planId}]\", \"Unauthorized\")\n#end\n",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_GET.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.error(\"${request.itemType} [${request.id}] not found\", 'NotFound')\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNgetForm": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNgetForm",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_get_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#set($isAllowed = false)\n#if($identity.tenantId == $args.accountId || $identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $args.formId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Form'))\n    $util.qr($ctx.stash.put(\"operation\", 'get'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            #if($identity.isAdmin != true)\n                \"SELECT * FROM Form WHERE id='${args.formId}' AND accountId='${identity.tenantId}'\"\n            #else\n                \"SELECT * FROM Form WHERE id='${args.formId}'\"\n            #end\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [GET] on Form[${args.formId}]\", \"Unauthorized\")\n#end\n",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_GET.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.error(\"${request.itemType} [${request.id}] not found\", 'NotFound')\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNlistForm": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNlistForm",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_list_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n$util.qr($ctx.stash.put(\"request\", $args))\n$util.qr($ctx.stash.request.put(\"itemType\", 'Form'))\n$util.qr($ctx.stash.put(\"operation\", 'list'))\n#set($limits = $util.defaultIfNull($args.offsetLimit, {\"offset\":0,\"limit\":50}))\n$util.qr($limits.put(\"offset\", $util.defaultIfNull($args.offsetLimit.offset, 0)))\n$util.qr($limits.put(\"limit\", $util.defaultIfNull($args.offsetLimit.limit, 50)))\n$util.qr($ctx.stash.put(\"limits\", $limits))\n#set($sort = $util.defaultIfNull($ctx.stash.sortExpression, \"\"))\n#if($ctx.stash.filterExpression)\n    #if(!$identity.isAdmin)\n        #if($ctx.stash.filterExpression.indexOf('accountId') == -1 && !$identity.isAdmin)\n            #set($filter=\"${ctx.stash.filterExpression} AND accountId = '${identity.tenantId}'\")\n        #end\n    #else\n        #set($filter=$ctx.stash.filterExpression)\n    #end\n#else\n    #if(!$identity.isAdmin)\n        #set($filter = \"WHERE accountId = '${identity.tenantId}'\")\n    #else\n        #set($filter = \"\")\n    #end\n#end\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM Form ${filter} ${sort} LIMIT ${limits.offset}, ${limits.limit}\"\n    ]\n}\n",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_list_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$utils.toJson($utils.rds.toJsonObject($ctx.result)[0])",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNupdateForm": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNupdateForm",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_update_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#if(!$args)\n    $util.error(\"Missing mandatory args\", \"BadRequest\")\n#end\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true || $identity.isAccountAdmin == true || $identity.isAccountEditor == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    #set($request = $args)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Form'))\n    $util.qr($ctx.stash.request.put(\"id\", $args.id))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"UPDATE Form SET updatedAt=:isotime #if($args.redirectHasEnded) ,redirectHasEnded=:redirectHasEnded #end #if($args.redirectNotStarted) ,redirectNotStarted=:redirectNotStarted #end  #if($args.currentVersionId) ,versionId=:versionId #end #if($args.startDate) , startDate=:startDate #end #if($args.endDate) , endDate=:endDate #end #if(!$util.isNull($args.name)) , `name`=:name #end #if(!$util.isNull($args.description)) , description=:description #end #if(!$util.isNull($args.isPaused)) , isPaused=:isPaused #end  WHERE id=:id\",\n            \"SELECT * FROM Form WHERE id ='${args.id}'\"\n        ],\n        \"variableMap\": {\n            \":id\" : \"${args.id}\",\n            \":name\" : \"${args.name}\",\n            #if($args.isPaused)\":isPaused\": $args.isPaused,#end\n            \":versionId\": \"${args.currentVersionId}\",\n            \":description\": \"description\",\n            \":startDate\": \"${args.startDate}\",\n            \":endDate\": \"${args.endDate}\",\n            \":isotime\" : \"${util.time.nowISO8601()}\",\n            \":redirectNotStarted\": \"${args.redirectNotStarted}\",\n            \":redirectHasEnded\" : \"${args.redirectHasEnded}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on [Form]\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_upsert_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNaddForm": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNaddForm",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_add_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    #set($formId = $util.autoId())\n    #set($now = \"${util.time.nowISO8601()}\")\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $formId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Form'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"INSERT INTO Form(id, ownerId, accountId, `name`, description, createdAt) VALUES(:id, :ownerId, :accountId, :name, :description, :createdAt)\",\n            \"SELECT * FROM Form WHERE id=:id\"\n        ],\n        \"variableMap\": {\n            \":id\": \"${formId}\",\n            \":ownerId\": \"${identity.callerId}\",\n            \":accountId\": \"${args.accountId}\",\n            \":name\": \"${args.name}\",\n            \":description\": \"${args.description}\",\n            \":createdAt\": \"${now}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on [Form]\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_upsert_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNattachFormVersion": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNattachFormVersion",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_attach_REQ.vtl\"))\n#set($args=$ctx.arguments.input)\n#set($identity=$ctx.stash.identity)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed)\n    #set($now = \"${util.time.nowISO8601()}\")\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $args.formId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Form'))\n    $util.qr($ctx.stash.put(\"operation\", 'post'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"UPDATE Form SET versionId=:versionId, updatedAt=:updatedAt, versionActivatedDate=:versionActivatedDate WHERE id=:formId AND accountId=:accountId\",\n            \"SELECT * FROM Form WHERE id=:formId\"\n        ],\n        \"variableMap\" : {\n            \":versionId\": \"${args.versionId}\",\n            \":updatedAt\": \"${now}\",\n            \":formId\"   : \"${args.formId}\",\n            \":accountId\": \"${args.accountId}\",\n            \":versionActivatedDate\" : \"${now}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [POST] on [Form]\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_upsert_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNdeleteForm": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNdeleteForm",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_delete_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin || (($identity.isAccountAdmin == true || $identity.tenantId == $args.accountId) && $args.accountId == $identity.tenantId))\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $args.id))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'Form'))\n    $util.qr($ctx.stash.put(\"operation\", 'delete'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"SELECT * FROM Form WHERE id=:id AND accountId=:accountId\",\n            \"UPDATE Form SET isDeleted=1, isPaused=1, endDate=:isotime, updatedAt=:isotime WHERE id=:id AND accountId=:accountId\",\n        ],\n        \"variableMap\": {\n            \":id\" : \"${args.id}\",\n            \":accountId\" : \"${args.accountId}\",\n            \":isotime\" : \"${util.time.nowISO8601()}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [DELETE] on Form[${args.id}]\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_delete_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.error(\"${request.itemType} [${request.id}] not found\", 'NotFound')\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNaddFormVersion": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNaddFormVersion",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_add_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed)\n    #set($versionId = $util.autoId())\n    #set($now = \"${util.time.nowISO8601()}\")\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $versionId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"INSERT INTO FormVersion(id, formId, ownerId, accountId, notes, createdAt, formData) VALUES(:id, :formId, :ownerId, :accountId, :notes, :createdAt, :formData)\",\n            \"SELECT * FROM Form WHERE id=:formId\"\n        ],\n        \"variableMap\": {\n            \":id\": \"${versionId}\",\n            \":accountId\" : \"${args.accountId}\",\n            \":formId\": \"${args.formId}\",\n            \":ownerId\": \"${identity.callerId}\",\n            \":displayName\" : \"${args.displayName}\",\n            \":notes\": \"$util.escapeJavaScript($args.notes)\",\n            \":createdAt\": \"${now}\",\n            \":formData\": \"${util.escapeJavaScript($util.toJson($args.formData))}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on [FormVersion]\", \"Unauthorized\")\n#end",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_upsert_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNdeleteFormVersion": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNdeleteFormVersion",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_delete_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed)\n    #set($now = \"${util.time.nowISO8601()}\")\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $args.versionId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n    $util.qr($ctx.stash.put(\"operation\", 'delete'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"SELECT * FROM FormVersion WHERE id=:versionId\",\n            \"DELETE FROM FormVersion WHERE NOT EXISTS(SELECT NULL FROM Form f WHERE id=:formId and accountId=:accountId and f.versionId=:versionId) AND id=:versionId\"\n        ],\n        \"variableMap\": {\n            \":versionId\": \"${args.versionId}\",\n            \":accountId\" : \"${args.accountId}\",\n            \":formId\": \"${args.formId}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [DELETE] on [FormVersion]\", \"Unauthorized\")\n#end\n\n",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_delete_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.error(\"${request.itemType} [${request.id}] not found\", 'NotFound')\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNgetFormVersion": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNgetFormVersion",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_get_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#set($isAllowed = false)\n#if($identity.tenantId == $args.accountId || $identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $args.versionId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n    $util.qr($ctx.stash.put(\"operation\", 'get'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            #if($identity.isAdmin != true)\n                \"SELECT * FROM FormVersion WHERE id='${args.versionId}' AND accountId='${identity.tenantId}'\"\n            #else\n                \"SELECT * FROM FormVersion WHERE id='${args.versionId}'\"\n            #end\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [GET] on FormVersion[${args.versionId}]\", \"Unauthorized\")\n#end\n",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_formVersion_get_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.toJson(null)\n#else\n    #set($result=$utils.rds.toJsonObject($ctx.result)[0][0])\n    #if($result.formData)\n        $util.qr($result.put(\"formData\", $util.parseJson($result.formData)))\n    #end\n    $util.toJson($result)\n#end",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlFunctionConfigurationFNlistFormEntry": {
+      "Type": "AWS::AppSync::FunctionConfiguration",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "Name": "GraphQlFunctionConfigurationFNlistFormEntry",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        },
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormEntry_list_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n$util.qr($ctx.stash.put(\"request\", $args))\n$util.qr($ctx.stash.request.put(\"itemType\", 'FormEntry'))\n$util.qr($ctx.stash.put(\"operation\", 'list'))\n#set($limits = $util.defaultIfNull($args.offsetLimit, {\"offset\":0,\"limit\":50}))\n$util.qr($limits.put(\"offset\", $util.defaultIfNull($args.offsetLimit.offset, 0)))\n$util.qr($limits.put(\"limit\", $util.defaultIfNull($args.offsetLimit.limit, 50)))\n$util.qr($ctx.stash.put(\"limits\", $limits))\n#set($sort = $util.defaultIfNull($ctx.stash.sortExpression, \"\"))\n#if($ctx.stash.filterExpression)\n    #if(!$identity.isAdmin)\n        #if($ctx.stash.filterExpression.indexOf('accountId') == -1 && !$identity.isAdmin)\n            #set($filter=\"${ctx.stash.filterExpression} AND accountId = '${identity.tenantId}'\")\n        #end\n    #else\n        #set($filter=$ctx.stash.filterExpression)\n    #end\n#else\n    #if(!$identity.isAdmin)\n        #set($filter = \"WHERE accountId = '${identity.tenantId}'\")\n    #else\n        #set($filter = \"\")\n    #end\n#end\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM FormEntry ${filter} ${sort} LIMIT ${limits.offset}, ${limits.limit}\"\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_list_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$utils.toJson($utils.rds.toJsonObject($ctx.result)[0])",
+        "FunctionVersion": "2018-05-29"
+      }
+    },
+    "GraphQlResolverQuerygetUser": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Query",
+        "FieldName": "getUser",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNgetUser",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverUsernumForms": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "User",
+        "FieldName": "numForms",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"User_numForms_get.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT count(*) as item_count FROM Form WHERE ownerId='${ctx.source.id}'\"\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_count_RES.vtl\"))\n#set($count=$utils.rds.toJsonObject($ctx.result)[0][0])\n#if($count[\"item_count\"])\n    $utils.toJson($count[\"item_count\"])\n#else\n    $utils.toJson(0)\n#end",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverUseraccount": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "User",
+        "FieldName": "account",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_Account_get_REQ.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM Account WHERE id='${ctx.source.accountId}'\"\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_Account_get_RES.vtl\"))\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $utils.toJson(null)\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverUserownedBy": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "User",
+        "FieldName": "ownedBy",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_Owner_get_REQ.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM User WHERE id='${ctx.source.ownerId}'\"\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_Owner_get_RES.vtl\"))\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $utils.toJson(null)\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverQuerylistUsers": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Query",
+        "FieldName": "listUsers",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNparseFilter",
+                "FunctionId"
+              ]
+            },
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNlistUsers",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverPlanplanType": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Plan",
+        "FieldName": "planType",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Plan_planType_get_REQ.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM PlanType WHERE id='${ctx.source.planTypeId}'\"\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Plan_planType_get_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.error(\"PlanType not found\", 'NotFound')\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverQuerygetPlan": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Query",
+        "FieldName": "getPlan",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNgetPlan",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverMutationdeletePlan": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Mutation",
+        "FieldName": "deletePlan",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNdeletePlan",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverMutationaddPlan": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Mutation",
+        "FieldName": "addPlan",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNcreatePlan",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverMutationupdatePlan": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Mutation",
+        "FieldName": "updatePlan",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNupdatePlan",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverQuerygetAccount": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Query",
+        "FieldName": "getAccount",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNgetAccount",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverQuerylistAccounts": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Query",
+        "FieldName": "listAccounts",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNparseFilter",
+                "FunctionId"
+              ]
+            },
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNlistAccounts",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverMutationupdateAccount": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Mutation",
+        "FieldName": "updateAccount",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNupdateAccount",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverMutationupdateAccountPlan": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Mutation",
+        "FieldName": "updateAccountPlan",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNcreatePlan",
+                "FunctionId"
+              ]
+            },
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNupdateAccountPlan",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverAccountnumForms": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Account",
+        "FieldName": "numForms",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Account_numForms_get_REQ.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT count(*) as item_count FROM Form WHERE accountId='${ctx.source.id}'\"\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_count_RES.vtl\"))\n#set($count=$utils.rds.toJsonObject($ctx.result)[0][0])\n#if($count[\"item_count\"])\n    $utils.toJson($count[\"item_count\"])\n#else\n    $utils.toJson(0)\n#end",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverAccountnumUsers": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Account",
+        "FieldName": "numUsers",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Account_numUsers_get_REQ.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT count(*) as item_count FROM User WHERE accountId='${ctx.source.id}'\"\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_count_RES.vtl\"))\n#set($count=$utils.rds.toJsonObject($ctx.result)[0][0])\n#if($count[\"item_count\"])\n    $utils.toJson($count[\"item_count\"])\n#else\n    $utils.toJson(0)\n#end",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverAccountplan": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Account",
+        "FieldName": "plan",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Account_plan_get_REQ.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM Plan WHERE accountId='${ctx.source.id}' and active=1\"\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Account_plan_get_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.toJson(null)\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverAccountownedBy": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Account",
+        "FieldName": "ownedBy",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_Owner_get_REQ.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM User WHERE id='${ctx.source.ownerId}'\"\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_Owner_get_RES.vtl\"))\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $utils.toJson(null)\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverAccountforms": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Account",
+        "FieldName": "forms",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Account_forms_list_REQ.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM Form WHERE accountId='${ctx.source.id}' ORDER BY createdAt DESC, updatedAt DESC\"\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Account_forms_list_RES.vtl\"))\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$utils.toJson($utils.rds.toJsonObject($ctx.result)[0])",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverAccountusers": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Account",
+        "FieldName": "users",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Account_user_list_REQ.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM User WHERE active=1 AND accountId='${ctx.source.id}'\"\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Account_user_list_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$utils.toJson($utils.rds.toJsonObject($ctx.result)[0])",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverQuerygetForm": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Query",
+        "FieldName": "getForm",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNgetForm",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverMutationupdateForm": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Mutation",
+        "FieldName": "updateForm",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNupdateForm",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverMutationaddForm": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Mutation",
+        "FieldName": "addForm",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNaddForm",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverMutationdeleteForm": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Mutation",
+        "FieldName": "deleteForm",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNdeleteForm",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverMutationaddFormVersion": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Mutation",
+        "FieldName": "addFormVersion",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNaddFormVersion",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverMutationattachFormVersion": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Mutation",
+        "FieldName": "attachFormVersion",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNattachFormVersion",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverMutationdeleteFormVersion": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Mutation",
+        "FieldName": "deleteFormVersion",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNdeleteFormVersion",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverQuerylistForms": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Query",
+        "FieldName": "listForms",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNparseFilter",
+                "FunctionId"
+              ]
+            },
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNlistForm",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverFormownedBy": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Form",
+        "FieldName": "ownedBy",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_Owner_get_REQ.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM User WHERE id='${ctx.source.ownerId}'\"\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_Owner_get_RES.vtl\"))\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $utils.toJson(null)\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverFormaccount": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Form",
+        "FieldName": "account",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_Account_get_REQ.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM Account WHERE id='${ctx.source.accountId}'\"\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_Account_get_RES.vtl\"))\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $utils.toJson(null)\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverFormversion": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Form",
+        "FieldName": "version",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_formVersion_get_REQ.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM FormVersion WHERE id='${ctx.source.versionId}'\"\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_formVersion_get_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.toJson(null)\n#else\n    #set($result=$utils.rds.toJsonObject($ctx.result)[0][0])\n    #if($result.formData)\n        $util.qr($result.put(\"formData\", $util.parseJson($result.formData)))\n    #end\n    $util.toJson($result)\n#end",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverFormversions": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Form",
+        "FieldName": "versions",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_formVersion_list_REQ.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM FormVersion WHERE formId='${ctx.source.id}' ORDER BY createdAt DESC LIMIT 0, 10\"\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_formVersion_list_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$utils.toJson($utils.rds.toJsonObject($ctx.result)[0])",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverFormnumEntries": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Form",
+        "FieldName": "numEntries",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.put(\"Form_numEntries_get_REQ.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT count(*) as item_count FROM FormEntry WHERE formId='${ctx.source.id}'\"\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_count_RES.vtl\"))\n#set($count=$utils.rds.toJsonObject($ctx.result)[0][0])\n#if($count[\"item_count\"])\n    $utils.toJson($count[\"item_count\"])\n#else\n    $utils.toJson(0)\n#end",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverQuerygetFormVersion": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Query",
+        "FieldName": "getFormVersion",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNgetFormVersion",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverFormVersionownedBy": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "FormVersion",
+        "FieldName": "ownedBy",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_Owner_get_REQ.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM User WHERE id='${ctx.source.ownerId}'\"\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_Owner_get_RES.vtl\"))\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $utils.toJson(null)\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverMutationaddFormEntry": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Mutation",
+        "FieldName": "addFormEntry",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"FormEntry_add_REQ.vtl\"))\n#set($args=$ctx.arguments.input)\n#set($now = \"${util.time.nowISO8601()}\")\n\n#set($entryId = $util.defaultIfNull($args.id, $util.autoId()))\n$util.qr($ctx.stash.put(\"request\", $args))\n$util.qr($ctx.stash.request.put(\"id\", $entryId))\n$util.qr($ctx.stash.request.put(\"itemType\", 'FormEntry'))\n$util.qr($ctx.stash.put(\"operation\", 'put'))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"INSERT INTO FormEntry(id, formId, data, createdAt) VALUES(:id, :formId, :data, :createdAt)\",\n        \"SELECT id, formId, createdAt FROM FormEntry WHERE id=:id\"\n    ],\n    \"variableMap\": {\n        \":id\": \"${entryId}\",\n        \":formId\": \"${args.formId}\",\n        \":data\": \"${util.escapeJavaScript($util.toJson($args.data))}\",\n        \":createdAt\": \"${now}\"\n    }\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormEntry_add_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverQuerylistFormEntries": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Query",
+        "FieldName": "listFormEntries",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNparseFilter",
+                "FunctionId"
+              ]
+            },
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNlistFormEntry",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverQuerylistPlanTypes": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Query",
+        "FieldName": "listPlanTypes",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNlistPlanTypes",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverPlanTypeownedBy": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "PlanType",
+        "FieldName": "ownedBy",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_Owner_get_REQ.vtl\"))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        \"SELECT * FROM User WHERE id='${ctx.source.ownerId}'\"\n    ]\n}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_Owner_get_RES.vtl\"))\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $utils.toJson(null)\n#else\n    $utils.toJson($utils.rds.toJsonObject($ctx.result)[0][0])\n#end",
+        "DataSourceName": {
+          "Fn::GetAtt": [
+            "GraphQlDsAppData",
+            "Name"
+          ]
+        }
+      }
+    },
+    "GraphQlResolverQuerygetPlanType": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Query",
+        "FieldName": "getPlanType",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNgetPlanType",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverMutationaddPlanType": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Mutation",
+        "FieldName": "addPlanType",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNaddPlanType",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverMutationupdatePlanType": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Mutation",
+        "FieldName": "updatePlanType",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNupdatePlanType",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "GraphQlResolverMutationdeletePlanType": {
+      "Type": "AWS::AppSync::Resolver",
+      "DependsOn": "GraphQlSchema",
+      "Properties": {
+        "ApiId": {
+          "Fn::GetAtt": [
+            "GraphQlApi",
+            "ApiId"
+          ]
+        },
+        "TypeName": "Mutation",
+        "FieldName": "deletePlanType",
+        "RequestMappingTemplate": "## Store tenantId, group in stash.identity\n$util.qr($ctx.stash.put(\"paths\", []))\n$util.qr($ctx.stash.paths.add(\"Common_REQ.vtl\"))\n\n#set ($identity = {})\n$util.qr($identity.put(\"tenantId\", $context.identity.claims.get(\"custom:tenantId\")))\n$util.qr($identity.put(\"callerId\", $ctx.identity.sub))\n#foreach($group in $context.identity.claims.get(\"cognito:groups\"))\n    #if($group == \"Admin\")\n        #set($isAdmin = true)\n        $util.qr($identity.put(\"isAdmin\", true))\n    #end\n    #if($group == \"AccountAdmin\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountAdmin\", true))\n    #end\n    #if($group == \"AccountEditor\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountEditor\", true))\n    #end\n    #if($group == \"AccountViewer\")\n        #set($isAccountAdmin = true)\n        $util.qr($identity.put(\"isAccountViewer\", true))\n    #end\n#end\n$util.qr($ctx.stash.put(\"identity\", $identity))\n$util.qr($ctx.stash.put(\"results\", {}))\n{}",
+        "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n$util.qr($ctx.stash.put(\"FINAL\", $context.result))\n$util.toJson($context.result)",
+        "Kind": "PIPELINE",
+        "PipelineConfig": {
+          "Functions": [
+            {
+              "Fn::GetAtt": [
+                "GraphQlFunctionConfigurationFNdeletePlanType",
+                "FunctionId"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": {
+        "Ref": "ServerlessDeploymentBucket"
+      }
+    },
+    "ServerlessDeploymentBucketAccelerated": {
+      "Value": true
+    },
+    "GraphQlApiUrl": {
+      "Value": {
+        "Fn::GetAtt": [
+          "GraphQlApi",
+          "GraphQLUrl"
+        ]
+      }
+    },
+    "GraphQlApiKeyDefault": {
+      "Value": {
+        "Fn::GetAtt": [
+          "GraphQlApiKeyDefault",
+          "ApiKey"
+        ]
+      }
+    }
+  }
+}

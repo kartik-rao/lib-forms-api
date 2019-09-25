@@ -1,0 +1,325 @@
+- dataSource: AppData
+  type: Query
+  field: getUser
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_getUser
+
+# User.numForms
+- dataSource: AppData
+  type: User
+  field: numForms
+  request: User_numForms_get_REQ.vtl
+  response: Common_FN_count_RES.vtl
+# User.account
+- dataSource: AppData
+  type: User
+  field: account
+  request: Common_Account_get_REQ.vtl
+  response: Common_Account_get_RES.vtl
+# User.ownedBy
+- dataSource: AppData
+  type: User
+  field: ownedBy
+  request: Common_Owner_get_REQ.vtl
+  response: Common_Owner_get_RES.vtl
+
+- dataSource: AppData
+  type: Query
+  field: listUsers
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_parseFilter
+    - FN_listUsers
+
+## Plan
+# Plan.planType
+- dataSource: AppData
+  type: Plan
+  field: planType
+  request: Plan_planType_get_REQ.vtl
+  response: Plan_planType_get_RES.vtl
+- dataSource: AppData
+  type: Query
+  field: getPlan
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_getPlan
+- dataSource: AppData
+  type: Mutation
+  field: deletePlan
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_deletePlan
+- dataSource: AppData
+  type: Mutation
+  field: addPlan
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_createPlan
+- dataSource: AppData
+  type: Mutation
+  field: updatePlan
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_updatePlan
+
+## Account
+- dataSource: AppData
+  type: Query
+  field: getAccount
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_getAccount
+- dataSource: AppData
+  type: Query
+  field: listAccounts
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_parseFilter
+    - FN_listAccounts
+- dataSource: AppData
+  type: Mutation
+  field: updateAccount
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_updateAccount
+- dataSource: AppData
+  type: Mutation
+  field: updateAccountPlan
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_createPlan
+    - FN_updateAccountPlan
+
+# Account.numForms
+- dataSource: AppData
+  type: Account
+  field: numForms
+  request: Account_numForms_get_REQ.vtl
+  response: Common_FN_count_RES.vtl
+# Account.numUsers
+- dataSource: AppData
+  type: Account
+  field: numUsers
+  request: Account_numUsers_get_REQ.vtl
+  response: Common_FN_count_RES.vtl
+# Account.plan
+- dataSource: AppData
+  type: Account
+  field: plan
+  request: Account_plan_get_REQ.vtl
+  response: Account_plan_get_RES.vtl
+# Account.ownedBy
+- dataSource: AppData
+  type: Account
+  field: ownedBy
+  request: Common_Owner_get_REQ.vtl
+  response: Common_Owner_get_RES.vtl
+# Account.forms
+- dataSource: AppData
+  type: Account
+  field: forms
+  request: Account_forms_list_REQ.vtl
+  response: Account_forms_list_RES.vtl
+# Account.users
+- dataSource: AppData
+  type: Account
+  field: users
+  request: Account_users_list_REQ.vtl
+  response: Account_users_list_RES.vtl
+
+## Form
+- dataSource: AppData
+  type: Query
+  field: getForm
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_getForm
+- dataSource: AppData
+  type: Mutation
+  field: updateForm
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_updateForm
+- dataSource: AppData
+  type: Mutation
+  field: addForm
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_addForm
+- dataSource: AppData
+  type: Mutation
+  field: deleteForm
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_deleteForm
+- dataSource: AppData
+  type: Mutation
+  field: addFormVersion
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_addFormVersion
+- dataSource: AppData
+  type: Mutation
+  field: attachFormVersion
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_attachFormVersion
+- dataSource: AppData
+  type: Mutation
+  field: deleteFormVersion
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_deleteFormVersion
+- dataSource: AppData
+  type: Query
+  field: listForms
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_parseFilter
+    - FN_listForm
+# Form.ownedBy
+- dataSource: AppData
+  type: Form
+  field: ownedBy
+  request: Common_Owner_get_REQ.vtl
+  response: Common_Owner_get_RES.vtl
+# Form.account
+- dataSource: AppData
+  type: Form
+  field: account
+  request: Common_Account_get_REQ.vtl
+  response: Common_Account_get_RES.vtl
+# Form.version
+- dataSource: AppData
+  type: Form
+  field: version
+  request: Form_formVersion_get_REQ.vtl
+  response: Form_formVersion_get_RES.vtl
+# Form.versions
+- dataSource: AppData
+  type: Form
+  field: versions
+  request: Form_formVersion_list_REQ.vtl
+  response: Form_formVersion_list_RES.vtl
+# Form.numEntries
+- dataSource: AppData
+  type: Form
+  field: numEntries
+  request: Form_numEntries_get_REQ.vtl
+  response: Common_FN_count_RES.vtl
+
+## FormVersion
+- dataSource: AppData
+  type: Query
+  field: getFormVersion
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_getFormVersion
+# FormVersion.ownedBy
+- dataSource: AppData
+  type: FormVersion
+  field: ownedBy
+  request: Common_Owner_get_REQ.vtl
+  response: Common_Owner_get_RES.vtl
+# FormEntry
+- dataSource: AppData
+  type: Mutation
+  field: addFormEntry
+  request: FormEntry_add_REQ.vtl
+  response: FormEntry_add_RES.vtl
+- dataSource: AppData
+  type: Query
+  field: listFormEntries
+  kind: PIPELINE
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  functions:
+    - FN_parseFilter
+    - FN_listFormEntry
+## PlanType
+- dataSource: AppData
+  type: Query
+  field: listPlanTypes
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_listPlanTypes
+# PlanType.ownedBy
+- dataSource: AppData
+  type: PlanType
+  field: ownedBy
+  request: Common_Owner_get_REQ.vtl
+  response: Common_Owner_get_RES.vtl
+- dataSource: AppData
+  type: Query
+  field: getPlanType
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_getPlanType
+- dataSource: AppData
+  type: Mutation
+  field: addPlanType
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_addPlanType
+- dataSource: AppData
+  type: Mutation
+  field: updatePlanType
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_updatePlanType
+- dataSource: AppData
+  type: Mutation
+  field: deletePlanType
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_deletePlanType

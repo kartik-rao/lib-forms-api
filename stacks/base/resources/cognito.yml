@@ -1,0 +1,24 @@
+Resources:
+  # Create the admin user for the pool
+  CognitoUserPoolAdminUser:
+    Type : AWS::Cognito::UserPoolUser
+    Properties:
+      Username: infrastructure.${self:provider.stage}@forms.li
+      UserPoolId: ${ssm:/${self:provider.stage}/formsli/cognito/userpool/id}
+      DesiredDeliveryMediums:
+          - EMAIL
+      UserAttributes:
+        - Name: email
+          Value: infrastructure.${self:provider.stage}@forms.li
+        - Name: given_name
+          Value: ${self:provider.stage} Infrastructure
+        - Name: family_name
+          Value: Admin
+        - Name: email_verified
+          Value: True
+        - Name: "custom:group"
+          Value: Admin
+        - Name: "custom:region"
+          Value: ${self:provider.region}
+        - Name: "custom:environment"
+          Value: ${self:provider.stage}

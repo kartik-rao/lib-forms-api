@@ -1,0 +1,77 @@
+#serverless.yml
+service: formsli-graphql
+frameworkVersion: '>=1.5.0 <2.0.0'
+provider:
+  name: aws
+  runtime: nodejs10.x
+  tracing: true
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'ap-northeast-1'}
+  logRetentionInDays: 7
+  tags:
+    stage  : ${self:provider.stage}
+    service: ${self:service}
+    region : ${self:provider.region}
+    stack  : api-graphql
+  profile: fl-infrastructure
+  environment:
+    hostedZoneId   : Z3CMAQR65ETWUL
+    serviceName    : ${self:service}
+    environment    : ${self:provider.stage}
+    region         : ${self:provider.region}
+    usEastCertArn  : "arn:aws:acm:us-east-1:286358943194:certificate/8e043316-5cf7-467c-b453-159d3cf3d68e"
+    domain_prefix  : ${ssm:/${self:provider.stage}/formsli/prefix/domain}
+    name_prefix    : ${ssm:/${self:provider.stage}/formsli/prefix/name}
+    rootDomain     : ${ssm:/${self:provider.stage}/formsli/domain/tld}
+    gqlDomain      : "${self:provider.environment.domain_prefix}graph.${self:provider.environment.rootDomain}"
+    databaseName   : ${self:service}
+    userPoolId     : ${ssm:/${self:provider.stage}/formsli/cognito/userpool/id}
+    dbClusterId        : ${ssm:/${self:provider.stage}/formsli/rds/id}
+    dbClusterArn       : "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:${self:provider.environment.dbClusterId}"
+    dbClusterSecretArn : ${ssm:/${self:provider.stage}/formsli/rds/password/secret}
+
+plugins:
+  - serverless-pseudo-parameters
+  - serverless-appsync-plugin
+  - '@anttiviljami/serverless-stack-output'
+
+resources:
+  - ${file(resources/iam.yml)}
+  - ${file(resources/cloudfront.yml)}
+  - ${file(resources/ssm.yml)}
+  - ${file(resources/route53.yml)}
+
+custom:
+  # Stack Output Plugin
+  output:
+    file: outputs/stack.${self:provider.stage}.json # toml, yaml, yml, and json format is available
+  appSync:
+    name:  ${self:provider.environment.name_prefix}graphql
+    authenticationType: AMAZON_COGNITO_USER_POOLS
+    additionalAuthenticationProviders:
+      - authenticationType: API_KEY
+    userPoolConfig:
+      awsRegion: ${self:provider.region}
+      defaultAction: ALLOW
+      userPoolId: "${self:provider.environment.userPoolId}"
+    logConfig:
+      loggingRoleArn: { Fn::GetAtt: [AppSyncCloudWatchRole, Arn] } # Where AppSyncLoggingServiceRole is a role with CloudWatch Logs write access
+      level: ALL
+    schema: schema.graphql
+    dataSources:
+      - type: RELATIONAL_DATABASE
+        name: AppData
+        description: RDS source for formsli
+        config:
+          # The identifier for RDSCluster. Where RDSCluster is the cluster defined in Resources
+          dbClusterIdentifier: ${self:provider.environment.dbClusterId}
+          # The RDSClusterSecret ARN. Where RDSClusterSecret is the cluster secret defined in Resources
+          awsSecretStoreArn: ${self:provider.environment.dbClusterSecretArn}
+          databaseName: formsli
+          serviceRoleArn: { Fn::GetAtt: [AppSyncRDSRole, Arn] }
+          region: ${self:provider.region}
+    mappingTemplatesLocation: ./resolvers
+    mappingTemplates: ${file(appsync-mappings.yml)}
+    functionConfigurations: ${file(appsync-functions.yml)}
+    ## Add substitutions here to replace all hardcoded table/index names in mapping templates
+    substitutions:

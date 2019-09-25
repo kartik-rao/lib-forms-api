@@ -1,0 +1,214 @@
+#serverless.yml
+service: formsli-api-forms
+frameworkVersion: '>=1.5.0 <2.0.0'
+provider:
+  profile: fl-infrastructure
+  name: aws
+  stage: ${opt:stage, 'dev'}
+  runtime: nodejs10.x
+  region: ${opt:region, 'ap-northeast-1'}
+  apiGateway:
+    restApiId: ${ssm:/${self:provider.stage}/formsli/apig/restApiId}
+    restApiRootResourceId: ${ssm:/${self:provider.stage}/formsli/apig/rootResourceId}
+    restApiResources: 
+      /form: ${ssm:/${self:provider.stage}/formsli/apig/resource/form}
+  logs:
+    restApi:
+      enableAccessLogging: true
+      level: INFO
+      dataTrace: true
+  tracing: true
+  memorySize: 512
+  timeout: 30
+  logRetentionInDays: 7
+  tags:
+    stage  : ${self:provider.stage}
+    service: ${self:service}
+    region : ${self:provider.region}
+    stack  : api-forms
+  functions:
+    formentry          : ${self:service}-${self:provider.stage}-form-entry
+    formjson           : ${self:service}-${self:provider.stage}-form-json
+    formview           : ${self:service}-${self:provider.stage}-form-view
+    sqs_fn_appsync     : ${self:service}-${self:provider.stage}-put-appsync
+    sqs_fn_firehose    : ${self:service}-${self:provider.stage}-put-firehose
+    sqs_fn_analytics   : ${self:service}-${self:provider.stage}-put-analytics
+    sqs_fn_integration : ${self:service}-${self:provider.stage}-integration
+  environment:
+    region          : ${self:provider.region}
+    environment     : ${self:provider.stage}
+    serviceName     : ${self:service}
+    databaseName    : "formsli"
+    dbClusterId     : ${ssm:/${self:provider.stage}/formsli/rds/id}
+    dbClusterArn    : "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:${self:provider.environment.dbClusterId}"
+    graphqlApiId    : ${ssm:/${self:provider.stage}/formsli/graphql/api/id}
+    dbClusterSecretArn : ${ssm:/${self:provider.stage}/formsli/rds/password/secret}
+    kinesisAccessRole  : ${ssm:/${self:provider.stage}/formsli/kinesis/accessRoleArn}
+    sqs_entry_url      : ${ssm:/${self:provider.stage}/formsli/queue/entry/url}
+    sqs_integration_url: ${ssm:/${self:provider.stage}/formsli/queue/integration/url}
+    sqs_firehose_url   : ${ssm:/${self:provider.stage}/formsli/queue/firehose/url}
+    sqs_analytics_url  : ${ssm:/${self:provider.stage}/formsli/queue/analytics/url}
+    sqs_entry_arn      : ${ssm:/${self:provider.stage}/formsli/queue/entry/arn}
+    sqs_integration_arn: ${ssm:/${self:provider.stage}/formsli/queue/integration/arn}
+    sqs_firehose_arn   : ${ssm:/${self:provider.stage}/formsli/queue/firehose/arn}
+    sqs_analytics_arn  : ${ssm:/${self:provider.stage}/formsli/queue/analytics/arn}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "tag:GetResources"
+        - "secretsmanager:CreateSecret"
+        - "secretsmanager:ListSecrets"
+        - "secretsmanager:GetRandomPassword"
+        - "logs:CreateLogGroup"
+        - "logs:CreateLogStream"
+        - "logs:PutLogEvents"
+        - "xray:PutTelemetryRecords"
+        - "xray:PutTraceSegments"
+      Resource:
+        - "*"
+    - Effect: "Allow"
+      Action:
+        - "ssm:GetParameter"
+        - "ssm:GetParameters"
+        - "ssm:GetParametersByPath"
+      Resource:
+        - "arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/${self:provider.stage}/formsli/*"
+
+plugins:
+  - serverless-webpack
+  - serverless-pseudo-parameters
+  - serverless-iam-roles-per-function
+  - serverless-plugin-tracing
+  - serverless-plugin-aws-alerts
+  - '@anttiviljami/serverless-stack-output'
+
+custom:
+  alerts:
+    dashboards: true
+    stages:
+      - dev # Disable later
+      - staging
+      - production
+    topics:
+      alarm:
+        topic: ${self:service}-${self:provider.stage}-alerts-alarm
+        notifications:
+          - protocol: email
+            endpoint: infrastructure.${self:provider.stage}@forms.li
+    alarms:
+      - functionErrors
+      - functionThrottles
+      - functionInvocations
+      - functionDuration
+  serverless-iam-roles-per-function:
+    defaultInherit: true
+  # Stack Output Plugin
+  output:
+    file: outputs/stack.${self:provider.stage}.json # toml, yaml, yml, and json format is available
+  # Servlerless Webpack (for functions)
+  packagePath: './package.json'
+  webpack:
+    webpackConfig: 'webpack.config.js'   # Name of webpack configuration file
+    packager: 'npm'   # Packager that will be used to package your external modules
+    includeModules:
+      forceInclude:
+        - source-map-support
+functions:
+  formJson:
+    name: ${self:provider.functions.formjson}
+    handler: functions/formjson.handle
+    events:
+      - http:
+          path: /form/json/{formId}
+          method: get
+          cors: true
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - "secretsmanager:GetSecretValue"
+        Resource:
+          - "arn:aws:secretsmanager:ap-northeast-1:#{AWS::AccountId}:secret:/${self:provider.stage}/formsli/rds/*"
+      - Effect: "Allow"
+        Action:
+          - "rds-data:GetItems"
+          - "rds-data:ExecuteSql"
+          - "rds-data:BatchExecuteStatement"
+          - "rds-data:ExecuteStatement"
+        Resource:
+          - "${self:provider.environment.dbClusterArn}"
+          - "${self:provider.environment.dbClusterArn}:*"
+  formEntry:
+    name: ${self:provider.functions.formentry}
+    handler: functions/formentry.handle
+    events:
+      - http:
+          path: /form/entry/{tenantId}/{formId}
+          method: post
+          cors: true
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - sqs:SendMessage
+          - sqs:ListQueues
+        Resource :
+          - "${self:provider.environment.sqs_entry_arn}"
+          - "${self:provider.environment.sqs_analytics_arn}"
+          - "${self:provider.environment.sqs_integration_arn}"
+          - "${self:provider.environment.sqs_firehose_arn}"
+  formView:
+    name: ${self:provider.functions.formview}
+    handler: functions/formview.handle
+    events:
+      - http:
+          path: /form/view/{formId}
+          method: get
+          cors: true
+  sqs_fn_firehose:
+    name: ${self:provider.functions.sqs_fn_firehose}
+    handler: functions/sqs_fn_firehose.handle
+    reservedConcurrency: 10
+    events:
+      - sqs:
+          arn: 
+            ${self:provider.environment.sqs_firehose_arn}
+          enabled: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - sqs:ReceiveMessage
+          - sqs:DeleteMessage
+          - sqs:GetQueueAttributes
+        Resource : ${self:provider.environment.sqs_firehose_arn}
+      - Effect: Allow
+        Action:
+          - firehose:putRecord
+          - firehose:putRecordBatch
+        Resource :
+          - "*"
+      - Effect: "Allow"
+        Action:
+          - "iam:passRole"
+          - "iam:getRole"
+        Resource:
+          - "${self:provider.environment.kinesisAccessRole}"
+  sqs_fn_appsync:
+    name: ${self:provider.functions.sqs_fn_appsync}
+    handler: functions/sqs_fn_appsync.handle
+    reservedConcurrency: 10
+    events:
+      - sqs:
+          arn: ${self:provider.environment.sqs_entry_arn}
+          enabled: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - sqs:ReceiveMessage
+          - sqs:DeleteMessage
+          - sqs:GetQueueAttributes
+        Resource :
+          - ${self:provider.environment.sqs_entry_arn}
+      - Effect: "Allow"
+        Action:
+          - "appsync:GraphQL"
+        Resource:
+          - "arn:aws:appsync:#{AWS::Region}:#{AWS::AccountId}:apis/${self:provider.environment.graphqlApiId}/types/Mutation/fields/addFormEntry"

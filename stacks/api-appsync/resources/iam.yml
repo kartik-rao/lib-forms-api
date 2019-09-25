@@ -1,0 +1,84 @@
+Resources:
+  AppSyncRDSRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "${self:provider.environment.name_prefix}appsync-iam-role"
+      ManagedPolicyArns:
+        - Ref: AppSyncRDSPolicy
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "sts:AssumeRole"
+            Principal:
+              Service:
+                - "appsync.amazonaws.com"
+    DependsOn:
+      - AppSyncRDSPolicy
+  AppSyncRDSPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Allow AWS AppSync to access RDS.
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "rds-data:InsertItems"
+              - "rds-data:GetItems"
+              - "rds-data:UpdateItems"
+              - "rds-data:DeleteItems"
+              - "rds-data:ExecuteSql"
+              - "rds-data:BatchExecuteStatement"
+              - "rds-data:BeginTransaction"
+              - "rds-data:CommitTransaction"
+              - "rds-data:ExecuteStatement"
+              - "rds-data:RollbackTransaction"
+              - "tag:GetResources"
+            Resource:
+              - "${self:provider.environment.dbClusterArn}"
+              - "${self:provider.environment.dbClusterArn}:*"
+          - Effect: "Allow"
+            Action:
+              - "secretsmanager:GetSecretValue"
+              - "secretsmanager:CreateSecret"
+              - "secretsmanager:ListSecrets"
+              - "secretsmanager:GetRandomPassword"
+            Resource:
+              - "arn:aws:secretsmanager:#{AWS::Region}:#{AWS::AccountId}:secret:/${self:provider.stage}/formsli/rds/*"
+          - Effect: "Allow"
+            Action:
+              "tag:GetResources"
+            Resource:
+              - "*"
+  AppSyncCloudWatchRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "${self:provider.environment.name_prefix}appsync-logging-iam-role"
+      ManagedPolicyArns:
+        - Ref: AppSyncCloudWatchPolicy
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "sts:AssumeRole"
+            Principal:
+              Service:
+                - "appsync.amazonaws.com"
+    DependsOn:
+      - AppSyncCloudWatchPolicy
+  AppSyncCloudWatchPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      Description: Allow AWS AppSync to write logs
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: "*"

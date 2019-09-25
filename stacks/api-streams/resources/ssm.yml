@@ -1,0 +1,8 @@
+Resources:
+  ssmKinesisAccessRoleArn:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/kinesis/accessRoleArn"
+      Description : Application Name
+      Value: { Fn::GetAtt: [KinesisAccessRole, Arn] }
+      Type: String

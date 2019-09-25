@@ -1,0 +1,36 @@
+Resources:
+  AppsyncCloudfrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    DependsOn: 
+      - GraphQlApi
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        HttpVersion: http2
+        Origins:
+        - DomainName: 
+            !Select [2, !Split ['/', !GetAtt 'GraphQlApi.GraphQLUrl']]
+          Id: { Fn::GetAtt: [GraphQlApi, ApiId] }
+          CustomOriginConfig:
+            HTTPPort: 80
+            HTTPSPort: 443
+            OriginKeepaliveTimeout: 60
+            OriginReadTimeout: 60
+            OriginProtocolPolicy: https-only
+            OriginSSLProtocols: [ TLSv1, TLSv1.1, TLSv1.2 ]
+        Aliases:
+          - ${self:provider.environment.gqlDomain}
+        DefaultCacheBehavior:
+          AllowedMethods: [ HEAD, DELETE, POST, GET, OPTIONS, PUT, PATCH ]
+          ForwardedValues:
+            QueryString: false
+            Headers:
+              - Authorization
+          SmoothStreaming: false
+          Compress: true
+          TargetOriginId: { Fn::GetAtt: [GraphQlApi, ApiId] }
+          ViewerProtocolPolicy: redirect-to-https
+        ViewerCertificate:
+          SslSupportMethod: sni-only
+          MinimumProtocolVersion: TLSv1.1_2016
+          AcmCertificateArn: ${self:provider.environment.usEastCertArn}

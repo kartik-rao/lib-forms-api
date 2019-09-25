@@ -1,0 +1,1678 @@
+{
+  "service": {
+    "service": "formsli-base",
+    "serviceObject": {
+      "name": "formsli-base"
+    },
+    "provider": {
+      "stage": "dev",
+      "variableSyntax": "\\${([ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)*]+?)}",
+      "name": "aws",
+      "runtime": "nodejs10.x",
+      "tracing": true,
+      "region": "ap-northeast-1",
+      "memorySize": 512,
+      "timeout": 30,
+      "logRetentionInDays": 7,
+      "tags": {
+        "stage": "dev",
+        "service": "formsli-base",
+        "region": "ap-northeast-1",
+        "stack": "base"
+      },
+      "environment": {
+        "namePrefix": "dev-formsli-",
+        "ssmKeyPrefix": "dev/formsli",
+        "rootDomain": "forms.li",
+        "domain_prefix_dev": "dev-",
+        "domain_prefix_staging": "staging-",
+        "domain_prefix_production": "",
+        "domain_prefix": "dev-",
+        "sftpDomain": "dev-sftp.forms.li",
+        "hostedZoneId": "Z3CMAQR65ETWUL",
+        "s3_user_bucket": "fl-dev-userdata",
+        "sqs_entry": "dev-formsli-entry-queue",
+        "sqs_firehose": "dev-formsli-firehose-queue",
+        "sqs_integration": "dev-formsli-integration-queue",
+        "sqs_analytics": "dev-formsli-analytics-queue"
+      },
+      "versionFunctions": true,
+      "remoteFunctionData": null,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              },
+              "AccelerateConfiguration": {
+                "AccelerationStatus": "Enabled"
+              }
+            }
+          },
+          "CognitoUserPoolAdminUser": {
+            "Type": "AWS::Cognito::UserPoolUser",
+            "Properties": {
+              "Username": "infrastructure.dev@forms.li",
+              "UserPoolId": "ap-northeast-1_Q798Nsl33",
+              "DesiredDeliveryMediums": [
+                "EMAIL"
+              ],
+              "UserAttributes": [
+                {
+                  "Name": "email",
+                  "Value": "infrastructure.dev@forms.li"
+                },
+                {
+                  "Name": "given_name",
+                  "Value": "dev Infrastructure"
+                },
+                {
+                  "Name": "family_name",
+                  "Value": "Admin"
+                },
+                {
+                  "Name": "email_verified",
+                  "Value": true
+                },
+                {
+                  "Name": "custom:group",
+                  "Value": "Admin"
+                },
+                {
+                  "Name": "custom:region",
+                  "Value": "ap-northeast-1"
+                },
+                {
+                  "Name": "custom:environment",
+                  "Value": "dev"
+                }
+              ]
+            }
+          },
+          "IamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": "lambda.amazonaws.com"
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "formsli-base",
+                    "dev",
+                    "ap-northeast-1",
+                    "lambdaRole"
+                  ]
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": "dev-formsli--role-lambda",
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "tag:GetResources",
+                          "secretsmanager:CreateSecret",
+                          "secretsmanager:ListSecrets",
+                          "secretsmanager:GetRandomPassword",
+                          "logs:CreateLogGroup",
+                          "logs:CreateLogStream",
+                          "logs:PutLogEvents",
+                          "xray:PutTelemetryRecords",
+                          "xray:PutTraceSegments"
+                        ],
+                        "Resource": [
+                          "*"
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "ssm:GetParameter",
+                          "ssm:GetParameters",
+                          "ssm:GetParametersByPath"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/dev/formsli/*"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "ApiGatewayRestApi": {
+            "Type": "AWS::ApiGateway::RestApi",
+            "Properties": {
+              "Name": "dev-formsli-apig",
+              "Description": "dev formsli-base api gateway"
+            }
+          },
+          "MyApiGatewayAuthorizer": {
+            "Type": "AWS::ApiGateway::Authorizer",
+            "Properties": {
+              "AuthorizerResultTtlInSeconds": 300,
+              "IdentitySource": "method.request.header.Authorization",
+              "Name": "MyCognitoAuthorizer",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "Type": "COGNITO_USER_POOLS",
+              "ProviderARNs": [
+                "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33"
+              ]
+            }
+          },
+          "ApiGatewayResourceForm": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ParentId": {
+                "Fn::GetAtt": "ApiGatewayRestApi.RootResourceId"
+              },
+              "PathPart": "form"
+            }
+          },
+          "ApiGatewayResourceStream": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ParentId": {
+                "Fn::GetAtt": "ApiGatewayRestApi.RootResourceId"
+              },
+              "PathPart": "stream"
+            }
+          },
+          "ApiGatewayResourceUser": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ParentId": {
+                "Fn::GetAtt": "ApiGatewayRestApi.RootResourceId"
+              },
+              "PathPart": "user"
+            }
+          },
+          "ApiGatewayResourceServers": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ParentId": {
+                "Fn::GetAtt": "ApiGatewayRestApi.RootResourceId"
+              },
+              "PathPart": "servers"
+            }
+          },
+          "SftpUserRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "transfer.amazonaws.com"
+                      ]
+                    },
+                    "Action": "sts:AssumeRole"
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": "SftpBucketAccessPolicy",
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "s3:*"
+                        ],
+                        "Resource": {
+                          "Fn::Join": [
+                            ":",
+                            [
+                              "arn",
+                              {
+                                "Ref": "AWS::Partition"
+                              },
+                              "s3::",
+                              "fl-dev-userdata*"
+                            ]
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "TransferIdentityProviderRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "transfer.amazonaws.com"
+                      ]
+                    },
+                    "Action": "sts:AssumeRole"
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": "TransferCanInvokeAuthorizeApi",
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "execute-api:Invoke"
+                        ],
+                        "Resource": {
+                          "Fn::Join": [
+                            ":",
+                            [
+                              "arn",
+                              {
+                                "Ref": "AWS::Partition"
+                              },
+                              "execute-api",
+                              {
+                                "Ref": "AWS::Region"
+                              },
+                              {
+                                "Ref": "AWS::AccountId"
+                              },
+                              {
+                                "Fn::Join": [
+                                  "",
+                                  [
+                                    {
+                                      "Ref": "ApiGatewayRestApi"
+                                    },
+                                    "/dev/GET/*"
+                                  ]
+                                ]
+                              }
+                            ]
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "PolicyName": "TransferCanReadAuthorizeApi",
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "apigateway:GET"
+                        ],
+                        "Resource": "*"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "TransferLoggingRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "transfer.amazonaws.com"
+                      ]
+                    },
+                    "Action": "sts:AssumeRole"
+                  }
+                ]
+              },
+              "ManagedPolicyArns": [
+                "arn:aws:iam::aws:policy/service-role/AWSTransferLoggingAccess"
+              ]
+            }
+          },
+          "SftpServer": {
+            "DependsOn": [
+              "TransferIdentityProviderRole",
+              "TransferLoggingRole",
+              "ApiGatewayRestApi",
+              "SftpUserRole"
+            ],
+            "Type": "AWS::Transfer::Server",
+            "Properties": {
+              "EndpointType": "PUBLIC",
+              "IdentityProviderType": "API_GATEWAY",
+              "LoggingRole": {
+                "Fn::GetAtt": [
+                  "TransferLoggingRole",
+                  "Arn"
+                ]
+              },
+              "IdentityProviderDetails": {
+                "InvocationRole": {
+                  "Fn::GetAtt": [
+                    "TransferIdentityProviderRole",
+                    "Arn"
+                  ]
+                },
+                "Url": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "https://",
+                      {
+                        "Ref": "ApiGatewayRestApi"
+                      },
+                      {
+                        "Fn::Sub": ".execute-api.${AWS::Region}.amazonaws.com/dev/"
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          },
+          "SftpDomain": {
+            "DependsOn": [
+              "SftpServer"
+            ],
+            "Type": "AWS::Route53::RecordSet",
+            "Properties": {
+              "HostedZoneId": "Z3CMAQR65ETWUL",
+              "Name": "dev-sftp.forms.li",
+              "Type": "CNAME",
+              "TTL": 300,
+              "ResourceRecords": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      {
+                        "Fn::GetAtt": [
+                          "SftpServer",
+                          "ServerId"
+                        ]
+                      },
+                      {
+                        "Fn::Sub": ".server.transfer.${AWS::Region}.amazonaws.com"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            }
+          },
+          "EntryDLQueue": {
+            "Type": "AWS::SQS::Queue",
+            "Properties": {
+              "QueueName": "dev-formsli-entry-queue-dl"
+            }
+          },
+          "EntryQueue": {
+            "Type": "AWS::SQS::Queue",
+            "Properties": {
+              "VisibilityTimeout": 120,
+              "QueueName": "dev-formsli-entry-queue",
+              "RedrivePolicy": {
+                "maxReceiveCount": 3,
+                "deadLetterTargetArn": {
+                  "Fn::GetAtt": [
+                    "EntryDLQueue",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          },
+          "FirehoseDLQueue": {
+            "Type": "AWS::SQS::Queue",
+            "Properties": {
+              "QueueName": "dev-formsli-firehose-queue-dl"
+            }
+          },
+          "FirehoseQueue": {
+            "Type": "AWS::SQS::Queue",
+            "Properties": {
+              "VisibilityTimeout": 120,
+              "QueueName": "dev-formsli-firehose-queue",
+              "RedrivePolicy": {
+                "maxReceiveCount": 3,
+                "deadLetterTargetArn": {
+                  "Fn::GetAtt": [
+                    "FirehoseDLQueue",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          },
+          "AnalyticsDLQueue": {
+            "Type": "AWS::SQS::Queue",
+            "Properties": {
+              "QueueName": "dev-formsli-analytics-queue-dl"
+            }
+          },
+          "AnalyticsQueue": {
+            "Type": "AWS::SQS::Queue",
+            "Properties": {
+              "VisibilityTimeout": 120,
+              "QueueName": "dev-formsli-analytics-queue",
+              "RedrivePolicy": {
+                "maxReceiveCount": 3,
+                "deadLetterTargetArn": {
+                  "Fn::GetAtt": [
+                    "AnalyticsDLQueue",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          },
+          "IntegrationDLQueue": {
+            "Type": "AWS::SQS::Queue",
+            "Properties": {
+              "QueueName": "dev-formsli-integration-queue-dl"
+            }
+          },
+          "IntegrationQueue": {
+            "Type": "AWS::SQS::Queue",
+            "Properties": {
+              "VisibilityTimeout": 300,
+              "QueueName": "dev-formsli-integration-queue",
+              "RedrivePolicy": {
+                "maxReceiveCount": 3,
+                "deadLetterTargetArn": {
+                  "Fn::GetAtt": [
+                    "IntegrationDLQueue",
+                    "Arn"
+                  ]
+                }
+              }
+            }
+          },
+          "ssmAppName": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/app/name",
+              "Description": "Application Name",
+              "Value": "formsli",
+              "Type": "String"
+            }
+          },
+          "ssmPrefixKey": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/prefix/key",
+              "Description": "Stage-App prefix for SSM keys",
+              "Value": "dev/formsli",
+              "Type": "String"
+            }
+          },
+          "ssmRootDomain": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/domain/tld",
+              "Description": "Application TLD",
+              "Value": "forms.li",
+              "Type": "String"
+            }
+          },
+          "ssmPrefixDomain": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/prefix/domain",
+              "Description": "Stage based domain prefix",
+              "Value": "dev-",
+              "Type": "String"
+            }
+          },
+          "ssmPrefixName": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/prefix/name",
+              "Description": "Stage based AWS resource name prefix",
+              "Value": "dev-formsli-",
+              "Type": "String"
+            }
+          },
+          "ssmRootApigRestApiId": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/apig/restApiId",
+              "Description": "API Gateway Rest Api Id",
+              "Value": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "Type": "String"
+            }
+          },
+          "ssmRootApigRootResource": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/apig/rootResourceId",
+              "Description": "API Gateway root resource id for paths to inherit from",
+              "Value": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "Type": "String"
+            }
+          },
+          "ssmRootApigAuthorizerId": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/apig/authorizerId",
+              "Description": "API Gateway cognito authorizer id",
+              "Value": {
+                "Ref": "MyApiGatewayAuthorizer"
+              },
+              "Type": "String"
+            }
+          },
+          "ssmApigResourceForm": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/apig/resource/form",
+              "Description": "API Gateway resource for /form paths",
+              "Value": {
+                "Ref": "ApiGatewayResourceForm"
+              },
+              "Type": "String"
+            }
+          },
+          "ssmApigResourceStream": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/apig/resource/stream",
+              "Description": "API Gateway resource for /stream paths",
+              "Value": {
+                "Ref": "ApiGatewayResourceStream"
+              },
+              "Type": "String"
+            }
+          },
+          "ssmApigResourceUser": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/apig/resource/user",
+              "Description": "API Gateway resource for /user paths",
+              "Value": {
+                "Ref": "ApiGatewayResourceUser"
+              },
+              "Type": "String"
+            }
+          },
+          "ssmApigResourceServers": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/apig/resource/server",
+              "Description": "API Gateway resource for /server path, used by AWS Transfer",
+              "Value": {
+                "Ref": "ApiGatewayResourceServers"
+              },
+              "Type": "String"
+            }
+          },
+          "ssmSftpServerId": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/sftp/id",
+              "Description": "AWS Transfer ServerId",
+              "Value": {
+                "Fn::GetAtt": [
+                  "SftpServer",
+                  "ServerId"
+                ]
+              },
+              "Type": "String"
+            }
+          },
+          "ssmSftpServerArn": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/sftp/arn",
+              "Description": "AWS Transfer Server Arn",
+              "Value": {
+                "Fn::GetAtt": [
+                  "SftpServer",
+                  "Arn"
+                ]
+              },
+              "Type": "String"
+            }
+          },
+          "ssmSftpUserRoleArn": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/sftp/userRoleArn",
+              "Description": "AWS Transfer User Role Arn",
+              "Value": {
+                "Fn::GetAtt": [
+                  "SftpUserRole",
+                  "Arn"
+                ]
+              },
+              "Type": "String"
+            }
+          },
+          "ssmEntryQueueArn": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/queue/entry/arn",
+              "Description": "Entry Queue Arn",
+              "Value": {
+                "Fn::GetAtt": [
+                  "EntryQueue",
+                  "Arn"
+                ]
+              },
+              "Type": "String"
+            }
+          },
+          "ssmAnalyticsQueueArn": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/queue/analytics/arn",
+              "Description": "Analytics Queue Arn",
+              "Value": {
+                "Fn::GetAtt": [
+                  "AnalyticsQueue",
+                  "Arn"
+                ]
+              },
+              "Type": "String"
+            }
+          },
+          "ssmIntegrationQueueArn": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/queue/integration/arn",
+              "Description": "Integration Queue Arn",
+              "Value": {
+                "Fn::GetAtt": [
+                  "IntegrationQueue",
+                  "Arn"
+                ]
+              },
+              "Type": "String"
+            }
+          },
+          "ssmFirehoseQueueArn": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/queue/firehose/arn",
+              "Description": "Firehose Queue Arn",
+              "Value": {
+                "Fn::GetAtt": [
+                  "FirehoseQueue",
+                  "Arn"
+                ]
+              },
+              "Type": "String"
+            }
+          },
+          "ssmEntryQueueUrl": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/queue/entry/url",
+              "Description": "Entry Queue Url",
+              "Value": {
+                "Ref": "EntryQueue"
+              },
+              "Type": "String"
+            }
+          },
+          "ssmAnalyticsQueueUrl": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/queue/analytics/url",
+              "Description": "Analytics Queue Url",
+              "Value": {
+                "Ref": "AnalyticsQueue"
+              },
+              "Type": "String"
+            }
+          },
+          "ssmIntegrationQueueUrl": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/queue/integration/url",
+              "Description": "Integration Queue Url",
+              "Value": {
+                "Ref": "IntegrationQueue"
+              },
+              "Type": "String"
+            }
+          },
+          "ssmFirehoseQueueUrl": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/queue/firehose/url",
+              "Description": "Firehose Queue Url",
+              "Value": {
+                "Ref": "FirehoseQueue"
+              },
+              "Type": "String"
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            }
+          },
+          "ServerlessDeploymentBucketAccelerated": {
+            "Value": true
+          },
+          "FirehoseQueue": {
+            "Value": {
+              "Ref": "FirehoseQueue"
+            }
+          },
+          "EntryQueue": {
+            "Value": {
+              "Ref": "EntryQueue"
+            }
+          },
+          "IntegrationQueue": {
+            "Value": {
+              "Ref": "IntegrationQueue"
+            }
+          },
+          "AnalyticsQueue": {
+            "Value": {
+              "Ref": "AnalyticsQueue"
+            }
+          }
+        }
+      },
+      "coreCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              },
+              "AccelerateConfiguration": {
+                "AccelerationStatus": "Enabled"
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            }
+          },
+          "ServerlessDeploymentBucketAccelerated": {
+            "Value": true
+          }
+        }
+      }
+    },
+    "custom": {
+      "output": {
+        "file": "outputs/stack.dev.json"
+      }
+    },
+    "plugins": [
+      "serverless-pseudo-parameters",
+      "@anttiviljami/serverless-stack-output"
+    ],
+    "pluginsData": {},
+    "functions": {},
+    "resources": {
+      "Resources": {
+        "CognitoUserPoolAdminUser": {
+          "Type": "AWS::Cognito::UserPoolUser",
+          "Properties": {
+            "Username": "infrastructure.dev@forms.li",
+            "UserPoolId": "ap-northeast-1_Q798Nsl33",
+            "DesiredDeliveryMediums": [
+              "EMAIL"
+            ],
+            "UserAttributes": [
+              {
+                "Name": "email",
+                "Value": "infrastructure.dev@forms.li"
+              },
+              {
+                "Name": "given_name",
+                "Value": "dev Infrastructure"
+              },
+              {
+                "Name": "family_name",
+                "Value": "Admin"
+              },
+              {
+                "Name": "email_verified",
+                "Value": true
+              },
+              {
+                "Name": "custom:group",
+                "Value": "Admin"
+              },
+              {
+                "Name": "custom:region",
+                "Value": "ap-northeast-1"
+              },
+              {
+                "Name": "custom:environment",
+                "Value": "dev"
+              }
+            ]
+          }
+        },
+        "IamRoleLambdaExecution": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": "lambda.amazonaws.com"
+                  },
+                  "Action": [
+                    "sts:AssumeRole"
+                  ]
+                }
+              ]
+            },
+            "Path": "/",
+            "RoleName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "formsli-base",
+                  "dev",
+                  "ap-northeast-1",
+                  "lambdaRole"
+                ]
+              ]
+            },
+            "Policies": [
+              {
+                "PolicyName": "dev-formsli--role-lambda",
+                "PolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "tag:GetResources",
+                        "secretsmanager:CreateSecret",
+                        "secretsmanager:ListSecrets",
+                        "secretsmanager:GetRandomPassword",
+                        "logs:CreateLogGroup",
+                        "logs:CreateLogStream",
+                        "logs:PutLogEvents",
+                        "xray:PutTelemetryRecords",
+                        "xray:PutTraceSegments"
+                      ],
+                      "Resource": [
+                        "*"
+                      ]
+                    },
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "ssm:GetParameter",
+                        "ssm:GetParameters",
+                        "ssm:GetParametersByPath"
+                      ],
+                      "Resource": [
+                        "arn:aws:ssm:#{AWS::Region}:#{AWS::AccountId}:parameter/dev/formsli/*"
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "ApiGatewayRestApi": {
+          "Type": "AWS::ApiGateway::RestApi",
+          "Properties": {
+            "Name": "dev-formsli-apig",
+            "Description": "dev formsli-base api gateway"
+          }
+        },
+        "MyApiGatewayAuthorizer": {
+          "Type": "AWS::ApiGateway::Authorizer",
+          "Properties": {
+            "AuthorizerResultTtlInSeconds": 300,
+            "IdentitySource": "method.request.header.Authorization",
+            "Name": "MyCognitoAuthorizer",
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "Type": "COGNITO_USER_POOLS",
+            "ProviderARNs": [
+              "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33"
+            ]
+          }
+        },
+        "ApiGatewayResourceForm": {
+          "Type": "AWS::ApiGateway::Resource",
+          "Properties": {
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "ParentId": {
+              "Fn::GetAtt": "ApiGatewayRestApi.RootResourceId"
+            },
+            "PathPart": "form"
+          }
+        },
+        "ApiGatewayResourceStream": {
+          "Type": "AWS::ApiGateway::Resource",
+          "Properties": {
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "ParentId": {
+              "Fn::GetAtt": "ApiGatewayRestApi.RootResourceId"
+            },
+            "PathPart": "stream"
+          }
+        },
+        "ApiGatewayResourceUser": {
+          "Type": "AWS::ApiGateway::Resource",
+          "Properties": {
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "ParentId": {
+              "Fn::GetAtt": "ApiGatewayRestApi.RootResourceId"
+            },
+            "PathPart": "user"
+          }
+        },
+        "ApiGatewayResourceServers": {
+          "Type": "AWS::ApiGateway::Resource",
+          "Properties": {
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "ParentId": {
+              "Fn::GetAtt": "ApiGatewayRestApi.RootResourceId"
+            },
+            "PathPart": "servers"
+          }
+        },
+        "SftpUserRole": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "transfer.amazonaws.com"
+                    ]
+                  },
+                  "Action": "sts:AssumeRole"
+                }
+              ]
+            },
+            "Policies": [
+              {
+                "PolicyName": "SftpBucketAccessPolicy",
+                "PolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "s3:*"
+                      ],
+                      "Resource": {
+                        "Fn::Join": [
+                          ":",
+                          [
+                            "arn",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            "s3::",
+                            "fl-dev-userdata*"
+                          ]
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "TransferIdentityProviderRole": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "transfer.amazonaws.com"
+                    ]
+                  },
+                  "Action": "sts:AssumeRole"
+                }
+              ]
+            },
+            "Policies": [
+              {
+                "PolicyName": "TransferCanInvokeAuthorizeApi",
+                "PolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "execute-api:Invoke"
+                      ],
+                      "Resource": {
+                        "Fn::Join": [
+                          ":",
+                          [
+                            "arn",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            "execute-api",
+                            {
+                              "Ref": "AWS::Region"
+                            },
+                            {
+                              "Ref": "AWS::AccountId"
+                            },
+                            {
+                              "Fn::Join": [
+                                "",
+                                [
+                                  {
+                                    "Ref": "ApiGatewayRestApi"
+                                  },
+                                  "/dev/GET/*"
+                                ]
+                              ]
+                            }
+                          ]
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "PolicyName": "TransferCanReadAuthorizeApi",
+                "PolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "apigateway:GET"
+                      ],
+                      "Resource": "*"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "TransferLoggingRole": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": [
+                      "transfer.amazonaws.com"
+                    ]
+                  },
+                  "Action": "sts:AssumeRole"
+                }
+              ]
+            },
+            "ManagedPolicyArns": [
+              "arn:aws:iam::aws:policy/service-role/AWSTransferLoggingAccess"
+            ]
+          }
+        },
+        "SftpServer": {
+          "DependsOn": [
+            "TransferIdentityProviderRole",
+            "TransferLoggingRole",
+            "ApiGatewayRestApi",
+            "SftpUserRole"
+          ],
+          "Type": "AWS::Transfer::Server",
+          "Properties": {
+            "EndpointType": "PUBLIC",
+            "IdentityProviderType": "API_GATEWAY",
+            "LoggingRole": {
+              "Fn::GetAtt": [
+                "TransferLoggingRole",
+                "Arn"
+              ]
+            },
+            "IdentityProviderDetails": {
+              "InvocationRole": {
+                "Fn::GetAtt": [
+                  "TransferIdentityProviderRole",
+                  "Arn"
+                ]
+              },
+              "Url": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "https://",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    ".execute-api.#{AWS::Region}.amazonaws.com/dev/"
+                  ]
+                ]
+              }
+            }
+          }
+        },
+        "SftpDomain": {
+          "DependsOn": [
+            "SftpServer"
+          ],
+          "Type": "AWS::Route53::RecordSet",
+          "Properties": {
+            "HostedZoneId": "Z3CMAQR65ETWUL",
+            "Name": "dev-sftp.forms.li",
+            "Type": "CNAME",
+            "TTL": 300,
+            "ResourceRecords": [
+              {
+                "Fn::Join": [
+                  "",
+                  [
+                    {
+                      "Fn::GetAtt": [
+                        "SftpServer",
+                        "ServerId"
+                      ]
+                    },
+                    ".server.transfer.#{AWS::Region}.amazonaws.com"
+                  ]
+                ]
+              }
+            ]
+          }
+        },
+        "EntryDLQueue": {
+          "Type": "AWS::SQS::Queue",
+          "Properties": {
+            "QueueName": "dev-formsli-entry-queue-dl"
+          }
+        },
+        "EntryQueue": {
+          "Type": "AWS::SQS::Queue",
+          "Properties": {
+            "VisibilityTimeout": 120,
+            "QueueName": "dev-formsli-entry-queue",
+            "RedrivePolicy": {
+              "maxReceiveCount": 3,
+              "deadLetterTargetArn": {
+                "Fn::GetAtt": [
+                  "EntryDLQueue",
+                  "Arn"
+                ]
+              }
+            }
+          }
+        },
+        "FirehoseDLQueue": {
+          "Type": "AWS::SQS::Queue",
+          "Properties": {
+            "QueueName": "dev-formsli-firehose-queue-dl"
+          }
+        },
+        "FirehoseQueue": {
+          "Type": "AWS::SQS::Queue",
+          "Properties": {
+            "VisibilityTimeout": 120,
+            "QueueName": "dev-formsli-firehose-queue",
+            "RedrivePolicy": {
+              "maxReceiveCount": 3,
+              "deadLetterTargetArn": {
+                "Fn::GetAtt": [
+                  "FirehoseDLQueue",
+                  "Arn"
+                ]
+              }
+            }
+          }
+        },
+        "AnalyticsDLQueue": {
+          "Type": "AWS::SQS::Queue",
+          "Properties": {
+            "QueueName": "dev-formsli-analytics-queue-dl"
+          }
+        },
+        "AnalyticsQueue": {
+          "Type": "AWS::SQS::Queue",
+          "Properties": {
+            "VisibilityTimeout": 120,
+            "QueueName": "dev-formsli-analytics-queue",
+            "RedrivePolicy": {
+              "maxReceiveCount": 3,
+              "deadLetterTargetArn": {
+                "Fn::GetAtt": [
+                  "AnalyticsDLQueue",
+                  "Arn"
+                ]
+              }
+            }
+          }
+        },
+        "IntegrationDLQueue": {
+          "Type": "AWS::SQS::Queue",
+          "Properties": {
+            "QueueName": "dev-formsli-integration-queue-dl"
+          }
+        },
+        "IntegrationQueue": {
+          "Type": "AWS::SQS::Queue",
+          "Properties": {
+            "VisibilityTimeout": 300,
+            "QueueName": "dev-formsli-integration-queue",
+            "RedrivePolicy": {
+              "maxReceiveCount": 3,
+              "deadLetterTargetArn": {
+                "Fn::GetAtt": [
+                  "IntegrationDLQueue",
+                  "Arn"
+                ]
+              }
+            }
+          }
+        },
+        "ssmAppName": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/app/name",
+            "Description": "Application Name",
+            "Value": "formsli",
+            "Type": "String"
+          }
+        },
+        "ssmPrefixKey": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/prefix/key",
+            "Description": "Stage-App prefix for SSM keys",
+            "Value": "dev/formsli",
+            "Type": "String"
+          }
+        },
+        "ssmRootDomain": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/domain/tld",
+            "Description": "Application TLD",
+            "Value": "forms.li",
+            "Type": "String"
+          }
+        },
+        "ssmPrefixDomain": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/prefix/domain",
+            "Description": "Stage based domain prefix",
+            "Value": "dev-",
+            "Type": "String"
+          }
+        },
+        "ssmPrefixName": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/prefix/name",
+            "Description": "Stage based AWS resource name prefix",
+            "Value": "dev-formsli-",
+            "Type": "String"
+          }
+        },
+        "ssmRootApigRestApiId": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/apig/restApiId",
+            "Description": "API Gateway Rest Api Id",
+            "Value": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "Type": "String"
+          }
+        },
+        "ssmRootApigRootResource": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/apig/rootResourceId",
+            "Description": "API Gateway root resource id for paths to inherit from",
+            "Value": {
+              "Fn::GetAtt": [
+                "ApiGatewayRestApi",
+                "RootResourceId"
+              ]
+            },
+            "Type": "String"
+          }
+        },
+        "ssmRootApigAuthorizerId": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/apig/authorizerId",
+            "Description": "API Gateway cognito authorizer id",
+            "Value": {
+              "Ref": "MyApiGatewayAuthorizer"
+            },
+            "Type": "String"
+          }
+        },
+        "ssmApigResourceForm": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/apig/resource/form",
+            "Description": "API Gateway resource for /form paths",
+            "Value": {
+              "Ref": "ApiGatewayResourceForm"
+            },
+            "Type": "String"
+          }
+        },
+        "ssmApigResourceStream": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/apig/resource/stream",
+            "Description": "API Gateway resource for /stream paths",
+            "Value": {
+              "Ref": "ApiGatewayResourceStream"
+            },
+            "Type": "String"
+          }
+        },
+        "ssmApigResourceUser": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/apig/resource/user",
+            "Description": "API Gateway resource for /user paths",
+            "Value": {
+              "Ref": "ApiGatewayResourceUser"
+            },
+            "Type": "String"
+          }
+        },
+        "ssmApigResourceServers": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/apig/resource/server",
+            "Description": "API Gateway resource for /server path, used by AWS Transfer",
+            "Value": {
+              "Ref": "ApiGatewayResourceServers"
+            },
+            "Type": "String"
+          }
+        },
+        "ssmSftpServerId": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/sftp/id",
+            "Description": "AWS Transfer ServerId",
+            "Value": {
+              "Fn::GetAtt": [
+                "SftpServer",
+                "ServerId"
+              ]
+            },
+            "Type": "String"
+          }
+        },
+        "ssmSftpServerArn": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/sftp/arn",
+            "Description": "AWS Transfer Server Arn",
+            "Value": {
+              "Fn::GetAtt": [
+                "SftpServer",
+                "Arn"
+              ]
+            },
+            "Type": "String"
+          }
+        },
+        "ssmSftpUserRoleArn": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/sftp/userRoleArn",
+            "Description": "AWS Transfer User Role Arn",
+            "Value": {
+              "Fn::GetAtt": [
+                "SftpUserRole",
+                "Arn"
+              ]
+            },
+            "Type": "String"
+          }
+        },
+        "ssmEntryQueueArn": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/queue/entry/arn",
+            "Description": "Entry Queue Arn",
+            "Value": {
+              "Fn::GetAtt": [
+                "EntryQueue",
+                "Arn"
+              ]
+            },
+            "Type": "String"
+          }
+        },
+        "ssmAnalyticsQueueArn": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/queue/analytics/arn",
+            "Description": "Analytics Queue Arn",
+            "Value": {
+              "Fn::GetAtt": [
+                "AnalyticsQueue",
+                "Arn"
+              ]
+            },
+            "Type": "String"
+          }
+        },
+        "ssmIntegrationQueueArn": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/queue/integration/arn",
+            "Description": "Integration Queue Arn",
+            "Value": {
+              "Fn::GetAtt": [
+                "IntegrationQueue",
+                "Arn"
+              ]
+            },
+            "Type": "String"
+          }
+        },
+        "ssmFirehoseQueueArn": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/queue/firehose/arn",
+            "Description": "Firehose Queue Arn",
+            "Value": {
+              "Fn::GetAtt": [
+                "FirehoseQueue",
+                "Arn"
+              ]
+            },
+            "Type": "String"
+          }
+        },
+        "ssmEntryQueueUrl": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/queue/entry/url",
+            "Description": "Entry Queue Url",
+            "Value": {
+              "Ref": "EntryQueue"
+            },
+            "Type": "String"
+          }
+        },
+        "ssmAnalyticsQueueUrl": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/queue/analytics/url",
+            "Description": "Analytics Queue Url",
+            "Value": {
+              "Ref": "AnalyticsQueue"
+            },
+            "Type": "String"
+          }
+        },
+        "ssmIntegrationQueueUrl": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/queue/integration/url",
+            "Description": "Integration Queue Url",
+            "Value": {
+              "Ref": "IntegrationQueue"
+            },
+            "Type": "String"
+          }
+        },
+        "ssmFirehoseQueueUrl": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/queue/firehose/url",
+            "Description": "Firehose Queue Url",
+            "Value": {
+              "Ref": "FirehoseQueue"
+            },
+            "Type": "String"
+          }
+        }
+      },
+      "Outputs": {
+        "FirehoseQueue": {
+          "Value": {
+            "Ref": "FirehoseQueue"
+          }
+        },
+        "EntryQueue": {
+          "Value": {
+            "Ref": "EntryQueue"
+          }
+        },
+        "IntegrationQueue": {
+          "Value": {
+            "Ref": "IntegrationQueue"
+          }
+        },
+        "AnalyticsQueue": {
+          "Value": {
+            "Ref": "AnalyticsQueue"
+          }
+        }
+      }
+    },
+    "serviceFilename": "serverless.yml",
+    "layers": {}
+  },
+  "package": {
+    "artifactDirectoryName": "serverless/formsli-base/dev/1569415032471-2019-09-25T12:37:12.471Z",
+    "artifact": ""
+  }
+}
