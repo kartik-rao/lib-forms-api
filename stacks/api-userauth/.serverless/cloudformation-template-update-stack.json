@@ -1,0 +1,1677 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "ServerlessDeploymentBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketEncryption": {
+          "ServerSideEncryptionConfiguration": [
+            {
+              "ServerSideEncryptionByDefault": {
+                "SSEAlgorithm": "AES256"
+              }
+            }
+          ]
+        },
+        "AccelerateConfiguration": {
+          "AccelerationStatus": "Enabled"
+        }
+      }
+    },
+    "AuthftpLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/formsli-auth-dev-authftp",
+        "RetentionInDays": 7
+      }
+    },
+    "PostConfirmationLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/formsli-auth-dev-postconf",
+        "RetentionInDays": 7
+      }
+    },
+    "InviteLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/formsli-auth-dev-invite",
+        "RetentionInDays": 7
+      }
+    },
+    "IamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "dev",
+                  "formsli-auth",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsli-auth-dev*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsli-auth-dev*:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "tag:GetResources",
+                    "secretsmanager:CreateSecret",
+                    "secretsmanager:ListSecrets",
+                    "secretsmanager:GetRandomPassword",
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents",
+                    "xray:PutTelemetryRecords",
+                    "xray:PutTraceSegments"
+                  ],
+                  "Resource": [
+                    "*"
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ssm:GetParameter",
+                    "ssm:GetParameters",
+                    "ssm:GetParametersByPath"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/dev/formsli/*"
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "formsli-auth",
+              "dev",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        }
+      }
+    },
+    "AuthftpLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/formsli-auth/dev/1569420769140-2019-09-25T14:12:49.140Z/formsli-auth.zip"
+        },
+        "FunctionName": "formsli-auth-dev-authftp",
+        "Handler": "functions/authftp.handle",
+        "MemorySize": 512,
+        "Role": {
+          "Fn::GetAtt": [
+            "AuthftpIamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs10.x",
+        "Timeout": 30,
+        "Tags": [
+          {
+            "Key": "stage",
+            "Value": "dev"
+          },
+          {
+            "Key": "service",
+            "Value": "formsli-auth"
+          },
+          {
+            "Key": "region",
+            "Value": "ap-northeast-1"
+          },
+          {
+            "Key": "stack",
+            "Value": "api-userauth"
+          }
+        ],
+        "Environment": {
+          "Variables": {
+            "region": "ap-northeast-1",
+            "environment": "dev",
+            "serviceName": "formsli-auth",
+            "databaseName": "formsli",
+            "userPoolId": "ap-northeast-1_Q798Nsl33",
+            "userPoolArn": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33",
+            "userPoolClientId": "7pvdgcaflsg9juob60mosafi9d",
+            "userPoolAdminClientId": "2ksv14apb63gdhstuvmc5196l5",
+            "dbClusterId": "fl-rds-cluster-dev",
+            "dbClusterArn": {
+              "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
+            },
+            "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX",
+            "s3_user_bucket": "fl-dev-userdata",
+            "sftp_server_id": "s-00ad4b86d41a4e388",
+            "sftp_server_arn": "arn:aws:transfer:ap-northeast-1:286358943194:server/s-00ad4b86d41a4e388",
+            "sftp_role_arn": "arn:aws:iam::286358943194:role/formsli-base-dev-SftpUserRole-1SS1E4Y2LIVAL",
+            "domain_prefix": "dev-",
+            "rootDomain": "forms.li"
+          }
+        },
+        "TracingConfig": {
+          "Mode": "Active"
+        }
+      },
+      "DependsOn": [
+        "AuthftpIamRoleLambdaExecution",
+        "AuthftpLogGroup"
+      ]
+    },
+    "AuthftpLambdaVersionGv5q7WuIstnZN49LK3RzZT3bAl8tq8Or4t7BXYg34": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "AuthftpLambdaFunction"
+        },
+        "CodeSha256": "FoAX/ADoCzI3SoLtvM9nV7vdbeHK8wsQ69L+31yo044="
+      }
+    },
+    "PostConfirmationLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/formsli-auth/dev/1569420769140-2019-09-25T14:12:49.140Z/formsli-auth.zip"
+        },
+        "FunctionName": "formsli-auth-dev-postconf",
+        "Handler": "functions/postconfirmation.handle",
+        "MemorySize": 512,
+        "Role": {
+          "Fn::GetAtt": [
+            "PostConfirmationIamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs10.x",
+        "Timeout": 30,
+        "Tags": [
+          {
+            "Key": "stage",
+            "Value": "dev"
+          },
+          {
+            "Key": "service",
+            "Value": "formsli-auth"
+          },
+          {
+            "Key": "region",
+            "Value": "ap-northeast-1"
+          },
+          {
+            "Key": "stack",
+            "Value": "api-userauth"
+          }
+        ],
+        "Environment": {
+          "Variables": {
+            "region": "ap-northeast-1",
+            "environment": "dev",
+            "serviceName": "formsli-auth",
+            "databaseName": "formsli",
+            "userPoolId": "ap-northeast-1_Q798Nsl33",
+            "userPoolArn": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33",
+            "userPoolClientId": "7pvdgcaflsg9juob60mosafi9d",
+            "userPoolAdminClientId": "2ksv14apb63gdhstuvmc5196l5",
+            "dbClusterId": "fl-rds-cluster-dev",
+            "dbClusterArn": {
+              "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
+            },
+            "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX",
+            "s3_user_bucket": "fl-dev-userdata",
+            "sftp_server_id": "s-00ad4b86d41a4e388",
+            "sftp_server_arn": "arn:aws:transfer:ap-northeast-1:286358943194:server/s-00ad4b86d41a4e388",
+            "sftp_role_arn": "arn:aws:iam::286358943194:role/formsli-base-dev-SftpUserRole-1SS1E4Y2LIVAL",
+            "domain_prefix": "dev-",
+            "rootDomain": "forms.li"
+          }
+        },
+        "TracingConfig": {
+          "Mode": "Active"
+        }
+      },
+      "DependsOn": [
+        "PostConfirmationIamRoleLambdaExecution",
+        "PostConfirmationLogGroup"
+      ]
+    },
+    "PostConfirmationLambdaVersionwULYmRKDpj6nvmVeepqKZ1MvYmwiBZogY103NAzfU": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "PostConfirmationLambdaFunction"
+        },
+        "CodeSha256": "FoAX/ADoCzI3SoLtvM9nV7vdbeHK8wsQ69L+31yo044="
+      }
+    },
+    "InviteLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/formsli-auth/dev/1569420769140-2019-09-25T14:12:49.140Z/formsli-auth.zip"
+        },
+        "FunctionName": "formsli-auth-dev-invite",
+        "Handler": "functions/invite.handle",
+        "MemorySize": 512,
+        "Role": {
+          "Fn::GetAtt": [
+            "InviteIamRoleLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs10.x",
+        "Timeout": 30,
+        "Tags": [
+          {
+            "Key": "stage",
+            "Value": "dev"
+          },
+          {
+            "Key": "service",
+            "Value": "formsli-auth"
+          },
+          {
+            "Key": "region",
+            "Value": "ap-northeast-1"
+          },
+          {
+            "Key": "stack",
+            "Value": "api-userauth"
+          }
+        ],
+        "Environment": {
+          "Variables": {
+            "region": "ap-northeast-1",
+            "environment": "dev",
+            "serviceName": "formsli-auth",
+            "databaseName": "formsli",
+            "userPoolId": "ap-northeast-1_Q798Nsl33",
+            "userPoolArn": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33",
+            "userPoolClientId": "7pvdgcaflsg9juob60mosafi9d",
+            "userPoolAdminClientId": "2ksv14apb63gdhstuvmc5196l5",
+            "dbClusterId": "fl-rds-cluster-dev",
+            "dbClusterArn": {
+              "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
+            },
+            "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX",
+            "s3_user_bucket": "fl-dev-userdata",
+            "sftp_server_id": "s-00ad4b86d41a4e388",
+            "sftp_server_arn": "arn:aws:transfer:ap-northeast-1:286358943194:server/s-00ad4b86d41a4e388",
+            "sftp_role_arn": "arn:aws:iam::286358943194:role/formsli-base-dev-SftpUserRole-1SS1E4Y2LIVAL",
+            "domain_prefix": "dev-",
+            "rootDomain": "forms.li"
+          }
+        },
+        "TracingConfig": {
+          "Mode": "Active"
+        }
+      },
+      "DependsOn": [
+        "InviteIamRoleLambdaExecution",
+        "InviteLogGroup"
+      ]
+    },
+    "InviteLambdaVersion85TpZv7VaQlgMVweBamBbWj19UBvl7oHNgAL7PpXmY": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "InviteLambdaFunction"
+        },
+        "CodeSha256": "FoAX/ADoCzI3SoLtvM9nV7vdbeHK8wsQ69L+31yo044="
+      }
+    },
+    "ApiGatewayResourceUserInvite": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": "zrqpl8",
+        "PathPart": "invite",
+        "RestApiId": "w2s48kp2a7"
+      }
+    },
+    "ApiGatewayResourceServersServeridVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": "09t9zh",
+        "PathPart": "{serverId}",
+        "RestApiId": "w2s48kp2a7"
+      }
+    },
+    "ApiGatewayResourceServersServeridVarUsers": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceServersServeridVar"
+        },
+        "PathPart": "users",
+        "RestApiId": "w2s48kp2a7"
+      }
+    },
+    "ApiGatewayResourceServersServeridVarUsersUsernameVar": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceServersServeridVarUsers"
+        },
+        "PathPart": "{username}",
+        "RestApiId": "w2s48kp2a7"
+      }
+    },
+    "ApiGatewayResourceServersServeridVarUsersUsernameVarConfig": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "ParentId": {
+          "Ref": "ApiGatewayResourceServersServeridVarUsersUsernameVar"
+        },
+        "PathPart": "config",
+        "RestApiId": "w2s48kp2a7"
+      }
+    },
+    "ApiGatewayMethodServersServeridVarUsersUsernameVarConfigOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Credentials": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "ContentHandling": "CONVERT_TO_TEXT",
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'",
+                "method.response.header.Access-Control-Allow-Credentials": "'false'"
+              },
+              "ResponseTemplates": {
+                "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".*\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceServersServeridVarUsersUsernameVarConfig"
+        },
+        "RestApiId": "w2s48kp2a7"
+      }
+    },
+    "ApiGatewayMethodUserInviteOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Credentials": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "ContentHandling": "CONVERT_TO_TEXT",
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'",
+                "method.response.header.Access-Control-Allow-Credentials": "'false'"
+              },
+              "ResponseTemplates": {
+                "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".*\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceUserInvite"
+        },
+        "RestApiId": "w2s48kp2a7"
+      }
+    },
+    "ApiGatewayMethodServersServeridVarUsersUsernameVarConfigGet": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceServersServeridVarUsersUsernameVarConfig"
+        },
+        "RestApiId": "w2s48kp2a7",
+        "ApiKeyRequired": false,
+        "AuthorizationType": "AWS_IAM",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "AuthftpLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      }
+    },
+    "ApiGatewayMethodUserInvitePost": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "POST",
+        "RequestParameters": {},
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceUserInvite"
+        },
+        "RestApiId": "w2s48kp2a7",
+        "ApiKeyRequired": false,
+        "AuthorizationType": "COGNITO_USER_POOLS",
+        "AuthorizerId": "0bbeey",
+        "Integration": {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ":lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "InviteLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "MethodResponses": []
+      }
+    },
+    "ApiGatewayDeployment1569420742151": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "Properties": {
+        "RestApiId": "w2s48kp2a7",
+        "StageName": "dev"
+      },
+      "DependsOn": [
+        "ApiGatewayMethodServersServeridVarUsersUsernameVarConfigOptions",
+        "ApiGatewayMethodUserInviteOptions",
+        "ApiGatewayMethodServersServeridVarUsersUsernameVarConfigGet",
+        "ApiGatewayMethodUserInvitePost"
+      ]
+    },
+    "AuthftpLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "AuthftpLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              "w2s48kp2a7",
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "InviteLambdaPermissionApiGateway": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "InviteLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              "w2s48kp2a7",
+              "/*/*"
+            ]
+          ]
+        }
+      }
+    },
+    "ApiGatewayLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/api-gateway/formsli-auth-dev",
+        "RetentionInDays": 7
+      }
+    },
+    "CustomApiGatewayAccountCloudWatchRole": {
+      "Type": "Custom::ApiGatewayAccountRole",
+      "Version": 1,
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomDashresourceDashapigwDashcwDashroleLambdaFunction",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "CustomDashresourceDashapigwDashcwDashroleLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/formsli-auth/dev/1569420769140-2019-09-25T14:12:49.140Z/custom-resources.zip"
+        },
+        "FunctionName": "formsli-auth-dev-custom-resource-apigw-cw-role",
+        "Handler": "apiGatewayCloudWatchRole/handler.handler",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleCustomResourcesLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs10.x",
+        "Timeout": 180
+      },
+      "DependsOn": [
+        "IamRoleCustomResourcesLambdaExecution"
+      ]
+    },
+    "IamRoleCustomResourcesLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "dev",
+                  "formsli-auth",
+                  "custom-resources-lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Resource": {
+                    "Fn::Join": [
+                      ":",
+                      [
+                        "arn:aws:iam:",
+                        {
+                          "Ref": "AWS::AccountId"
+                        },
+                        "role/*"
+                      ]
+                    ]
+                  },
+                  "Action": [
+                    "iam:AttachRolePolicy",
+                    "iam:CreateRole",
+                    "iam:ListAttachedRolePolicies",
+                    "iam:PassRole"
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Resource": "arn:aws:apigateway:*::/account",
+                  "Action": [
+                    "apigateway:GET",
+                    "apigateway:PATCH"
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Resource": "*",
+                  "Action": [
+                    "cognito-idp:ListUserPools",
+                    "cognito-idp:DescribeUserPool",
+                    "cognito-idp:UpdateUserPool"
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Resource": "arn:aws:lambda:*:*:function:formsli-auth-dev-postconf",
+                  "Action": [
+                    "lambda:AddPermission",
+                    "lambda:RemovePermission"
+                  ]
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
+    "PostConfirmationCustomCognitoUserPool1": {
+      "Type": "Custom::CognitoUserPool",
+      "Version": 1,
+      "DependsOn": [
+        "PostConfirmationLambdaFunction",
+        "CustomDashresourceDashexistingDashcupLambdaFunction"
+      ],
+      "Properties": {
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "CustomDashresourceDashexistingDashcupLambdaFunction",
+            "Arn"
+          ]
+        },
+        "FunctionName": "formsli-auth-dev-postconf",
+        "UserPoolName": "fl-dev-userpool",
+        "UserPoolConfigs": [
+          {
+            "Trigger": "PostConfirmation"
+          }
+        ]
+      }
+    },
+    "CustomDashresourceDashexistingDashcupLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Ref": "ServerlessDeploymentBucket"
+          },
+          "S3Key": "serverless/formsli-auth/dev/1569420769140-2019-09-25T14:12:49.140Z/custom-resources.zip"
+        },
+        "FunctionName": "formsli-auth-dev-custom-resource-existing-cup",
+        "Handler": "cognitoUserPool/handler.handler",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "IamRoleCustomResourcesLambdaExecution",
+            "Arn"
+          ]
+        },
+        "Runtime": "nodejs10.x",
+        "Timeout": 180
+      },
+      "DependsOn": [
+        "IamRoleCustomResourcesLambdaExecution"
+      ]
+    },
+    "AwsAlertsAlarm": {
+      "Type": "AWS::SNS::Topic",
+      "Properties": {
+        "TopicName": "formsli-auth-dev-alerts-alarm",
+        "Subscription": [
+          {
+            "Protocol": "email",
+            "Endpoint": "infrastructure.dev@forms.li"
+          }
+        ]
+      }
+    },
+    "AuthftpFunctionErrorsAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "Namespace": "AWS/Lambda",
+        "MetricName": "Errors",
+        "Threshold": 1,
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "OKActions": [],
+        "AlarmActions": [
+          {
+            "Ref": "AwsAlertsAlarm"
+          }
+        ],
+        "InsufficientDataActions": [],
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "AuthftpLambdaFunction"
+            }
+          }
+        ],
+        "TreatMissingData": "missing",
+        "Statistic": "Sum"
+      }
+    },
+    "AuthftpFunctionThrottlesAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "Namespace": "AWS/Lambda",
+        "MetricName": "Throttles",
+        "Threshold": 1,
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "OKActions": [],
+        "AlarmActions": [
+          {
+            "Ref": "AwsAlertsAlarm"
+          }
+        ],
+        "InsufficientDataActions": [],
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "AuthftpLambdaFunction"
+            }
+          }
+        ],
+        "TreatMissingData": "missing",
+        "Statistic": "Sum"
+      }
+    },
+    "AuthftpFunctionInvocationsAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "Namespace": "AWS/Lambda",
+        "MetricName": "Invocations",
+        "Threshold": 100,
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "OKActions": [],
+        "AlarmActions": [
+          {
+            "Ref": "AwsAlertsAlarm"
+          }
+        ],
+        "InsufficientDataActions": [],
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "AuthftpLambdaFunction"
+            }
+          }
+        ],
+        "TreatMissingData": "missing",
+        "Statistic": "Sum"
+      }
+    },
+    "AuthftpFunctionDurationAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "Namespace": "AWS/Lambda",
+        "MetricName": "Duration",
+        "Threshold": 500,
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "OKActions": [],
+        "AlarmActions": [
+          {
+            "Ref": "AwsAlertsAlarm"
+          }
+        ],
+        "InsufficientDataActions": [],
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "AuthftpLambdaFunction"
+            }
+          }
+        ],
+        "TreatMissingData": "missing",
+        "Statistic": "Average"
+      }
+    },
+    "PostConfirmationFunctionErrorsAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "Namespace": "AWS/Lambda",
+        "MetricName": "Errors",
+        "Threshold": 1,
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "OKActions": [],
+        "AlarmActions": [
+          {
+            "Ref": "AwsAlertsAlarm"
+          }
+        ],
+        "InsufficientDataActions": [],
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "PostConfirmationLambdaFunction"
+            }
+          }
+        ],
+        "TreatMissingData": "missing",
+        "Statistic": "Sum"
+      }
+    },
+    "PostConfirmationFunctionThrottlesAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "Namespace": "AWS/Lambda",
+        "MetricName": "Throttles",
+        "Threshold": 1,
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "OKActions": [],
+        "AlarmActions": [
+          {
+            "Ref": "AwsAlertsAlarm"
+          }
+        ],
+        "InsufficientDataActions": [],
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "PostConfirmationLambdaFunction"
+            }
+          }
+        ],
+        "TreatMissingData": "missing",
+        "Statistic": "Sum"
+      }
+    },
+    "PostConfirmationFunctionInvocationsAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "Namespace": "AWS/Lambda",
+        "MetricName": "Invocations",
+        "Threshold": 100,
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "OKActions": [],
+        "AlarmActions": [
+          {
+            "Ref": "AwsAlertsAlarm"
+          }
+        ],
+        "InsufficientDataActions": [],
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "PostConfirmationLambdaFunction"
+            }
+          }
+        ],
+        "TreatMissingData": "missing",
+        "Statistic": "Sum"
+      }
+    },
+    "PostConfirmationFunctionDurationAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "Namespace": "AWS/Lambda",
+        "MetricName": "Duration",
+        "Threshold": 500,
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "OKActions": [],
+        "AlarmActions": [
+          {
+            "Ref": "AwsAlertsAlarm"
+          }
+        ],
+        "InsufficientDataActions": [],
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "PostConfirmationLambdaFunction"
+            }
+          }
+        ],
+        "TreatMissingData": "missing",
+        "Statistic": "Average"
+      }
+    },
+    "InviteFunctionErrorsAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "Namespace": "AWS/Lambda",
+        "MetricName": "Errors",
+        "Threshold": 1,
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "OKActions": [],
+        "AlarmActions": [
+          {
+            "Ref": "AwsAlertsAlarm"
+          }
+        ],
+        "InsufficientDataActions": [],
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "InviteLambdaFunction"
+            }
+          }
+        ],
+        "TreatMissingData": "missing",
+        "Statistic": "Sum"
+      }
+    },
+    "InviteFunctionThrottlesAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "Namespace": "AWS/Lambda",
+        "MetricName": "Throttles",
+        "Threshold": 1,
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "OKActions": [],
+        "AlarmActions": [
+          {
+            "Ref": "AwsAlertsAlarm"
+          }
+        ],
+        "InsufficientDataActions": [],
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "InviteLambdaFunction"
+            }
+          }
+        ],
+        "TreatMissingData": "missing",
+        "Statistic": "Sum"
+      }
+    },
+    "InviteFunctionInvocationsAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "Namespace": "AWS/Lambda",
+        "MetricName": "Invocations",
+        "Threshold": 100,
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "OKActions": [],
+        "AlarmActions": [
+          {
+            "Ref": "AwsAlertsAlarm"
+          }
+        ],
+        "InsufficientDataActions": [],
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "InviteLambdaFunction"
+            }
+          }
+        ],
+        "TreatMissingData": "missing",
+        "Statistic": "Sum"
+      }
+    },
+    "InviteFunctionDurationAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "Namespace": "AWS/Lambda",
+        "MetricName": "Duration",
+        "Threshold": 500,
+        "Period": 60,
+        "EvaluationPeriods": 1,
+        "DatapointsToAlarm": 1,
+        "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+        "OKActions": [],
+        "AlarmActions": [
+          {
+            "Ref": "AwsAlertsAlarm"
+          }
+        ],
+        "InsufficientDataActions": [],
+        "Dimensions": [
+          {
+            "Name": "FunctionName",
+            "Value": {
+              "Ref": "InviteLambdaFunction"
+            }
+          }
+        ],
+        "TreatMissingData": "missing",
+        "Statistic": "Average"
+      }
+    },
+    "AlertsDashboard": {
+      "Type": "AWS::CloudWatch::Dashboard",
+      "Properties": {
+        "DashboardName": "formsli-auth-dev-ap-northeast-1",
+        "DashboardBody": "{\"widgets\":[{\"type\":\"metric\",\"x\":0,\"y\":0,\"width\":8,\"height\":6,\"properties\":{\"title\":\"Errors\",\"view\":\"timeSeries\",\"stacked\":false,\"metrics\":[[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"formsli-auth-dev-authftp\",{\"stat\":\"Sum\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"authftp\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"formsli-auth-dev-postConfirmation\",{\"stat\":\"Sum\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"postConfirmation\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"formsli-auth-dev-invite\",{\"stat\":\"Sum\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"invite\"}]],\"region\":\"ap-northeast-1\",\"period\":300}},{\"type\":\"metric\",\"x\":8,\"y\":0,\"width\":6,\"height\":6,\"properties\":{\"title\":\"Errors\",\"view\":\"singleValue\",\"metrics\":[[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"formsli-auth-dev-authftp\",{\"stat\":\"Sum\",\"period\":2592000,\"region\":\"ap-northeast-1\",\"label\":\"authftp\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"formsli-auth-dev-postConfirmation\",{\"stat\":\"Sum\",\"period\":2592000,\"region\":\"ap-northeast-1\",\"label\":\"postConfirmation\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"formsli-auth-dev-invite\",{\"stat\":\"Sum\",\"period\":2592000,\"region\":\"ap-northeast-1\",\"label\":\"invite\"}]],\"region\":\"ap-northeast-1\",\"period\":300}},{\"type\":\"metric\",\"x\":14,\"y\":0,\"width\":10,\"height\":6,\"properties\":{\"title\":\"Duration\",\"view\":\"timeSeries\",\"stacked\":false,\"metrics\":[[\"AWS/Lambda\",\"Duration\",\"FunctionName\",\"formsli-auth-dev-authftp\",{\"stat\":\"p50\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"authftp p50\"}],[\"AWS/Lambda\",\"Duration\",\"FunctionName\",\"formsli-auth-dev-authftp\",{\"stat\":\"p90\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"authftp p90\"}],[\"AWS/Lambda\",\"Duration\",\"FunctionName\",\"formsli-auth-dev-postConfirmation\",{\"stat\":\"p50\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"postConfirmation p50\"}],[\"AWS/Lambda\",\"Duration\",\"FunctionName\",\"formsli-auth-dev-postConfirmation\",{\"stat\":\"p90\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"postConfirmation p90\"}],[\"AWS/Lambda\",\"Duration\",\"FunctionName\",\"formsli-auth-dev-invite\",{\"stat\":\"p50\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"invite p50\"}],[\"AWS/Lambda\",\"Duration\",\"FunctionName\",\"formsli-auth-dev-invite\",{\"stat\":\"p90\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"invite p90\"}]],\"region\":\"ap-northeast-1\",\"period\":300}},{\"type\":\"metric\",\"x\":0,\"y\":6,\"width\":8,\"height\":6,\"properties\":{\"title\":\"Invocations\",\"view\":\"timeSeries\",\"stacked\":false,\"metrics\":[[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"formsli-auth-dev-authftp\",{\"stat\":\"Sum\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"authftp\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"formsli-auth-dev-postConfirmation\",{\"stat\":\"Sum\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"postConfirmation\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"formsli-auth-dev-invite\",{\"stat\":\"Sum\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"invite\"}]],\"region\":\"ap-northeast-1\",\"period\":300}},{\"type\":\"metric\",\"x\":8,\"y\":6,\"width\":6,\"height\":6,\"properties\":{\"title\":\"Invocations\",\"view\":\"singleValue\",\"metrics\":[[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"formsli-auth-dev-authftp\",{\"stat\":\"Sum\",\"period\":2592000,\"region\":\"ap-northeast-1\",\"label\":\"authftp\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"formsli-auth-dev-postConfirmation\",{\"stat\":\"Sum\",\"period\":2592000,\"region\":\"ap-northeast-1\",\"label\":\"postConfirmation\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"formsli-auth-dev-invite\",{\"stat\":\"Sum\",\"period\":2592000,\"region\":\"ap-northeast-1\",\"label\":\"invite\"}]],\"region\":\"ap-northeast-1\",\"period\":300}},{\"type\":\"metric\",\"x\":14,\"y\":6,\"width\":10,\"height\":6,\"properties\":{\"title\":\"API Requests\",\"view\":\"timeSeries\",\"stacked\":false,\"metrics\":[[\"AWS/ApiGateway\",\"5XXError\",\"ApiName\",\"dev-formsli-auth\",{\"stat\":\"Sum\",\"period\":900}],[\"AWS/ApiGateway\",\"4XXError\",\"ApiName\",\"dev-formsli-auth\",{\"stat\":\"Sum\",\"period\":900}],[\"AWS/ApiGateway\",\"Count\",\"ApiName\",\"dev-formsli-auth\",{\"stat\":\"Sum\",\"period\":900}]],\"region\":\"ap-northeast-1\"}},{\"type\":\"metric\",\"x\":0,\"y\":12,\"width\":8,\"height\":6,\"properties\":{\"title\":\"Throttles\",\"view\":\"timeSeries\",\"stacked\":false,\"metrics\":[[\"AWS/Lambda\",\"Throttles\",\"FunctionName\",\"formsli-auth-dev-authftp\",{\"stat\":\"Sum\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"authftp\"}],[\"AWS/Lambda\",\"Throttles\",\"FunctionName\",\"formsli-auth-dev-postConfirmation\",{\"stat\":\"Sum\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"postConfirmation\"}],[\"AWS/Lambda\",\"Throttles\",\"FunctionName\",\"formsli-auth-dev-invite\",{\"stat\":\"Sum\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"invite\"}]],\"region\":\"ap-northeast-1\",\"period\":300}},{\"type\":\"metric\",\"x\":8,\"y\":12,\"width\":6,\"height\":6,\"properties\":{\"title\":\"Throttles\",\"view\":\"singleValue\",\"metrics\":[[\"AWS/Lambda\",\"Throttles\",\"FunctionName\",\"formsli-auth-dev-authftp\",{\"stat\":\"Sum\",\"period\":2592000,\"region\":\"ap-northeast-1\",\"label\":\"authftp\"}],[\"AWS/Lambda\",\"Throttles\",\"FunctionName\",\"formsli-auth-dev-postConfirmation\",{\"stat\":\"Sum\",\"period\":2592000,\"region\":\"ap-northeast-1\",\"label\":\"postConfirmation\"}],[\"AWS/Lambda\",\"Throttles\",\"FunctionName\",\"formsli-auth-dev-invite\",{\"stat\":\"Sum\",\"period\":2592000,\"region\":\"ap-northeast-1\",\"label\":\"invite\"}]],\"region\":\"ap-northeast-1\",\"period\":300}},{\"type\":\"metric\",\"x\":14,\"y\":12,\"width\":10,\"height\":6,\"properties\":{\"title\":\"API Latency\",\"view\":\"timeSeries\",\"stacked\":false,\"metrics\":[[\"AWS/ApiGateway\",\"IntegrationLatency\",\"ApiName\",\"dev-formsli-auth\",{\"stat\":\"p50\",\"period\":900,\"region\":\"ap-northeast-1\"}],[\"AWS/ApiGateway\",\"Latency\",\"ApiName\",\"dev-formsli-auth\",{\"stat\":\"p50\",\"period\":900,\"region\":\"ap-northeast-1\"}],[\"AWS/ApiGateway\",\"IntegrationLatency\",\"ApiName\",\"dev-formsli-auth\",{\"stat\":\"p90\",\"period\":900,\"region\":\"ap-northeast-1\"}],[\"AWS/ApiGateway\",\"Latency\",\"ApiName\",\"dev-formsli-auth\",{\"stat\":\"p90\",\"period\":900,\"region\":\"ap-northeast-1\"}]],\"region\":\"ap-northeast-1\"}}]}"
+      }
+    },
+    "AuthftpIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "dev",
+                  "formsli-auth",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsli-auth-dev-authftp:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "tag:GetResources",
+                    "secretsmanager:CreateSecret",
+                    "secretsmanager:ListSecrets",
+                    "secretsmanager:GetRandomPassword",
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents",
+                    "xray:PutTelemetryRecords",
+                    "xray:PutTraceSegments"
+                  ],
+                  "Resource": [
+                    "*"
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ssm:GetParameter",
+                    "ssm:GetParameters",
+                    "ssm:GetParametersByPath"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/dev/formsli/*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "cognito-idp:AdminGetUser",
+                    "cognito-idp:AdminInitiateAuth"
+                  ],
+                  "Resource": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33"
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "formsli-auth",
+              "dev",
+              "authftp",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    },
+    "PostConfirmationIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "dev",
+                  "formsli-auth",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsli-auth-dev-postconf:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "tag:GetResources",
+                    "secretsmanager:CreateSecret",
+                    "secretsmanager:ListSecrets",
+                    "secretsmanager:GetRandomPassword",
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents",
+                    "xray:PutTelemetryRecords",
+                    "xray:PutTraceSegments"
+                  ],
+                  "Resource": [
+                    "*"
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ssm:GetParameter",
+                    "ssm:GetParameters",
+                    "ssm:GetParametersByPath"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/dev/formsli/*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ses:SendEmail",
+                    "ses:SendRawEmail"
+                  ],
+                  "Resource": [
+                    "*"
+                  ],
+                  "Condition": {
+                    "StringLike": {
+                      "ses:FromAddress": [
+                        "*@forms.li"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "secretsmanager:GetSecretValue"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:secretsmanager:ap-northeast-1:${AWS::AccountId}:secret:/dev/formsli/rds/*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "rds-data:BatchExecuteStatement",
+                    "rds-data:BeginTransaction",
+                    "rds-data:CommitTransaction",
+                    "rds-data:ExecuteStatement",
+                    "rds-data:RollbackTransaction"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
+                    },
+                    {
+                      "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "cognito-idp:AdminAddUserToGroup",
+                    "cognito-idp:AdminUpdateUserAttributes",
+                    "cognito-idp:AdminGetUser"
+                  ],
+                  "Resource": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33"
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "formsli-auth",
+              "dev",
+              "postConfirmation",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    },
+    "InviteIamRoleLambdaExecution": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "lambda.amazonaws.com"
+                ]
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "Policies": [
+          {
+            "PolicyName": {
+              "Fn::Join": [
+                "-",
+                [
+                  "dev",
+                  "formsli-auth",
+                  "lambda"
+                ]
+              ]
+            },
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsli-auth-dev-invite:*:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "tag:GetResources",
+                    "secretsmanager:CreateSecret",
+                    "secretsmanager:ListSecrets",
+                    "secretsmanager:GetRandomPassword",
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents",
+                    "xray:PutTelemetryRecords",
+                    "xray:PutTraceSegments"
+                  ],
+                  "Resource": [
+                    "*"
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ssm:GetParameter",
+                    "ssm:GetParameters",
+                    "ssm:GetParametersByPath"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/dev/formsli/*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "secretsmanager:GetSecretValue"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:secretsmanager:ap-northeast-1:${AWS::AccountId}:secret:/dev/formsli/rds/*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "rds-data:ExecuteStatement"
+                  ],
+                  "Resource": [
+                    {
+                      "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
+                    },
+                    {
+                      "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev:*"
+                    }
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "cognito-idp:AdminAddUserToGroup",
+                    "cognito-idp:AdminCreateUser",
+                    "cognito-idp:AdminGetUser"
+                  ],
+                  "Resource": "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33"
+                }
+              ]
+            }
+          }
+        ],
+        "Path": "/",
+        "RoleName": {
+          "Fn::Join": [
+            "-",
+            [
+              "formsli-auth",
+              "dev",
+              "invite",
+              {
+                "Ref": "AWS::Region"
+              },
+              "lambdaRole"
+            ]
+          ]
+        },
+        "ManagedPolicyArns": []
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": {
+        "Ref": "ServerlessDeploymentBucket"
+      }
+    },
+    "ServerlessDeploymentBucketAccelerated": {
+      "Value": true
+    },
+    "AuthftpLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "AuthftpLambdaVersionGv5q7WuIstnZN49LK3RzZT3bAl8tq8Or4t7BXYg34"
+      }
+    },
+    "PostConfirmationLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "PostConfirmationLambdaVersionwULYmRKDpj6nvmVeepqKZ1MvYmwiBZogY103NAzfU"
+      }
+    },
+    "InviteLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "InviteLambdaVersion85TpZv7VaQlgMVweBamBbWj19UBvl7oHNgAL7PpXmY"
+      }
+    },
+    "ServiceEndpoint": {
+      "Description": "URL of the service endpoint",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            "w2s48kp2a7",
+            ".execute-api.",
+            {
+              "Ref": "AWS::Region"
+            },
+            ".",
+            {
+              "Ref": "AWS::URLSuffix"
+            },
+            "/dev"
+          ]
+        ]
+      }
+    }
+  }
+}

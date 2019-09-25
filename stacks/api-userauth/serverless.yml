@@ -39,6 +39,7 @@ provider:
     userPoolId      : ${ssm:/${self:provider.stage}/formsli/cognito/userpool/id}
     userPoolArn     : ${ssm:/${self:provider.stage}/formsli/cognito/userpool/arn}
     userPoolClientId: ${ssm:/${self:provider.stage}/formsli/cognito/userpool/clientId}
+    userPoolAdminClientId : ${ssm:/${self:provider.stage}/formsli/cognito/userpool/adminClientId}
     dbClusterId     : ${ssm:/${self:provider.stage}/formsli/rds/id}
     dbClusterArn    : "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:${self:provider.environment.dbClusterId}"
     dbClusterSecretArn : ${ssm:/${self:provider.stage}/formsli/rds/password/secret}
