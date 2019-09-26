@@ -1,0 +1,633 @@
+subscription OnCreatePlanType {
+  onCreatePlanType {
+    id
+    name
+    displayName
+    description
+    isFree
+    billingCycle
+    billingAmount
+  }
+}
+
+subscription OnUpdatePlanType {
+  onUpdatePlanType {
+    id
+    name
+    displayName
+    description
+    isFree
+    billingCycle
+    billingAmount
+  }
+}
+
+subscription OnDeletePlanType {
+  onDeletePlanType {
+    id
+    name
+    displayName
+    description
+    isFree
+    billingCycle
+    billingAmount
+  }
+}
+
+subscription OnCreatePlan {
+  onCreatePlan {
+    id
+    type {
+      id
+      name
+      displayName
+      description
+      isFree
+      billingCycle
+      billingAmount
+    }
+    startDate
+    endDate
+  }
+}
+
+subscription OnUpdatePlan {
+  onUpdatePlan {
+    id
+    type {
+      id
+      name
+      displayName
+      description
+      isFree
+      billingCycle
+      billingAmount
+    }
+    startDate
+    endDate
+  }
+}
+
+subscription OnDeletePlan {
+  onDeletePlan {
+    id
+    type {
+      id
+      name
+      displayName
+      description
+      isFree
+      billingCycle
+      billingAmount
+    }
+    startDate
+    endDate
+  }
+}
+
+subscription OnCreateUser {
+  onCreateUser {
+    id
+    name
+    account {
+      id
+      name
+      enabled
+      createdDate
+      plan {
+        id
+        startDate
+        endDate
+      }
+      forms {
+        id
+        name
+        groupName
+        createdDate
+        updatedDate
+        starts
+        ends
+        data
+        version
+      }
+      integrations {
+        id
+        type
+        externalId
+        context
+        authType
+        authUrl
+        credentials
+        disabled
+        version
+      }
+      lastPaymentDate
+      lastPaymentAmount
+      owingAmount
+      users {
+        id
+        name
+        group
+        version
+      }
+      version
+    }
+    group
+    version
+  }
+}
+
+subscription OnUpdateUser {
+  onUpdateUser {
+    id
+    name
+    account {
+      id
+      name
+      enabled
+      createdDate
+      plan {
+        id
+        startDate
+        endDate
+      }
+      forms {
+        id
+        name
+        groupName
+        createdDate
+        updatedDate
+        starts
+        ends
+        data
+        version
+      }
+      integrations {
+        id
+        type
+        externalId
+        context
+        authType
+        authUrl
+        credentials
+        disabled
+        version
+      }
+      lastPaymentDate
+      lastPaymentAmount
+      owingAmount
+      users {
+        id
+        name
+        group
+        version
+      }
+      version
+    }
+    group
+    version
+  }
+}
+
+subscription OnDeleteUser {
+  onDeleteUser {
+    id
+    name
+    account {
+      id
+      name
+      enabled
+      createdDate
+      plan {
+        id
+        startDate
+        endDate
+      }
+      forms {
+        id
+        name
+        groupName
+        createdDate
+        updatedDate
+        starts
+        ends
+        data
+        version
+      }
+      integrations {
+        id
+        type
+        externalId
+        context
+        authType
+        authUrl
+        credentials
+        disabled
+        version
+      }
+      lastPaymentDate
+      lastPaymentAmount
+      owingAmount
+      users {
+        id
+        name
+        group
+        version
+      }
+      version
+    }
+    group
+    version
+  }
+}
+
+subscription OnCreateAccount {
+  onCreateAccount {
+    id
+    name
+    enabled
+    createdDate
+    plan {
+      id
+      type {
+        id
+        name
+        displayName
+        description
+        isFree
+        billingCycle
+        billingAmount
+      }
+      startDate
+      endDate
+    }
+    forms {
+      id
+      name
+      groupName
+      integration {
+        id
+        type
+        externalId
+        context
+        authType
+        authUrl
+        credentials
+        disabled
+        version
+      }
+      createdDate
+      updatedDate
+      starts
+      ends
+      data
+      entries {
+        id
+        data
+      }
+      version
+    }
+    integrations {
+      id
+      type
+      externalId
+      context
+      authType
+      authUrl
+      credentials
+      disabled
+      version
+    }
+    lastPaymentDate
+    lastPaymentAmount
+    owingAmount
+    users {
+      id
+      name
+      account {
+        id
+        name
+        enabled
+        createdDate
+        lastPaymentDate
+        lastPaymentAmount
+        owingAmount
+        version
+      }
+      group
+      version
+    }
+    version
+  }
+}
+
+subscription OnUpdateAccount {
+  onUpdateAccount {
+    id
+    name
+    enabled
+    createdDate
+    plan {
+      id
+      type {
+        id
+        name
+        displayName
+        description
+        isFree
+        billingCycle
+        billingAmount
+      }
+      startDate
+      endDate
+    }
+    forms {
+      id
+      name
+      groupName
+      integration {
+        id
+        type
+        externalId
+        context
+        authType
+        authUrl
+        credentials
+        disabled
+        version
+      }
+      createdDate
+      updatedDate
+      starts
+      ends
+      data
+      entries {
+        id
+        data
+      }
+      version
+    }
+    integrations {
+      id
+      type
+      externalId
+      context
+      authType
+      authUrl
+      credentials
+      disabled
+      version
+    }
+    lastPaymentDate
+    lastPaymentAmount
+    owingAmount
+    users {
+      id
+      name
+      account {
+        id
+        name
+        enabled
+        createdDate
+        lastPaymentDate
+        lastPaymentAmount
+        owingAmount
+        version
+      }
+      group
+      version
+    }
+    version
+  }
+}
+
+subscription OnDeleteAccount {
+  onDeleteAccount {
+    id
+    name
+    enabled
+    createdDate
+    plan {
+      id
+      type {
+        id
+        name
+        displayName
+        description
+        isFree
+        billingCycle
+        billingAmount
+      }
+      startDate
+      endDate
+    }
+    forms {
+      id
+      name
+      groupName
+      integration {
+        id
+        type
+        externalId
+        context
+        authType
+        authUrl
+        credentials
+        disabled
+        version
+      }
+      createdDate
+      updatedDate
+      starts
+      ends
+      data
+      entries {
+        id
+        data
+      }
+      version
+    }
+    integrations {
+      id
+      type
+      externalId
+      context
+      authType
+      authUrl
+      credentials
+      disabled
+      version
+    }
+    lastPaymentDate
+    lastPaymentAmount
+    owingAmount
+    users {
+      id
+      name
+      account {
+        id
+        name
+        enabled
+        createdDate
+        lastPaymentDate
+        lastPaymentAmount
+        owingAmount
+        version
+      }
+      group
+      version
+    }
+    version
+  }
+}
+
+subscription OnCreateIntegration {
+  onCreateIntegration {
+    id
+    type
+    externalId
+    context
+    authType
+    authUrl
+    credentials
+    disabled
+    version
+  }
+}
+
+subscription OnUpdateIntegration {
+  onUpdateIntegration {
+    id
+    type
+    externalId
+    context
+    authType
+    authUrl
+    credentials
+    disabled
+    version
+  }
+}
+
+subscription OnDeleteIntegration {
+  onDeleteIntegration {
+    id
+    type
+    externalId
+    context
+    authType
+    authUrl
+    credentials
+    disabled
+    version
+  }
+}
+
+subscription OnCreateForm {
+  onCreateForm {
+    id
+    name
+    groupName
+    integration {
+      id
+      type
+      externalId
+      context
+      authType
+      authUrl
+      credentials
+      disabled
+      version
+    }
+    createdDate
+    updatedDate
+    starts
+    ends
+    data
+    entries {
+      id
+      data
+    }
+    version
+  }
+}
+
+subscription OnUpdateForm {
+  onUpdateForm {
+    id
+    name
+    groupName
+    integration {
+      id
+      type
+      externalId
+      context
+      authType
+      authUrl
+      credentials
+      disabled
+      version
+    }
+    createdDate
+    updatedDate
+    starts
+    ends
+    data
+    entries {
+      id
+      data
+    }
+    version
+  }
+}
+
+subscription OnDeleteForm {
+  onDeleteForm {
+    id
+    name
+    groupName
+    integration {
+      id
+      type
+      externalId
+      context
+      authType
+      authUrl
+      credentials
+      disabled
+      version
+    }
+    createdDate
+    updatedDate
+    starts
+    ends
+    data
+    entries {
+      id
+      data
+    }
+    version
+  }
+}
+
+subscription OnCreateFormEntry {
+  onCreateFormEntry {
+    id
+    data
+  }
+}
+
+subscription OnUpdateFormEntry {
+  onUpdateFormEntry {
+    id
+    data
+  }
+}
+
+subscription OnDeleteFormEntry {
+  onDeleteFormEntry {
+    id
+    data
+  }
+}
+

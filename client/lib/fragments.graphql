@@ -1,0 +1,43 @@
+fragment userFields on User {
+  id
+  email
+  userGroup
+  given_name
+  family_name
+  createdAt
+  updatedAt
+}
+
+fragment accountFields on Account {
+  id
+  name
+  ownerId
+  ownedBy {...userFields}
+}
+
+fragment formFields on Form {
+  id
+  ownerId
+  ownedBy {...userFields}
+  description
+  accountId
+  account {...accountFields}
+  createdAt
+}
+
+fragment planTypeFields on PlanType {
+  id
+  name
+  cost
+  billingTerm
+}
+
+fragment planFields on Plan {
+  id
+  accountId
+  ownerId
+  ownedBy {...userFields}
+  planTypeId
+  planType {...planTypeFields}
+  startDate
+}

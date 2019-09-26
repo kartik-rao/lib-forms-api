@@ -1,0 +1,27 @@
+schema:
+  - client-schema.graphql
+  - ../schema/schema.graphql
+documents:
+  - ../schema/fragments.graphql
+  - ../schema/queries.graphql
+  - ../schema/mutations.graphql
+generates:
+  index.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-resolvers
+      - typescript-document-nodes
+    hooks:
+      afterOneFileWrite:
+        - prettier --write
+config:
+  preResolveTypes: true
+  typesPrefix: I
+  skipTypename: true
+  declarationKind: 'interface'
+  scalars:
+    AWSJSON  : string
+    AWSPhone : string
+    AWSDateTime : string
+    AWSURL : string
