@@ -32,6 +32,7 @@ provider:
     region          : ${self:provider.region}
     environment     : ${self:provider.stage}
     serviceName     : ${self:service}
+    databaseName    : formsli
     dbClusterId     : ${ssm:/${self:provider.stage}/formsli/rds/id}
     dbClusterArn    : "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:${self:provider.environment.dbClusterId}"
     dbClusterSecretArn : ${ssm:/${self:provider.stage}/formsli/rds/password/secret}
