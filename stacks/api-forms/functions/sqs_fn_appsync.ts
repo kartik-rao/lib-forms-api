@@ -51,6 +51,7 @@ export const handle = async (event : SQSEvent, context : APIGatewayEventRequestC
         addFormEntry(input: $input) {
           id
           formId
+          accountId
           createdAt
         }
     }`);
