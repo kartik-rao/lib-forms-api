@@ -61,18 +61,22 @@ export const handle = async (event : SQSEvent, context : APIGatewayEventRequestC
         isDebug && console.log(`${ServiceName} - sqs_fn_appsync.handle - processing ${event.Records.length} entries`);
         let client = await appsync.hydrated();
 
-        let writeRowAndDeleteMessage = (sqsRecord: SQSRecord) : Promise<any>  => {
+        let writeRowAndDeleteMessage = async (sqsRecord: SQSRecord) : Promise<any>  => {
             let Attributes = sqsRecord.messageAttributes as EntryMessageAttributeMap<SQSMessageAttribute>;
             let Body = JSON.parse(sqsRecord.body) as EntryMessageBody;
             let {__RequestId} = Body;
             let FormId = Attributes.FormId.stringValue;
             let AccountId = Attributes.TenantId.stringValue;
             const variables = {input:{id:__RequestId, formId: FormId, accountId: AccountId, data: Body.Payload}};
-
-            return Promise.all([
-                client.mutate({mutation: mutation, variables: variables}),
-                entryQueue.deleteMessage({QueueUrl: QueueUrl, ReceiptHandle: sqsRecord.receiptHandle}).promise()
-            ]);
+            return new Promise(async (resolve, reject) => {
+                try {
+                    await client.mutate({mutation: mutation, variables: variables});
+                    entryQueue.deleteMessage({QueueUrl: QueueUrl, ReceiptHandle: sqsRecord.receiptHandle}).promise();
+                    resolve();
+                } catch (error) {
+                    reject(error);
+                }    
+            });
         };
 
         let rowPromises : Promise<any>[] = event.Records.map((r) => {
