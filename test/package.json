@@ -13,6 +13,7 @@
   "scripts": {
     "fetch-config": "ts-node specs/common/config.ts",
     "test": "ts-node -T --project ./tsconfig.json node_modules/jasmine/bin/jasmine --config=./jasmine.json",
+    "test:clean": "rm ssm-config.json && ts-node -T --project ./tsconfig.json node_modules/jasmine/bin/jasmine --config=./jasmine.json",
     "karma": "karma start"
   },
   "author": "Kartik Rao",
