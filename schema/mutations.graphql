@@ -1,0 +1,662 @@
+mutation AddPlanType($input: AddPlanTypeInput) {
+    addPlanType(input: $input) {
+      id
+      ownerId
+      ownedBy {...userFields}
+      name
+      cost
+      active
+      billingTerm
+      createdAt
+      updatedAt
+      isDeleted
+    }
+  }
+
+mutation AddPlan($input: AddPlanInput) {
+    addPlan(input: $input) {
+      id
+      accountId
+      account {
+        id
+        name
+        website
+        taxId
+        ownerId
+        planId
+        createdAt
+        updatedAt
+        active
+        numForms
+        numUsers
+      }
+      ownerId
+      ownedBy {...userFields}
+      planTypeId
+      startDate
+      endDate
+      active
+      lastBillDate
+      createdAt
+      updatedAt
+      planType {
+        id
+        ownerId
+        name
+        cost
+        active
+        billingTerm
+        createdAt
+        updatedAt
+        isDeleted
+      }
+      isDeleted
+    }
+  }
+
+mutation AddIntegrationType($input: AddIntegrationTypeInput) {
+    addIntegrationType(input: $input) {
+      id
+      ownerId
+      ownedBy {...userFields}
+      planTypeId
+      planType {
+        id
+        ownerId
+        name
+        cost
+        active
+        billingTerm
+        createdAt
+        updatedAt
+        isDeleted
+      }
+      name
+      active
+      createdAt
+      updatedAt
+    }
+  }
+
+mutation AddIntegration($input: AddIntegrationInput) {
+    addIntegration(input: $input) {
+      id
+      integrationTypeId
+      integrationType {
+        id
+        ownerId
+        planTypeId
+        name
+        active
+        createdAt
+        updatedAt
+      }
+      ownerId
+      ownedBy {...userFields}
+      accountId
+      formId
+      form {...formFields}
+      active
+      authType
+      auth
+      target
+      method
+      lastExecuted
+      lastExecutionResult
+      lastExecutionResultMessage
+      createdAt
+      updatedAt
+      isDeleted
+    }
+  }
+
+mutation AddForm($input: AddFormInput!) {
+    addForm(input: $input) {
+      id
+      ownerId
+      name
+      description
+      ownedBy {...userFields}
+      accountId
+      account {...accountFields}
+      createdAt
+      updatedAt
+      startDate
+      endDate
+      isPaused
+      isDeleted
+      redirectNotStarted
+      redirectHasEnded
+    }
+  }
+
+mutation AddFormVersion($input: AddFormVersionInput!) {
+    addFormVersion(input: $input) {
+      id
+      ownerId
+      name
+      description
+      versionId
+      versionActivatedDate
+      version {
+        id
+        accountId
+        formId
+        ownerId
+        createdAt
+        displayName
+        notes
+        formData
+        ownedBy {...userFields}
+      }
+      ownedBy {...userFields}
+      accountId
+      account {...accountFields}
+      createdAt
+      updatedAt
+      startDate
+      endDate
+      isPaused
+      isDeleted
+      redirectNotStarted
+      redirectHasEnded
+      versions {
+        id
+        accountId
+        formId
+        ownerId
+        createdAt
+        displayName
+        notes
+        ownedBy {...userFields}
+      }
+    }
+  }
+
+mutation AttachFormVersion($input: AttachFormVersionInput!) {
+    attachFormVersion(input: $input) {
+      id
+      versionId
+      versionActivatedDate
+      version {
+        id
+        accountId
+        formId
+        ownerId
+        createdAt
+        displayName
+        notes
+        formData
+        ownedBy {...userFields}
+      }
+      updatedAt
+    }
+  }
+
+mutation UpdatePlanType($input: UpdatePlanTypeInput) {
+    updatePlanType(input: $input) {
+      id
+      ownerId
+      ownedBy {...userFields}
+      name
+      cost
+      active
+      billingTerm
+      createdAt
+      updatedAt
+      isDeleted
+    }
+  }
+
+mutation UpdatePlan($input: UpdatePlanInput) {
+    updatePlan(input: $input) {
+      id
+      accountId
+      account {...accountFields}
+      ownerId
+      ownedBy {...userFields}
+      planTypeId
+      startDate
+      endDate
+      active
+      lastBillDate
+      createdAt
+      updatedAt
+      planType {
+        id
+        ownerId
+        name
+        cost
+        active
+        billingTerm
+        createdAt
+        updatedAt
+        isDeleted
+      }
+      isDeleted
+    }
+  }
+
+mutation UpdateAccount($input: UpdateAccountInput) {
+    updateAccount(input: $input) {
+      id
+      name
+      addresses {
+        id
+        name
+        addressee
+        addressType
+        phone_number
+        email
+        street
+        city
+        state
+        country
+      }
+      website
+      taxId
+      ownerId
+      ownedBy {...userFields}
+      plan {
+        id
+        accountId
+        ownerId
+        planTypeId
+        startDate
+        endDate
+        active
+        lastBillDate
+        createdAt
+        updatedAt
+        isDeleted
+      }
+      planId
+      createdAt
+      updatedAt
+      active
+      numForms
+      numUsers
+    }
+  }
+
+mutation UpdateAccountPlan($input: AddPlanInput) {
+    updateAccountPlan(input: $input) {
+      id
+      name
+      website
+      taxId
+      ownerId
+      ownedBy {...userFields}
+      plan {
+        id
+        accountId
+        ownerId
+        planTypeId
+        startDate
+        endDate
+        active
+        lastBillDate
+        createdAt
+        updatedAt
+        isDeleted
+      }
+      planId
+      createdAt
+      updatedAt
+      active
+      numForms
+      numUsers
+    }
+  }
+
+mutation UpdateUser($input: UpdateUserInput) {
+    updateUser(input: $input) {
+      id
+      ownerId
+      ownedBy {...userFields}
+      accountId
+      account {...accountFields}
+      email
+      userGroup
+      given_name
+      family_name
+      phone_number
+      createdAt
+      updatedAt
+      isDeleted
+      numForms
+    }
+  }
+
+mutation UpdateIntegrationType($input: UpdateIntegrationTypeInput) {
+    updateIntegrationType(input: $input) {
+      id
+      ownerId
+      ownedBy {...userFields}
+      planTypeId
+      planType {
+        id
+        ownerId
+        name
+        cost
+        active
+        billingTerm
+        createdAt
+        updatedAt
+        isDeleted
+      }
+      name
+      active
+      createdAt
+      updatedAt
+    }
+  }
+
+mutation UpdateIntegration($input: UpdateIntegrationInput) {
+    updateIntegration(input: $input) {
+      id
+      integrationTypeId
+      integrationType {
+        id
+        ownerId
+        planTypeId
+        name
+        active
+        createdAt
+        updatedAt
+      }
+      ownerId
+      accountId
+      formId
+      active
+      authType
+      auth
+      target
+      method
+      lastExecuted
+      lastExecutionResult
+      lastExecutionResultMessage
+      createdAt
+      updatedAt
+      isDeleted
+    }
+  }
+
+mutation UpdateForm($input: UpdateFormInput) {
+    updateForm(input: $input) {
+      id
+      ownerId
+      name
+      description
+      versionId
+      versionActivatedDate
+      version {
+        id
+        accountId
+        formId
+        ownerId
+        createdAt
+        displayName
+        notes
+        formData
+      }
+      ownedBy {...userFields}
+      accountId
+      account {...accountFields}
+      createdAt
+      updatedAt
+      startDate
+      endDate
+      isPaused
+      isDeleted
+      redirectNotStarted
+      redirectHasEnded
+      versions {
+        id
+        accountId
+        formId
+        ownerId
+        createdAt
+        displayName
+        notes
+        ownedBy {...userFields}
+      }
+    }
+  }
+
+mutation DeleteForm($input: DeleteFormInput!) {
+    deleteForm(input: $input) {
+      id
+      ownerId
+      name
+      description
+      versionId
+      versionActivatedDate
+      version {
+        id
+        accountId
+        formId
+        ownerId
+        createdAt
+        displayName
+        notes
+        formData
+      }
+      ownedBy {...userFields}
+      accountId
+      account {...accountFields}
+      createdAt
+      updatedAt
+      startDate
+      endDate
+      isPaused
+      isDeleted
+      redirectNotStarted
+      redirectHasEnded
+      versions {
+        id
+        accountId
+        formId
+        ownerId
+        createdAt
+        displayName
+        notes
+        formData
+      }
+      integrations {
+        id
+        integrationTypeId
+        ownerId
+        accountId
+        formId
+        active
+        authType
+        auth
+        target
+        method
+        lastExecuted
+        lastExecutionResult
+        lastExecutionResultMessage
+        createdAt
+        updatedAt
+        isDeleted
+      }
+      entries {
+        id
+        formId
+        data
+        createdAt
+      }
+    }
+  }
+
+mutation DeletePlanType($planTypeId: ID!) {
+    deletePlanType(planTypeId: $planTypeId) {
+      id
+      ownerId
+      ownedBy {...userFields}
+      name
+      cost
+      active
+      billingTerm
+      createdAt
+      updatedAt
+      isDeleted
+    }
+  }
+
+mutation DeletePlan($accountId: ID!, $planId: ID!) {
+    deletePlan(accountId: $accountId, planId: $planId) {
+      id
+      accountId
+      account {...accountFields}
+      ownerId
+      ownedBy {...userFields}
+      planTypeId
+      startDate
+      endDate
+      active
+      lastBillDate
+      createdAt
+      updatedAt
+      planType {
+        id
+        ownerId
+        name
+        cost
+        active
+        billingTerm
+        createdAt
+        updatedAt
+        isDeleted
+      }
+      isDeleted
+    }
+  }
+
+mutation DeleteAccount($accountId: ID!) {
+    deleteAccount(accountId: $accountId) {
+      id
+      name
+      website
+      taxId
+      ownerId
+      ownedBy {...userFields}
+      plan {
+        id
+        accountId
+        ownerId
+        planTypeId
+        startDate
+        endDate
+        active
+        lastBillDate
+        createdAt
+        updatedAt
+        isDeleted
+      }
+      planId
+      createdAt
+      updatedAt
+      active
+      numForms
+      numUsers
+    }
+  }
+
+mutation DeleteUser($userId: ID!) {
+    deleteUser(userId: $userId) {
+      id
+      ownerId
+      ownedBy {...userFields}
+      accountId
+      account {...accountFields}
+      email
+      userGroup
+      given_name
+      family_name
+      phone_number
+      createdAt
+      updatedAt
+      isDeleted
+      numForms
+    }
+  }
+
+mutation DeleteIntegrationType($integrationTypeId: ID!) {
+    deleteIntegrationType(integrationTypeId: $integrationTypeId) {
+      id
+      ownerId
+      ownedBy {...userFields}
+      planTypeId
+      planType {
+        id
+        ownerId
+        name
+        cost
+        active
+        billingTerm
+        createdAt
+        updatedAt
+        isDeleted
+      }
+      name
+      active
+      createdAt
+      updatedAt
+    }
+  }
+
+mutation DeleteIntegration($integrationId: ID!) {
+    deleteIntegration(integrationId: $integrationId) {
+      id
+      integrationTypeId
+      integrationType {
+        id
+        ownerId
+        planTypeId
+        name
+        active
+        createdAt
+        updatedAt
+      }
+      ownerId
+      ownedBy {...userFields}
+      accountId
+      account {...accountFields}
+      formId
+      active
+      authType
+      auth
+      target
+      method
+      lastExecuted
+      lastExecutionResult
+      lastExecutionResultMessage
+      createdAt
+      updatedAt
+      isDeleted
+    }
+  }
+
+mutation DeleteFormVersion($input: DeleteFormVersionInput!) {
+    deleteFormVersion(input: $input) {
+      id
+      accountId
+      formId
+      ownerId
+      ownedBy {...userFields}
+      createdAt
+      displayName
+      notes
+      formData
+    }
+  }
+
+mutation AddFormEntry($input: AddFormEntryInput!) {
+    addFormEntry(input: $input) {
+      id
+      formId
+      createdAt
+    }
+  }

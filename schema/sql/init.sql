@@ -1,0 +1,2 @@
+INSERT INTO `User` (`id`, `ownerId`, `accountId`, `email`, `userGroup`, `given_name`, `family_name`, `phone_number`, `createdAt`, `updatedAt`, `active`, `isDeleted`)
+VALUES ('652cedf5-d47d-483a-8ded-cacdd68e6879', NULL, NULL, 'infrastructure.dev@forms.li', 'Admin', 'Kartik', 'Rao', NULL, '2019-08-23T08:34:48.287Z', NULL, 1, 0);
