@@ -1,14 +1,15 @@
 import Auth, { CognitoUser } from '@aws-amplify/auth';
-import { ApiHelper } from "./api.utils";
-import { AuthUtils } from "./auth.utils";
 import * as AWS from 'aws-sdk';
+import { IAddFormMutation, IAddFormVersionMutation, IDeleteFormMutation, IGetFormQuery, IUpdateFormMutation } from '../../client';
+import { ApiHelper } from "./common/api.utils";
+import { AuthUtils } from "./common/auth.utils";
+import { loadConfiguration, SSMConfig } from "./common/config";
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
-const config = require("../outputs/stack.dev.json");
 
-Auth.configure(ApiHelper.apiConfig().Auth);
 
 describe("Form", () => {
+    let config: SSMConfig;
     let token: string;
     let tenantId: string;
     let formId: string;
@@ -16,6 +17,9 @@ describe("Form", () => {
 
     beforeAll(async (done) => {
         try {
+            config = await loadConfiguration();
+            let apiConfig = ApiHelper.apiConfig(config);
+            Auth.configure(apiConfig);
             await AuthUtils.setup();
             const user: CognitoUser = await Auth.signIn(AuthUtils.globalAdmin);
             token = (await Auth.currentSession()).getIdToken().getJwtToken();
@@ -31,11 +35,11 @@ describe("Form", () => {
         try {
             if(formId) {
                 const rdsCommonParams = {
-                    database: config['Service'],
-                    resourceArn: config['DBClusterArn'],
-                    secretArn: config['DBSecretArn']
-                };
-                let client = new AWS.RDSDataService();
+                    database: "formsli",
+                    resourceArn: config["rds/arn"],
+                    secretArn: config["rds/password/secret"]
+                } as AWS.RDSDataService.ExecuteStatementRequest;
+                let client = new AWS.RDSDataService({region: config["app/region"]});
                 await client.executeStatement({
                     ...rdsCommonParams, sql : `UPDATE Form set versionId=NULL WHERE description='spec.form'`
                 }).promise();
@@ -66,17 +70,16 @@ describe("Form", () => {
         `};
 
         try {
-            let response = await ApiHelper.makeRequest("addForm", addForm, token);
-            let {status, parsed, hasErrors, errors} = response;
+            let response = await ApiHelper.makeRequest<IAddFormMutation>(config, addForm, token);
+            let {errors} = response;
 
-            expect(status).toEqual(200);
-            expect(hasErrors).toBeFalsy("Response should not have errors");
+            let hasErrors = response.errors && response.errors.length > 0;
             hasErrors && done.fail(errors[0].message);
 
-            expect(parsed).toBeDefined();
-            formId = parsed.id;
-            expect(parsed.accountId).toEqual(tenantId);
-            expect(parsed).toBeDefined();
+            expect(response.data.addForm).toBeDefined();
+            let form = response.data.addForm;
+            formId = form.id;
+            expect(form.accountId).toEqual(tenantId);
         } catch (error) {
             console.error(error);
             fail(error);
@@ -97,13 +100,11 @@ describe("Form", () => {
         `};
 
         try {
-            let response = await ApiHelper.makeRequest("getForm", getForm, token);
-            let {status, parsed, hasErrors, errors} = response;
-
-            expect(status).toEqual(200);
-            expect(hasErrors).toBeFalsy("Response should not have errors");
+            let response = await ApiHelper.makeRequest<IGetFormQuery>(config, getForm, token);
+            let {errors} = response;
+            let hasErrors = response.errors && response.errors.length > 0;
             hasErrors && done.fail(errors[0].message);
-            expect(parsed).toBeDefined();
+            expect(response.data.getForm).toBeDefined();
         } catch (error) {
             console.error(error);
             fail(error);
@@ -124,14 +125,12 @@ describe("Form", () => {
         `};
 
         try {
-            let response = await ApiHelper.makeRequest("updateForm", updateForm, token);
-            let {status, parsed, hasErrors, errors} = response;
-
-            expect(status).toEqual(200);
-            expect(hasErrors).toBeFalsy("Response should not have errors");
+            let response = await ApiHelper.makeRequest<IUpdateFormMutation>(config, updateForm, token);
+            let {errors} = response;
+            let hasErrors = response.errors && response.errors.length > 0;
             hasErrors && done.fail(errors[0].message);
-            expect(parsed).toBeDefined();
-            expect(parsed.name).toEqual("lib-forms-api-updated");
+            expect(response.data.updateForm).toBeDefined();
+            expect(response.data.updateForm.name).toEqual("lib-forms-api-updated");
         } catch (error) {
             console.error(error);
             fail(error);
@@ -157,13 +156,11 @@ describe("Form", () => {
         `};
 
         try {
-            let response = await ApiHelper.makeRequest("addFormVersion", addFormVersion, token);
-            let {status, parsed, hasErrors, errors} = response;
-
-            expect(status).toEqual(200);
-            expect(hasErrors).toBeFalsy("Response should not have errors");
+            let response = await ApiHelper.makeRequest<IAddFormVersionMutation>(config, addFormVersion, token);
+            let {errors} = response;
+            let hasErrors = response.errors && response.errors.length > 0;
             hasErrors && done.fail(errors[0].message);
-            expect(parsed).toBeDefined("Response.data should exist");
+            expect(response.data.addFormVersion).toBeDefined("data.addFormVersion should exist");
         } catch (error) {
             fail(error);
         }
@@ -183,12 +180,12 @@ describe("Form", () => {
         `};
 
         try {
-            let response = await ApiHelper.makeRequest("deleteForm", deleteForm, token);
-            let {status, parsed, hasErrors, errors} = response;
-
-            expect(status).toEqual(200);
-            expect(hasErrors).toBeFalsy("Response should not have errors");
+            let response = await ApiHelper.makeRequest<IDeleteFormMutation>(config, deleteForm, token);
+            let {errors} = response;
+            let hasErrors = response.errors && response.errors.length > 0;
             hasErrors && done.fail(errors[0].message);
+            expect(response.data.deleteForm).toBeDefined("data.deleteForm should exist");
+            done();
             // Fetch again and check
         } catch (error) {
             fail(error);
