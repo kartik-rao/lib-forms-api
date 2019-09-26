@@ -19,11 +19,7 @@ const UserPool = new AWS.CognitoIdentityServiceProvider();
 
 describe("Onboarding", () => {
     let config: SSMConfig;
-    let rdsCommonParams = {
-        database: "formsli",
-        secretArn: config["rds/password/secret"],
-        resourceArn: config["rds/arn"]
-    }
+    let rdsCommonParams: any;
     let rds: AWS.RDSDataService;
 
     beforeAll(async (done) => {
@@ -31,8 +27,15 @@ describe("Onboarding", () => {
         AWS.config.region = config['Region'];
         let apiConfig = ApiHelper.apiConfig(config);
         rds = new AWS.RDSDataService({region: config["app/region"]});
+        rdsCommonParams = {
+            database: "formsli",
+            secretArn: config["rds/password/secret"],
+            resourceArn: config["rds/arn"]
+        }
         Auth.configure(apiConfig);
-    })
+        done();
+    });
+
     describe("Signup", () => {
         const tenantName = "lib-forms-api";
         let inbox: Inbox;
@@ -93,7 +96,7 @@ describe("Onboarding", () => {
             } catch (error) {
                 signupSuccess = false;
                 done.fail("Confirm Sign Up Failed");
-                console.log(`spec.signup.confirmSignUp ERROR - ${error.toString()}`);
+                console.log(`spec.signup.confirmSignUp ERROR - ${JSON.stringify(error)}`);
             }
         });
 
@@ -140,7 +143,7 @@ describe("Onboarding", () => {
                         given_name: "invite",
                         email: inboxEditor.emailAddress
                     }
-                    let inviteResponse = await fetch(`https://${config["apig/restApiEndpoint"]}/invite`, {
+                    let inviteResponse = await fetch(`${config["apig/restApiEndpoint"]}user/invite`, {
                         method: 'POST',
                         headers: {
                             'Authorization': token,
