@@ -225,7 +225,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli-auth/dev/1569420769140-2019-09-25T14:12:49.140Z/formsli-auth.zip"
+                "S3Key": "serverless/formsli-auth/dev/1569483909781-2019-09-26T07:45:09.781Z/formsli-auth.zip"
               },
               "FunctionName": "formsli-auth-dev-authftp",
               "Handler": "functions/authftp.handle",
@@ -288,14 +288,14 @@
               "AuthftpLogGroup"
             ]
           },
-          "AuthftpLambdaVersionGv5q7WuIstnZN49LK3RzZT3bAl8tq8Or4t7BXYg34": {
+          "AuthftpLambdaVersioncLZ27IibxnpMtSQK3kmAncmFPdCaOVnp2CdPEJzRY": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "AuthftpLambdaFunction"
               },
-              "CodeSha256": "FoAX/ADoCzI3SoLtvM9nV7vdbeHK8wsQ69L+31yo044="
+              "CodeSha256": "EL6DVttMEhozL3SnGhToUkboQBDYCMjJqTKrraf5YwA="
             }
           },
           "PostConfirmationLambdaFunction": {
@@ -305,7 +305,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli-auth/dev/1569420769140-2019-09-25T14:12:49.140Z/formsli-auth.zip"
+                "S3Key": "serverless/formsli-auth/dev/1569483909781-2019-09-26T07:45:09.781Z/formsli-auth.zip"
               },
               "FunctionName": "formsli-auth-dev-postconf",
               "Handler": "functions/postconfirmation.handle",
@@ -368,14 +368,14 @@
               "PostConfirmationLogGroup"
             ]
           },
-          "PostConfirmationLambdaVersionwULYmRKDpj6nvmVeepqKZ1MvYmwiBZogY103NAzfU": {
+          "PostConfirmationLambdaVersionnxfsNWJTcp8d7MRCCh55ywtGekKFBQSzdifXzpraQ4": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "PostConfirmationLambdaFunction"
               },
-              "CodeSha256": "FoAX/ADoCzI3SoLtvM9nV7vdbeHK8wsQ69L+31yo044="
+              "CodeSha256": "EL6DVttMEhozL3SnGhToUkboQBDYCMjJqTKrraf5YwA="
             }
           },
           "InviteLambdaFunction": {
@@ -385,7 +385,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli-auth/dev/1569420769140-2019-09-25T14:12:49.140Z/formsli-auth.zip"
+                "S3Key": "serverless/formsli-auth/dev/1569483909781-2019-09-26T07:45:09.781Z/formsli-auth.zip"
               },
               "FunctionName": "formsli-auth-dev-invite",
               "Handler": "functions/invite.handle",
@@ -448,14 +448,14 @@
               "InviteLogGroup"
             ]
           },
-          "InviteLambdaVersion85TpZv7VaQlgMVweBamBbWj19UBvl7oHNgAL7PpXmY": {
+          "InviteLambdaVersionwgC7eC7nHAoafPr4PVJsvwF02h946uA1DdUob4": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "InviteLambdaFunction"
               },
-              "CodeSha256": "FoAX/ADoCzI3SoLtvM9nV7vdbeHK8wsQ69L+31yo044="
+              "CodeSha256": "EL6DVttMEhozL3SnGhToUkboQBDYCMjJqTKrraf5YwA="
             }
           },
           "ApiGatewayResourceUserInvite": {
@@ -677,7 +677,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1569420742151": {
+          "ApiGatewayDeployment1569483877339": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": "w2s48kp2a7",
@@ -786,7 +786,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli-auth/dev/1569420769140-2019-09-25T14:12:49.140Z/custom-resources.zip"
+                "S3Key": "serverless/formsli-auth/dev/1569483909781-2019-09-26T07:45:09.781Z/custom-resources.zip"
               },
               "FunctionName": "formsli-auth-dev-custom-resource-apigw-cw-role",
               "Handler": "apiGatewayCloudWatchRole/handler.handler",
@@ -920,7 +920,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli-auth/dev/1569420769140-2019-09-25T14:12:49.140Z/custom-resources.zip"
+                "S3Key": "serverless/formsli-auth/dev/1569483909781-2019-09-26T07:45:09.781Z/custom-resources.zip"
               },
               "FunctionName": "formsli-auth-dev-custom-resource-existing-cup",
               "Handler": "cognitoUserPool/handler.handler",
@@ -1637,19 +1637,19 @@
           "AuthftpLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "AuthftpLambdaVersionGv5q7WuIstnZN49LK3RzZT3bAl8tq8Or4t7BXYg34"
+              "Ref": "AuthftpLambdaVersioncLZ27IibxnpMtSQK3kmAncmFPdCaOVnp2CdPEJzRY"
             }
           },
           "PostConfirmationLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "PostConfirmationLambdaVersionwULYmRKDpj6nvmVeepqKZ1MvYmwiBZogY103NAzfU"
+              "Ref": "PostConfirmationLambdaVersionnxfsNWJTcp8d7MRCCh55ywtGekKFBQSzdifXzpraQ4"
             }
           },
           "InviteLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "InviteLambdaVersion85TpZv7VaQlgMVweBamBbWj19UBvl7oHNgAL7PpXmY"
+              "Ref": "InviteLambdaVersionwgC7eC7nHAoafPr4PVJsvwF02h946uA1DdUob4"
             }
           },
           "ServiceEndpoint": {
@@ -1922,7 +1922,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli-auth/dev/1569420769140-2019-09-25T14:12:49.140Z",
+    "artifactDirectoryName": "serverless/formsli-auth/dev/1569483909781-2019-09-26T07:45:09.781Z",
     "artifact": ""
   }
 }
