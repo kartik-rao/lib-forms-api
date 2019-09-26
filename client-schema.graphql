@@ -1,7 +1,0 @@
-directive @model on OBJECT
-directive @aws_api_key on OBJECT | FIELD_DEFINITION
-
-scalar AWSPhone
-scalar AWSJSON
-scalar AWSDateTime
-scalar AWSURL
