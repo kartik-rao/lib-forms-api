@@ -42,6 +42,12 @@ export const handle = async (event : SQSEvent, context : APIGatewayEventRequestC
             let {__RequestId, __RequestTimestamp} = Entry;
             let firehoseData = {...Entry, __EntryId : __RequestId};
             try {
+                let streams = await firehose.listDeliveryStreams({ExclusiveStartDeliveryStreamName: StreamName}).promise();
+                if (!streams.DeliveryStreamNames || streams.DeliveryStreamNames.length == 0) {
+                    // Should we notify ?
+                    callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({message: `Stream ${StreamName} unavailable`, status:204, id: __RequestId, timestamp: __RequestTimestamp})});
+                    return;
+                }
                 let response = await firehose.putRecord({DeliveryStreamName: StreamName, Record: {Data : JSON.stringify(firehoseData) + "\n"}}).promise();
                 await sqs.deleteMessage({QueueUrl: QueueUrl, ReceiptHandle: sqsRecord.receiptHandle}).promise();
                 callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({message: "OK", status:202, id: __RequestId, timestamp: __RequestTimestamp, data: response})});
