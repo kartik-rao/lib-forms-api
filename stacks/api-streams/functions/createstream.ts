@@ -15,6 +15,7 @@ const UserBucket    = process.env.s3_user_bucket;
 const RoleArn       = process.env.kinesisAccessRole;
 const DBClusterId   = process.env.dbClusterArn;
 const DBSecretARN   = process.env.dbClusterSecretArn;
+const DatabaseName  = process.env.databaseName;
 
 const CORS_HEADERS = {
     "Access-Control-Allow-Headers": "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token",
@@ -59,7 +60,7 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
     try {
         const rds = new AWS.RDSDataService();
         const checkFormInTenant:AWS.RDSDataService.ExecuteStatementRequest = {
-            database: ServiceName,
+            database: DatabaseName,
             resourceArn: DBClusterId,
             secretArn: DBSecretARN,
             sql: `SELECT COUNT(*) AS form_count FROM Form WHERE id=:id AND accountId=:accountId`,
