@@ -50,7 +50,6 @@ export const handle = async (event : SQSEvent, context : APIGatewayEventRequestC
     const mutation = gql(`mutation AddFormEntry($input: AddFormEntryInput!) {
         addFormEntry(input: $input) {
           id
-          accountId
           formId
           createdAt
         }
