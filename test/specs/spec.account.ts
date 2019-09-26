@@ -17,7 +17,6 @@ describe("Account", () => {
     let tenantName: string;
 
     beforeAll(async (done) => {
-        console.log("BEFORE ALL");
         try {
             config = await loadConfiguration();
             let apiConfig = ApiHelper.apiConfig(config);
