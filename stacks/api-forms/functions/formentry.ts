@@ -54,10 +54,10 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
         "StreamName" : {DataType: "String", StringValue: streamName}
     };
 
-    // 22/Sep/2019:08:15:50 +0000
+    const utcTimestamp = dayjs(requestTime, 'DD/MMM/YYYY:HH:mm:ss ZZ').utc().format();
     let queueData: EntryMessageBody = {
         __RequestId: requestId,
-        __RequestTimestamp: dayjs(requestTime, 'DD/MMM/YYYY:HH:mm:ss ZZ').utc().format(),
+        __RequestTimestamp: utcTimestamp,
         __RequestIpAddress : identity.sourceIp,
         __RequestUserAgent: identity.userAgent,
         Payload : event.body
@@ -79,7 +79,7 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
             sqs.sendMessage({...baseMessage,  QueueUrl: AnalyticsQueueUrl}).promise(),
             sqs.sendMessage({...baseMessage,  QueueUrl: IntegrationQueueUrl}).promise()
         ]);
-        callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({message: "OK", status:202, id: requestId, timestamp: requestTime})});
+        callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({message: "OK", status:202, id: requestId, timestamp: utcTimestamp})});
     } catch (error) {
         console.log(`${ServiceName} - formentry.handle ERROR - SQS.parallel`, error);
         callback(null, {statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({message: "InternalServerError", status: 500, requestId: requestId})});
