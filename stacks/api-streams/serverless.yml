@@ -147,3 +147,9 @@ functions:
         Resource:
           - "${self:provider.environment.dbClusterArn}"
           - "${self:provider.environment.dbClusterArn}:*"
+      - Effect: "Allow"
+        Action:
+          - "iam:passRole"
+          - "iam:getRole"
+        Resource:
+          - "${self:provider.environment.kinesisAccessRole}"
