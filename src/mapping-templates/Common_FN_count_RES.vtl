@@ -1,7 +1,0 @@
-$util.qr($ctx.stash.paths.add("Common_FN_count_RES.vtl"))
-#set($count=$utils.rds.toJsonObject($ctx.result)[0][0])
-#if($count["item_count"])
-    $utils.toJson($count["item_count"])
-#else
-    $utils.toJson(0)
-#end

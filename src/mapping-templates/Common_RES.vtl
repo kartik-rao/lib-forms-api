@@ -1,7 +1,0 @@
-$util.qr($ctx.stash.paths.add("Common_RES.vtl"))
-#if($ctx.error)
-    $util.qr($ctx.stash.put("error", $ctx.error))
-    $util.error($ctx.error.message, $ctx.error.type)
-#end
-$util.qr($ctx.stash.put("FINAL", $context.result))
-$util.toJson($context.result)
