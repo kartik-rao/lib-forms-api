@@ -6,6 +6,20 @@ Resources:
       Description : Application Name
       Value: formsli
       Type: String
+  ssmAppStage:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/app/stage"
+      Description : Application Stage
+      Value: ${self:provider.stage}
+      Type: String
+  ssmAppRegion:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/app/region"
+      Description : Application Region
+      Value: ${self:provider.region}
+      Type: String
   ssmPrefixKey:
     Type : "AWS::SSM::Parameter"
     Properties:
@@ -39,8 +53,22 @@ Resources:
     Properties:
       Name: "/${self:provider.stage}/formsli/apig/restApiId"
       Description: API Gateway Rest Api Id
-      Value:  
+      Value:
         Ref: ApiGatewayRestApi
+      Type: String
+  ssmRootApigRestApiEndpoint:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/apig/restApiEndpoint"
+      Description: API Gateway Rest Api Endpoint
+      Value:
+        Fn::Join:
+        - ""
+        - - "https://"
+          - Ref: ApiGatewayRestApi
+          - ".execute-api.${self:provider.region}."
+          - Ref: "AWS::URLSuffix"
+          - "/${self:provider.stage}/"
       Type: String
   ssmRootApigRootResource:
     Type : "AWS::SSM::Parameter"
@@ -54,7 +82,7 @@ Resources:
     Properties:
       Name: "/${self:provider.stage}/formsli/apig/authorizerId"
       Description: API Gateway cognito authorizer id
-      Value: 
+      Value:
         Ref: MyApiGatewayAuthorizer
       Type: String
   ssmApigResourceForm:
@@ -62,7 +90,7 @@ Resources:
     Properties:
       Name: "/${self:provider.stage}/formsli/apig/resource/form"
       Description: API Gateway resource for /form paths
-      Value:  
+      Value:
         Ref: ApiGatewayResourceForm
       Type: String
   ssmApigResourceStream:
@@ -70,7 +98,7 @@ Resources:
     Properties:
       Name: "/${self:provider.stage}/formsli/apig/resource/stream"
       Description: API Gateway resource for /stream paths
-      Value:  
+      Value:
         Ref: ApiGatewayResourceStream
       Type: String
   ssmApigResourceUser:
@@ -78,7 +106,7 @@ Resources:
     Properties:
       Name: "/${self:provider.stage}/formsli/apig/resource/user"
       Description: API Gateway resource for /user paths
-      Value:  
+      Value:
         Ref: ApiGatewayResourceUser
       Type: String
   ssmApigResourceServers:
@@ -86,7 +114,7 @@ Resources:
     Properties:
       Name: "/${self:provider.stage}/formsli/apig/resource/server"
       Description: API Gateway resource for /server path, used by AWS Transfer
-      Value:  
+      Value:
         Ref: ApiGatewayResourceServers
       Type: String
   ssmSftpServerId:
@@ -143,7 +171,7 @@ Resources:
     Properties:
       Name: "/${self:provider.stage}/formsli/queue/entry/url"
       Description: Entry Queue Url
-      Value: 
+      Value:
         Ref: EntryQueue
       Type: String
   ssmAnalyticsQueueUrl:
@@ -151,7 +179,7 @@ Resources:
     Properties:
       Name: "/${self:provider.stage}/formsli/queue/analytics/url"
       Description: Analytics Queue Url
-      Value: 
+      Value:
         Ref: AnalyticsQueue
       Type: String
   ssmIntegrationQueueUrl:
@@ -159,7 +187,7 @@ Resources:
     Properties:
       Name: "/${self:provider.stage}/formsli/queue/integration/url"
       Description: Integration Queue Url
-      Value: 
+      Value:
         Ref: IntegrationQueue
       Type: String
   ssmFirehoseQueueUrl:
@@ -167,6 +195,14 @@ Resources:
     Properties:
       Name: "/${self:provider.stage}/formsli/queue/firehose/url"
       Description: Firehose Queue Url
-      Value: 
+      Value:
         Ref: FirehoseQueue
+      Type: String
+  ssmUserPoolAdminUser:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/cognito/userpool/adminUser"
+      Description: Cognito user pool admin username
+      Value:
+        Ref: CognitoUserPoolAdminUser
       Type: String
