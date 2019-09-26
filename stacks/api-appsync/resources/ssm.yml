@@ -23,3 +23,9 @@ Resources:
       Name: "/${self:provider.stage}/formsli/graphql/api/endpoint"
       Value: !Select [2, !Split ['/', !GetAtt 'GraphQlApi.GraphQLUrl']]
       Type: String
+  ssmRdsClusterArn:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/rds/arn"
+      Value: "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:${self:provider.environment.dbClusterId}"
+      Type: String
