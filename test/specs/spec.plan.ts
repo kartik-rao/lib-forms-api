@@ -3,9 +3,7 @@ import {loadConfiguration, SSMConfig} from "./common/config";
 import { ApiHelper } from "./common/api.utils";
 import { AuthUtils } from "./common/auth.utils";
 import * as AWS from 'aws-sdk';
-import { IAddPlanTypeMutation, IAddPlanMutation, IDeletePlanMutation } from '../../client';
-import { IGetPlanQuery } from '../../client';
-import { IUpdatePlanMutation } from '../../client';
+import { IAddPlanTypeMutation, IAddPlanMutation, IDeletePlanMutation, IUpdatePlanMutation, IGetPlanQuery } from '../../client';
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
 
@@ -86,7 +84,6 @@ describe("Plan", () => {
             let response = await ApiHelper.makeRequest<IAddPlanMutation>(config, addPlan, token);
             let {errors} = response;
             let hasErrors = response.errors && response.errors.length > 0;
-            expect(hasErrors).toBeFalsy("Response should not have errors");
             hasErrors && done.fail(errors[0].message);
             expect(response.data).toBeDefined();
             let plan = response.data.addPlan;
