@@ -1,10 +1,10 @@
 {
-  "FormViewLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-api-forms-dev-form-view:1",
-  "FormJsonLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-api-forms-dev-form-json:1",
-  "FormEntryLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-api-forms-dev-form-entry:1",
-  "SqsUnderscorefnUnderscorefirehoseLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-api-forms-dev-put-firehose:1",
+  "FormViewLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-api-forms-dev-form-view:2",
+  "FormJsonLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-api-forms-dev-form-json:2",
+  "FormEntryLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-api-forms-dev-form-entry:2",
+  "SqsUnderscorefnUnderscorefirehoseLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-api-forms-dev-put-firehose:2",
   "ServerlessDeploymentBucketAccelerated": "true",
-  "SqsUnderscorefnUnderscoreappsyncLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-api-forms-dev-put-appsync:1",
+  "SqsUnderscorefnUnderscoreappsyncLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-api-forms-dev-put-appsync:2",
   "ServiceEndpoint": "https://w2s48kp2a7.execute-api.ap-northeast-1.amazonaws.com/dev",
   "ServerlessDeploymentBucketName": "formsli-api-forms-dev-serverlessdeploymentbucket-melhh4tse638"
 }

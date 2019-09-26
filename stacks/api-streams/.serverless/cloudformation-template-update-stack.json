@@ -139,7 +139,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli-stream/dev/1569415823524-2019-09-25T12:50:23.524Z/formsli-stream.zip"
+          "S3Key": "serverless/formsli-stream/dev/1569503623684-2019-09-26T13:13:43.684Z/formsli-stream.zip"
         },
         "FunctionName": "formsli-stream-dev-create-delivery-stream",
         "Handler": "functions/createstream.handle",
@@ -175,6 +175,7 @@
             "region": "ap-northeast-1",
             "environment": "dev",
             "serviceName": "formsli-stream",
+            "databaseName": "formsli",
             "dbClusterId": "fl-rds-cluster-dev",
             "dbClusterArn": {
               "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
@@ -198,14 +199,14 @@
         "CreateEntryStreamLogGroup"
       ]
     },
-    "CreateEntryStreamLambdaVersionLix9QnXelS6TKkEdx3EKc92XHloFk9q6q6jgwPTjWA": {
+    "CreateEntryStreamLambdaVersionCyYnEyeVGZc2MdrbGPnQL3bxoHUDOKmtePhTOkx7xBk": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateEntryStreamLambdaFunction"
         },
-        "CodeSha256": "cl7mbyBdSdDxnu7J6Fxn/fAuKewWv+ovjZkzMyV1d/Q="
+        "CodeSha256": "PcdGXC05hJXaC/M7F7e8WDFIpajfuNUowkHilc9jshY="
       }
     },
     "ApiGatewayResourceStreamFormidVar": {
@@ -303,7 +304,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1569415798521": {
+    "ApiGatewayDeployment1569503599787": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": "w2s48kp2a7",
@@ -375,7 +376,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli-stream/dev/1569415823524-2019-09-25T12:50:23.524Z/custom-resources.zip"
+          "S3Key": "serverless/formsli-stream/dev/1569503623684-2019-09-26T13:13:43.684Z/custom-resources.zip"
         },
         "FunctionName": "formsli-stream-dev-custom-resource-apigw-cw-role",
         "Handler": "apiGatewayCloudWatchRole/handler.handler",
@@ -876,7 +877,7 @@
     "CreateEntryStreamLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateEntryStreamLambdaVersionLix9QnXelS6TKkEdx3EKc92XHloFk9q6q6jgwPTjWA"
+        "Ref": "CreateEntryStreamLambdaVersionCyYnEyeVGZc2MdrbGPnQL3bxoHUDOKmtePhTOkx7xBk"
       }
     },
     "ServiceEndpoint": {
