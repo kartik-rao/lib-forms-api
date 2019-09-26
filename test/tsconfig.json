@@ -9,6 +9,7 @@
         "esModuleInterop" : true
     },
     "include": [
+        "helpers/Reporters.ts",
         "specs/*.ts",
         "../types/aws-xray-sdk.d.ts"
     ],
