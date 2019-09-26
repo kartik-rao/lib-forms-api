@@ -88,7 +88,7 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
     const streamErrorPrefix = getDeliveryStreamErrorPrefix(tenantId, formId);
 
     try {
-        let streams = await firehose.listDeliveryStreams({ExclusiveStartDeliveryStreamName: streamName}).promise();
+        let streams = await firehose.listDeliveryStreams({ExclusiveStartDeliveryStreamName: streamName.substring(0, streamName.length-1)}).promise();
         if (!streams.DeliveryStreamNames || streams.DeliveryStreamNames.length == 0) {
             await firehose.createDeliveryStream({
                 DeliveryStreamName: streamName,
