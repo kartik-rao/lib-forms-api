@@ -1,6 +1,6 @@
 {
     "spec_dir": "specs",
-    "spec_files": ["**/spec.plantype.ts"],
+    "spec_files": ["**/spec.*.ts"],
     "helpers": [
       "helpers/**/*.ts"
     ],
