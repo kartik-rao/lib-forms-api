@@ -42,6 +42,8 @@ provider:
     dbClusterId     : ${ssm:/${self:provider.stage}/formsli/rds/id}
     dbClusterArn    : "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:${self:provider.environment.dbClusterId}"
     graphqlApiId    : ${ssm:/${self:provider.stage}/formsli/graphql/api/id}
+    graphqlApiUrl   : ${ssm:/${self:provider.stage}/formsli/graphql/api/url}
+    graphqlApiKey   : ${ssm:/${self:provider.stage}/formsli/graphql/api/key}
     dbClusterSecretArn : ${ssm:/${self:provider.stage}/formsli/rds/password/secret}
     kinesisAccessRole  : ${ssm:/${self:provider.stage}/formsli/kinesis/accessRoleArn}
     sqs_entry_url      : ${ssm:/${self:provider.stage}/formsli/queue/entry/url}
@@ -181,6 +183,8 @@ functions:
         Resource : ${self:provider.environment.sqs_firehose_arn}
       - Effect: Allow
         Action:
+          - firehose:listDeliveryStreams
+          - firehose:describeDeliveryStream
           - firehose:putRecord
           - firehose:putRecordBatch
         Resource :
