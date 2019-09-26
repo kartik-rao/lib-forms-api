@@ -12,7 +12,7 @@ $util.qr($ctx.stash.put("operation", 'put'))
     "version": "2018-05-29",
     "statements": [
         "INSERT INTO FormEntry(id, formId, accountId, data, createdAt) VALUES(:id, :formId, :accountId, :data, :createdAt)",
-        "SELECT id, formId, createdAt FROM FormEntry WHERE id=:id"
+        "SELECT id, formId, accountId, createdAt FROM FormEntry WHERE id=:id"
     ],
     "variableMap": {
         ":id": "${entryId}",

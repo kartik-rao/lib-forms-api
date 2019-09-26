@@ -189,7 +189,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli-api-forms/dev/1569505326177-2019-09-26T13:42:06.177Z/formsli-api-forms.zip"
+          "S3Key": "serverless/formsli-api-forms/dev/1569506315630-2019-09-26T13:58:35.630Z/formsli-api-forms.zip"
         },
         "FunctionName": "formsli-api-forms-dev-form-json",
         "Handler": "functions/formjson.handle",
@@ -254,14 +254,14 @@
         "FormJsonLogGroup"
       ]
     },
-    "FormJsonLambdaVersionxMc1yZQBdZejpU1pEOOcme2CmzbRQ70bC47glSKeAc": {
+    "FormJsonLambdaVersionbXwRDgqRT4gEDkHSccK8hCE1E10zO4BQ2jcpKFg6HI": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "FormJsonLambdaFunction"
         },
-        "CodeSha256": "BckZOt2GTr2arHEqqoSD1Ybl8yk7c+E+TqXFcPkbgW4="
+        "CodeSha256": "OkGGHPsirx20hvlzAaztIdIqbIQyfDcxq2r8SG66QW0="
       }
     },
     "FormEntryLambdaFunction": {
@@ -271,7 +271,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli-api-forms/dev/1569505326177-2019-09-26T13:42:06.177Z/formsli-api-forms.zip"
+          "S3Key": "serverless/formsli-api-forms/dev/1569506315630-2019-09-26T13:58:35.630Z/formsli-api-forms.zip"
         },
         "FunctionName": "formsli-api-forms-dev-form-entry",
         "Handler": "functions/formentry.handle",
@@ -336,14 +336,14 @@
         "FormEntryLogGroup"
       ]
     },
-    "FormEntryLambdaVersionXBM9ZRJ83ynB7pdzn1TYb4Ho0v9p5TjHb4VGTVDEzk": {
+    "FormEntryLambdaVersionrc5n0BL9T06c6K7Hmdg78y2MFTlRmSO2tXjWTG4zM": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "FormEntryLambdaFunction"
         },
-        "CodeSha256": "BckZOt2GTr2arHEqqoSD1Ybl8yk7c+E+TqXFcPkbgW4="
+        "CodeSha256": "OkGGHPsirx20hvlzAaztIdIqbIQyfDcxq2r8SG66QW0="
       }
     },
     "FormViewLambdaFunction": {
@@ -353,7 +353,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli-api-forms/dev/1569505326177-2019-09-26T13:42:06.177Z/formsli-api-forms.zip"
+          "S3Key": "serverless/formsli-api-forms/dev/1569506315630-2019-09-26T13:58:35.630Z/formsli-api-forms.zip"
         },
         "FunctionName": "formsli-api-forms-dev-form-view",
         "Handler": "functions/formview.handle",
@@ -418,14 +418,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "FormViewLambdaVersionCsqwixet2Klreu1c0M7kDE1GNW7HJXuK4SZCZhESeI": {
+    "FormViewLambdaVersion9dzeJ3pXKOGOAe1AHtlymsnL4FFxBK8YHsqPUFJKHM": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "FormViewLambdaFunction"
         },
-        "CodeSha256": "BckZOt2GTr2arHEqqoSD1Ybl8yk7c+E+TqXFcPkbgW4="
+        "CodeSha256": "OkGGHPsirx20hvlzAaztIdIqbIQyfDcxq2r8SG66QW0="
       }
     },
     "SqsUnderscorefnUnderscorefirehoseLambdaFunction": {
@@ -435,7 +435,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli-api-forms/dev/1569505326177-2019-09-26T13:42:06.177Z/formsli-api-forms.zip"
+          "S3Key": "serverless/formsli-api-forms/dev/1569506315630-2019-09-26T13:58:35.630Z/formsli-api-forms.zip"
         },
         "FunctionName": "formsli-api-forms-dev-put-firehose",
         "Handler": "functions/sqs_fn_firehose.handle",
@@ -501,14 +501,14 @@
         "SqsUnderscorefnUnderscorefirehoseLogGroup"
       ]
     },
-    "SqsUnderscorefnUnderscorefirehoseLambdaVersion84E2MwgmJEMerR65wPCwLzpVQjgASaJ0U7fNAO9og": {
+    "SqsUnderscorefnUnderscorefirehoseLambdaVersion7i5xVnxmD6c49Ab7ns3AhPa2OXnDqjI2tCSRQdAwYc": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "SqsUnderscorefnUnderscorefirehoseLambdaFunction"
         },
-        "CodeSha256": "BckZOt2GTr2arHEqqoSD1Ybl8yk7c+E+TqXFcPkbgW4="
+        "CodeSha256": "OkGGHPsirx20hvlzAaztIdIqbIQyfDcxq2r8SG66QW0="
       }
     },
     "SqsUnderscorefnUnderscoreappsyncLambdaFunction": {
@@ -518,7 +518,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli-api-forms/dev/1569505326177-2019-09-26T13:42:06.177Z/formsli-api-forms.zip"
+          "S3Key": "serverless/formsli-api-forms/dev/1569506315630-2019-09-26T13:58:35.630Z/formsli-api-forms.zip"
         },
         "FunctionName": "formsli-api-forms-dev-put-appsync",
         "Handler": "functions/sqs_fn_appsync.handle",
@@ -584,14 +584,14 @@
         "SqsUnderscorefnUnderscoreappsyncLogGroup"
       ]
     },
-    "SqsUnderscorefnUnderscoreappsyncLambdaVersionD9SPxukfTCqASUHfDma91iedTQ23oBVMz7sNjI": {
+    "SqsUnderscorefnUnderscoreappsyncLambdaVersionqBMS0Cg4FEj0qCTiVunqFds1FNO4lsjikZl2nOHAI8": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "SqsUnderscorefnUnderscoreappsyncLambdaFunction"
         },
-        "CodeSha256": "BckZOt2GTr2arHEqqoSD1Ybl8yk7c+E+TqXFcPkbgW4="
+        "CodeSha256": "OkGGHPsirx20hvlzAaztIdIqbIQyfDcxq2r8SG66QW0="
       }
     },
     "ApiGatewayResourceFormJson": {
@@ -916,7 +916,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1569505280847": {
+    "ApiGatewayDeployment1569506271213": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": "w2s48kp2a7",
@@ -1062,7 +1062,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli-api-forms/dev/1569505326177-2019-09-26T13:42:06.177Z/custom-resources.zip"
+          "S3Key": "serverless/formsli-api-forms/dev/1569506315630-2019-09-26T13:58:35.630Z/custom-resources.zip"
         },
         "FunctionName": "formsli-api-forms-dev-custom-resource-apigw-cw-role",
         "Handler": "apiGatewayCloudWatchRole/handler.handler",
@@ -2299,31 +2299,31 @@
     "FormJsonLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "FormJsonLambdaVersionxMc1yZQBdZejpU1pEOOcme2CmzbRQ70bC47glSKeAc"
+        "Ref": "FormJsonLambdaVersionbXwRDgqRT4gEDkHSccK8hCE1E10zO4BQ2jcpKFg6HI"
       }
     },
     "FormEntryLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "FormEntryLambdaVersionXBM9ZRJ83ynB7pdzn1TYb4Ho0v9p5TjHb4VGTVDEzk"
+        "Ref": "FormEntryLambdaVersionrc5n0BL9T06c6K7Hmdg78y2MFTlRmSO2tXjWTG4zM"
       }
     },
     "FormViewLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "FormViewLambdaVersionCsqwixet2Klreu1c0M7kDE1GNW7HJXuK4SZCZhESeI"
+        "Ref": "FormViewLambdaVersion9dzeJ3pXKOGOAe1AHtlymsnL4FFxBK8YHsqPUFJKHM"
       }
     },
     "SqsUnderscorefnUnderscorefirehoseLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "SqsUnderscorefnUnderscorefirehoseLambdaVersion84E2MwgmJEMerR65wPCwLzpVQjgASaJ0U7fNAO9og"
+        "Ref": "SqsUnderscorefnUnderscorefirehoseLambdaVersion7i5xVnxmD6c49Ab7ns3AhPa2OXnDqjI2tCSRQdAwYc"
       }
     },
     "SqsUnderscorefnUnderscoreappsyncLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "SqsUnderscorefnUnderscoreappsyncLambdaVersionD9SPxukfTCqASUHfDma91iedTQ23oBVMz7sNjI"
+        "Ref": "SqsUnderscorefnUnderscoreappsyncLambdaVersionqBMS0Cg4FEj0qCTiVunqFds1FNO4lsjikZl2nOHAI8"
       }
     },
     "ServiceEndpoint": {
