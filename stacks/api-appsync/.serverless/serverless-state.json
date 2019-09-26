@@ -340,6 +340,16 @@
               "Type": "String"
             }
           },
+          "ssmRdsClusterArn": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/rds/arn",
+              "Value": {
+                "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
+              },
+              "Type": "String"
+            }
+          },
           "AppsyncDnsRecord": {
             "Type": "AWS::Route53::RecordSetGroup",
             "Properties": {
@@ -417,7 +427,7 @@
                 ]
               },
               "Description": "serverless-appsync-plugin: AppSync API Key for GraphQlApiKeyDefault",
-              "Expires": 1600945058
+              "Expires": 1601015907
             }
           },
           "GraphQlSchema": {
@@ -2208,7 +2218,7 @@
           },
           "level": "ALL"
         },
-        "schema": "schema.graphql",
+        "schema": "../../schema/schema.graphql",
         "dataSources": [
           {
             "type": "RELATIONAL_DATABASE",
@@ -3106,6 +3116,14 @@
             "Type": "String"
           }
         },
+        "ssmRdsClusterArn": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/rds/arn",
+            "Value": "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:fl-rds-cluster-dev",
+            "Type": "String"
+          }
+        },
         "AppsyncDnsRecord": {
           "Type": "AWS::Route53::RecordSetGroup",
           "Properties": {
@@ -3134,7 +3152,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli-graphql/dev/1569409058520-2019-09-25T10:57:38.520Z",
+    "artifactDirectoryName": "serverless/formsli-graphql/dev/1569479907673-2019-09-26T06:38:27.673Z",
     "artifact": ""
   }
 }

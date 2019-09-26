@@ -301,6 +301,16 @@
         "Type": "String"
       }
     },
+    "ssmRdsClusterArn": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/dev/formsli/rds/arn",
+        "Value": {
+          "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
+        },
+        "Type": "String"
+      }
+    },
     "AppsyncDnsRecord": {
       "Type": "AWS::Route53::RecordSetGroup",
       "Properties": {
@@ -378,7 +388,7 @@
           ]
         },
         "Description": "serverless-appsync-plugin: AppSync API Key for GraphQlApiKeyDefault",
-        "Expires": 1600945058
+        "Expires": 1601015907
       }
     },
     "GraphQlSchema": {

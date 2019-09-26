@@ -517,6 +517,24 @@
         "Type": "String"
       }
     },
+    "ssmAppStage": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/dev/formsli/app/stage",
+        "Description": "Application Stage",
+        "Value": "dev",
+        "Type": "String"
+      }
+    },
+    "ssmAppRegion": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/dev/formsli/app/region",
+        "Description": "Application Region",
+        "Value": "ap-northeast-1",
+        "Type": "String"
+      }
+    },
     "ssmPrefixKey": {
       "Type": "AWS::SSM::Parameter",
       "Properties": {
@@ -560,6 +578,30 @@
         "Description": "API Gateway Rest Api Id",
         "Value": {
           "Ref": "ApiGatewayRestApi"
+        },
+        "Type": "String"
+      }
+    },
+    "ssmRootApigRestApiEndpoint": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/dev/formsli/apig/restApiEndpoint",
+        "Description": "API Gateway Rest Api Endpoint",
+        "Value": {
+          "Fn::Join": [
+            "",
+            [
+              "https://",
+              {
+                "Ref": "ApiGatewayRestApi"
+              },
+              ".execute-api.ap-northeast-1.",
+              {
+                "Ref": "AWS::URLSuffix"
+              },
+              "/dev/"
+            ]
+          ]
         },
         "Type": "String"
       }
@@ -771,6 +813,17 @@
         "Description": "Firehose Queue Url",
         "Value": {
           "Ref": "FirehoseQueue"
+        },
+        "Type": "String"
+      }
+    },
+    "ssmUserPoolAdminUser": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/dev/cognito/userpool/adminUser",
+        "Description": "Cognito user pool admin username",
+        "Value": {
+          "Ref": "CognitoUserPoolAdminUser"
         },
         "Type": "String"
       }
