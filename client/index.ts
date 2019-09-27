@@ -254,6 +254,7 @@ export interface IFormEntryFilterInput {
 export interface IFormEntrySansData {
   id: Scalars["ID"];
   formId: Scalars["ID"];
+  accountId: Scalars["ID"];
   createdAt: Scalars["AWSDateTime"];
 }
 
@@ -1839,6 +1840,7 @@ export type IGetFormQuery = {
     isDeleted: Maybe<number>;
     redirectNotStarted: Maybe<string>;
     redirectHasEnded: Maybe<string>;
+    numEntries: Maybe<number>;
     version: Maybe<{
       id: string;
       accountId: string;
@@ -2767,6 +2769,7 @@ export type IFormEntrySansDataResolvers<
 > = {
   id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
   formId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+  accountId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
   createdAt?: Resolver<IResolversTypes["AWSDateTime"], ParentType, ContextType>;
 };
 
@@ -4323,6 +4326,7 @@ export const GetForm = gql`
           ...userFields
         }
       }
+      numEntries
     }
   }
   ${UserFields}

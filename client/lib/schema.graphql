@@ -237,6 +237,7 @@ input FormEntrySortInput {
 type FormEntrySansData @aws_api_key {
   id: ID!
   formId: ID!
+  accountId: ID!
   createdAt: AWSDateTime!
 }
 

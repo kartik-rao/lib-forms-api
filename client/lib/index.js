@@ -1112,6 +1112,7 @@ exports.GetForm = graphql_tag_1.default `
           ...userFields
         }
       }
+      numEntries
     }
   }
   ${exports.UserFields}

@@ -220,6 +220,7 @@ export interface IFormEntryFilterInput {
 export interface IFormEntrySansData {
     id: Scalars["ID"];
     formId: Scalars["ID"];
+    accountId: Scalars["ID"];
     createdAt: Scalars["AWSDateTime"];
 }
 export interface IFormEntrySortInput {
@@ -1640,6 +1641,7 @@ export declare type IGetFormQuery = {
         isDeleted: Maybe<number>;
         redirectNotStarted: Maybe<string>;
         redirectHasEnded: Maybe<string>;
+        numEntries: Maybe<number>;
         version: Maybe<{
             id: string;
             accountId: string;
@@ -2287,6 +2289,7 @@ export declare type IFormEntryResolvers<ContextType = any, ParentType extends IR
 export declare type IFormEntrySansDataResolvers<ContextType = any, ParentType extends IResolversParentTypes["FormEntrySansData"] = IResolversParentTypes["FormEntrySansData"]> = {
     id?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
     formId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
+    accountId?: Resolver<IResolversTypes["ID"], ParentType, ContextType>;
     createdAt?: Resolver<IResolversTypes["AWSDateTime"], ParentType, ContextType>;
 };
 export declare type IFormVersionResolvers<ContextType = any, ParentType extends IResolversParentTypes["FormVersion"] = IResolversParentTypes["FormVersion"]> = {
