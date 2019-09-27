@@ -421,6 +421,7 @@ mutation UpdateForm($input: UpdateFormInput) {
         notes
         ownedBy {...userFields}
       }
+      numEntries
     }
   }
 

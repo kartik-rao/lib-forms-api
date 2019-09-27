@@ -1208,6 +1208,7 @@ export declare type IUpdateFormMutation = {
         isDeleted: Maybe<number>;
         redirectNotStarted: Maybe<string>;
         redirectHasEnded: Maybe<string>;
+        numEntries: Maybe<number>;
         version: Maybe<{
             id: string;
             accountId: string;
