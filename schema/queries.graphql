@@ -158,6 +158,7 @@ query GetForm($formId: String!) {
         notes
         ownedBy {...userFields}
       }
+      numEntries
     }
 }
 
