@@ -746,15 +746,54 @@ export declare type IUserFieldsFragment = {
     createdAt: Maybe<string>;
     updatedAt: Maybe<string>;
 };
+export declare type IFormFieldsFragment = {
+    id: string;
+    ownerId: string;
+    name: string;
+    description: string;
+    versionId: Maybe<string>;
+    versionActivatedDate: Maybe<string>;
+    accountId: string;
+    createdAt: string;
+    updatedAt: Maybe<string>;
+    startDate: Maybe<string>;
+    endDate: Maybe<string>;
+    isPaused: Maybe<number>;
+    isDeleted: Maybe<number>;
+    redirectNotStarted: Maybe<string>;
+    redirectHasEnded: Maybe<string>;
+    numEntries: Maybe<number>;
+    version: Maybe<{
+        id: string;
+        accountId: string;
+        formId: string;
+        ownerId: string;
+        createdAt: Maybe<string>;
+        displayName: string;
+        notes: Maybe<string>;
+        formData: string;
+        ownedBy: {} & IUserFieldsFragment;
+    }>;
+    ownedBy: {} & IUserFieldsFragment;
+    account: {} & IAccountFieldsFragment;
+    versions: Maybe<Array<Maybe<{
+        id: string;
+        createdAt: Maybe<string>;
+        displayName: string;
+        notes: Maybe<string>;
+        ownedBy: {} & IUserFieldsFragment;
+    }>>>;
+};
 export declare type IAccountFieldsFragment = {
     id: string;
     name: string;
     ownerId: string;
     ownedBy: {} & IUserFieldsFragment;
 };
-export declare type IFormFieldsFragment = {
+export declare type IShortFormFieldsFragment = {
     id: string;
     ownerId: string;
+    name: string;
     description: string;
     accountId: string;
     createdAt: string;
@@ -893,7 +932,7 @@ export declare type IAddIntegrationMutation = {
             updatedAt: Maybe<string>;
         };
         ownedBy: {} & IUserFieldsFragment;
-        form: Maybe<{} & IFormFieldsFragment>;
+        form: Maybe<{} & IShortFormFieldsFragment>;
     };
 };
 export declare type IAddFormMutationVariables = {
@@ -1192,114 +1231,13 @@ export declare type IUpdateFormMutationVariables = {
     input?: Maybe<IUpdateFormInput>;
 };
 export declare type IUpdateFormMutation = {
-    updateForm: {
-        id: string;
-        ownerId: string;
-        name: string;
-        description: string;
-        versionId: Maybe<string>;
-        versionActivatedDate: Maybe<string>;
-        accountId: string;
-        createdAt: string;
-        updatedAt: Maybe<string>;
-        startDate: Maybe<string>;
-        endDate: Maybe<string>;
-        isPaused: Maybe<number>;
-        isDeleted: Maybe<number>;
-        redirectNotStarted: Maybe<string>;
-        redirectHasEnded: Maybe<string>;
-        numEntries: Maybe<number>;
-        version: Maybe<{
-            id: string;
-            accountId: string;
-            formId: string;
-            ownerId: string;
-            createdAt: Maybe<string>;
-            displayName: string;
-            notes: Maybe<string>;
-            formData: string;
-        }>;
-        ownedBy: {} & IUserFieldsFragment;
-        account: {} & IAccountFieldsFragment;
-        versions: Maybe<Array<Maybe<{
-            id: string;
-            accountId: string;
-            formId: string;
-            ownerId: string;
-            createdAt: Maybe<string>;
-            displayName: string;
-            notes: Maybe<string>;
-            ownedBy: {} & IUserFieldsFragment;
-        }>>>;
-    };
+    updateForm: {} & IFormFieldsFragment;
 };
 export declare type IDeleteFormMutationVariables = {
     input: IDeleteFormInput;
 };
 export declare type IDeleteFormMutation = {
-    deleteForm: {
-        id: string;
-        ownerId: string;
-        name: string;
-        description: string;
-        versionId: Maybe<string>;
-        versionActivatedDate: Maybe<string>;
-        accountId: string;
-        createdAt: string;
-        updatedAt: Maybe<string>;
-        startDate: Maybe<string>;
-        endDate: Maybe<string>;
-        isPaused: Maybe<number>;
-        isDeleted: Maybe<number>;
-        redirectNotStarted: Maybe<string>;
-        redirectHasEnded: Maybe<string>;
-        version: Maybe<{
-            id: string;
-            accountId: string;
-            formId: string;
-            ownerId: string;
-            createdAt: Maybe<string>;
-            displayName: string;
-            notes: Maybe<string>;
-            formData: string;
-        }>;
-        ownedBy: {} & IUserFieldsFragment;
-        account: {} & IAccountFieldsFragment;
-        versions: Maybe<Array<Maybe<{
-            id: string;
-            accountId: string;
-            formId: string;
-            ownerId: string;
-            createdAt: Maybe<string>;
-            displayName: string;
-            notes: Maybe<string>;
-            formData: string;
-        }>>>;
-        integrations: Maybe<Array<Maybe<{
-            id: string;
-            integrationTypeId: string;
-            ownerId: string;
-            accountId: string;
-            formId: Maybe<string>;
-            active: number;
-            authType: Maybe<string>;
-            auth: Maybe<string>;
-            target: Maybe<string>;
-            method: Maybe<string>;
-            lastExecuted: Maybe<string>;
-            lastExecutionResult: Maybe<number>;
-            lastExecutionResultMessage: Maybe<string>;
-            createdAt: Maybe<string>;
-            updatedAt: Maybe<string>;
-            isDeleted: Maybe<number>;
-        }>>>;
-        entries: Maybe<Array<Maybe<{
-            id: string;
-            formId: string;
-            data: string;
-            createdAt: string;
-        }>>>;
-    };
+    deleteForm: {} & IShortFormFieldsFragment;
 };
 export declare type IDeletePlanTypeMutationVariables = {
     planTypeId: Scalars["ID"];
@@ -1626,44 +1564,7 @@ export declare type IGetFormQueryVariables = {
     formId: Scalars["String"];
 };
 export declare type IGetFormQuery = {
-    getForm: Maybe<{
-        id: string;
-        ownerId: string;
-        name: string;
-        description: string;
-        versionId: Maybe<string>;
-        versionActivatedDate: Maybe<string>;
-        accountId: string;
-        createdAt: string;
-        updatedAt: Maybe<string>;
-        startDate: Maybe<string>;
-        endDate: Maybe<string>;
-        isPaused: Maybe<number>;
-        isDeleted: Maybe<number>;
-        redirectNotStarted: Maybe<string>;
-        redirectHasEnded: Maybe<string>;
-        numEntries: Maybe<number>;
-        version: Maybe<{
-            id: string;
-            accountId: string;
-            formId: string;
-            ownerId: string;
-            createdAt: Maybe<string>;
-            displayName: string;
-            notes: Maybe<string>;
-            formData: string;
-            ownedBy: {} & IUserFieldsFragment;
-        }>;
-        ownedBy: {} & IUserFieldsFragment;
-        account: {} & IAccountFieldsFragment;
-        versions: Maybe<Array<Maybe<{
-            id: string;
-            createdAt: Maybe<string>;
-            displayName: string;
-            notes: Maybe<string>;
-            ownedBy: {} & IUserFieldsFragment;
-        }>>>;
-    }>;
+    getForm: Maybe<{} & IFormFieldsFragment>;
 };
 export declare type IGetFormVersionQueryVariables = {
     versionId: Scalars["String"];
@@ -2455,6 +2356,7 @@ export declare type IDirectiveResolvers<ContextType = any> = {
 export declare const UserFields: any;
 export declare const AccountFields: any;
 export declare const FormFields: any;
+export declare const ShortFormFields: any;
 export declare const PlanTypeFields: any;
 export declare const PlanFields: any;
 export declare const AddPlanType: any;

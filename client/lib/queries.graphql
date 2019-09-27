@@ -123,43 +123,8 @@ query GetPlanType($planTypeId: String!) {
 
 query GetForm($formId: String!) {
     getForm(formId: $formId) {
-      id
-      ownerId
-      name
-      description
-      versionId
-      versionActivatedDate
-      version {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        formData
-        ownedBy {...userFields}
-      }
-      ownedBy {...userFields}
-      accountId
-      account {...accountFields}
-      createdAt
-      updatedAt
-      startDate
-      endDate
-      isPaused
-      isDeleted
-      redirectNotStarted
-      redirectHasEnded
-      versions {
-        id
-        createdAt
-        displayName
-        notes
-        ownedBy {...userFields}
-      }
-      numEntries
-    }
+      ...formFields
+  }
 }
 
 query GetFormVersion($versionId: String!) {

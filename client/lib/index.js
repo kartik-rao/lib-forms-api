@@ -82,10 +82,61 @@ exports.FormFields = graphql_tag_1.default `
   fragment formFields on Form {
     id
     ownerId
+    name
+    description
+    versionId
+    versionActivatedDate
+    version {
+      id
+      accountId
+      formId
+      ownerId
+      createdAt
+      displayName
+      notes
+      formData
+      ownedBy {
+        ...userFields
+      }
+    }
     ownedBy {
       ...userFields
     }
+    accountId
+    account {
+      ...accountFields
+    }
+    createdAt
+    updatedAt
+    startDate
+    endDate
+    isPaused
+    isDeleted
+    redirectNotStarted
+    redirectHasEnded
+    versions {
+      id
+      createdAt
+      displayName
+      notes
+      ownedBy {
+        ...userFields
+      }
+    }
+    numEntries
+  }
+  ${exports.UserFields}
+  ${exports.AccountFields}
+`;
+exports.ShortFormFields = graphql_tag_1.default `
+  fragment shortFormFields on Form {
+    id
+    ownerId
+    name
     description
+    ownedBy {
+      ...userFields
+    }
     accountId
     account {
       ...accountFields
@@ -233,7 +284,7 @@ exports.AddIntegration = graphql_tag_1.default `
       accountId
       formId
       form {
-        ...formFields
+        ...shortFormFields
       }
       active
       authType
@@ -249,7 +300,7 @@ exports.AddIntegration = graphql_tag_1.default `
     }
   }
   ${exports.UserFields}
-  ${exports.FormFields}
+  ${exports.ShortFormFields}
 `;
 exports.AddForm = graphql_tag_1.default `
   mutation AddForm($input: AddFormInput!) {
@@ -579,127 +630,18 @@ exports.UpdateIntegration = graphql_tag_1.default `
 exports.UpdateForm = graphql_tag_1.default `
   mutation UpdateForm($input: UpdateFormInput) {
     updateForm(input: $input) {
-      id
-      ownerId
-      name
-      description
-      versionId
-      versionActivatedDate
-      version {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        formData
-      }
-      ownedBy {
-        ...userFields
-      }
-      accountId
-      account {
-        ...accountFields
-      }
-      createdAt
-      updatedAt
-      startDate
-      endDate
-      isPaused
-      isDeleted
-      redirectNotStarted
-      redirectHasEnded
-      versions {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        ownedBy {
-          ...userFields
-        }
-      }
-      numEntries
+      ...formFields
     }
   }
-  ${exports.UserFields}
-  ${exports.AccountFields}
+  ${exports.FormFields}
 `;
 exports.DeleteForm = graphql_tag_1.default `
   mutation DeleteForm($input: DeleteFormInput!) {
     deleteForm(input: $input) {
-      id
-      ownerId
-      name
-      description
-      versionId
-      versionActivatedDate
-      version {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        formData
-      }
-      ownedBy {
-        ...userFields
-      }
-      accountId
-      account {
-        ...accountFields
-      }
-      createdAt
-      updatedAt
-      startDate
-      endDate
-      isPaused
-      isDeleted
-      redirectNotStarted
-      redirectHasEnded
-      versions {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        formData
-      }
-      integrations {
-        id
-        integrationTypeId
-        ownerId
-        accountId
-        formId
-        active
-        authType
-        auth
-        target
-        method
-        lastExecuted
-        lastExecutionResult
-        lastExecutionResultMessage
-        createdAt
-        updatedAt
-        isDeleted
-      }
-      entries {
-        id
-        formId
-        data
-        createdAt
-      }
+      ...shortFormFields
     }
   }
-  ${exports.UserFields}
-  ${exports.AccountFields}
+  ${exports.ShortFormFields}
 `;
 exports.DeletePlanType = graphql_tag_1.default `
   mutation DeletePlanType($planTypeId: ID!) {
@@ -1070,54 +1012,10 @@ exports.GetPlanType = graphql_tag_1.default `
 exports.GetForm = graphql_tag_1.default `
   query GetForm($formId: String!) {
     getForm(formId: $formId) {
-      id
-      ownerId
-      name
-      description
-      versionId
-      versionActivatedDate
-      version {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        formData
-        ownedBy {
-          ...userFields
-        }
-      }
-      ownedBy {
-        ...userFields
-      }
-      accountId
-      account {
-        ...accountFields
-      }
-      createdAt
-      updatedAt
-      startDate
-      endDate
-      isPaused
-      isDeleted
-      redirectNotStarted
-      redirectHasEnded
-      versions {
-        id
-        createdAt
-        displayName
-        notes
-        ownedBy {
-          ...userFields
-        }
-      }
-      numEntries
+      ...formFields
     }
   }
-  ${exports.UserFields}
-  ${exports.AccountFields}
+  ${exports.FormFields}
 `;
 exports.GetFormVersion = graphql_tag_1.default `
   query GetFormVersion($versionId: String!) {

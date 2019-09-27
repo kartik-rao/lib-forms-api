@@ -863,6 +863,49 @@ export type IUserFieldsFragment = {
   updatedAt: Maybe<string>;
 };
 
+export type IFormFieldsFragment = {
+  id: string;
+  ownerId: string;
+  name: string;
+  description: string;
+  versionId: Maybe<string>;
+  versionActivatedDate: Maybe<string>;
+  accountId: string;
+  createdAt: string;
+  updatedAt: Maybe<string>;
+  startDate: Maybe<string>;
+  endDate: Maybe<string>;
+  isPaused: Maybe<number>;
+  isDeleted: Maybe<number>;
+  redirectNotStarted: Maybe<string>;
+  redirectHasEnded: Maybe<string>;
+  numEntries: Maybe<number>;
+  version: Maybe<{
+    id: string;
+    accountId: string;
+    formId: string;
+    ownerId: string;
+    createdAt: Maybe<string>;
+    displayName: string;
+    notes: Maybe<string>;
+    formData: string;
+    ownedBy: {} & IUserFieldsFragment;
+  }>;
+  ownedBy: {} & IUserFieldsFragment;
+  account: {} & IAccountFieldsFragment;
+  versions: Maybe<
+    Array<
+      Maybe<{
+        id: string;
+        createdAt: Maybe<string>;
+        displayName: string;
+        notes: Maybe<string>;
+        ownedBy: {} & IUserFieldsFragment;
+      }>
+    >
+  >;
+};
+
 export type IAccountFieldsFragment = {
   id: string;
   name: string;
@@ -870,9 +913,10 @@ export type IAccountFieldsFragment = {
   ownedBy: {} & IUserFieldsFragment;
 };
 
-export type IFormFieldsFragment = {
+export type IShortFormFieldsFragment = {
   id: string;
   ownerId: string;
+  name: string;
   description: string;
   accountId: string;
   createdAt: string;
@@ -1021,7 +1065,7 @@ export type IAddIntegrationMutation = {
       updatedAt: Maybe<string>;
     };
     ownedBy: {} & IUserFieldsFragment;
-    form: Maybe<{} & IFormFieldsFragment>;
+    form: Maybe<{} & IShortFormFieldsFragment>;
   };
 };
 
@@ -1349,129 +1393,13 @@ export type IUpdateFormMutationVariables = {
   input?: Maybe<IUpdateFormInput>;
 };
 
-export type IUpdateFormMutation = {
-  updateForm: {
-    id: string;
-    ownerId: string;
-    name: string;
-    description: string;
-    versionId: Maybe<string>;
-    versionActivatedDate: Maybe<string>;
-    accountId: string;
-    createdAt: string;
-    updatedAt: Maybe<string>;
-    startDate: Maybe<string>;
-    endDate: Maybe<string>;
-    isPaused: Maybe<number>;
-    isDeleted: Maybe<number>;
-    redirectNotStarted: Maybe<string>;
-    redirectHasEnded: Maybe<string>;
-    numEntries: Maybe<number>;
-    version: Maybe<{
-      id: string;
-      accountId: string;
-      formId: string;
-      ownerId: string;
-      createdAt: Maybe<string>;
-      displayName: string;
-      notes: Maybe<string>;
-      formData: string;
-    }>;
-    ownedBy: {} & IUserFieldsFragment;
-    account: {} & IAccountFieldsFragment;
-    versions: Maybe<
-      Array<
-        Maybe<{
-          id: string;
-          accountId: string;
-          formId: string;
-          ownerId: string;
-          createdAt: Maybe<string>;
-          displayName: string;
-          notes: Maybe<string>;
-          ownedBy: {} & IUserFieldsFragment;
-        }>
-      >
-    >;
-  };
-};
+export type IUpdateFormMutation = { updateForm: {} & IFormFieldsFragment };
 
 export type IDeleteFormMutationVariables = {
   input: IDeleteFormInput;
 };
 
-export type IDeleteFormMutation = {
-  deleteForm: {
-    id: string;
-    ownerId: string;
-    name: string;
-    description: string;
-    versionId: Maybe<string>;
-    versionActivatedDate: Maybe<string>;
-    accountId: string;
-    createdAt: string;
-    updatedAt: Maybe<string>;
-    startDate: Maybe<string>;
-    endDate: Maybe<string>;
-    isPaused: Maybe<number>;
-    isDeleted: Maybe<number>;
-    redirectNotStarted: Maybe<string>;
-    redirectHasEnded: Maybe<string>;
-    version: Maybe<{
-      id: string;
-      accountId: string;
-      formId: string;
-      ownerId: string;
-      createdAt: Maybe<string>;
-      displayName: string;
-      notes: Maybe<string>;
-      formData: string;
-    }>;
-    ownedBy: {} & IUserFieldsFragment;
-    account: {} & IAccountFieldsFragment;
-    versions: Maybe<
-      Array<
-        Maybe<{
-          id: string;
-          accountId: string;
-          formId: string;
-          ownerId: string;
-          createdAt: Maybe<string>;
-          displayName: string;
-          notes: Maybe<string>;
-          formData: string;
-        }>
-      >
-    >;
-    integrations: Maybe<
-      Array<
-        Maybe<{
-          id: string;
-          integrationTypeId: string;
-          ownerId: string;
-          accountId: string;
-          formId: Maybe<string>;
-          active: number;
-          authType: Maybe<string>;
-          auth: Maybe<string>;
-          target: Maybe<string>;
-          method: Maybe<string>;
-          lastExecuted: Maybe<string>;
-          lastExecutionResult: Maybe<number>;
-          lastExecutionResultMessage: Maybe<string>;
-          createdAt: Maybe<string>;
-          updatedAt: Maybe<string>;
-          isDeleted: Maybe<number>;
-        }>
-      >
-    >;
-    entries: Maybe<
-      Array<
-        Maybe<{ id: string; formId: string; data: string; createdAt: string }>
-      >
-    >;
-  };
-};
+export type IDeleteFormMutation = { deleteForm: {} & IShortFormFieldsFragment };
 
 export type IDeletePlanTypeMutationVariables = {
   planTypeId: Scalars["ID"];
@@ -1824,50 +1752,7 @@ export type IGetFormQueryVariables = {
   formId: Scalars["String"];
 };
 
-export type IGetFormQuery = {
-  getForm: Maybe<{
-    id: string;
-    ownerId: string;
-    name: string;
-    description: string;
-    versionId: Maybe<string>;
-    versionActivatedDate: Maybe<string>;
-    accountId: string;
-    createdAt: string;
-    updatedAt: Maybe<string>;
-    startDate: Maybe<string>;
-    endDate: Maybe<string>;
-    isPaused: Maybe<number>;
-    isDeleted: Maybe<number>;
-    redirectNotStarted: Maybe<string>;
-    redirectHasEnded: Maybe<string>;
-    numEntries: Maybe<number>;
-    version: Maybe<{
-      id: string;
-      accountId: string;
-      formId: string;
-      ownerId: string;
-      createdAt: Maybe<string>;
-      displayName: string;
-      notes: Maybe<string>;
-      formData: string;
-      ownedBy: {} & IUserFieldsFragment;
-    }>;
-    ownedBy: {} & IUserFieldsFragment;
-    account: {} & IAccountFieldsFragment;
-    versions: Maybe<
-      Array<
-        Maybe<{
-          id: string;
-          createdAt: Maybe<string>;
-          displayName: string;
-          notes: Maybe<string>;
-          ownedBy: {} & IUserFieldsFragment;
-        }>
-      >
-    >;
-  }>;
-};
+export type IGetFormQuery = { getForm: Maybe<{} & IFormFieldsFragment> };
 
 export type IGetFormVersionQueryVariables = {
   versionId: Scalars["String"];
@@ -3297,10 +3182,61 @@ export const FormFields = gql`
   fragment formFields on Form {
     id
     ownerId
+    name
+    description
+    versionId
+    versionActivatedDate
+    version {
+      id
+      accountId
+      formId
+      ownerId
+      createdAt
+      displayName
+      notes
+      formData
+      ownedBy {
+        ...userFields
+      }
+    }
     ownedBy {
       ...userFields
     }
+    accountId
+    account {
+      ...accountFields
+    }
+    createdAt
+    updatedAt
+    startDate
+    endDate
+    isPaused
+    isDeleted
+    redirectNotStarted
+    redirectHasEnded
+    versions {
+      id
+      createdAt
+      displayName
+      notes
+      ownedBy {
+        ...userFields
+      }
+    }
+    numEntries
+  }
+  ${UserFields}
+  ${AccountFields}
+`;
+export const ShortFormFields = gql`
+  fragment shortFormFields on Form {
+    id
+    ownerId
+    name
     description
+    ownedBy {
+      ...userFields
+    }
     accountId
     account {
       ...accountFields
@@ -3448,7 +3384,7 @@ export const AddIntegration = gql`
       accountId
       formId
       form {
-        ...formFields
+        ...shortFormFields
       }
       active
       authType
@@ -3464,7 +3400,7 @@ export const AddIntegration = gql`
     }
   }
   ${UserFields}
-  ${FormFields}
+  ${ShortFormFields}
 `;
 export const AddForm = gql`
   mutation AddForm($input: AddFormInput!) {
@@ -3794,127 +3730,18 @@ export const UpdateIntegration = gql`
 export const UpdateForm = gql`
   mutation UpdateForm($input: UpdateFormInput) {
     updateForm(input: $input) {
-      id
-      ownerId
-      name
-      description
-      versionId
-      versionActivatedDate
-      version {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        formData
-      }
-      ownedBy {
-        ...userFields
-      }
-      accountId
-      account {
-        ...accountFields
-      }
-      createdAt
-      updatedAt
-      startDate
-      endDate
-      isPaused
-      isDeleted
-      redirectNotStarted
-      redirectHasEnded
-      versions {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        ownedBy {
-          ...userFields
-        }
-      }
-      numEntries
+      ...formFields
     }
   }
-  ${UserFields}
-  ${AccountFields}
+  ${FormFields}
 `;
 export const DeleteForm = gql`
   mutation DeleteForm($input: DeleteFormInput!) {
     deleteForm(input: $input) {
-      id
-      ownerId
-      name
-      description
-      versionId
-      versionActivatedDate
-      version {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        formData
-      }
-      ownedBy {
-        ...userFields
-      }
-      accountId
-      account {
-        ...accountFields
-      }
-      createdAt
-      updatedAt
-      startDate
-      endDate
-      isPaused
-      isDeleted
-      redirectNotStarted
-      redirectHasEnded
-      versions {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        formData
-      }
-      integrations {
-        id
-        integrationTypeId
-        ownerId
-        accountId
-        formId
-        active
-        authType
-        auth
-        target
-        method
-        lastExecuted
-        lastExecutionResult
-        lastExecutionResultMessage
-        createdAt
-        updatedAt
-        isDeleted
-      }
-      entries {
-        id
-        formId
-        data
-        createdAt
-      }
+      ...shortFormFields
     }
   }
-  ${UserFields}
-  ${AccountFields}
+  ${ShortFormFields}
 `;
 export const DeletePlanType = gql`
   mutation DeletePlanType($planTypeId: ID!) {
@@ -4285,54 +4112,10 @@ export const GetPlanType = gql`
 export const GetForm = gql`
   query GetForm($formId: String!) {
     getForm(formId: $formId) {
-      id
-      ownerId
-      name
-      description
-      versionId
-      versionActivatedDate
-      version {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        formData
-        ownedBy {
-          ...userFields
-        }
-      }
-      ownedBy {
-        ...userFields
-      }
-      accountId
-      account {
-        ...accountFields
-      }
-      createdAt
-      updatedAt
-      startDate
-      endDate
-      isPaused
-      isDeleted
-      redirectNotStarted
-      redirectHasEnded
-      versions {
-        id
-        createdAt
-        displayName
-        notes
-        ownedBy {
-          ...userFields
-        }
-      }
-      numEntries
+      ...formFields
     }
   }
-  ${UserFields}
-  ${AccountFields}
+  ${FormFields}
 `;
 export const GetFormVersion = gql`
   query GetFormVersion($versionId: String!) {
