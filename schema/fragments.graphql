@@ -8,6 +8,45 @@ fragment userFields on User {
   updatedAt
 }
 
+fragment formFields on Form {
+  id
+  ownerId
+  name
+  description
+  versionId
+  versionActivatedDate
+  version {
+    id
+    accountId
+    formId
+    ownerId
+    createdAt
+    displayName
+    notes
+    formData
+    ownedBy {...userFields}
+  }
+  ownedBy {...userFields}
+  accountId
+  account {...accountFields}
+  createdAt
+  updatedAt
+  startDate
+  endDate
+  isPaused
+  isDeleted
+  redirectNotStarted
+  redirectHasEnded
+  versions {
+    id
+    createdAt
+    displayName
+    notes
+    ownedBy {...userFields}
+  }
+  numEntries
+}
+
 fragment accountFields on Account {
   id
   name
@@ -15,11 +54,12 @@ fragment accountFields on Account {
   ownedBy {...userFields}
 }
 
-fragment formFields on Form {
+fragment shortFormFields on Form {
   id
   ownerId
-  ownedBy {...userFields}
+  name
   description
+  ownedBy {...userFields}
   accountId
   account {...accountFields}
   createdAt
