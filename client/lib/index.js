@@ -333,55 +333,18 @@ exports.AddFormVersion = graphql_tag_1.default `
   mutation AddFormVersion($input: AddFormVersionInput!) {
     addFormVersion(input: $input) {
       id
+      accountId
+      formId
       ownerId
-      name
-      description
-      versionId
-      versionActivatedDate
-      version {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        formData
-        ownedBy {
-          ...userFields
-        }
-      }
+      createdAt
+      displayName
+      notes
       ownedBy {
         ...userFields
-      }
-      accountId
-      account {
-        ...accountFields
-      }
-      createdAt
-      updatedAt
-      startDate
-      endDate
-      isPaused
-      isDeleted
-      redirectNotStarted
-      redirectHasEnded
-      versions {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        ownedBy {
-          ...userFields
-        }
       }
     }
   }
   ${exports.UserFields}
-  ${exports.AccountFields}
 `;
 exports.AttachFormVersion = graphql_tag_1.default `
   mutation AttachFormVersion($input: AttachFormVersionInput!) {

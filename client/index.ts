@@ -393,7 +393,7 @@ export interface IMutation {
   addIntegrationType: IIntegrationType;
   addIntegration: IIntegration;
   addForm: IForm;
-  addFormVersion: IForm;
+  addFormVersion: IFormVersion;
   attachFormVersion: IForm;
   updatePlanType: IPlanType;
   updatePlan: IPlan;
@@ -403,6 +403,7 @@ export interface IMutation {
   updateIntegrationType: IIntegrationType;
   updateIntegration: IIntegration;
   updateForm: IForm;
+  updateFormVersion: IFormVersion;
   deleteForm: IForm;
   deletePlanType: IPlanType;
   deletePlan: IPlan;
@@ -472,6 +473,10 @@ export interface IMutationUpdateIntegrationArgs {
 
 export interface IMutationUpdateFormArgs {
   input?: Maybe<IUpdateFormInput>;
+}
+
+export interface IMutationUpdateFormVersionArgs {
+  input?: Maybe<IUpdateFormVersionInput>;
 }
 
 export interface IMutationDeleteFormArgs {
@@ -754,6 +759,12 @@ export interface IUpdateFormInput {
   redirectNotStarted?: Maybe<Scalars["AWSURL"]>;
   redirectHasEnded?: Maybe<Scalars["AWSURL"]>;
   isPaused?: Maybe<Scalars["Int"]>;
+}
+
+export interface IUpdateFormVersionInput {
+  id: Scalars["String"];
+  accountId: Scalars["String"];
+  displayName?: Maybe<Scalars["String"]>;
 }
 
 export interface IUpdateIntegrationInput {
@@ -1096,47 +1107,13 @@ export type IAddFormVersionMutationVariables = {
 export type IAddFormVersionMutation = {
   addFormVersion: {
     id: string;
-    ownerId: string;
-    name: string;
-    description: string;
-    versionId: Maybe<string>;
-    versionActivatedDate: Maybe<string>;
     accountId: string;
-    createdAt: string;
-    updatedAt: Maybe<string>;
-    startDate: Maybe<string>;
-    endDate: Maybe<string>;
-    isPaused: Maybe<number>;
-    isDeleted: Maybe<number>;
-    redirectNotStarted: Maybe<string>;
-    redirectHasEnded: Maybe<string>;
-    version: Maybe<{
-      id: string;
-      accountId: string;
-      formId: string;
-      ownerId: string;
-      createdAt: Maybe<string>;
-      displayName: string;
-      notes: Maybe<string>;
-      formData: string;
-      ownedBy: {} & IUserFieldsFragment;
-    }>;
+    formId: string;
+    ownerId: string;
+    createdAt: Maybe<string>;
+    displayName: string;
+    notes: Maybe<string>;
     ownedBy: {} & IUserFieldsFragment;
-    account: {} & IAccountFieldsFragment;
-    versions: Maybe<
-      Array<
-        Maybe<{
-          id: string;
-          accountId: string;
-          formId: string;
-          ownerId: string;
-          createdAt: Maybe<string>;
-          displayName: string;
-          notes: Maybe<string>;
-          ownedBy: {} & IUserFieldsFragment;
-        }>
-      >
-    >;
   };
 };
 
@@ -2338,6 +2315,7 @@ export type IResolversTypes = {
   UpdateIntegrationTypeInput: IUpdateIntegrationTypeInput;
   UpdateIntegrationInput: IUpdateIntegrationInput;
   UpdateFormInput: IUpdateFormInput;
+  UpdateFormVersionInput: IUpdateFormVersionInput;
   DeleteFormInput: IDeleteFormInput;
   DeleteFormVersionInput: IDeleteFormVersionInput;
   AddFormEntryInput: IAddFormEntryInput;
@@ -2414,6 +2392,7 @@ export type IResolversParentTypes = {
   UpdateIntegrationTypeInput: IUpdateIntegrationTypeInput;
   UpdateIntegrationInput: IUpdateIntegrationInput;
   UpdateFormInput: IUpdateFormInput;
+  UpdateFormVersionInput: IUpdateFormVersionInput;
   DeleteFormInput: IDeleteFormInput;
   DeleteFormVersionInput: IDeleteFormVersionInput;
   AddFormEntryInput: IAddFormEntryInput;
@@ -2788,7 +2767,7 @@ export type IMutationResolvers<
     RequireFields<IMutationAddFormArgs, "input">
   >;
   addFormVersion?: Resolver<
-    IResolversTypes["Form"],
+    IResolversTypes["FormVersion"],
     ParentType,
     ContextType,
     RequireFields<IMutationAddFormVersionArgs, "input">
@@ -2846,6 +2825,12 @@ export type IMutationResolvers<
     ParentType,
     ContextType,
     IMutationUpdateFormArgs
+  >;
+  updateFormVersion?: Resolver<
+    IResolversTypes["FormVersion"],
+    ParentType,
+    ContextType,
+    IMutationUpdateFormVersionArgs
   >;
   deleteForm?: Resolver<
     IResolversTypes["Form"],
@@ -3427,55 +3412,18 @@ export const AddFormVersion = gql`
   mutation AddFormVersion($input: AddFormVersionInput!) {
     addFormVersion(input: $input) {
       id
+      accountId
+      formId
       ownerId
-      name
-      description
-      versionId
-      versionActivatedDate
-      version {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        formData
-        ownedBy {
-          ...userFields
-        }
-      }
+      createdAt
+      displayName
+      notes
       ownedBy {
         ...userFields
-      }
-      accountId
-      account {
-        ...accountFields
-      }
-      createdAt
-      updatedAt
-      startDate
-      endDate
-      isPaused
-      isDeleted
-      redirectNotStarted
-      redirectHasEnded
-      versions {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        ownedBy {
-          ...userFields
-        }
       }
     }
   }
   ${UserFields}
-  ${AccountFields}
 `;
 export const AttachFormVersion = gql`
   mutation AttachFormVersion($input: AttachFormVersionInput!) {
