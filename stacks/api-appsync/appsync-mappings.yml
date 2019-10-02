@@ -262,6 +262,14 @@
   kind: PIPELINE
   functions:
     - FN_getFormVersion
+- dataSource: AppData
+  type: Mutation
+  field: updateFormVersion
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_updateFormVersion
 # FormVersion.ownedBy
 - dataSource: AppData
   type: FormVersion

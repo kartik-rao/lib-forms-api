@@ -260,6 +260,12 @@ type FormVersion @model {
   formData: AWSJSON!
 }
 
+input UpdateFormVersionInput {
+  id: String!
+  accountId: String!
+  displayName: String
+}
+
 input FormVersionFilterInput {
   accountId: StringFilter
   formId: StringFilter
@@ -603,7 +609,7 @@ type Mutation {
   updateIntegrationType(input: UpdateIntegrationTypeInput): IntegrationType!
   updateIntegration(input: UpdateIntegrationInput): Integration!
   updateForm(input: UpdateFormInput): Form!
-
+  updateFormVersion(input: UpdateFormVersionInput): FormVersion!
   deleteForm(input: DeleteFormInput!): Form!
   deletePlanType(planTypeId: ID!): PlanType!
   deletePlan(accountId: ID!, planId: ID!): Plan!

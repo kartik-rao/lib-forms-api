@@ -144,6 +144,11 @@
   name: FN_getFormVersion
   request: FormVersion_get_REQ.vtl
   response: FormVersion_get_RES.vtl
+- dataSource: AppData
+  type: Mutation
+  name: FN_updateFormVersion
+  request: FormVersion_update_REQ.vtl
+  response: Common_FN_upsert_RES.vtl
 ## FormEntry
 - dataSource: AppData
   type: Query
