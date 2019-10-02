@@ -6,7 +6,14 @@
   kind: PIPELINE
   functions:
     - FN_getUser
-
+- dataSource: AppData
+  type: Mutation
+  field: updateUser
+  request: Common_REQ.vtl
+  response: Common_RES.vtl
+  kind: PIPELINE
+  functions:
+    - FN_updateUser
 # User.numForms
 - dataSource: AppData
   type: User

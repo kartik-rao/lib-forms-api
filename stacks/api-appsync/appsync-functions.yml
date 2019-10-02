@@ -42,6 +42,11 @@
   name: FN_getUser
   request: User_get_REQ.vtl
   response: Common_FN_get_RES.vtl
+- dataSource: AppData
+  type: Mutation
+  name: FN_updateUser
+  request: User_update_REQ.vtl
+  response: Common_FN_upsert_RES.vtl
 
 ## PlanType
 - dataSource: AppData

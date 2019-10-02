@@ -363,16 +363,12 @@ type User @model {
 }
 
 
-input UpdateUserInputData {
-  group: String!
-  given_name: String!
-  family_name: String!
-  phone_number: AWSPhone
-}
-
 input UpdateUserInput {
   id: ID!
-  data: UpdateUserInputData!
+  group: String
+  given_name: String
+  family_name: String
+  phone_number: AWSPhone
 }
 
 enum AddressType {

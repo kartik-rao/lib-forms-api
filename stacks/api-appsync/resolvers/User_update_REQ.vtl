@@ -1,0 +1,43 @@
+$util.qr($ctx.stash.paths.add("User_update_REQ.vtl"))
+#set($identity=$ctx.stash.identity)
+#set($args=$ctx.arguments.input)
+
+#if(!$args)
+    $util.error("Missing mandatory args", "BadRequest")
+#end
+
+#set($isAllowed = false)
+#if($identity.isAdmin == true || $identity.isAccountAdmin == true || ($identity.callerId == $args.id && !$args.containsKey("group")))
+    #set($isAllowed = true)
+#end
+
+#if($isAllowed == true)
+    #set($request = $args)
+    $util.qr($ctx.stash.put("operation", 'put'))
+    #if($args.containsKey("phone_number"))
+        #if($util.isNull($args.endDate))
+            $util.qr($args.put("phone_number", "NULL"))
+        #else
+            $util.qr($args.put("phone_number", "'${args.phone_number}'"))
+        #end
+    #end
+    $util.qr($ctx.stash.put("request", $args))
+    $util.qr($ctx.stash.request.put("itemType", 'User'))
+    $util.qr($ctx.stash.request.put("id", $args.id))
+    {
+        "version": "2018-05-29",
+        "statements": [
+            "UPDATE User SET updatedAt=:isotime #if($args.containsKey("phone_number")) ,phone_number=$args.phone_number #end #if($args.containsKey("group")) userGroup=:userGroup #end #if($args.given_name) given_name=:given_name #end #if($args.family_name) ,family_name=:family_name #end WHERE id=:id",
+            "SELECT * FROM User WHERE id ='${args.id}'"
+        ],
+        "variableMap": {
+            ":id" : "${args.id}",
+            ":given_name" : "${args.given_name}",
+            ":family_name" : "${args.family_name}",
+            ":userGroup" : "${args.group}",
+            ":isotime" : "${util.time.nowISO8601()}"
+        }
+    }
+#else
+    $util.error("User [${identity.callerId}] cannot execute [PUT] on [User]", "Unauthorized")
+#end
