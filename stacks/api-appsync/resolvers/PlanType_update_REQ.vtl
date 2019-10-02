@@ -15,7 +15,7 @@ $util.qr($ctx.stash.paths.add("PlanType_update_REQ.vtl"))
     {
         "version": "2018-05-29",
         "statements": [
-            "UPDATE PlanType SET updatedAt='${util.time.nowISO8601()}' #if($args.name) , `name`='${args.name}' #end #if($args.billingTerm) , billingTerm='${args.billingTerm}' #end #if(!$util.isNull($args.cost)) , cost=${args.cost} #end #if(!$util.isNull($args.active)) , active=${args.active} #end WHERE id='${args.id}'",
+            "UPDATE PlanType SET updatedAt='${util.time.nowISO8601()}' #if($args.name) , `name`='${args.name}' #end #if($args.billingTerm) , billingTerm='${args.billingTerm}' #end #if(!$util.isNull($args.cost)) ,cost=${args.cost} #end #if(!$util.isNull($args.active)) , active=${args.active} #end WHERE id='${args.id}'",
             "SELECT * FROM PlanType WHERE id ='${args.id}'"
         ]
     }
