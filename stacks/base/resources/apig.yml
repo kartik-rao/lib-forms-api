@@ -81,3 +81,10 @@ Resources:
       RestApiId: { Ref: "ApiGatewayRestApi" }
       ParentId: { Fn::GetAtt: "ApiGatewayRestApi.RootResourceId" }
       PathPart: servers
+  # /tenant (references the API Gateway as parent) - Used for any in-tenant apis
+  ApiGatewayResourceTenant:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: { Ref: "ApiGatewayRestApi" }
+      ParentId: { Fn::GetAtt: "ApiGatewayRestApi.RootResourceId" }
+      PathPart: tenant
