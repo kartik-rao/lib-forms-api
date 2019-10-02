@@ -133,43 +133,13 @@ mutation AddForm($input: AddFormInput!) {
 mutation AddFormVersion($input: AddFormVersionInput!) {
     addFormVersion(input: $input) {
       id
-      ownerId
-      name
-      description
-      versionId
-      versionActivatedDate
-      version {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        formData
-        ownedBy {...userFields}
-      }
-      ownedBy {...userFields}
       accountId
-      account {...accountFields}
+      formId
+      ownerId
       createdAt
-      updatedAt
-      startDate
-      endDate
-      isPaused
-      isDeleted
-      redirectNotStarted
-      redirectHasEnded
-      versions {
-        id
-        accountId
-        formId
-        ownerId
-        createdAt
-        displayName
-        notes
-        ownedBy {...userFields}
-      }
+      displayName
+      notes
+      ownedBy {...userFields}
     }
   }
 
