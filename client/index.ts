@@ -796,13 +796,9 @@ export interface IUpdatePlanTypeInput {
 
 export interface IUpdateUserInput {
   id: Scalars["ID"];
-  data: IUpdateUserInputData;
-}
-
-export interface IUpdateUserInputData {
-  group: Scalars["String"];
-  given_name: Scalars["String"];
-  family_name: Scalars["String"];
+  group?: Maybe<Scalars["String"]>;
+  given_name?: Maybe<Scalars["String"]>;
+  family_name?: Maybe<Scalars["String"]>;
   phone_number?: Maybe<Scalars["AWSPhone"]>;
 }
 
@@ -2339,7 +2335,6 @@ export type IResolversTypes = {
   UpdatePlanInput: IUpdatePlanInput;
   UpdateAccountInput: IUpdateAccountInput;
   UpdateUserInput: IUpdateUserInput;
-  UpdateUserInputData: IUpdateUserInputData;
   UpdateIntegrationTypeInput: IUpdateIntegrationTypeInput;
   UpdateIntegrationInput: IUpdateIntegrationInput;
   UpdateFormInput: IUpdateFormInput;
@@ -2416,7 +2411,6 @@ export type IResolversParentTypes = {
   UpdatePlanInput: IUpdatePlanInput;
   UpdateAccountInput: IUpdateAccountInput;
   UpdateUserInput: IUpdateUserInput;
-  UpdateUserInputData: IUpdateUserInputData;
   UpdateIntegrationTypeInput: IUpdateIntegrationTypeInput;
   UpdateIntegrationInput: IUpdateIntegrationInput;
   UpdateFormInput: IUpdateFormInput;
