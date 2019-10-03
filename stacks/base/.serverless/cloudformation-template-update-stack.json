@@ -200,6 +200,18 @@
         "PathPart": "servers"
       }
     },
+    "ApiGatewayResourceTenant": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ParentId": {
+          "Fn::GetAtt": "ApiGatewayRestApi.RootResourceId"
+        },
+        "PathPart": "tenant"
+      }
+    },
     "SftpUserRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -429,10 +441,10 @@
     "EntryQueue": {
       "Type": "AWS::SQS::Queue",
       "Properties": {
-        "VisibilityTimeout": 120,
+        "VisibilityTimeout": 300,
         "QueueName": "dev-formsli-entry-queue",
         "RedrivePolicy": {
-          "maxReceiveCount": 3,
+          "maxReceiveCount": 5,
           "deadLetterTargetArn": {
             "Fn::GetAtt": [
               "EntryDLQueue",
@@ -451,10 +463,10 @@
     "FirehoseQueue": {
       "Type": "AWS::SQS::Queue",
       "Properties": {
-        "VisibilityTimeout": 120,
+        "VisibilityTimeout": 300,
         "QueueName": "dev-formsli-firehose-queue",
         "RedrivePolicy": {
-          "maxReceiveCount": 3,
+          "maxReceiveCount": 5,
           "deadLetterTargetArn": {
             "Fn::GetAtt": [
               "FirehoseDLQueue",
@@ -473,10 +485,10 @@
     "AnalyticsQueue": {
       "Type": "AWS::SQS::Queue",
       "Properties": {
-        "VisibilityTimeout": 120,
+        "VisibilityTimeout": 300,
         "QueueName": "dev-formsli-analytics-queue",
         "RedrivePolicy": {
-          "maxReceiveCount": 3,
+          "maxReceiveCount": 5,
           "deadLetterTargetArn": {
             "Fn::GetAtt": [
               "AnalyticsDLQueue",
@@ -498,7 +510,7 @@
         "VisibilityTimeout": 300,
         "QueueName": "dev-formsli-integration-queue",
         "RedrivePolicy": {
-          "maxReceiveCount": 3,
+          "maxReceiveCount": 5,
           "deadLetterTargetArn": {
             "Fn::GetAtt": [
               "IntegrationDLQueue",

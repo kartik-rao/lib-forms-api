@@ -97,7 +97,10 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
                     Prefix: streamPrefix,
                     ErrorOutputPrefix: streamErrorPrefix,
                     BucketARN : `arn:aws:s3:::${UserBucket}`,
-                    RoleARN: RoleArn
+                    RoleARN: RoleArn,
+                    CloudWatchLoggingOptions : {
+                        Enabled: true
+                    }
                 },
                 Tags : [
                     { Key: "Stage",  Value: stage},

@@ -6,10 +6,10 @@ Resources:
   EntryQueue:
     Type: "AWS::SQS::Queue"
     Properties:
-      VisibilityTimeout: 120
+      VisibilityTimeout: 300
       QueueName: ${self:provider.environment.sqs_entry}
       RedrivePolicy:
-        maxReceiveCount: 3
+        maxReceiveCount: 5
         deadLetterTargetArn : { Fn::GetAtt: [EntryDLQueue, Arn] }
   FirehoseDLQueue:
     Type: "AWS::SQS::Queue"
@@ -18,10 +18,10 @@ Resources:
   FirehoseQueue:
     Type: "AWS::SQS::Queue"
     Properties:
-      VisibilityTimeout: 120
+      VisibilityTimeout: 300
       QueueName: ${self:provider.environment.sqs_firehose}
       RedrivePolicy:
-        maxReceiveCount: 3
+        maxReceiveCount: 5
         deadLetterTargetArn : { Fn::GetAtt: [FirehoseDLQueue, Arn] }
   AnalyticsDLQueue:
     Type: "AWS::SQS::Queue"
@@ -30,10 +30,10 @@ Resources:
   AnalyticsQueue:
     Type: "AWS::SQS::Queue"
     Properties:
-      VisibilityTimeout: 120
+      VisibilityTimeout: 300
       QueueName: ${self:provider.environment.sqs_analytics}
       RedrivePolicy:
-        maxReceiveCount: 3
+        maxReceiveCount: 5
         deadLetterTargetArn : { Fn::GetAtt: [AnalyticsDLQueue, Arn] }
   IntegrationDLQueue:
     Type: "AWS::SQS::Queue"
@@ -45,7 +45,7 @@ Resources:
       VisibilityTimeout: 300
       QueueName: ${self:provider.environment.sqs_integration}
       RedrivePolicy:
-        maxReceiveCount: 3
+        maxReceiveCount: 5
         deadLetterTargetArn : { Fn::GetAtt: [IntegrationDLQueue, Arn] }
 # Print out the queue names
 Outputs:

@@ -20,43 +20,37 @@ const CORS_HEADERS = {
     "Content-Type": "application/json"
 }
 
-const asMap = (attrs: SQSMessageAttributes) : {[name: string] : string} => {
-    let map = {};
-    Object.keys(attrs).map((key) => {
-        map[key] = attrs[key].stringValue;
+const firehose = new AWS.Firehose({region: Region});
+const sqs = new AWS.SQS({region: Region});
+const isDebug = Env != "production";
+
+const processMessage = (sqsRecord: SQSRecord) => {
+    let Attributes = sqsRecord.messageAttributes as EntryMessageAttributeMap<SQSMessageAttribute>;
+    let StreamName = Attributes.StreamName.stringValue;
+
+    return new Promise(async (resolve, reject) => {
+        try {
+            let Entry = JSON.parse(sqsRecord.body) as EntryMessageBody;
+            let {__RequestId} = Entry;
+            let firehoseData = {...Entry, __EntryId : __RequestId};
+            let fhResponse = await firehose.putRecord({DeliveryStreamName: StreamName, Record: {Data : JSON.stringify(firehoseData) + "\n"}}).promise();
+            await sqs.deleteMessage({QueueUrl: QueueUrl, ReceiptHandle: sqsRecord.receiptHandle}).promise();
+            isDebug && console.log(`${ServiceName} - sqs_fn_firehose.process - record [${__RequestId}] stream [${StreamName}] trace [${fhResponse.RecordId}] OK`);
+        } catch (error) {
+            console.error(error, JSON.stringify({stream: StreamName, sqsReceiptHandle: sqsRecord.receiptHandle}));
+        }
+        resolve();
     });
-    return map;
 }
 
 export const handle = async (event : SQSEvent, context : APIGatewayEventRequestContext, callback : any) => {
-    let sqs = new AWS.SQS({region: Region});
-    let firehose = new AWS.Firehose({region: Region});
-
     try {
-        Env != "production" && console.log(`${ServiceName} - putfirehose.handle - processing ${event.Records.length} entries`);
-        event.Records.forEach(async (sqsRecord: SQSRecord) => {
-            let Attributes = sqsRecord.messageAttributes as EntryMessageAttributeMap<SQSMessageAttribute>;
-            let StreamName = Attributes.StreamName.stringValue;
-
-            let Entry = JSON.parse(sqsRecord.body) as EntryMessageBody;
-            let {__RequestId, __RequestTimestamp} = Entry;
-            let firehoseData = {...Entry, __EntryId : __RequestId};
-            try {
-                let streams = await firehose.listDeliveryStreams({ExclusiveStartDeliveryStreamName: StreamName}).promise();
-                if (!streams.DeliveryStreamNames || streams.DeliveryStreamNames.length == 0) {
-                    // Should we notify ?
-                    callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({message: `Stream ${StreamName} unavailable`, status:204, id: __RequestId, timestamp: __RequestTimestamp})});
-                    return;
-                }
-                let response = await firehose.putRecord({DeliveryStreamName: StreamName, Record: {Data : JSON.stringify(firehoseData) + "\n"}}).promise();
-                await sqs.deleteMessage({QueueUrl: QueueUrl, ReceiptHandle: sqsRecord.receiptHandle}).promise();
-                callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({message: "OK", status:202, id: __RequestId, timestamp: __RequestTimestamp, data: response})});
-            } catch (error) {
-                console.error(error, JSON.stringify({stream: StreamName, sqsRequestId: __RequestId}) )
-            }
-        });
-        callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({message: `OK - ${context.requestId}`, status:200})});
+        isDebug && console.log(`${ServiceName} - sqs_fn_firehose.handle - Processing [${event.Records.length}] records`);
+        await Promise.all(event.Records.map(processMessage));
+        isDebug && console.log(`${ServiceName} - sqs_fn_firehose.handle - OK`);
+        callback(null, {statusCode: 200, body: JSON.stringify({message: `OK - ${context.requestId}`, status:200})});
     } catch (error) {
-        console.log(`${ServiceName} - putfirehose.handle SQS.event.Records iteration ERROR`, error);
+        callback(error);
+        console.log(`${ServiceName} - sqs_fn_firehose.handle SQS.event.Records iteration ERROR`, error);
     }
 }

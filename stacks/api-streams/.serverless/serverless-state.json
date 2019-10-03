@@ -205,7 +205,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli-stream/dev/1569505049908-2019-09-26T13:37:29.908Z/formsli-stream.zip"
+                "S3Key": "serverless/formsli-stream/dev/1570081870055-2019-10-03T05:51:10.055Z/formsli-stream.zip"
               },
               "FunctionName": "formsli-stream-dev-create-delivery-stream",
               "Handler": "functions/createstream.handle",
@@ -265,14 +265,14 @@
               "CreateEntryStreamLogGroup"
             ]
           },
-          "CreateEntryStreamLambdaVersionCVwgLSaL4p1O8QJkbqrPlY6x7QfTcE0oTEeK8gGhM": {
+          "CreateEntryStreamLambdaVersionIbXLenXIJb8tORllqBtFsyA62L9AzRFytKHoc03DOHc": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateEntryStreamLambdaFunction"
               },
-              "CodeSha256": "i9+tinfXRJF4TIn/huBeEHRvC9zP3zW/6KgGT8r6PQw="
+              "CodeSha256": "gwlz5MqTKFLwgkR+6SO4uzzCMgRmGY4ZrGRVPga3QIk="
             }
           },
           "ApiGatewayResourceStreamFormidVar": {
@@ -370,7 +370,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1569505024839": {
+          "ApiGatewayDeployment1570081845136": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": "w2s48kp2a7",
@@ -442,7 +442,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/formsli-stream/dev/1569505049908-2019-09-26T13:37:29.908Z/custom-resources.zip"
+                "S3Key": "serverless/formsli-stream/dev/1570081870055-2019-10-03T05:51:10.055Z/custom-resources.zip"
               },
               "FunctionName": "formsli-stream-dev-custom-resource-apigw-cw-role",
               "Handler": "apiGatewayCloudWatchRole/handler.handler",
@@ -931,7 +931,7 @@
           "CreateEntryStreamLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateEntryStreamLambdaVersionCVwgLSaL4p1O8QJkbqrPlY6x7QfTcE0oTEeK8gGhM"
+              "Ref": "CreateEntryStreamLambdaVersionIbXLenXIJb8tORllqBtFsyA62L9AzRFytKHoc03DOHc"
             }
           },
           "ServiceEndpoint": {
@@ -1244,7 +1244,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli-stream/dev/1569505049908-2019-09-26T13:37:29.908Z",
+    "artifactDirectoryName": "serverless/formsli-stream/dev/1570081870055-2019-10-03T05:51:10.055Z",
     "artifact": ""
   }
 }
