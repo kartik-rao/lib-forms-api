@@ -784,6 +784,7 @@ export declare type IFormFieldsFragment = {
     account: {} & IAccountFieldsFragment;
     versions: Maybe<Array<Maybe<{
         id: string;
+        accountId: string;
         createdAt: Maybe<string>;
         displayName: string;
         notes: Maybe<string>;

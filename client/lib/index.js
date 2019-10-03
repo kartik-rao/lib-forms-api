@@ -116,6 +116,7 @@ exports.FormFields = graphql_tag_1.default `
     redirectHasEnded
     versions {
       id
+      accountId
       createdAt
       displayName
       notes

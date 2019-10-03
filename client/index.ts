@@ -904,6 +904,7 @@ export type IFormFieldsFragment = {
     Array<
       Maybe<{
         id: string;
+        accountId: string;
         createdAt: Maybe<string>;
         displayName: string;
         notes: Maybe<string>;
@@ -3212,6 +3213,7 @@ export const FormFields = gql`
     redirectHasEnded
     versions {
       id
+      accountId
       createdAt
       displayName
       notes
