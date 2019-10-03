@@ -388,7 +388,7 @@
           ]
         },
         "Description": "serverless-appsync-plugin: AppSync API Key for GraphQlApiKeyDefault",
-        "Expires": 1601595909
+        "Expires": 1601608097
       }
     },
     "GraphQlSchema": {
@@ -1009,7 +1009,7 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_update_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#if(!$args)\n    $util.error(\"Missing mandatory args\", \"BadRequest\")\n#end\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    #set($request = $args)\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n    $util.qr($ctx.stash.request.put(\"id\", $args.id))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"UPDATE FormVersion SET displayName=:displayName WHERE id=:id AND accountId=:accountId\",\n            \"SELECT * FROM Form WHERE id ='${args.id}'\"\n        ],\n        \"variableMap\": {\n            \":id\" : \"${args.id}\",\n            \":displayName\" : \"${args.displayName}\",\n            \":accountId\": \"${args.accountId}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on [FormVersion]\", \"Unauthorized\")\n#end",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_update_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments.input)\n\n#if(!$args)\n    $util.error(\"Missing mandatory args\", \"BadRequest\")\n#end\n\n#set($isAllowed = false)\n#if($identity.isAdmin == true || ($identity.tenantId == $args.accountId && ($identity.isAccountAdmin == true || $identity.isAccountEditor == true)))\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    #set($request = $args)\n    $util.qr($ctx.stash.put(\"operation\", 'put'))\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n    $util.qr($ctx.stash.request.put(\"id\", $args.id))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            \"UPDATE FormVersion SET displayName=:displayName WHERE id=:id AND accountId=:accountId\",\n            \"SELECT * FROM FormVersion WHERE id =:id\"\n        ],\n        \"variableMap\": {\n            \":id\" : \"${args.id}\",\n            \":displayName\" : \"${args.displayName}\",\n            \":accountId\": \"${args.accountId}\"\n        }\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [PUT] on [FormVersion]\", \"Unauthorized\")\n#end",
         "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Common_FN_upsert_RES.vtl\"))\n#set($request=$ctx.stash.request)\n#set($itemType=$request.itemType)\n\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n$util.toJson($util.rds.toJsonObject($ctx.result)[1][0])",
         "FunctionVersion": "2018-05-29"
       }
