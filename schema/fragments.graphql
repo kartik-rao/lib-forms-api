@@ -39,6 +39,7 @@ fragment formFields on Form {
   redirectHasEnded
   versions {
     id
+    accountId
     createdAt
     displayName
     notes
