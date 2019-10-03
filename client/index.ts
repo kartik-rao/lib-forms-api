@@ -1141,6 +1141,23 @@ export type IAttachFormVersionMutation = {
   };
 };
 
+export type IUpdateFormVersionMutationVariables = {
+  input: IUpdateFormVersionInput;
+};
+
+export type IUpdateFormVersionMutation = {
+  updateFormVersion: {
+    id: string;
+    accountId: string;
+    formId: string;
+    ownerId: string;
+    createdAt: Maybe<string>;
+    displayName: string;
+    notes: Maybe<string>;
+    ownedBy: {} & IUserFieldsFragment;
+  };
+};
+
 export type IUpdatePlanTypeMutationVariables = {
   input?: Maybe<IUpdatePlanTypeInput>;
 };
@@ -3445,6 +3462,23 @@ export const AttachFormVersion = gql`
         }
       }
       updatedAt
+    }
+  }
+  ${UserFields}
+`;
+export const UpdateFormVersion = gql`
+  mutation UpdateFormVersion($input: UpdateFormVersionInput!) {
+    updateFormVersion(input: $input) {
+      id
+      accountId
+      formId
+      ownerId
+      createdAt
+      displayName
+      notes
+      ownedBy {
+        ...userFields
+      }
     }
   }
   ${UserFields}

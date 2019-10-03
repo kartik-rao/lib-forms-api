@@ -370,6 +370,23 @@ exports.AttachFormVersion = graphql_tag_1.default `
   }
   ${exports.UserFields}
 `;
+exports.UpdateFormVersion = graphql_tag_1.default `
+  mutation UpdateFormVersion($input: UpdateFormVersionInput!) {
+    updateFormVersion(input: $input) {
+      id
+      accountId
+      formId
+      ownerId
+      createdAt
+      displayName
+      notes
+      ownedBy {
+        ...userFields
+      }
+    }
+  }
+  ${exports.UserFields}
+`;
 exports.UpdatePlanType = graphql_tag_1.default `
   mutation UpdatePlanType($input: UpdatePlanTypeInput) {
     updatePlanType(input: $input) {

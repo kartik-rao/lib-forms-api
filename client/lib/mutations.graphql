@@ -161,7 +161,20 @@ mutation AttachFormVersion($input: AttachFormVersionInput!) {
       }
       updatedAt
     }
-  }
+}
+
+mutation UpdateFormVersion($input: UpdateFormVersionInput!) {
+    updateFormVersion(input: $input) {
+      id
+      accountId
+      formId
+      ownerId
+      createdAt
+      displayName
+      notes
+      ownedBy {...userFields}
+    }
+}
 
 mutation UpdatePlanType($input: UpdatePlanTypeInput) {
     updatePlanType(input: $input) {

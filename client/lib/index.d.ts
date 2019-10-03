@@ -1000,6 +1000,21 @@ export declare type IAttachFormVersionMutation = {
         }>;
     };
 };
+export declare type IUpdateFormVersionMutationVariables = {
+    input: IUpdateFormVersionInput;
+};
+export declare type IUpdateFormVersionMutation = {
+    updateFormVersion: {
+        id: string;
+        accountId: string;
+        formId: string;
+        ownerId: string;
+        createdAt: Maybe<string>;
+        displayName: string;
+        notes: Maybe<string>;
+        ownedBy: {} & IUserFieldsFragment;
+    };
+};
 export declare type IUpdatePlanTypeMutationVariables = {
     input?: Maybe<IUpdatePlanTypeInput>;
 };
@@ -2343,6 +2358,7 @@ export declare const AddIntegration: any;
 export declare const AddForm: any;
 export declare const AddFormVersion: any;
 export declare const AttachFormVersion: any;
+export declare const UpdateFormVersion: any;
 export declare const UpdatePlanType: any;
 export declare const UpdatePlan: any;
 export declare const UpdateAccount: any;
