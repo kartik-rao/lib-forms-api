@@ -146,11 +146,11 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli-api-app/dev/1570172180691-2019-10-04T06:56:20.691Z/formsli-api-app.zip"
+          "S3Key": "serverless/formsli-api-app/dev/1570172585724-2019-10-04T07:03:05.724Z/formsli-api-app.zip"
         },
         "FunctionName": "formsli-api-app-dev-form-screenshot",
         "Handler": "functions/screenshot.handle",
-        "MemorySize": 512,
+        "MemorySize": 1024,
         "Role": {
           "Fn::GetAtt": [
             "IamRoleLambdaExecution",
@@ -158,7 +158,7 @@
           ]
         },
         "Runtime": "nodejs8.10",
-        "Timeout": 30,
+        "Timeout": 60,
         "Tags": [
           {
             "Key": "stage",
@@ -199,14 +199,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "ScreenshotLambdaVersion0KqJRbBOhv9fIBshm2PsYSQt2bKaXJthsmZap7ERm0U": {
+    "ScreenshotLambdaVersionxAsZtaAA6RLdavYtkFalNBOuIp7WIALFWsxg2iEg": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ScreenshotLambdaFunction"
         },
-        "CodeSha256": "JDh1LlTpQaCch5py2GgzaytxCvFotdE32X5AYYJoIrs="
+        "CodeSha256": "LQTvv0tRttE61FEtcMk3o3S1SAC/NJuoqnsXJzW4FkI="
       }
     },
     "FormversionviewLambdaFunction": {
@@ -216,7 +216,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli-api-app/dev/1570172180691-2019-10-04T06:56:20.691Z/formsli-api-app.zip"
+          "S3Key": "serverless/formsli-api-app/dev/1570172585724-2019-10-04T07:03:05.724Z/formsli-api-app.zip"
         },
         "FunctionName": "formsli-api-app-dev-form-versionview",
         "Handler": "functions/formversionview.handle",
@@ -269,14 +269,14 @@
         "FormversionviewLogGroup"
       ]
     },
-    "FormversionviewLambdaVersionoRIBa99hsNrvaXosmeLWzaqsLIgdJLZxw7ZzccNNvdU": {
+    "FormversionviewLambdaVersionITA6tTpCCgydh9m0LU5AL6no7hAXzLTDymULWT0i6dk": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "FormversionviewLambdaFunction"
         },
-        "CodeSha256": "JDh1LlTpQaCch5py2GgzaytxCvFotdE32X5AYYJoIrs="
+        "CodeSha256": "LQTvv0tRttE61FEtcMk3o3S1SAC/NJuoqnsXJzW4FkI="
       }
     },
     "ApiGatewayResourceAppScreenshot": {
@@ -509,7 +509,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1570172163885": {
+    "ApiGatewayDeployment1570172568898": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": "w2s48kp2a7",
@@ -618,7 +618,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/formsli-api-app/dev/1570172180691-2019-10-04T06:56:20.691Z/custom-resources.zip"
+          "S3Key": "serverless/formsli-api-app/dev/1570172585724-2019-10-04T07:03:05.724Z/custom-resources.zip"
         },
         "FunctionName": "formsli-api-app-dev-custom-resource-apigw-cw-role",
         "Handler": "apiGatewayCloudWatchRole/handler.handler",
@@ -1095,13 +1095,13 @@
     "ScreenshotLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ScreenshotLambdaVersion0KqJRbBOhv9fIBshm2PsYSQt2bKaXJthsmZap7ERm0U"
+        "Ref": "ScreenshotLambdaVersionxAsZtaAA6RLdavYtkFalNBOuIp7WIALFWsxg2iEg"
       }
     },
     "FormversionviewLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "FormversionviewLambdaVersionoRIBa99hsNrvaXosmeLWzaqsLIgdJLZxw7ZzccNNvdU"
+        "Ref": "FormversionviewLambdaVersionITA6tTpCCgydh9m0LU5AL6no7hAXzLTDymULWT0i6dk"
       }
     },
     "ServiceEndpoint": {
