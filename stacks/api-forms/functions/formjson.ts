@@ -33,6 +33,7 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
                 { formId: event.pathParameters.formId }
             ]
         });
+
         console.log(`${ServiceName} - formrender.handle - QUERY ${event.pathParameters.formId} RES`, response);
         if (response && response.records && response.records.length > 0) {
             let starts, ends;
