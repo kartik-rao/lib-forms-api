@@ -1,0 +1,1372 @@
+{
+  "service": {
+    "service": "formsli-api-app",
+    "serviceObject": {
+      "name": "formsli-api-app"
+    },
+    "provider": {
+      "stage": "dev",
+      "variableSyntax": "\\${([ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)*]+?)}",
+      "profile": "fl-infrastructure",
+      "name": "aws",
+      "runtime": "nodejs10.x",
+      "region": "ap-northeast-1",
+      "apiGateway": {
+        "restApiId": "w2s48kp2a7",
+        "restApiRootResourceId": "urpppltvrc",
+        "restApiResources": {
+          "/app": "qiknjx"
+        }
+      },
+      "logs": {
+        "restApi": {
+          "enableAccessLogging": true,
+          "level": "INFO",
+          "dataTrace": true
+        }
+      },
+      "tracing": true,
+      "memorySize": 512,
+      "timeout": 30,
+      "logRetentionInDays": 7,
+      "tags": {
+        "stage": "dev",
+        "service": "formsli-api-app",
+        "region": "ap-northeast-1",
+        "stack": "api-app"
+      },
+      "functions": {
+        "formversionview": "formsli-api-app-dev-form-versionview",
+        "screenshot": "formsli-api-app-dev-form-screenshot"
+      },
+      "environment": {
+        "region": "ap-northeast-1",
+        "environment": "dev",
+        "serviceName": "formsli-api-app",
+        "databaseName": "formsli",
+        "dbClusterId": "fl-rds-cluster-dev",
+        "dbClusterArn": "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:fl-rds-cluster-dev",
+        "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX"
+      },
+      "iamRoleStatements": [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "tag:GetResources",
+            "secretsmanager:CreateSecret",
+            "secretsmanager:ListSecrets",
+            "secretsmanager:GetRandomPassword",
+            "logs:CreateLogGroup",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents",
+            "xray:PutTelemetryRecords",
+            "xray:PutTraceSegments"
+          ],
+          "Resource": [
+            "*"
+          ]
+        },
+        {
+          "Effect": "Allow",
+          "Action": [
+            "ssm:GetParameter",
+            "ssm:GetParameters",
+            "ssm:GetParametersByPath"
+          ],
+          "Resource": [
+            {
+              "Fn::Sub": "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/dev/formsli/*"
+            }
+          ]
+        }
+      ],
+      "versionFunctions": true,
+      "remoteFunctionData": null,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              },
+              "AccelerateConfiguration": {
+                "AccelerationStatus": "Enabled"
+              }
+            }
+          },
+          "ScreenshotLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/formsli-api-app-dev-form-screenshot",
+              "RetentionInDays": 7
+            }
+          },
+          "FormversionviewLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/formsli-api-app-dev-form-versionview",
+              "RetentionInDays": 7
+            }
+          },
+          "IamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "dev",
+                        "formsli-api-app",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsli-api-app-dev*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsli-api-app-dev*:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][0]"
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][1]"
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "formsli-api-app",
+                    "dev",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              }
+            }
+          },
+          "ScreenshotLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/formsli-api-app/dev/1570171981980-2019-10-04T06:53:01.980Z/formsli-api-app.zip"
+              },
+              "FunctionName": "formsli-api-app-dev-form-screenshot",
+              "Handler": "functions/screenshot.handle",
+              "MemorySize": 512,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "Runtime": "nodejs8.10",
+              "Timeout": 30,
+              "Tags": [
+                {
+                  "Key": "stage",
+                  "Value": "dev"
+                },
+                {
+                  "Key": "service",
+                  "Value": "formsli-api-app"
+                },
+                {
+                  "Key": "region",
+                  "Value": "ap-northeast-1"
+                },
+                {
+                  "Key": "stack",
+                  "Value": "api-app"
+                }
+              ],
+              "Environment": {
+                "Variables": {
+                  "region": "ap-northeast-1",
+                  "environment": "dev",
+                  "serviceName": "formsli-api-app",
+                  "databaseName": "formsli",
+                  "dbClusterId": "fl-rds-cluster-dev",
+                  "dbClusterArn": {
+                    "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
+                  },
+                  "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX"
+                }
+              },
+              "TracingConfig": {
+                "Mode": "Active"
+              }
+            },
+            "DependsOn": [
+              "ScreenshotLogGroup",
+              "IamRoleLambdaExecution"
+            ]
+          },
+          "ScreenshotLambdaVersionkeWffYPNFGldlyquJUncyy86U9mbeh06ojKodmMPVU": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ScreenshotLambdaFunction"
+              },
+              "CodeSha256": "imOrESPEsCnK9zXmx4BxJBUKQ/B2rLdVXge9DD8UAUg="
+            }
+          },
+          "FormversionviewLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/formsli-api-app/dev/1570171981980-2019-10-04T06:53:01.980Z/formsli-api-app.zip"
+              },
+              "FunctionName": "formsli-api-app-dev-form-versionview",
+              "Handler": "functions/formversionview.handle",
+              "MemorySize": 512,
+              "Role": {
+                "Fn::GetAtt": [
+                  "FormversionviewIamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "Runtime": "nodejs10.x",
+              "Timeout": 30,
+              "Tags": [
+                {
+                  "Key": "stage",
+                  "Value": "dev"
+                },
+                {
+                  "Key": "service",
+                  "Value": "formsli-api-app"
+                },
+                {
+                  "Key": "region",
+                  "Value": "ap-northeast-1"
+                },
+                {
+                  "Key": "stack",
+                  "Value": "api-app"
+                }
+              ],
+              "Environment": {
+                "Variables": {
+                  "region": "ap-northeast-1",
+                  "environment": "dev",
+                  "serviceName": "formsli-api-app",
+                  "databaseName": "formsli",
+                  "dbClusterId": "fl-rds-cluster-dev",
+                  "dbClusterArn": {
+                    "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
+                  },
+                  "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX"
+                }
+              },
+              "TracingConfig": {
+                "Mode": "Active"
+              }
+            },
+            "DependsOn": [
+              "FormversionviewIamRoleLambdaExecution",
+              "FormversionviewLogGroup"
+            ]
+          },
+          "FormversionviewLambdaVersion3DwspUW5O7xxGxxaYeQ82Er6Nl4d1I51LVs4qXF4": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "FormversionviewLambdaFunction"
+              },
+              "CodeSha256": "imOrESPEsCnK9zXmx4BxJBUKQ/B2rLdVXge9DD8UAUg="
+            }
+          },
+          "ApiGatewayResourceAppScreenshot": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": "qiknjx",
+              "PathPart": "screenshot",
+              "RestApiId": "w2s48kp2a7"
+            }
+          },
+          "ApiGatewayResourceAppScreenshotFormidVar": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceAppScreenshot"
+              },
+              "PathPart": "{formId}",
+              "RestApiId": "w2s48kp2a7"
+            }
+          },
+          "ApiGatewayResourceAppScreenshotFormidVarVersionidVar": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceAppScreenshotFormidVar"
+              },
+              "PathPart": "{versionId}",
+              "RestApiId": "w2s48kp2a7"
+            }
+          },
+          "ApiGatewayResourceAppView": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": "qiknjx",
+              "PathPart": "view",
+              "RestApiId": "w2s48kp2a7"
+            }
+          },
+          "ApiGatewayResourceAppViewFormidVar": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceAppView"
+              },
+              "PathPart": "{formId}",
+              "RestApiId": "w2s48kp2a7"
+            }
+          },
+          "ApiGatewayResourceAppViewFormidVarVersionidVar": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Ref": "ApiGatewayResourceAppViewFormidVar"
+              },
+              "PathPart": "{versionId}",
+              "RestApiId": "w2s48kp2a7"
+            }
+          },
+          "ApiGatewayMethodAppScreenshotFormidVarVersionidVarOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true,
+                    "method.response.header.Access-Control-Allow-Credentials": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'",
+                      "method.response.header.Access-Control-Allow-Credentials": "'false'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".*\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceAppScreenshotFormidVarVersionidVar"
+              },
+              "RestApiId": "w2s48kp2a7"
+            }
+          },
+          "ApiGatewayMethodAppViewFormidVarVersionidVarOptions": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "AuthorizationType": "NONE",
+              "HttpMethod": "OPTIONS",
+              "MethodResponses": [
+                {
+                  "StatusCode": "200",
+                  "ResponseParameters": {
+                    "method.response.header.Access-Control-Allow-Origin": true,
+                    "method.response.header.Access-Control-Allow-Headers": true,
+                    "method.response.header.Access-Control-Allow-Methods": true,
+                    "method.response.header.Access-Control-Allow-Credentials": true
+                  },
+                  "ResponseModels": {}
+                }
+              ],
+              "RequestParameters": {},
+              "Integration": {
+                "Type": "MOCK",
+                "RequestTemplates": {
+                  "application/json": "{statusCode:200}"
+                },
+                "ContentHandling": "CONVERT_TO_TEXT",
+                "IntegrationResponses": [
+                  {
+                    "StatusCode": "200",
+                    "ResponseParameters": {
+                      "method.response.header.Access-Control-Allow-Origin": "'*'",
+                      "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'",
+                      "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,GET'",
+                      "method.response.header.Access-Control-Allow-Credentials": "'false'"
+                    },
+                    "ResponseTemplates": {
+                      "application/json": "#set($origin = $input.params(\"Origin\"))\n#if($origin == \"\") #set($origin = $input.params(\"origin\")) #end\n#if($origin.matches(\".*\")) #set($context.responseOverride.header.Access-Control-Allow-Origin = $origin) #end"
+                    }
+                  }
+                ]
+              },
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceAppViewFormidVarVersionidVar"
+              },
+              "RestApiId": "w2s48kp2a7"
+            }
+          },
+          "ApiGatewayMethodAppScreenshotFormidVarVersionidVarGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceAppScreenshotFormidVarVersionidVar"
+              },
+              "RestApiId": "w2s48kp2a7",
+              "ApiKeyRequired": false,
+              "AuthorizationType": "COGNITO_USER_POOLS",
+              "AuthorizerId": "0bbeey",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "ScreenshotLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            }
+          },
+          "ApiGatewayMethodAppViewFormidVarVersionidVarGet": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceAppViewFormidVarVersionidVar"
+              },
+              "RestApiId": "w2s48kp2a7",
+              "ApiKeyRequired": false,
+              "AuthorizationType": "COGNITO_USER_POOLS",
+              "AuthorizerId": "0bbeey",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "FormversionviewLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            }
+          },
+          "ApiGatewayDeployment1570171964806": {
+            "Type": "AWS::ApiGateway::Deployment",
+            "Properties": {
+              "RestApiId": "w2s48kp2a7",
+              "StageName": "dev"
+            },
+            "DependsOn": [
+              "ApiGatewayMethodAppScreenshotFormidVarVersionidVarOptions",
+              "ApiGatewayMethodAppViewFormidVarVersionidVarOptions",
+              "ApiGatewayMethodAppScreenshotFormidVarVersionidVarGet",
+              "ApiGatewayMethodAppViewFormidVarVersionidVarGet"
+            ]
+          },
+          "ScreenshotLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ScreenshotLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    "w2s48kp2a7",
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "FormversionviewLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "FormversionviewLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    "w2s48kp2a7",
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "ApiGatewayLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/api-gateway/formsli-api-app-dev",
+              "RetentionInDays": 7
+            }
+          },
+          "CustomApiGatewayAccountCloudWatchRole": {
+            "Type": "Custom::ApiGatewayAccountRole",
+            "Version": 1,
+            "Properties": {
+              "ServiceToken": {
+                "Fn::GetAtt": [
+                  "CustomDashresourceDashapigwDashcwDashroleLambdaFunction",
+                  "Arn"
+                ]
+              }
+            }
+          },
+          "CustomDashresourceDashapigwDashcwDashroleLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/formsli-api-app/dev/1570171981980-2019-10-04T06:53:01.980Z/custom-resources.zip"
+              },
+              "FunctionName": "formsli-api-app-dev-custom-resource-apigw-cw-role",
+              "Handler": "apiGatewayCloudWatchRole/handler.handler",
+              "MemorySize": 1024,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleCustomResourcesLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "Runtime": "nodejs10.x",
+              "Timeout": 180
+            },
+            "DependsOn": [
+              "IamRoleCustomResourcesLambdaExecution"
+            ]
+          },
+          "IamRoleCustomResourcesLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "dev",
+                        "formsli-api-app",
+                        "custom-resources-lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Resource": {
+                          "Fn::Join": [
+                            ":",
+                            [
+                              "arn:aws:iam:",
+                              {
+                                "Ref": "AWS::AccountId"
+                              },
+                              "role/*"
+                            ]
+                          ]
+                        },
+                        "Action": [
+                          "iam:AttachRolePolicy",
+                          "iam:CreateRole",
+                          "iam:ListAttachedRolePolicies",
+                          "iam:PassRole"
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Resource": "arn:aws:apigateway:*::/account",
+                        "Action": [
+                          "apigateway:GET",
+                          "apigateway:PATCH"
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          "AwsAlertsAlarm": {
+            "Type": "AWS::SNS::Topic",
+            "Properties": {
+              "TopicName": "formsli-api-app-dev-alerts-alarm",
+              "Subscription": [
+                {
+                  "Protocol": "email",
+                  "Endpoint": "infrastructure.dev@forms.li"
+                }
+              ]
+            }
+          },
+          "ScreenshotFunctionErrorsAlarm": {
+            "Type": "AWS::CloudWatch::Alarm",
+            "Properties": {
+              "Namespace": "AWS/Lambda",
+              "MetricName": "Errors",
+              "Threshold": 1,
+              "Period": 60,
+              "EvaluationPeriods": 1,
+              "DatapointsToAlarm": 1,
+              "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+              "OKActions": [],
+              "AlarmActions": [
+                {
+                  "Ref": "AwsAlertsAlarm"
+                }
+              ],
+              "InsufficientDataActions": [],
+              "Dimensions": [
+                {
+                  "Name": "FunctionName",
+                  "Value": {
+                    "Ref": "ScreenshotLambdaFunction"
+                  }
+                }
+              ],
+              "TreatMissingData": "missing",
+              "Statistic": "Sum"
+            }
+          },
+          "ScreenshotFunctionThrottlesAlarm": {
+            "Type": "AWS::CloudWatch::Alarm",
+            "Properties": {
+              "Namespace": "AWS/Lambda",
+              "MetricName": "Throttles",
+              "Threshold": 1,
+              "Period": 60,
+              "EvaluationPeriods": 1,
+              "DatapointsToAlarm": 1,
+              "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+              "OKActions": [],
+              "AlarmActions": [
+                {
+                  "Ref": "AwsAlertsAlarm"
+                }
+              ],
+              "InsufficientDataActions": [],
+              "Dimensions": [
+                {
+                  "Name": "FunctionName",
+                  "Value": {
+                    "Ref": "ScreenshotLambdaFunction"
+                  }
+                }
+              ],
+              "TreatMissingData": "missing",
+              "Statistic": "Sum"
+            }
+          },
+          "ScreenshotFunctionInvocationsAlarm": {
+            "Type": "AWS::CloudWatch::Alarm",
+            "Properties": {
+              "Namespace": "AWS/Lambda",
+              "MetricName": "Invocations",
+              "Threshold": 100,
+              "Period": 60,
+              "EvaluationPeriods": 1,
+              "DatapointsToAlarm": 1,
+              "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+              "OKActions": [],
+              "AlarmActions": [
+                {
+                  "Ref": "AwsAlertsAlarm"
+                }
+              ],
+              "InsufficientDataActions": [],
+              "Dimensions": [
+                {
+                  "Name": "FunctionName",
+                  "Value": {
+                    "Ref": "ScreenshotLambdaFunction"
+                  }
+                }
+              ],
+              "TreatMissingData": "missing",
+              "Statistic": "Sum"
+            }
+          },
+          "ScreenshotFunctionDurationAlarm": {
+            "Type": "AWS::CloudWatch::Alarm",
+            "Properties": {
+              "Namespace": "AWS/Lambda",
+              "MetricName": "Duration",
+              "Threshold": 500,
+              "Period": 60,
+              "EvaluationPeriods": 1,
+              "DatapointsToAlarm": 1,
+              "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+              "OKActions": [],
+              "AlarmActions": [
+                {
+                  "Ref": "AwsAlertsAlarm"
+                }
+              ],
+              "InsufficientDataActions": [],
+              "Dimensions": [
+                {
+                  "Name": "FunctionName",
+                  "Value": {
+                    "Ref": "ScreenshotLambdaFunction"
+                  }
+                }
+              ],
+              "TreatMissingData": "missing",
+              "Statistic": "Average"
+            }
+          },
+          "FormversionviewFunctionErrorsAlarm": {
+            "Type": "AWS::CloudWatch::Alarm",
+            "Properties": {
+              "Namespace": "AWS/Lambda",
+              "MetricName": "Errors",
+              "Threshold": 1,
+              "Period": 60,
+              "EvaluationPeriods": 1,
+              "DatapointsToAlarm": 1,
+              "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+              "OKActions": [],
+              "AlarmActions": [
+                {
+                  "Ref": "AwsAlertsAlarm"
+                }
+              ],
+              "InsufficientDataActions": [],
+              "Dimensions": [
+                {
+                  "Name": "FunctionName",
+                  "Value": {
+                    "Ref": "FormversionviewLambdaFunction"
+                  }
+                }
+              ],
+              "TreatMissingData": "missing",
+              "Statistic": "Sum"
+            }
+          },
+          "FormversionviewFunctionThrottlesAlarm": {
+            "Type": "AWS::CloudWatch::Alarm",
+            "Properties": {
+              "Namespace": "AWS/Lambda",
+              "MetricName": "Throttles",
+              "Threshold": 1,
+              "Period": 60,
+              "EvaluationPeriods": 1,
+              "DatapointsToAlarm": 1,
+              "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+              "OKActions": [],
+              "AlarmActions": [
+                {
+                  "Ref": "AwsAlertsAlarm"
+                }
+              ],
+              "InsufficientDataActions": [],
+              "Dimensions": [
+                {
+                  "Name": "FunctionName",
+                  "Value": {
+                    "Ref": "FormversionviewLambdaFunction"
+                  }
+                }
+              ],
+              "TreatMissingData": "missing",
+              "Statistic": "Sum"
+            }
+          },
+          "FormversionviewFunctionInvocationsAlarm": {
+            "Type": "AWS::CloudWatch::Alarm",
+            "Properties": {
+              "Namespace": "AWS/Lambda",
+              "MetricName": "Invocations",
+              "Threshold": 100,
+              "Period": 60,
+              "EvaluationPeriods": 1,
+              "DatapointsToAlarm": 1,
+              "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+              "OKActions": [],
+              "AlarmActions": [
+                {
+                  "Ref": "AwsAlertsAlarm"
+                }
+              ],
+              "InsufficientDataActions": [],
+              "Dimensions": [
+                {
+                  "Name": "FunctionName",
+                  "Value": {
+                    "Ref": "FormversionviewLambdaFunction"
+                  }
+                }
+              ],
+              "TreatMissingData": "missing",
+              "Statistic": "Sum"
+            }
+          },
+          "FormversionviewFunctionDurationAlarm": {
+            "Type": "AWS::CloudWatch::Alarm",
+            "Properties": {
+              "Namespace": "AWS/Lambda",
+              "MetricName": "Duration",
+              "Threshold": 500,
+              "Period": 60,
+              "EvaluationPeriods": 1,
+              "DatapointsToAlarm": 1,
+              "ComparisonOperator": "GreaterThanOrEqualToThreshold",
+              "OKActions": [],
+              "AlarmActions": [
+                {
+                  "Ref": "AwsAlertsAlarm"
+                }
+              ],
+              "InsufficientDataActions": [],
+              "Dimensions": [
+                {
+                  "Name": "FunctionName",
+                  "Value": {
+                    "Ref": "FormversionviewLambdaFunction"
+                  }
+                }
+              ],
+              "TreatMissingData": "missing",
+              "Statistic": "Average"
+            }
+          },
+          "AlertsDashboard": {
+            "Type": "AWS::CloudWatch::Dashboard",
+            "Properties": {
+              "DashboardName": "formsli-api-app-dev-ap-northeast-1",
+              "DashboardBody": "{\"widgets\":[{\"type\":\"metric\",\"x\":0,\"y\":0,\"width\":8,\"height\":6,\"properties\":{\"title\":\"Errors\",\"view\":\"timeSeries\",\"stacked\":false,\"metrics\":[[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"formsli-api-app-dev-screenshot\",{\"stat\":\"Sum\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"screenshot\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"formsli-api-app-dev-formversionview\",{\"stat\":\"Sum\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"formversionview\"}]],\"region\":\"ap-northeast-1\",\"period\":300}},{\"type\":\"metric\",\"x\":8,\"y\":0,\"width\":6,\"height\":6,\"properties\":{\"title\":\"Errors\",\"view\":\"singleValue\",\"metrics\":[[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"formsli-api-app-dev-screenshot\",{\"stat\":\"Sum\",\"period\":2592000,\"region\":\"ap-northeast-1\",\"label\":\"screenshot\"}],[\"AWS/Lambda\",\"Errors\",\"FunctionName\",\"formsli-api-app-dev-formversionview\",{\"stat\":\"Sum\",\"period\":2592000,\"region\":\"ap-northeast-1\",\"label\":\"formversionview\"}]],\"region\":\"ap-northeast-1\",\"period\":300}},{\"type\":\"metric\",\"x\":14,\"y\":0,\"width\":10,\"height\":6,\"properties\":{\"title\":\"Duration\",\"view\":\"timeSeries\",\"stacked\":false,\"metrics\":[[\"AWS/Lambda\",\"Duration\",\"FunctionName\",\"formsli-api-app-dev-screenshot\",{\"stat\":\"p50\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"screenshot p50\"}],[\"AWS/Lambda\",\"Duration\",\"FunctionName\",\"formsli-api-app-dev-screenshot\",{\"stat\":\"p90\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"screenshot p90\"}],[\"AWS/Lambda\",\"Duration\",\"FunctionName\",\"formsli-api-app-dev-formversionview\",{\"stat\":\"p50\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"formversionview p50\"}],[\"AWS/Lambda\",\"Duration\",\"FunctionName\",\"formsli-api-app-dev-formversionview\",{\"stat\":\"p90\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"formversionview p90\"}]],\"region\":\"ap-northeast-1\",\"period\":300}},{\"type\":\"metric\",\"x\":0,\"y\":6,\"width\":8,\"height\":6,\"properties\":{\"title\":\"Invocations\",\"view\":\"timeSeries\",\"stacked\":false,\"metrics\":[[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"formsli-api-app-dev-screenshot\",{\"stat\":\"Sum\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"screenshot\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"formsli-api-app-dev-formversionview\",{\"stat\":\"Sum\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"formversionview\"}]],\"region\":\"ap-northeast-1\",\"period\":300}},{\"type\":\"metric\",\"x\":8,\"y\":6,\"width\":6,\"height\":6,\"properties\":{\"title\":\"Invocations\",\"view\":\"singleValue\",\"metrics\":[[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"formsli-api-app-dev-screenshot\",{\"stat\":\"Sum\",\"period\":2592000,\"region\":\"ap-northeast-1\",\"label\":\"screenshot\"}],[\"AWS/Lambda\",\"Invocations\",\"FunctionName\",\"formsli-api-app-dev-formversionview\",{\"stat\":\"Sum\",\"period\":2592000,\"region\":\"ap-northeast-1\",\"label\":\"formversionview\"}]],\"region\":\"ap-northeast-1\",\"period\":300}},{\"type\":\"metric\",\"x\":14,\"y\":6,\"width\":10,\"height\":6,\"properties\":{\"title\":\"API Requests\",\"view\":\"timeSeries\",\"stacked\":false,\"metrics\":[[\"AWS/ApiGateway\",\"5XXError\",\"ApiName\",\"dev-formsli-api-app\",{\"stat\":\"Sum\",\"period\":900}],[\"AWS/ApiGateway\",\"4XXError\",\"ApiName\",\"dev-formsli-api-app\",{\"stat\":\"Sum\",\"period\":900}],[\"AWS/ApiGateway\",\"Count\",\"ApiName\",\"dev-formsli-api-app\",{\"stat\":\"Sum\",\"period\":900}]],\"region\":\"ap-northeast-1\"}},{\"type\":\"metric\",\"x\":0,\"y\":12,\"width\":8,\"height\":6,\"properties\":{\"title\":\"Throttles\",\"view\":\"timeSeries\",\"stacked\":false,\"metrics\":[[\"AWS/Lambda\",\"Throttles\",\"FunctionName\",\"formsli-api-app-dev-screenshot\",{\"stat\":\"Sum\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"screenshot\"}],[\"AWS/Lambda\",\"Throttles\",\"FunctionName\",\"formsli-api-app-dev-formversionview\",{\"stat\":\"Sum\",\"period\":900,\"region\":\"ap-northeast-1\",\"label\":\"formversionview\"}]],\"region\":\"ap-northeast-1\",\"period\":300}},{\"type\":\"metric\",\"x\":8,\"y\":12,\"width\":6,\"height\":6,\"properties\":{\"title\":\"Throttles\",\"view\":\"singleValue\",\"metrics\":[[\"AWS/Lambda\",\"Throttles\",\"FunctionName\",\"formsli-api-app-dev-screenshot\",{\"stat\":\"Sum\",\"period\":2592000,\"region\":\"ap-northeast-1\",\"label\":\"screenshot\"}],[\"AWS/Lambda\",\"Throttles\",\"FunctionName\",\"formsli-api-app-dev-formversionview\",{\"stat\":\"Sum\",\"period\":2592000,\"region\":\"ap-northeast-1\",\"label\":\"formversionview\"}]],\"region\":\"ap-northeast-1\",\"period\":300}},{\"type\":\"metric\",\"x\":14,\"y\":12,\"width\":10,\"height\":6,\"properties\":{\"title\":\"API Latency\",\"view\":\"timeSeries\",\"stacked\":false,\"metrics\":[[\"AWS/ApiGateway\",\"IntegrationLatency\",\"ApiName\",\"dev-formsli-api-app\",{\"stat\":\"p50\",\"period\":900,\"region\":\"ap-northeast-1\"}],[\"AWS/ApiGateway\",\"Latency\",\"ApiName\",\"dev-formsli-api-app\",{\"stat\":\"p50\",\"period\":900,\"region\":\"ap-northeast-1\"}],[\"AWS/ApiGateway\",\"IntegrationLatency\",\"ApiName\",\"dev-formsli-api-app\",{\"stat\":\"p90\",\"period\":900,\"region\":\"ap-northeast-1\"}],[\"AWS/ApiGateway\",\"Latency\",\"ApiName\",\"dev-formsli-api-app\",{\"stat\":\"p90\",\"period\":900,\"region\":\"ap-northeast-1\"}]],\"region\":\"ap-northeast-1\"}}]}"
+            }
+          },
+          "FormversionviewIamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "dev",
+                        "formsli-api-app",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream",
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:${AWS::Partition}:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/formsli-api-app-dev-form-versionview:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][0]"
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iamRoleStatements\"][1]"
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "secretsmanager:GetSecretValue"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:aws:secretsmanager:ap-northeast-1:${AWS::AccountId}:secret:/dev/formsli/rds/*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "rds-data:GetItems",
+                          "rds-data:ExecuteSql",
+                          "rds-data:BatchExecuteStatement",
+                          "rds-data:ExecuteStatement"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
+                          },
+                          {
+                            "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev:*"
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "formsli-api-app",
+                    "dev",
+                    "formversionview",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    "lambdaRole"
+                  ]
+                ]
+              },
+              "ManagedPolicyArns": []
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            }
+          },
+          "ServerlessDeploymentBucketAccelerated": {
+            "Value": true
+          },
+          "ScreenshotLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ScreenshotLambdaVersionkeWffYPNFGldlyquJUncyy86U9mbeh06ojKodmMPVU"
+            }
+          },
+          "FormversionviewLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "FormversionviewLambdaVersion3DwspUW5O7xxGxxaYeQ82Er6Nl4d1I51LVs4qXF4"
+            }
+          },
+          "ServiceEndpoint": {
+            "Description": "URL of the service endpoint",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://",
+                  "w2s48kp2a7",
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/dev"
+                ]
+              ]
+            }
+          }
+        }
+      },
+      "coreCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketEncryption": {
+                "ServerSideEncryptionConfiguration": [
+                  {
+                    "ServerSideEncryptionByDefault": {
+                      "SSEAlgorithm": "AES256"
+                    }
+                  }
+                ]
+              },
+              "AccelerateConfiguration": {
+                "AccelerationStatus": "Enabled"
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            }
+          },
+          "ServerlessDeploymentBucketAccelerated": {
+            "Value": true
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "custom": {
+      "alerts": {
+        "dashboards": true,
+        "stages": [
+          "dev",
+          "staging",
+          "production"
+        ],
+        "topics": {
+          "alarm": {
+            "topic": "formsli-api-app-dev-alerts-alarm",
+            "notifications": [
+              {
+                "protocol": "email",
+                "endpoint": "infrastructure.dev@forms.li"
+              }
+            ]
+          }
+        },
+        "alarms": [
+          "functionErrors",
+          "functionThrottles",
+          "functionInvocations",
+          "functionDuration"
+        ]
+      },
+      "serverless-iam-roles-per-function": {
+        "defaultInherit": true
+      },
+      "output": {
+        "file": "outputs/stack.dev.json"
+      },
+      "packagePath": "./package.json",
+      "webpack": {
+        "webpackConfig": "webpack.config.js",
+        "packager": "npm",
+        "includeModules": {
+          "forceInclude": [
+            "source-map-support"
+          ]
+        }
+      }
+    },
+    "plugins": [
+      "serverless-webpack",
+      "serverless-pseudo-parameters",
+      "serverless-iam-roles-per-function",
+      "serverless-plugin-tracing",
+      "serverless-plugin-aws-alerts",
+      "@anttiviljami/serverless-stack-output"
+    ],
+    "pluginsData": {},
+    "functions": {
+      "screenshot": {
+        "name": "formsli-api-app-dev-form-screenshot",
+        "handler": "functions/screenshot.handle",
+        "runtime": "nodejs8.10",
+        "events": [
+          {
+            "http": {
+              "path": "app/screenshot/{formId}/{versionId}",
+              "method": "get",
+              "cors": {
+                "origins": [
+                  "*"
+                ],
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "GET"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent"
+                ],
+                "allowCredentials": false
+              },
+              "authorizer": {
+                "type": "COGNITO_USER_POOLS",
+                "authorizerId": "0bbeey",
+                "resultTtlInSeconds": 300,
+                "identitySource": "method.request.header.Authorization",
+                "claims": [
+                  "email",
+                  "username",
+                  "custom:tenantId",
+                  "custom:group"
+                ]
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "package": {
+          "artifact": ".serverless/formsli-api-app.zip"
+        },
+        "memory": 512,
+        "timeout": 30,
+        "vpc": {}
+      },
+      "formversionview": {
+        "name": "formsli-api-app-dev-form-versionview",
+        "handler": "functions/formversionview.handle",
+        "events": [
+          {
+            "http": {
+              "path": "app/view/{formId}/{versionId}",
+              "method": "get",
+              "cors": {
+                "origins": [
+                  "*"
+                ],
+                "origin": "*",
+                "methods": [
+                  "OPTIONS",
+                  "GET"
+                ],
+                "headers": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent"
+                ],
+                "allowCredentials": false
+              },
+              "authorizer": {
+                "type": "COGNITO_USER_POOLS",
+                "authorizerId": "0bbeey",
+                "resultTtlInSeconds": 300,
+                "identitySource": "method.request.header.Authorization",
+                "claims": [
+                  "email",
+                  "username",
+                  "custom:tenantId",
+                  "custom:group"
+                ]
+              },
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "iamRoleStatements": [
+          {
+            "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"FormversionviewIamRoleLambdaExecution\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][3]"
+          },
+          {
+            "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"FormversionviewIamRoleLambdaExecution\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][4]"
+          }
+        ],
+        "package": {
+          "artifact": ".serverless/formsli-api-app.zip"
+        },
+        "memory": 512,
+        "timeout": 30,
+        "runtime": "nodejs10.x",
+        "vpc": {}
+      }
+    },
+    "serviceFilename": "serverless.yml",
+    "layers": {}
+  },
+  "package": {
+    "artifactDirectoryName": "serverless/formsli-api-app/dev/1570171981980-2019-10-04T06:53:01.980Z",
+    "artifact": ""
+  }
+}
