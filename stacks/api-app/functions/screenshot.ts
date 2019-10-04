@@ -32,10 +32,10 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
         page.setJavaScriptEnabled(true);
         page.setViewport({height: 1080, width: 1920});
         page.setExtraHTTPHeaders({"Authorization" : event.headers["Authorization"]});
-        page.setDefaultNavigationTimeout(15000);
+        page.setDefaultNavigationTimeout(10000);
         await page.goto(versionUrl);
         page.waitFor(5000);
-        const file = await page.screenshot({type: "png", quality: 75, fullPage: true});
+        const file = await page.screenshot({type: "png", fullPage: true});
         callback(null, {statusCode: 200, headers: CORS_HEADERS, body: file});
     } catch (error) {
         console.error(error);
