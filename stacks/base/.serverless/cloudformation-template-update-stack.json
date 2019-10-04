@@ -212,6 +212,18 @@
         "PathPart": "tenant"
       }
     },
+    "ApiGatewayResourceApp": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ParentId": {
+          "Fn::GetAtt": "ApiGatewayRestApi.RootResourceId"
+        },
+        "PathPart": "app"
+      }
+    },
     "SftpUserRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -683,6 +695,17 @@
         "Description": "API Gateway resource for /server path, used by AWS Transfer",
         "Value": {
           "Ref": "ApiGatewayResourceServers"
+        },
+        "Type": "String"
+      }
+    },
+    "ssmApigResourceApp": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/dev/formsli/apig/resource/app",
+        "Description": "API Gateway resource for /server path, used by AWS Transfer",
+        "Value": {
+          "Ref": "ApiGatewayResourceApp"
         },
         "Type": "String"
       }

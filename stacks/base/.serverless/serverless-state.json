@@ -252,6 +252,18 @@
               "PathPart": "tenant"
             }
           },
+          "ApiGatewayResourceApp": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ParentId": {
+                "Fn::GetAtt": "ApiGatewayRestApi.RootResourceId"
+              },
+              "PathPart": "app"
+            }
+          },
           "SftpUserRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
@@ -727,6 +739,17 @@
               "Type": "String"
             }
           },
+          "ssmApigResourceApp": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/apig/resource/app",
+              "Description": "API Gateway resource for /server path, used by AWS Transfer",
+              "Value": {
+                "Ref": "ApiGatewayResourceApp"
+              },
+              "Type": "String"
+            }
+          },
           "ssmSftpServerId": {
             "Type": "AWS::SSM::Parameter",
             "Properties": {
@@ -1148,6 +1171,18 @@
               "Fn::GetAtt": "ApiGatewayRestApi.RootResourceId"
             },
             "PathPart": "tenant"
+          }
+        },
+        "ApiGatewayResourceApp": {
+          "Type": "AWS::ApiGateway::Resource",
+          "Properties": {
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "ParentId": {
+              "Fn::GetAtt": "ApiGatewayRestApi.RootResourceId"
+            },
+            "PathPart": "app"
           }
         },
         "SftpUserRole": {
@@ -1621,6 +1656,17 @@
             "Type": "String"
           }
         },
+        "ssmApigResourceApp": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/apig/resource/app",
+            "Description": "API Gateway resource for /server path, used by AWS Transfer",
+            "Value": {
+              "Ref": "ApiGatewayResourceApp"
+            },
+            "Type": "String"
+          }
+        },
         "ssmSftpServerId": {
           "Type": "AWS::SSM::Parameter",
           "Properties": {
@@ -1802,7 +1848,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli-base/dev/1570076813422-2019-10-03T04:26:53.422Z",
+    "artifactDirectoryName": "serverless/formsli-base/dev/1570164365118-2019-10-04T04:46:05.118Z",
     "artifact": ""
   }
 }

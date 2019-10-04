@@ -117,6 +117,14 @@ Resources:
       Value:
         Ref: ApiGatewayResourceServers
       Type: String
+  ssmApigResourceApp:
+    Type : "AWS::SSM::Parameter"
+    Properties:
+      Name: "/${self:provider.stage}/formsli/apig/resource/app"
+      Description: API Gateway resource for /server path, used by AWS Transfer
+      Value:
+        Ref: ApiGatewayResourceApp
+      Type: String
   ssmSftpServerId:
     Type : "AWS::SSM::Parameter"
     Properties:
