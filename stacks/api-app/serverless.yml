@@ -103,6 +103,8 @@ functions:
     name: ${self:provider.functions.screenshot}
     handler: functions/screenshot.handle
     runtime: nodejs8.10
+    memorySize: 1024
+    timeout: 60
     events:
       - http:
           path: /app/screenshot/{formId}/{versionId}
