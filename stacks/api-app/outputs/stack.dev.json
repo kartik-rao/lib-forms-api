@@ -1,7 +1,7 @@
 {
-  "ScreenshotLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-api-app-dev-form-screenshot:4",
+  "ScreenshotLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-api-app-dev-form-screenshot:5",
   "ServerlessDeploymentBucketAccelerated": "true",
-  "FormversionviewLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-api-app-dev-form-versionview:3",
+  "FormversionviewLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-api-app-dev-form-versionview:4",
   "ServiceEndpoint": "https://w2s48kp2a7.execute-api.ap-northeast-1.amazonaws.com/dev",
   "ServerlessDeploymentBucketName": "formsli-api-app-dev-serverlessdeploymentbucket-nf52t1htlbwj"
 }
