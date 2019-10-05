@@ -3,6 +3,7 @@ Resources:
     Type: "AWS::SQS::Queue"
     Properties:
       QueueName: "${self:provider.environment.sqs_entry}-dl"
+      MessageRetentionPeriod: 1209600 # 14 days in seconds
   EntryQueue:
     Type: "AWS::SQS::Queue"
     Properties:
@@ -15,10 +16,11 @@ Resources:
     Type: "AWS::SQS::Queue"
     Properties:
       QueueName: "${self:provider.environment.sqs_firehose}-dl"
+      MessageRetentionPeriod: 1209600 # 14 days in seconds
   FirehoseQueue:
     Type: "AWS::SQS::Queue"
     Properties:
-      VisibilityTimeout: 300
+      VisibilityTimeout: 600
       QueueName: ${self:provider.environment.sqs_firehose}
       RedrivePolicy:
         maxReceiveCount: 5
@@ -27,10 +29,11 @@ Resources:
     Type: "AWS::SQS::Queue"
     Properties:
       QueueName: "${self:provider.environment.sqs_analytics}-dl"
+      MessageRetentionPeriod: 1209600 # 14 days in seconds
   AnalyticsQueue:
     Type: "AWS::SQS::Queue"
     Properties:
-      VisibilityTimeout: 300
+      VisibilityTimeout: 600
       QueueName: ${self:provider.environment.sqs_analytics}
       RedrivePolicy:
         maxReceiveCount: 5
@@ -39,10 +42,11 @@ Resources:
     Type: "AWS::SQS::Queue"
     Properties:
       QueueName: "${self:provider.environment.sqs_integration}-dl"
+      MessageRetentionPeriod: 1209600 # 14 days in seconds
   IntegrationQueue:
     Type: "AWS::SQS::Queue"
     Properties:
-      VisibilityTimeout: 300
+      VisibilityTimeout: 600
       QueueName: ${self:provider.environment.sqs_integration}
       RedrivePolicy:
         maxReceiveCount: 5

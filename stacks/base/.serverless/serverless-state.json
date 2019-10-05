@@ -487,7 +487,8 @@
           "EntryDLQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
-              "QueueName": "dev-formsli-entry-queue-dl"
+              "QueueName": "dev-formsli-entry-queue-dl",
+              "MessageRetentionPeriod": 1209600
             }
           },
           "EntryQueue": {
@@ -509,13 +510,14 @@
           "FirehoseDLQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
-              "QueueName": "dev-formsli-firehose-queue-dl"
+              "QueueName": "dev-formsli-firehose-queue-dl",
+              "MessageRetentionPeriod": 1209600
             }
           },
           "FirehoseQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
-              "VisibilityTimeout": 300,
+              "VisibilityTimeout": 600,
               "QueueName": "dev-formsli-firehose-queue",
               "RedrivePolicy": {
                 "maxReceiveCount": 5,
@@ -531,13 +533,14 @@
           "AnalyticsDLQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
-              "QueueName": "dev-formsli-analytics-queue-dl"
+              "QueueName": "dev-formsli-analytics-queue-dl",
+              "MessageRetentionPeriod": 1209600
             }
           },
           "AnalyticsQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
-              "VisibilityTimeout": 300,
+              "VisibilityTimeout": 600,
               "QueueName": "dev-formsli-analytics-queue",
               "RedrivePolicy": {
                 "maxReceiveCount": 5,
@@ -553,13 +556,14 @@
           "IntegrationDLQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
-              "QueueName": "dev-formsli-integration-queue-dl"
+              "QueueName": "dev-formsli-integration-queue-dl",
+              "MessageRetentionPeriod": 1209600
             }
           },
           "IntegrationQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
-              "VisibilityTimeout": 300,
+              "VisibilityTimeout": 600,
               "QueueName": "dev-formsli-integration-queue",
               "RedrivePolicy": {
                 "maxReceiveCount": 5,
@@ -1404,7 +1408,8 @@
         "EntryDLQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
-            "QueueName": "dev-formsli-entry-queue-dl"
+            "QueueName": "dev-formsli-entry-queue-dl",
+            "MessageRetentionPeriod": 1209600
           }
         },
         "EntryQueue": {
@@ -1426,13 +1431,14 @@
         "FirehoseDLQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
-            "QueueName": "dev-formsli-firehose-queue-dl"
+            "QueueName": "dev-formsli-firehose-queue-dl",
+            "MessageRetentionPeriod": 1209600
           }
         },
         "FirehoseQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
-            "VisibilityTimeout": 300,
+            "VisibilityTimeout": 600,
             "QueueName": "dev-formsli-firehose-queue",
             "RedrivePolicy": {
               "maxReceiveCount": 5,
@@ -1448,13 +1454,14 @@
         "AnalyticsDLQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
-            "QueueName": "dev-formsli-analytics-queue-dl"
+            "QueueName": "dev-formsli-analytics-queue-dl",
+            "MessageRetentionPeriod": 1209600
           }
         },
         "AnalyticsQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
-            "VisibilityTimeout": 300,
+            "VisibilityTimeout": 600,
             "QueueName": "dev-formsli-analytics-queue",
             "RedrivePolicy": {
               "maxReceiveCount": 5,
@@ -1470,13 +1477,14 @@
         "IntegrationDLQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
-            "QueueName": "dev-formsli-integration-queue-dl"
+            "QueueName": "dev-formsli-integration-queue-dl",
+            "MessageRetentionPeriod": 1209600
           }
         },
         "IntegrationQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
-            "VisibilityTimeout": 300,
+            "VisibilityTimeout": 600,
             "QueueName": "dev-formsli-integration-queue",
             "RedrivePolicy": {
               "maxReceiveCount": 5,
@@ -1848,7 +1856,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli-base/dev/1570164365118-2019-10-04T04:46:05.118Z",
+    "artifactDirectoryName": "serverless/formsli-base/dev/1570280529427-2019-10-05T13:02:09.427Z",
     "artifact": ""
   }
 }
