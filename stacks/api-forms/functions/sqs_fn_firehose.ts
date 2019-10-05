@@ -2,7 +2,7 @@
 require('source-map-support').install();
 process.env.TZ = 'UTC';
 
-import {APIGatewayEventRequestContext, SQSEvent, SQSRecord, SQSMessageAttributes, SQSMessageAttribute} from 'aws-lambda';
+import { APIGatewayEventRequestContext, SQSEvent, SQSMessageAttribute, SQSRecord } from 'aws-lambda';
 import _AWS from 'aws-sdk';
 import XRay from 'aws-xray-sdk';
 import { EntryMessageAttributeMap, EntryMessageBody } from './common';
@@ -28,19 +28,15 @@ const processMessage = (sqsRecord: SQSRecord) => {
     let Attributes = sqsRecord.messageAttributes as EntryMessageAttributeMap<SQSMessageAttribute>;
     let StreamName = Attributes.StreamName.stringValue;
 
-    return new Promise(async (resolve, reject) => {
-        try {
-            let Entry = JSON.parse(sqsRecord.body) as EntryMessageBody;
-            let {__RequestId} = Entry;
-            let firehoseData = {...Entry, __EntryId : __RequestId};
-            let fhResponse = await firehose.putRecord({DeliveryStreamName: StreamName, Record: {Data : JSON.stringify(firehoseData) + "\n"}}).promise();
-            await sqs.deleteMessage({QueueUrl: QueueUrl, ReceiptHandle: sqsRecord.receiptHandle}).promise();
-            isDebug && console.log(`${ServiceName} - sqs_fn_firehose.process - record [${__RequestId}] stream [${StreamName}] trace [${fhResponse.RecordId}] OK`);
-        } catch (error) {
-            console.error(error, JSON.stringify({stream: StreamName, sqsReceiptHandle: sqsRecord.receiptHandle}));
-        }
-        resolve();
-    });
+    // No need to delete, AWS handles message deletion
+    let Entry = JSON.parse(sqsRecord.body) as EntryMessageBody;
+    let {__RequestId} = Entry;
+    let firehoseData = {...Entry, __EntryId : __RequestId};
+
+    return Promise.all([
+        firehose.describeDeliveryStream({DeliveryStreamName: StreamName}).promise(),
+        firehose.putRecord({DeliveryStreamName: StreamName, Record: {Data : JSON.stringify(firehoseData) + "\n"}}).promise()
+    ]);
 }
 
 export const handle = async (event : SQSEvent, context : APIGatewayEventRequestContext, callback : any) => {
@@ -50,7 +46,7 @@ export const handle = async (event : SQSEvent, context : APIGatewayEventRequestC
         isDebug && console.log(`${ServiceName} - sqs_fn_firehose.handle - OK`);
         callback(null, {statusCode: 200, body: JSON.stringify({message: `OK - ${context.requestId}`, status:200})});
     } catch (error) {
-        callback(error);
         console.log(`${ServiceName} - sqs_fn_firehose.handle SQS.event.Records iteration ERROR`, error);
+        callback(error);
     }
 }

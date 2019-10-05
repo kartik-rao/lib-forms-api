@@ -168,12 +168,14 @@ functions:
   sqs_fn_firehose:
     name: ${self:provider.functions.sqs_fn_firehose}
     handler: functions/sqs_fn_firehose.handle
-    reservedConcurrency: 10
+    reservedConcurrency: 25
+    timeout: 60
     events:
       - sqs:
           arn: 
             ${self:provider.environment.sqs_firehose_arn}
           enabled: true
+      - batchSize: 1
     iamRoleStatements:
       - Effect: Allow
         Action:
@@ -198,7 +200,8 @@ functions:
   sqs_fn_appsync:
     name: ${self:provider.functions.sqs_fn_appsync}
     handler: functions/sqs_fn_appsync.handle
-    reservedConcurrency: 10
+    reservedConcurrency: 25
+    timeout: 120
     events:
       - sqs:
           arn: ${self:provider.environment.sqs_entry_arn}
