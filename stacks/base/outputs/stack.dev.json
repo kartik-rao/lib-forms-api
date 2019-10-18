@@ -3,6 +3,5 @@
   "IntegrationQueue": "https://sqs.ap-northeast-1.amazonaws.com/286358943194/dev-formsli-integration-queue",
   "AnalyticsQueue": "https://sqs.ap-northeast-1.amazonaws.com/286358943194/dev-formsli-analytics-queue",
   "EntryQueue": "https://sqs.ap-northeast-1.amazonaws.com/286358943194/dev-formsli-entry-queue",
-  "ServerlessDeploymentBucketAccelerated": "true",
-  "ServerlessDeploymentBucketName": "formsli-base-dev-serverlessdeploymentbucket-50187jscqe3g"
+  "ServerlessDeploymentBucketName": "fl-dev-deployments"
 }

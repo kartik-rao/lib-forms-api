@@ -14,6 +14,7 @@
       "memorySize": 512,
       "timeout": 30,
       "logRetentionInDays": 7,
+      "deploymentBucket": "fl-dev-deployments",
       "tags": {
         "stage": "dev",
         "service": "formsli-base",
@@ -42,23 +43,6 @@
         "AWSTemplateFormatVersion": "2010-09-09",
         "Description": "The AWS CloudFormation template for this Serverless application",
         "Resources": {
-          "ServerlessDeploymentBucket": {
-            "Type": "AWS::S3::Bucket",
-            "Properties": {
-              "BucketEncryption": {
-                "ServerSideEncryptionConfiguration": [
-                  {
-                    "ServerSideEncryptionByDefault": {
-                      "SSEAlgorithm": "AES256"
-                    }
-                  }
-                ]
-              },
-              "AccelerateConfiguration": {
-                "AccelerationStatus": "Enabled"
-              }
-            }
-          },
           "CognitoUserPoolAdminUser": {
             "Type": "AWS::Cognito::UserPoolUser",
             "Properties": {
@@ -494,6 +478,7 @@
           "EntryQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
+              "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
               "VisibilityTimeout": 300,
               "QueueName": "dev-formsli-entry-queue",
               "RedrivePolicy": {
@@ -510,6 +495,7 @@
           "FirehoseDLQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
+              "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
               "QueueName": "dev-formsli-firehose-queue-dl",
               "MessageRetentionPeriod": 1209600
             }
@@ -519,6 +505,7 @@
             "Properties": {
               "VisibilityTimeout": 600,
               "QueueName": "dev-formsli-firehose-queue",
+              "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
               "RedrivePolicy": {
                 "maxReceiveCount": 5,
                 "deadLetterTargetArn": {
@@ -533,6 +520,7 @@
           "AnalyticsDLQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
+              "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
               "QueueName": "dev-formsli-analytics-queue-dl",
               "MessageRetentionPeriod": 1209600
             }
@@ -542,6 +530,7 @@
             "Properties": {
               "VisibilityTimeout": 600,
               "QueueName": "dev-formsli-analytics-queue",
+              "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
               "RedrivePolicy": {
                 "maxReceiveCount": 5,
                 "deadLetterTargetArn": {
@@ -556,6 +545,7 @@
           "IntegrationDLQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
+              "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
               "QueueName": "dev-formsli-integration-queue-dl",
               "MessageRetentionPeriod": 1209600
             }
@@ -563,6 +553,7 @@
           "IntegrationQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
+              "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
               "VisibilityTimeout": 600,
               "QueueName": "dev-formsli-integration-queue",
               "RedrivePolicy": {
@@ -910,12 +901,7 @@
         },
         "Outputs": {
           "ServerlessDeploymentBucketName": {
-            "Value": {
-              "Ref": "ServerlessDeploymentBucket"
-            }
-          },
-          "ServerlessDeploymentBucketAccelerated": {
-            "Value": true
+            "Value": "fl-dev-deployments"
           },
           "FirehoseQueue": {
             "Value": {
@@ -936,39 +922,6 @@
             "Value": {
               "Ref": "AnalyticsQueue"
             }
-          }
-        }
-      },
-      "coreCloudFormationTemplate": {
-        "AWSTemplateFormatVersion": "2010-09-09",
-        "Description": "The AWS CloudFormation template for this Serverless application",
-        "Resources": {
-          "ServerlessDeploymentBucket": {
-            "Type": "AWS::S3::Bucket",
-            "Properties": {
-              "BucketEncryption": {
-                "ServerSideEncryptionConfiguration": [
-                  {
-                    "ServerSideEncryptionByDefault": {
-                      "SSEAlgorithm": "AES256"
-                    }
-                  }
-                ]
-              },
-              "AccelerateConfiguration": {
-                "AccelerationStatus": "Enabled"
-              }
-            }
-          }
-        },
-        "Outputs": {
-          "ServerlessDeploymentBucketName": {
-            "Value": {
-              "Ref": "ServerlessDeploymentBucket"
-            }
-          },
-          "ServerlessDeploymentBucketAccelerated": {
-            "Value": true
           }
         }
       }
@@ -1415,6 +1368,7 @@
         "EntryQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
+            "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
             "VisibilityTimeout": 300,
             "QueueName": "dev-formsli-entry-queue",
             "RedrivePolicy": {
@@ -1431,6 +1385,7 @@
         "FirehoseDLQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
+            "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
             "QueueName": "dev-formsli-firehose-queue-dl",
             "MessageRetentionPeriod": 1209600
           }
@@ -1440,6 +1395,7 @@
           "Properties": {
             "VisibilityTimeout": 600,
             "QueueName": "dev-formsli-firehose-queue",
+            "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
             "RedrivePolicy": {
               "maxReceiveCount": 5,
               "deadLetterTargetArn": {
@@ -1454,6 +1410,7 @@
         "AnalyticsDLQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
+            "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
             "QueueName": "dev-formsli-analytics-queue-dl",
             "MessageRetentionPeriod": 1209600
           }
@@ -1463,6 +1420,7 @@
           "Properties": {
             "VisibilityTimeout": 600,
             "QueueName": "dev-formsli-analytics-queue",
+            "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
             "RedrivePolicy": {
               "maxReceiveCount": 5,
               "deadLetterTargetArn": {
@@ -1477,6 +1435,7 @@
         "IntegrationDLQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
+            "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
             "QueueName": "dev-formsli-integration-queue-dl",
             "MessageRetentionPeriod": 1209600
           }
@@ -1484,6 +1443,7 @@
         "IntegrationQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
+            "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
             "VisibilityTimeout": 600,
             "QueueName": "dev-formsli-integration-queue",
             "RedrivePolicy": {
@@ -1856,7 +1816,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli-base/dev/1570280529427-2019-10-05T13:02:09.427Z",
+    "artifactDirectoryName": "serverless/formsli-base/dev/1571373219814-2019-10-18T04:33:39.814Z",
     "artifact": ""
   }
 }
