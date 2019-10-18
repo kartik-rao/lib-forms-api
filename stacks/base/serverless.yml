@@ -10,6 +10,7 @@ provider:
   memorySize: 512
   timeout: 30
   logRetentionInDays: 7
+  deploymentBucket: fl-${self:provider.stage}-deployments
   tags:
     stage  : ${self:provider.stage}
     service: ${self:service}
