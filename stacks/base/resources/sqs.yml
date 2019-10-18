@@ -7,6 +7,7 @@ Resources:
   EntryQueue:
     Type: "AWS::SQS::Queue"
     Properties:
+      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/id}
       VisibilityTimeout: 300
       QueueName: ${self:provider.environment.sqs_entry}
       RedrivePolicy:
@@ -15,6 +16,7 @@ Resources:
   FirehoseDLQueue:
     Type: "AWS::SQS::Queue"
     Properties:
+      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/id}
       QueueName: "${self:provider.environment.sqs_firehose}-dl"
       MessageRetentionPeriod: 1209600 # 14 days in seconds
   FirehoseQueue:
@@ -22,12 +24,14 @@ Resources:
     Properties:
       VisibilityTimeout: 600
       QueueName: ${self:provider.environment.sqs_firehose}
+      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/id}
       RedrivePolicy:
         maxReceiveCount: 5
         deadLetterTargetArn : { Fn::GetAtt: [FirehoseDLQueue, Arn] }
   AnalyticsDLQueue:
     Type: "AWS::SQS::Queue"
     Properties:
+      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/id}
       QueueName: "${self:provider.environment.sqs_analytics}-dl"
       MessageRetentionPeriod: 1209600 # 14 days in seconds
   AnalyticsQueue:
@@ -35,17 +39,20 @@ Resources:
     Properties:
       VisibilityTimeout: 600
       QueueName: ${self:provider.environment.sqs_analytics}
+      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/id}
       RedrivePolicy:
         maxReceiveCount: 5
         deadLetterTargetArn : { Fn::GetAtt: [AnalyticsDLQueue, Arn] }
   IntegrationDLQueue:
     Type: "AWS::SQS::Queue"
     Properties:
+      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/id}
       QueueName: "${self:provider.environment.sqs_integration}-dl"
       MessageRetentionPeriod: 1209600 # 14 days in seconds
   IntegrationQueue:
     Type: "AWS::SQS::Queue"
     Properties:
+      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/id}
       VisibilityTimeout: 600
       QueueName: ${self:provider.environment.sqs_integration}
       RedrivePolicy:
