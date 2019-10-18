@@ -33,6 +33,7 @@ provider:
     sqs_analytics      : ${self:provider.environment.namePrefix}analytics-queue
 plugins:
   - serverless-pseudo-parameters
+  - serverless-content-encoding
   - '@anttiviljami/serverless-stack-output'
 
 resources:
@@ -46,3 +47,5 @@ custom:
   # Stack Output Plugin
   output:
     file: outputs/stack.${self:provider.stage}.json # toml, yaml, yml, and json format is available
+  contentEncoding:
+    minimumCompressionSize: 4096

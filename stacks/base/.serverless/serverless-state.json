@@ -930,10 +930,14 @@
     "custom": {
       "output": {
         "file": "outputs/stack.dev.json"
+      },
+      "contentEncoding": {
+        "minimumCompressionSize": 4096
       }
     },
     "plugins": [
       "serverless-pseudo-parameters",
+      "serverless-content-encoding",
       "@anttiviljami/serverless-stack-output"
     ],
     "pluginsData": {},
@@ -1818,7 +1822,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli-base/dev/1571382236560-2019-10-18T07:03:56.560Z",
+    "artifactDirectoryName": "serverless/formsli-base/dev/1571383265976-2019-10-18T07:21:05.976Z",
     "artifact": ""
   }
 }
