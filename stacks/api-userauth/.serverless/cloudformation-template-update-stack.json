@@ -134,7 +134,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "fl-dev-deployments",
-          "S3Key": "serverless/formsli-auth/dev/1571373890452-2019-10-18T04:44:50.452Z/formsli-auth.zip"
+          "S3Key": "serverless/formsli-auth/dev/1571375100444-2019-10-18T05:05:00.444Z/formsli-auth.zip"
         },
         "FunctionName": "formsli-auth-dev-authftp",
         "Handler": "functions/authftp.handle",
@@ -212,7 +212,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "fl-dev-deployments",
-          "S3Key": "serverless/formsli-auth/dev/1571373890452-2019-10-18T04:44:50.452Z/formsli-auth.zip"
+          "S3Key": "serverless/formsli-auth/dev/1571375100444-2019-10-18T05:05:00.444Z/formsli-auth.zip"
         },
         "FunctionName": "formsli-auth-dev-postconf",
         "Handler": "functions/postconfirmation.handle",
@@ -290,7 +290,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "fl-dev-deployments",
-          "S3Key": "serverless/formsli-auth/dev/1571373890452-2019-10-18T04:44:50.452Z/formsli-auth.zip"
+          "S3Key": "serverless/formsli-auth/dev/1571375100444-2019-10-18T05:05:00.444Z/formsli-auth.zip"
         },
         "FunctionName": "formsli-auth-dev-invite",
         "Handler": "functions/invite.handle",
@@ -582,7 +582,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1571373856316": {
+    "ApiGatewayDeployment1571375069186": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": "w2s48kp2a7",
@@ -689,7 +689,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "fl-dev-deployments",
-          "S3Key": "serverless/formsli-auth/dev/1571373890452-2019-10-18T04:44:50.452Z/custom-resources.zip"
+          "S3Key": "serverless/formsli-auth/dev/1571375100444-2019-10-18T05:05:00.444Z/custom-resources.zip"
         },
         "FunctionName": "formsli-auth-dev-custom-resource-apigw-cw-role",
         "Handler": "apiGatewayCloudWatchRole/handler.handler",
@@ -821,7 +821,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "fl-dev-deployments",
-          "S3Key": "serverless/formsli-auth/dev/1571373890452-2019-10-18T04:44:50.452Z/custom-resources.zip"
+          "S3Key": "serverless/formsli-auth/dev/1571375100444-2019-10-18T05:05:00.444Z/custom-resources.zip"
         },
         "FunctionName": "formsli-auth-dev-custom-resource-existing-cup",
         "Handler": "cognitoUserPool/handler.handler",
@@ -1596,6 +1596,42 @@
         },
         "ManagedPolicyArns": []
       }
+    },
+    "AuthftpSubscriptionFilter": {
+      "Type": "AWS::Logs::SubscriptionFilter",
+      "Properties": {
+        "DestinationArn": "arn:aws:firehose:ap-northeast-1:286358943194:deliverystream/fl-dev-logs-delivery-stream",
+        "FilterPattern": "",
+        "LogGroupName": "/aws/lambda/formsli-auth-dev-authftp",
+        "RoleArn": "arn:aws:iam::286358943194:role/fl-dev-logs-cloudwatch-role"
+      },
+      "DependsOn": [
+        "AuthftpLogGroup"
+      ]
+    },
+    "PostConfirmationSubscriptionFilter": {
+      "Type": "AWS::Logs::SubscriptionFilter",
+      "Properties": {
+        "DestinationArn": "arn:aws:firehose:ap-northeast-1:286358943194:deliverystream/fl-dev-logs-delivery-stream",
+        "FilterPattern": "",
+        "LogGroupName": "/aws/lambda/formsli-auth-dev-postconf",
+        "RoleArn": "arn:aws:iam::286358943194:role/fl-dev-logs-cloudwatch-role"
+      },
+      "DependsOn": [
+        "PostConfirmationLogGroup"
+      ]
+    },
+    "InviteSubscriptionFilter": {
+      "Type": "AWS::Logs::SubscriptionFilter",
+      "Properties": {
+        "DestinationArn": "arn:aws:firehose:ap-northeast-1:286358943194:deliverystream/fl-dev-logs-delivery-stream",
+        "FilterPattern": "",
+        "LogGroupName": "/aws/lambda/formsli-auth-dev-invite",
+        "RoleArn": "arn:aws:iam::286358943194:role/fl-dev-logs-cloudwatch-role"
+      },
+      "DependsOn": [
+        "InviteLogGroup"
+      ]
     }
   },
   "Outputs": {

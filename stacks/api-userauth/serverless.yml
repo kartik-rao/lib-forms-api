@@ -79,9 +79,14 @@ plugins:
   - serverless-domain-manager
   - serverless-plugin-tracing
   - serverless-plugin-aws-alerts
+  - serverless-plugin-log-subscription
   - '@anttiviljami/serverless-stack-output'
 
 custom:
+  logSubscription:
+    enabled: true
+    destinationArn: ${ssm:/${self:provider.stage}/formsli/logging/destinationArn}
+    roleArn: ${ssm:/${self:provider.stage}/formsli/logging/roleArn}
   # API Gateway custom domain
   customDomain:
     DependsOn: ApiGatewayApiKey1
