@@ -10,7 +10,7 @@ provider:
   apiGateway:
     restApiId: ${ssm:/${self:provider.stage}/formsli/apig/restApiId}
     restApiRootResourceId: ${ssm:/${self:provider.stage}/formsli/apig/rootResourceId}
-    restApiResources: 
+    restApiResources:
       /form: ${ssm:/${self:provider.stage}/formsli/apig/resource/form}
   logs:
     restApi:
@@ -21,6 +21,7 @@ provider:
   memorySize: 512
   timeout: 30
   logRetentionInDays: 7
+  deploymentBucket: fl-${self:provider.stage}-deployments
   tags:
     stage  : ${self:provider.stage}
     service: ${self:service}
@@ -82,9 +83,14 @@ plugins:
   - serverless-iam-roles-per-function
   - serverless-plugin-tracing
   - serverless-plugin-aws-alerts
+  - serverless-plugin-log-subscription
   - '@anttiviljami/serverless-stack-output'
 
 custom:
+  logSubscription:
+    enabled: true
+    destinationArn: ${ssm:/${self:provider.stage}/formsli/logging/destinationArn}
+    roleArn: ${ssm:/${self:provider.stage}/formsli/logging/roleArn}
   alerts:
     dashboards: true
     stages:
@@ -172,7 +178,7 @@ functions:
     timeout: 60
     events:
       - sqs:
-          arn: 
+          arn:
             ${self:provider.environment.sqs_firehose_arn}
           enabled: true
       - batchSize: 1
