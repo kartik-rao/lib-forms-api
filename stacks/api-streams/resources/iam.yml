@@ -17,7 +17,7 @@ Resources:
             Resource:
               Fn::Join:
                 - ":"
-                - 
+                -
                   - "arn"
                   - Ref: 'AWS::Partition'
                   - "s3::"
@@ -31,7 +31,7 @@ Resources:
               StringEquals:
                 "kms:ViaService" : "s3.#{AWS::Region}.amazonaws.com"
               StringLike:
-                "kms:EncryptionContext:aws:s3:arn" : "arn:aws:s3:::${self:provider.environment.s3_user_bucket}/home*"
+                "kms:EncryptionContext:aws:s3:arn" : "${self:provider.environment.s3_user_bucket}/home*"
           - Effect: "Allow"
             Action:
               - "logs:PutLogEvents"
