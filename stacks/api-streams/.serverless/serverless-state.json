@@ -29,6 +29,7 @@
       "memorySize": 512,
       "timeout": 30,
       "logRetentionInDays": 7,
+      "deploymentBucket": "fl-dev-deployments",
       "tags": {
         "stage": "dev",
         "service": "formsli-stream",
@@ -92,23 +93,6 @@
         "AWSTemplateFormatVersion": "2010-09-09",
         "Description": "The AWS CloudFormation template for this Serverless application",
         "Resources": {
-          "ServerlessDeploymentBucket": {
-            "Type": "AWS::S3::Bucket",
-            "Properties": {
-              "BucketEncryption": {
-                "ServerSideEncryptionConfiguration": [
-                  {
-                    "ServerSideEncryptionByDefault": {
-                      "SSEAlgorithm": "AES256"
-                    }
-                  }
-                ]
-              },
-              "AccelerateConfiguration": {
-                "AccelerationStatus": "Enabled"
-              }
-            }
-          },
           "CreateEntryStreamLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
@@ -202,10 +186,8 @@
             "Type": "AWS::Lambda::Function",
             "Properties": {
               "Code": {
-                "S3Bucket": {
-                  "Ref": "ServerlessDeploymentBucket"
-                },
-                "S3Key": "serverless/formsli-stream/dev/1570081870055-2019-10-03T05:51:10.055Z/formsli-stream.zip"
+                "S3Bucket": "fl-dev-deployments",
+                "S3Key": "serverless/formsli-stream/dev/1571379656036-2019-10-18T06:20:56.036Z/formsli-stream.zip"
               },
               "FunctionName": "formsli-stream-dev-create-delivery-stream",
               "Handler": "functions/createstream.handle",
@@ -265,14 +247,14 @@
               "CreateEntryStreamLogGroup"
             ]
           },
-          "CreateEntryStreamLambdaVersionIbXLenXIJb8tORllqBtFsyA62L9AzRFytKHoc03DOHc": {
+          "CreateEntryStreamLambdaVersion9ydddqYEK7D9WLuc8xhVfCT3uaqNp7w3qV1hGMzWVY": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateEntryStreamLambdaFunction"
               },
-              "CodeSha256": "gwlz5MqTKFLwgkR+6SO4uzzCMgRmGY4ZrGRVPga3QIk="
+              "CodeSha256": "9i2EOEJ0v3uanFoiLD2b/EPs+gspvdViK4z9zaf5aEQ="
             }
           },
           "ApiGatewayResourceStreamFormidVar": {
@@ -370,7 +352,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1570081845136": {
+          "ApiGatewayDeployment1571379626454": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": "w2s48kp2a7",
@@ -439,10 +421,8 @@
             "Type": "AWS::Lambda::Function",
             "Properties": {
               "Code": {
-                "S3Bucket": {
-                  "Ref": "ServerlessDeploymentBucket"
-                },
-                "S3Key": "serverless/formsli-stream/dev/1570081870055-2019-10-03T05:51:10.055Z/custom-resources.zip"
+                "S3Bucket": "fl-dev-deployments",
+                "S3Key": "serverless/formsli-stream/dev/1571379656036-2019-10-18T06:20:56.036Z/custom-resources.zip"
               },
               "FunctionName": "formsli-stream-dev-custom-resource-apigw-cw-role",
               "Handler": "apiGatewayCloudWatchRole/handler.handler",
@@ -836,7 +816,7 @@
                         }
                       },
                       "StringLike": {
-                        "kms:EncryptionContext:aws:s3:arn": "arn:aws:s3:::fl-dev-userdata/home*"
+                        "kms:EncryptionContext:aws:s3:arn": "fl-dev-userdata/home*"
                       }
                     }
                   },
@@ -917,21 +897,28 @@
               },
               "Type": "String"
             }
+          },
+          "CreateEntryStreamSubscriptionFilter": {
+            "Type": "AWS::Logs::SubscriptionFilter",
+            "Properties": {
+              "DestinationArn": "arn:aws:firehose:ap-northeast-1:286358943194:deliverystream/fl-dev-logs-delivery-stream",
+              "FilterPattern": "",
+              "LogGroupName": "/aws/lambda/formsli-stream-dev-create-delivery-stream",
+              "RoleArn": "arn:aws:iam::286358943194:role/fl-dev-logs-cloudwatch-role"
+            },
+            "DependsOn": [
+              "CreateEntryStreamLogGroup"
+            ]
           }
         },
         "Outputs": {
           "ServerlessDeploymentBucketName": {
-            "Value": {
-              "Ref": "ServerlessDeploymentBucket"
-            }
-          },
-          "ServerlessDeploymentBucketAccelerated": {
-            "Value": true
+            "Value": "fl-dev-deployments"
           },
           "CreateEntryStreamLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateEntryStreamLambdaVersionIbXLenXIJb8tORllqBtFsyA62L9AzRFytKHoc03DOHc"
+              "Ref": "CreateEntryStreamLambdaVersion9ydddqYEK7D9WLuc8xhVfCT3uaqNp7w3qV1hGMzWVY"
             }
           },
           "ServiceEndpoint": {
@@ -957,42 +944,14 @@
           }
         }
       },
-      "coreCloudFormationTemplate": {
-        "AWSTemplateFormatVersion": "2010-09-09",
-        "Description": "The AWS CloudFormation template for this Serverless application",
-        "Resources": {
-          "ServerlessDeploymentBucket": {
-            "Type": "AWS::S3::Bucket",
-            "Properties": {
-              "BucketEncryption": {
-                "ServerSideEncryptionConfiguration": [
-                  {
-                    "ServerSideEncryptionByDefault": {
-                      "SSEAlgorithm": "AES256"
-                    }
-                  }
-                ]
-              },
-              "AccelerateConfiguration": {
-                "AccelerationStatus": "Enabled"
-              }
-            }
-          }
-        },
-        "Outputs": {
-          "ServerlessDeploymentBucketName": {
-            "Value": {
-              "Ref": "ServerlessDeploymentBucket"
-            }
-          },
-          "ServerlessDeploymentBucketAccelerated": {
-            "Value": true
-          }
-        }
-      },
       "vpc": {}
     },
     "custom": {
+      "logSubscription": {
+        "enabled": true,
+        "destinationArn": "arn:aws:firehose:ap-northeast-1:286358943194:deliverystream/fl-dev-logs-delivery-stream",
+        "roleArn": "arn:aws:iam::286358943194:role/fl-dev-logs-cloudwatch-role"
+      },
       "alerts": {
         "dashboards": true,
         "stages": [
@@ -1041,6 +1000,7 @@
       "serverless-iam-roles-per-function",
       "serverless-plugin-tracing",
       "serverless-plugin-aws-alerts",
+      "serverless-plugin-log-subscription",
       "@anttiviljami/serverless-stack-output"
     ],
     "pluginsData": {},
@@ -1161,7 +1121,7 @@
                       "kms:ViaService": "s3.#{AWS::Region}.amazonaws.com"
                     },
                     "StringLike": {
-                      "kms:EncryptionContext:aws:s3:arn": "arn:aws:s3:::fl-dev-userdata/home*"
+                      "kms:EncryptionContext:aws:s3:arn": "fl-dev-userdata/home*"
                     }
                   }
                 },
@@ -1244,7 +1204,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli-stream/dev/1570081870055-2019-10-03T05:51:10.055Z",
+    "artifactDirectoryName": "serverless/formsli-stream/dev/1571379656036-2019-10-18T06:20:56.036Z",
     "artifact": ""
   }
 }
