@@ -12,6 +12,7 @@
       "tracing": true,
       "region": "ap-northeast-1",
       "logRetentionInDays": 7,
+      "deploymentBucket": "fl-dev-deployments",
       "tags": {
         "stage": "dev",
         "service": "formsli-graphql",
@@ -41,23 +42,6 @@
         "AWSTemplateFormatVersion": "2010-09-09",
         "Description": "The AWS CloudFormation template for this Serverless application",
         "Resources": {
-          "ServerlessDeploymentBucket": {
-            "Type": "AWS::S3::Bucket",
-            "Properties": {
-              "BucketEncryption": {
-                "ServerSideEncryptionConfiguration": [
-                  {
-                    "ServerSideEncryptionByDefault": {
-                      "SSEAlgorithm": "AES256"
-                    }
-                  }
-                ]
-              },
-              "AccelerateConfiguration": {
-                "AccelerationStatus": "Enabled"
-              }
-            }
-          },
           "AppSyncRDSRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
@@ -427,7 +411,7 @@
                 ]
               },
               "Description": "serverless-appsync-plugin: AppSync API Key for GraphQlApiKeyDefault",
-              "Expires": 1601609012
+              "Expires": 1602916333
             }
           },
           "GraphQlSchema": {
@@ -2232,12 +2216,7 @@
         },
         "Outputs": {
           "ServerlessDeploymentBucketName": {
-            "Value": {
-              "Ref": "ServerlessDeploymentBucket"
-            }
-          },
-          "ServerlessDeploymentBucketAccelerated": {
-            "Value": true
+            "Value": "fl-dev-deployments"
           },
           "GraphQlApiUrl": {
             "Value": {
@@ -2254,39 +2233,6 @@
                 "ApiKey"
               ]
             }
-          }
-        }
-      },
-      "coreCloudFormationTemplate": {
-        "AWSTemplateFormatVersion": "2010-09-09",
-        "Description": "The AWS CloudFormation template for this Serverless application",
-        "Resources": {
-          "ServerlessDeploymentBucket": {
-            "Type": "AWS::S3::Bucket",
-            "Properties": {
-              "BucketEncryption": {
-                "ServerSideEncryptionConfiguration": [
-                  {
-                    "ServerSideEncryptionByDefault": {
-                      "SSEAlgorithm": "AES256"
-                    }
-                  }
-                ]
-              },
-              "AccelerateConfiguration": {
-                "AccelerationStatus": "Enabled"
-              }
-            }
-          }
-        },
-        "Outputs": {
-          "ServerlessDeploymentBucketName": {
-            "Value": {
-              "Ref": "ServerlessDeploymentBucket"
-            }
-          },
-          "ServerlessDeploymentBucketAccelerated": {
-            "Value": true
           }
         }
       }
@@ -3284,7 +3230,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli-graphql/dev/1570073012433-2019-10-03T03:23:32.433Z",
+    "artifactDirectoryName": "serverless/formsli-graphql/dev/1571380333918-2019-10-18T06:32:13.918Z",
     "artifact": ""
   }
 }

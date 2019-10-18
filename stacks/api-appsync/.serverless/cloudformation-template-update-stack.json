@@ -2,23 +2,6 @@
   "AWSTemplateFormatVersion": "2010-09-09",
   "Description": "The AWS CloudFormation template for this Serverless application",
   "Resources": {
-    "ServerlessDeploymentBucket": {
-      "Type": "AWS::S3::Bucket",
-      "Properties": {
-        "BucketEncryption": {
-          "ServerSideEncryptionConfiguration": [
-            {
-              "ServerSideEncryptionByDefault": {
-                "SSEAlgorithm": "AES256"
-              }
-            }
-          ]
-        },
-        "AccelerateConfiguration": {
-          "AccelerationStatus": "Enabled"
-        }
-      }
-    },
     "AppSyncRDSRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
@@ -388,7 +371,7 @@
           ]
         },
         "Description": "serverless-appsync-plugin: AppSync API Key for GraphQlApiKeyDefault",
-        "Expires": 1601609012
+        "Expires": 1602916333
       }
     },
     "GraphQlSchema": {
@@ -2193,12 +2176,7 @@
   },
   "Outputs": {
     "ServerlessDeploymentBucketName": {
-      "Value": {
-        "Ref": "ServerlessDeploymentBucket"
-      }
-    },
-    "ServerlessDeploymentBucketAccelerated": {
-      "Value": true
+      "Value": "fl-dev-deployments"
     },
     "GraphQlApiUrl": {
       "Value": {

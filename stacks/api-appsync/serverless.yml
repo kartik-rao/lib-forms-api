@@ -8,6 +8,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'ap-northeast-1'}
   logRetentionInDays: 7
+  deploymentBucket: fl-${self:provider.stage}-deployments
   tags:
     stage  : ${self:provider.stage}
     service: ${self:service}
