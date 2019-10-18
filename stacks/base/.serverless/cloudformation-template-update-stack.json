@@ -430,6 +430,7 @@
     "EntryDLQueue": {
       "Type": "AWS::SQS::Queue",
       "Properties": {
+        "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
         "QueueName": "dev-formsli-entry-queue-dl",
         "MessageRetentionPeriod": 1209600
       }

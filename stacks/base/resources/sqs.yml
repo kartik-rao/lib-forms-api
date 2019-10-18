@@ -2,6 +2,7 @@ Resources:
   EntryDLQueue:
     Type: "AWS::SQS::Queue"
     Properties:
+      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/id}
       QueueName: "${self:provider.environment.sqs_entry}-dl"
       MessageRetentionPeriod: 1209600 # 14 days in seconds
   EntryQueue:

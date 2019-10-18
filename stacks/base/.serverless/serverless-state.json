@@ -471,6 +471,7 @@
           "EntryDLQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
+              "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
               "QueueName": "dev-formsli-entry-queue-dl",
               "MessageRetentionPeriod": 1209600
             }
@@ -1361,6 +1362,7 @@
         "EntryDLQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
+            "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
             "QueueName": "dev-formsli-entry-queue-dl",
             "MessageRetentionPeriod": 1209600
           }
@@ -1816,7 +1818,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli-base/dev/1571373219814-2019-10-18T04:33:39.814Z",
+    "artifactDirectoryName": "serverless/formsli-base/dev/1571382236560-2019-10-18T07:03:56.560Z",
     "artifact": ""
   }
 }
