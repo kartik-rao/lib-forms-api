@@ -35,10 +35,10 @@ Run `npm i` in
 ## Region
 Due to AWS limitations, currently the following regions are supported:
 - US East
-    - `us-east-1` Ohio (DEFAULT)
+    - `us-east-1` Ohio
     - `us-east-2` Northern Virginia
 - Asia Pacific
-    - `ap-northeast-1` Tokyo
+    - `ap-northeast-1` Tokyo (DEFAULT)
 - EU
     - `eu-west-1` Ireland
 
