@@ -14,13 +14,14 @@
       "memorySize": 512,
       "timeout": 30,
       "logRetentionInDays": 7,
-      "deploymentBucket": "fl-dev-deployments",
-      "tags": {
-        "stage": "dev",
-        "service": "formsli-base",
-        "region": "ap-northeast-1",
-        "stack": "base"
+      "stackTags": {
+        "Application": "formsli",
+        "Stack": "dev",
+        "Service": "base",
+        "Serverless": "true"
       },
+      "deploymentBucket": "fl-dev-deployments",
+      "deploymentPrefix": "formsli-base",
       "environment": {
         "namePrefix": "dev-formsli-",
         "ssmKeyPrefix": "dev/formsli",
@@ -37,6 +38,11 @@
         "sqs_integration": "dev-formsli-integration-queue",
         "sqs_analytics": "dev-formsli-analytics-queue"
       },
+      "deploymentBucketObject": {
+        "name": "fl-dev-deployments",
+        "blockPublicAccess": true,
+        "serverSideEncryption": "AES256"
+      },
       "versionFunctions": true,
       "remoteFunctionData": null,
       "compiledCloudFormationTemplate": {
@@ -47,7 +53,7 @@
             "Type": "AWS::Cognito::UserPoolUser",
             "Properties": {
               "Username": "infrastructure.dev@forms.li",
-              "UserPoolId": "ap-northeast-1_Q798Nsl33",
+              "UserPoolId": "ap-northeast-1_0wTBnqAhr",
               "DesiredDeliveryMediums": [
                 "EMAIL"
               ],
@@ -158,7 +164,8 @@
             "Type": "AWS::ApiGateway::RestApi",
             "Properties": {
               "Name": "dev-formsli-apig",
-              "Description": "dev formsli-base api gateway"
+              "Description": "dev formsli-base api gateway",
+              "MinimumCompressionSize": 4096
             }
           },
           "MyApiGatewayAuthorizer": {
@@ -172,7 +179,7 @@
               },
               "Type": "COGNITO_USER_POOLS",
               "ProviderARNs": [
-                "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33"
+                "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_0wTBnqAhr"
               ]
             }
           },
@@ -471,15 +478,20 @@
           "EntryDLQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
-              "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
+              "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
               "QueueName": "dev-formsli-entry-queue-dl",
-              "MessageRetentionPeriod": 1209600
+              "MessageRetentionPeriod": 1209600,
+              "Tags": [
+                {
+                  "IsDeadLetterQueue": "true"
+                }
+              ]
             }
           },
           "EntryQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
-              "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
+              "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
               "VisibilityTimeout": 300,
               "QueueName": "dev-formsli-entry-queue",
               "RedrivePolicy": {
@@ -496,9 +508,14 @@
           "FirehoseDLQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
-              "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
+              "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
               "QueueName": "dev-formsli-firehose-queue-dl",
-              "MessageRetentionPeriod": 1209600
+              "MessageRetentionPeriod": 1209600,
+              "Tags": [
+                {
+                  "IsDeadLetterQueue": "true"
+                }
+              ]
             }
           },
           "FirehoseQueue": {
@@ -506,7 +523,7 @@
             "Properties": {
               "VisibilityTimeout": 600,
               "QueueName": "dev-formsli-firehose-queue",
-              "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
+              "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
               "RedrivePolicy": {
                 "maxReceiveCount": 5,
                 "deadLetterTargetArn": {
@@ -521,9 +538,14 @@
           "AnalyticsDLQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
-              "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
+              "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
               "QueueName": "dev-formsli-analytics-queue-dl",
-              "MessageRetentionPeriod": 1209600
+              "MessageRetentionPeriod": 1209600,
+              "Tags": [
+                {
+                  "IsDeadLetterQueue": "true"
+                }
+              ]
             }
           },
           "AnalyticsQueue": {
@@ -531,7 +553,7 @@
             "Properties": {
               "VisibilityTimeout": 600,
               "QueueName": "dev-formsli-analytics-queue",
-              "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
+              "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
               "RedrivePolicy": {
                 "maxReceiveCount": 5,
                 "deadLetterTargetArn": {
@@ -546,15 +568,20 @@
           "IntegrationDLQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
-              "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
+              "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
               "QueueName": "dev-formsli-integration-queue-dl",
-              "MessageRetentionPeriod": 1209600
+              "MessageRetentionPeriod": 1209600,
+              "Tags": [
+                {
+                  "IsDeadLetterQueue": "true"
+                }
+              ]
             }
           },
           "IntegrationQueue": {
             "Type": "AWS::SQS::Queue",
             "Properties": {
-              "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
+              "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
               "VisibilityTimeout": 600,
               "QueueName": "dev-formsli-integration-queue",
               "RedrivePolicy": {
@@ -930,14 +957,10 @@
     "custom": {
       "output": {
         "file": "outputs/stack.dev.json"
-      },
-      "contentEncoding": {
-        "minimumCompressionSize": 4096
       }
     },
     "plugins": [
       "serverless-pseudo-parameters",
-      "serverless-content-encoding",
       "@anttiviljami/serverless-stack-output"
     ],
     "pluginsData": {},
@@ -948,7 +971,7 @@
           "Type": "AWS::Cognito::UserPoolUser",
           "Properties": {
             "Username": "infrastructure.dev@forms.li",
-            "UserPoolId": "ap-northeast-1_Q798Nsl33",
+            "UserPoolId": "ap-northeast-1_0wTBnqAhr",
             "DesiredDeliveryMediums": [
               "EMAIL"
             ],
@@ -1057,7 +1080,8 @@
           "Type": "AWS::ApiGateway::RestApi",
           "Properties": {
             "Name": "dev-formsli-apig",
-            "Description": "dev formsli-base api gateway"
+            "Description": "dev formsli-base api gateway",
+            "MinimumCompressionSize": 4096
           }
         },
         "MyApiGatewayAuthorizer": {
@@ -1071,7 +1095,7 @@
             },
             "Type": "COGNITO_USER_POOLS",
             "ProviderARNs": [
-              "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_Q798Nsl33"
+              "arn:aws:cognito-idp:ap-northeast-1:286358943194:userpool/ap-northeast-1_0wTBnqAhr"
             ]
           }
         },
@@ -1366,15 +1390,20 @@
         "EntryDLQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
-            "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
+            "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
             "QueueName": "dev-formsli-entry-queue-dl",
-            "MessageRetentionPeriod": 1209600
+            "MessageRetentionPeriod": 1209600,
+            "Tags": [
+              {
+                "IsDeadLetterQueue": "true"
+              }
+            ]
           }
         },
         "EntryQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
-            "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
+            "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
             "VisibilityTimeout": 300,
             "QueueName": "dev-formsli-entry-queue",
             "RedrivePolicy": {
@@ -1391,9 +1420,14 @@
         "FirehoseDLQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
-            "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
+            "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
             "QueueName": "dev-formsli-firehose-queue-dl",
-            "MessageRetentionPeriod": 1209600
+            "MessageRetentionPeriod": 1209600,
+            "Tags": [
+              {
+                "IsDeadLetterQueue": "true"
+              }
+            ]
           }
         },
         "FirehoseQueue": {
@@ -1401,7 +1435,7 @@
           "Properties": {
             "VisibilityTimeout": 600,
             "QueueName": "dev-formsli-firehose-queue",
-            "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
+            "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
             "RedrivePolicy": {
               "maxReceiveCount": 5,
               "deadLetterTargetArn": {
@@ -1416,9 +1450,14 @@
         "AnalyticsDLQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
-            "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
+            "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
             "QueueName": "dev-formsli-analytics-queue-dl",
-            "MessageRetentionPeriod": 1209600
+            "MessageRetentionPeriod": 1209600,
+            "Tags": [
+              {
+                "IsDeadLetterQueue": "true"
+              }
+            ]
           }
         },
         "AnalyticsQueue": {
@@ -1426,7 +1465,7 @@
           "Properties": {
             "VisibilityTimeout": 600,
             "QueueName": "dev-formsli-analytics-queue",
-            "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
+            "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
             "RedrivePolicy": {
               "maxReceiveCount": 5,
               "deadLetterTargetArn": {
@@ -1441,15 +1480,20 @@
         "IntegrationDLQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
-            "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
+            "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
             "QueueName": "dev-formsli-integration-queue-dl",
-            "MessageRetentionPeriod": 1209600
+            "MessageRetentionPeriod": 1209600,
+            "Tags": [
+              {
+                "IsDeadLetterQueue": "true"
+              }
+            ]
           }
         },
         "IntegrationQueue": {
           "Type": "AWS::SQS::Queue",
           "Properties": {
-            "KmsMasterKeyId": "31d51ce9-1624-471d-8981-79cbc000030f",
+            "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
             "VisibilityTimeout": 600,
             "QueueName": "dev-formsli-integration-queue",
             "RedrivePolicy": {
@@ -1822,7 +1866,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli-base/dev/1571383265976-2019-10-18T07:21:05.976Z",
+    "artifactDirectoryName": "formsli-base/formsli-base/dev/1573124150717-2019-11-07T10:55:50.717Z",
     "artifact": ""
   }
 }

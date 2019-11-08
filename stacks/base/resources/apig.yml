@@ -42,6 +42,9 @@ Resources:
     Properties:
       Name: ${self:provider.environment.namePrefix}apig
       Description: ${self:provider.stage} ${self:service} api gateway
+      MinimumCompressionSize: 4096
+      Tags:
+        - Name: ${self:provider.environment.namePrefix}apig
   MyApiGatewayAuthorizer:
     Type: AWS::ApiGateway::Authorizer
     Properties:
@@ -52,7 +55,9 @@ Resources:
           Ref: ApiGatewayRestApi
       Type: COGNITO_USER_POOLS
       ProviderARNs:
-          - ${ssm:/${self:provider.stage}/formsli/cognito/userpool/arn}
+        - ${ssm:/${self:provider.stage}/formsli/cognito/userpool/arn}
+      Tags:
+        - Name: ${self:provider.environment.namePrefix}authorizer
   # /form (references the API Gateway as parent) - Used for form related apis
   ApiGatewayResourceForm:
     Type: AWS::ApiGateway::Resource

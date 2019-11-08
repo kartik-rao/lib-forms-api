@@ -87,6 +87,8 @@ Resources:
       - SftpUserRole
     Type: AWS::Transfer::Server
     Properties:
+      Tags:
+        - Name: ${self:provider.environment.namePrefix}-sftp
       EndpointType: "PUBLIC"
       IdentityProviderType: "API_GATEWAY"
       LoggingRole: 
