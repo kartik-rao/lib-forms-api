@@ -2,83 +2,107 @@ Resources:
   EntryDLQueue:
     Type: "AWS::SQS::Queue"
     Properties:
-      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/id}
+      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/app/id}
       QueueName: "${self:provider.environment.sqs_entry}-dl"
       MessageRetentionPeriod: 1209600 # 14 days in seconds
       Tags:
-        - Name: "${self:provider.environment.sqs_entry}-dl"
-        - IsDeadLetterQueue: "true"
+        -
+          Key: Name
+          Value: "${self:provider.environment.sqs_entry}-dl"
+        -
+          Key: IsDeadLetterQueue
+          Value: "true"
   EntryQueue:
     Type: "AWS::SQS::Queue"
     Properties:
-      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/id}
+      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/app/id}
       VisibilityTimeout: 300
       QueueName: ${self:provider.environment.sqs_entry}
       RedrivePolicy:
         maxReceiveCount: 5
         deadLetterTargetArn : { Fn::GetAtt: [EntryDLQueue, Arn] }
       Tags:
-        - Name: ${self:provider.environment.sqs_entry}
+        -
+          Key: Name
+          Value: ${self:provider.environment.sqs_entry}
   FirehoseDLQueue:
     Type: "AWS::SQS::Queue"
     Properties:
-      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/id}
+      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/app/id}
       QueueName: "${self:provider.environment.sqs_firehose}-dl"
       MessageRetentionPeriod: 1209600 # 14 days in seconds
       Tags:
-        - IsDeadLetterQueue: "true"
-        - Name: "${self:provider.environment.sqs_firehose}-dl"
+        -
+          Key: IsDeadLetterQueue
+          Value: "true"
+        -
+          Key: Name
+          Value: "${self:provider.environment.sqs_firehose}-dl"
   FirehoseQueue:
     Type: "AWS::SQS::Queue"
     Properties:
       VisibilityTimeout: 600
       QueueName: ${self:provider.environment.sqs_firehose}
-      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/id}
+      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/app/id}
       RedrivePolicy:
         maxReceiveCount: 5
         deadLetterTargetArn : { Fn::GetAtt: [FirehoseDLQueue, Arn] }
       Tags:
-        - Name: ${self:provider.environment.sqs_firehose}
+        -
+          Key: Name
+          Value: ${self:provider.environment.sqs_firehose}
   AnalyticsDLQueue:
     Type: "AWS::SQS::Queue"
     Properties:
-      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/id}
+      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/app/id}
       QueueName: "${self:provider.environment.sqs_analytics}-dl"
       MessageRetentionPeriod: 1209600 # 14 days in seconds
       Tags:
-        - IsDeadLetterQueue: "true"
-        - Name: "${self:provider.environment.sqs_analytics}-dl"
+        -
+          Key: IsDeadLetterQueue
+          Value: "true"
+        - 
+          Key: Name
+          Value: "${self:provider.environment.sqs_analytics}-dl"
   AnalyticsQueue:
     Type: "AWS::SQS::Queue"
     Properties:
       VisibilityTimeout: 600
       QueueName: ${self:provider.environment.sqs_analytics}
-      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/id}
+      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/app/id}
       RedrivePolicy:
         maxReceiveCount: 5
         deadLetterTargetArn : { Fn::GetAtt: [AnalyticsDLQueue, Arn] }
       Tags:
-        - Name: ${self:provider.environment.sqs_analytics}
+        -
+          Key: Name
+          Value: ${self:provider.environment.sqs_analytics}
   IntegrationDLQueue:
     Type: "AWS::SQS::Queue"
     Properties:
-      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/id}
+      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/app/id}
       QueueName: "${self:provider.environment.sqs_integration}-dl"
       MessageRetentionPeriod: 1209600 # 14 days in seconds
       Tags:
-        - IsDeadLetterQueue: "true"
-        - Name: "${self:provider.environment.sqs_integration}-dl"
+        -
+          Key: IsDeadLetterQueue
+          Value: "true"
+        -
+          Key: Name
+          Value: "${self:provider.environment.sqs_integration}-dl"
   IntegrationQueue:
     Type: "AWS::SQS::Queue"
     Properties:
-      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/id}
+      KmsMasterKeyId: ${ssm:/${self:provider.stage}/formsli/kms/cmk/app/id}
       VisibilityTimeout: 600
       QueueName: ${self:provider.environment.sqs_integration}
       RedrivePolicy:
         maxReceiveCount: 5
         deadLetterTargetArn : { Fn::GetAtt: [IntegrationDLQueue, Arn] }
       Tags:
-        - Name: ${self:provider.environment.sqs_integration}
+        -
+          Key: Name
+          Value: ${self:provider.environment.sqs_integration}
 # Print out the queue names
 Outputs:
   FirehoseQueue:
