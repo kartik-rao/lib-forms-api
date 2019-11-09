@@ -58,10 +58,6 @@ Resources:
       Type: COGNITO_USER_POOLS
       ProviderARNs:
         - ${ssm:/${self:provider.stage}/formsli/cognito/userpool/arn}
-      Tags:
-        - 
-          Key: Name
-          Value : ${self:provider.environment.namePrefix}authorizer
   # /form (references the API Gateway as parent) - Used for form related apis
   ApiGatewayResourceForm:
     Type: AWS::ApiGateway::Resource
