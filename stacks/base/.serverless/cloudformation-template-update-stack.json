@@ -73,7 +73,7 @@
         },
         "Policies": [
           {
-            "PolicyName": "dev-formsli--role-lambda",
+            "PolicyName": "fl-dev-role-lambda",
             "PolicyDocument": {
               "Version": "2012-10-17",
               "Statement": [
@@ -116,9 +116,15 @@
     "ApiGatewayRestApi": {
       "Type": "AWS::ApiGateway::RestApi",
       "Properties": {
-        "Name": "dev-formsli-apig",
+        "Name": "fl-dev-apig",
         "Description": "dev formsli-base api gateway",
-        "MinimumCompressionSize": 4096
+        "MinimumCompressionSize": 4096,
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "fl-dev-apig"
+          }
+        ]
       }
     },
     "MyApiGatewayAuthorizer": {
@@ -366,6 +372,12 @@
       ],
       "Type": "AWS::Transfer::Server",
       "Properties": {
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "fl-dev-sftp"
+          }
+        ],
         "EndpointType": "PUBLIC",
         "IdentityProviderType": "API_GATEWAY",
         "LoggingRole": {
@@ -431,12 +443,17 @@
     "EntryDLQueue": {
       "Type": "AWS::SQS::Queue",
       "Properties": {
-        "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
-        "QueueName": "dev-formsli-entry-queue-dl",
+        "KmsMasterKeyId": "bd6821c2-2816-4736-8010-e27859a4f281",
+        "QueueName": "fl-dev-entry-queue-dl",
         "MessageRetentionPeriod": 1209600,
         "Tags": [
           {
-            "IsDeadLetterQueue": "true"
+            "Key": "Name",
+            "Value": "fl-dev-entry-queue-dl"
+          },
+          {
+            "Key": "IsDeadLetterQueue",
+            "Value": "true"
           }
         ]
       }
@@ -444,9 +461,9 @@
     "EntryQueue": {
       "Type": "AWS::SQS::Queue",
       "Properties": {
-        "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
+        "KmsMasterKeyId": "bd6821c2-2816-4736-8010-e27859a4f281",
         "VisibilityTimeout": 300,
-        "QueueName": "dev-formsli-entry-queue",
+        "QueueName": "fl-dev-entry-queue",
         "RedrivePolicy": {
           "maxReceiveCount": 5,
           "deadLetterTargetArn": {
@@ -455,18 +472,29 @@
               "Arn"
             ]
           }
-        }
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "fl-dev-entry-queue"
+          }
+        ]
       }
     },
     "FirehoseDLQueue": {
       "Type": "AWS::SQS::Queue",
       "Properties": {
-        "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
-        "QueueName": "dev-formsli-firehose-queue-dl",
+        "KmsMasterKeyId": "bd6821c2-2816-4736-8010-e27859a4f281",
+        "QueueName": "fl-dev-firehose-queue-dl",
         "MessageRetentionPeriod": 1209600,
         "Tags": [
           {
-            "IsDeadLetterQueue": "true"
+            "Key": "IsDeadLetterQueue",
+            "Value": "true"
+          },
+          {
+            "Key": "Name",
+            "Value": "fl-dev-firehose-queue-dl"
           }
         ]
       }
@@ -475,8 +503,8 @@
       "Type": "AWS::SQS::Queue",
       "Properties": {
         "VisibilityTimeout": 600,
-        "QueueName": "dev-formsli-firehose-queue",
-        "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
+        "QueueName": "fl-dev-firehose-queue",
+        "KmsMasterKeyId": "bd6821c2-2816-4736-8010-e27859a4f281",
         "RedrivePolicy": {
           "maxReceiveCount": 5,
           "deadLetterTargetArn": {
@@ -485,18 +513,29 @@
               "Arn"
             ]
           }
-        }
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "fl-dev-firehose-queue"
+          }
+        ]
       }
     },
     "AnalyticsDLQueue": {
       "Type": "AWS::SQS::Queue",
       "Properties": {
-        "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
-        "QueueName": "dev-formsli-analytics-queue-dl",
+        "KmsMasterKeyId": "bd6821c2-2816-4736-8010-e27859a4f281",
+        "QueueName": "fl-dev-analytics-queue-dl",
         "MessageRetentionPeriod": 1209600,
         "Tags": [
           {
-            "IsDeadLetterQueue": "true"
+            "Key": "IsDeadLetterQueue",
+            "Value": "true"
+          },
+          {
+            "Key": "Name",
+            "Value": "fl-dev-analytics-queue-dl"
           }
         ]
       }
@@ -505,8 +544,8 @@
       "Type": "AWS::SQS::Queue",
       "Properties": {
         "VisibilityTimeout": 600,
-        "QueueName": "dev-formsli-analytics-queue",
-        "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
+        "QueueName": "fl-dev-analytics-queue",
+        "KmsMasterKeyId": "bd6821c2-2816-4736-8010-e27859a4f281",
         "RedrivePolicy": {
           "maxReceiveCount": 5,
           "deadLetterTargetArn": {
@@ -515,18 +554,29 @@
               "Arn"
             ]
           }
-        }
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "fl-dev-analytics-queue"
+          }
+        ]
       }
     },
     "IntegrationDLQueue": {
       "Type": "AWS::SQS::Queue",
       "Properties": {
-        "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
-        "QueueName": "dev-formsli-integration-queue-dl",
+        "KmsMasterKeyId": "bd6821c2-2816-4736-8010-e27859a4f281",
+        "QueueName": "fl-dev-integration-queue-dl",
         "MessageRetentionPeriod": 1209600,
         "Tags": [
           {
-            "IsDeadLetterQueue": "true"
+            "Key": "IsDeadLetterQueue",
+            "Value": "true"
+          },
+          {
+            "Key": "Name",
+            "Value": "fl-dev-integration-queue-dl"
           }
         ]
       }
@@ -534,9 +584,9 @@
     "IntegrationQueue": {
       "Type": "AWS::SQS::Queue",
       "Properties": {
-        "KmsMasterKeyId": "204c55dd-9e6f-4cdd-80bb-5454556cd4af",
+        "KmsMasterKeyId": "bd6821c2-2816-4736-8010-e27859a4f281",
         "VisibilityTimeout": 600,
-        "QueueName": "dev-formsli-integration-queue",
+        "QueueName": "fl-dev-integration-queue",
         "RedrivePolicy": {
           "maxReceiveCount": 5,
           "deadLetterTargetArn": {
@@ -545,7 +595,13 @@
               "Arn"
             ]
           }
-        }
+        },
+        "Tags": [
+          {
+            "Key": "Name",
+            "Value": "fl-dev-integration-queue"
+          }
+        ]
       }
     },
     "ssmAppName": {
@@ -607,7 +663,7 @@
       "Properties": {
         "Name": "/dev/formsli/prefix/name",
         "Description": "Stage based AWS resource name prefix",
-        "Value": "dev-formsli-",
+        "Value": "fl-dev-",
         "Type": "String"
       }
     },

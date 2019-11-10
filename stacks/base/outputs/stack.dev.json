@@ -1,7 +1,7 @@
 {
-  "FirehoseQueue": "https://sqs.ap-northeast-1.amazonaws.com/286358943194/dev-formsli-firehose-queue",
-  "IntegrationQueue": "https://sqs.ap-northeast-1.amazonaws.com/286358943194/dev-formsli-integration-queue",
-  "AnalyticsQueue": "https://sqs.ap-northeast-1.amazonaws.com/286358943194/dev-formsli-analytics-queue",
-  "EntryQueue": "https://sqs.ap-northeast-1.amazonaws.com/286358943194/dev-formsli-entry-queue",
+  "FirehoseQueue": "https://sqs.ap-northeast-1.amazonaws.com/286358943194/fl-dev-firehose-queue",
+  "IntegrationQueue": "https://sqs.ap-northeast-1.amazonaws.com/286358943194/fl-dev-integration-queue",
+  "AnalyticsQueue": "https://sqs.ap-northeast-1.amazonaws.com/286358943194/fl-dev-analytics-queue",
+  "EntryQueue": "https://sqs.ap-northeast-1.amazonaws.com/286358943194/fl-dev-entry-queue",
   "ServerlessDeploymentBucketName": "fl-dev-deployments"
 }
