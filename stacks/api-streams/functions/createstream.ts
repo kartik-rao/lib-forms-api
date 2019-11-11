@@ -103,8 +103,11 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
                     }
                 },
                 Tags : [
-                    { Key: "Stage",  Value: stage},
-                    { Key: "ServiceName",  Value: ServiceName},
+                    { Key: "Application",  Value: "formsli"},
+                    { Key: "Name",  Value: streamName},
+                    { Key: "Environment",  Value: stage},
+                    { Key: "Stack",  Value: ServiceName},
+                    { Key: "Deployer",  Value: ServiceName},
                     { Key: "TenantId",  Value: tenantId},
                     { Key: "FormId",  Value: formId}
                 ]
