@@ -120,7 +120,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "fl-dev-deployments",
-          "S3Key": "serverless/formsli-stream/dev/1571379656036-2019-10-18T06:20:56.036Z/formsli-stream.zip"
+          "S3Key": "formsli-stream/formsli-stream/dev/1573473482894-2019-11-11T11:58:02.894Z/formsli-stream.zip"
         },
         "FunctionName": "formsli-stream-dev-create-delivery-stream",
         "Handler": "functions/createstream.handle",
@@ -133,24 +133,6 @@
         },
         "Runtime": "nodejs10.x",
         "Timeout": 30,
-        "Tags": [
-          {
-            "Key": "stage",
-            "Value": "dev"
-          },
-          {
-            "Key": "service",
-            "Value": "formsli-stream"
-          },
-          {
-            "Key": "region",
-            "Value": "ap-northeast-1"
-          },
-          {
-            "Key": "stack",
-            "Value": "api-streams"
-          }
-        ],
         "Environment": {
           "Variables": {
             "region": "ap-northeast-1",
@@ -180,22 +162,22 @@
         "CreateEntryStreamLogGroup"
       ]
     },
-    "CreateEntryStreamLambdaVersion9ydddqYEK7D9WLuc8xhVfCT3uaqNp7w3qV1hGMzWVY": {
+    "CreateEntryStreamLambdaVersionK4o892EI9lyiOwBwgr5Dbhsx9vdtF4gMVF9Knho": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "CreateEntryStreamLambdaFunction"
         },
-        "CodeSha256": "9i2EOEJ0v3uanFoiLD2b/EPs+gspvdViK4z9zaf5aEQ="
+        "CodeSha256": "oqQlaPXuyoRUFN74LWNSDvHHj1PiPv5ct8hFK1ADAM4="
       }
     },
     "ApiGatewayResourceStreamFormidVar": {
       "Type": "AWS::ApiGateway::Resource",
       "Properties": {
-        "ParentId": "b66gbx",
+        "ParentId": "crt6jp",
         "PathPart": "{formId}",
-        "RestApiId": "w2s48kp2a7"
+        "RestApiId": "hivvqih13m"
       }
     },
     "ApiGatewayMethodStreamFormidVarOptions": {
@@ -240,7 +222,7 @@
         "ResourceId": {
           "Ref": "ApiGatewayResourceStreamFormidVar"
         },
-        "RestApiId": "w2s48kp2a7"
+        "RestApiId": "hivvqih13m"
       }
     },
     "ApiGatewayMethodStreamFormidVarPut": {
@@ -251,10 +233,10 @@
         "ResourceId": {
           "Ref": "ApiGatewayResourceStreamFormidVar"
         },
-        "RestApiId": "w2s48kp2a7",
+        "RestApiId": "hivvqih13m",
         "ApiKeyRequired": false,
         "AuthorizationType": "COGNITO_USER_POOLS",
-        "AuthorizerId": "0bbeey",
+        "AuthorizerId": "2nu754",
         "Integration": {
           "IntegrationHttpMethod": "POST",
           "Type": "AWS_PROXY",
@@ -285,10 +267,10 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1571379626454": {
+    "ApiGatewayDeployment1573473457082": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
-        "RestApiId": "w2s48kp2a7",
+        "RestApiId": "hivvqih13m",
         "StageName": "dev"
       },
       "DependsOn": [
@@ -324,7 +306,7 @@
                 "Ref": "AWS::AccountId"
               },
               ":",
-              "w2s48kp2a7",
+              "hivvqih13m",
               "/*/*"
             ]
           ]
@@ -355,7 +337,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "fl-dev-deployments",
-          "S3Key": "serverless/formsli-stream/dev/1571379656036-2019-10-18T06:20:56.036Z/custom-resources.zip"
+          "S3Key": "formsli-stream/formsli-stream/dev/1573473482894-2019-11-11T11:58:02.894Z/custom-resources.zip"
         },
         "FunctionName": "formsli-stream-dev-custom-resource-apigw-cw-role",
         "Handler": "apiGatewayCloudWatchRole/handler.handler",
@@ -855,7 +837,11 @@
             "Arn"
           ]
         },
-        "Type": "String"
+        "Type": "String",
+        "Tags": {
+          "Key": "Name",
+          "Value": "dev.formsli.kinesis.accessRoleArn"
+        }
       }
     },
     "CreateEntryStreamSubscriptionFilter": {
@@ -878,7 +864,7 @@
     "CreateEntryStreamLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "CreateEntryStreamLambdaVersion9ydddqYEK7D9WLuc8xhVfCT3uaqNp7w3qV1hGMzWVY"
+        "Ref": "CreateEntryStreamLambdaVersionK4o892EI9lyiOwBwgr5Dbhsx9vdtF4gMVF9Knho"
       }
     },
     "ServiceEndpoint": {
@@ -888,7 +874,7 @@
           "",
           [
             "https://",
-            "w2s48kp2a7",
+            "hivvqih13m",
             ".execute-api.",
             {
               "Ref": "AWS::Region"

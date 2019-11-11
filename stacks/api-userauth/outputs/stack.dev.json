@@ -1,7 +1,7 @@
 {
-  "AuthftpLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-auth-dev-authftp:3",
-  "InviteLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-auth-dev-invite:3",
-  "ServiceEndpoint": "https://w2s48kp2a7.execute-api.ap-northeast-1.amazonaws.com/dev",
+  "AuthftpLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-auth-dev-authftp:4",
+  "InviteLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-auth-dev-invite:4",
+  "ServiceEndpoint": "https://hivvqih13m.execute-api.ap-northeast-1.amazonaws.com/dev",
   "ServerlessDeploymentBucketName": "fl-dev-deployments",
-  "PostConfirmationLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-auth-dev-postconf:3"
+  "PostConfirmationLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-auth-dev-postconf:4"
 }

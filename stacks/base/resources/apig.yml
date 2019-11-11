@@ -13,7 +13,7 @@ Resources:
       Path: "/"
       RoleName: { "Fn::Join": [ "-", [ "${self:service}", "${self:provider.stage}", "${self:provider.region}", "lambdaRole" ] ] }
       Policies:
-        - PolicyName: "${self:provider.environment.namePrefix}-role-lambda"
+        - PolicyName: "${self:provider.environment.namePrefix}role-lambda"
           PolicyDocument:
             Version: "2012-10-17"
             Statement:
@@ -42,6 +42,11 @@ Resources:
     Properties:
       Name: ${self:provider.environment.namePrefix}apig
       Description: ${self:provider.stage} ${self:service} api gateway
+      MinimumCompressionSize: 4096
+      Tags:
+        - 
+          Key: Name
+          Value : ${self:provider.environment.namePrefix}apig
   MyApiGatewayAuthorizer:
     Type: AWS::ApiGateway::Authorizer
     Properties:
@@ -52,7 +57,7 @@ Resources:
           Ref: ApiGatewayRestApi
       Type: COGNITO_USER_POOLS
       ProviderARNs:
-          - ${ssm:/${self:provider.stage}/formsli/cognito/userpool/arn}
+        - ${ssm:/${self:provider.stage}/formsli/cognito/userpool/arn}
   # /form (references the API Gateway as parent) - Used for form related apis
   ApiGatewayResourceForm:
     Type: AWS::ApiGateway::Resource

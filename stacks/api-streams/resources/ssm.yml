@@ -6,3 +6,6 @@ Resources:
       Description : Application Name
       Value: { Fn::GetAtt: [KinesisAccessRole, Arn] }
       Type: String
+      Tags:
+          Key: Name
+          Value: "${self:provider.stage}.formsli.kinesis.accessRoleArn"
