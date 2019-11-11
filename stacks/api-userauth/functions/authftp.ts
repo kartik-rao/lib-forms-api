@@ -25,6 +25,7 @@ const UserPoolClientId = process.env.userPoolAdminClientId;
 const S3Bucket = process.env.s3_user_bucket;
 const SftpRoleArn = process.env.sftp_role_arn;
 const SftpServerId = process.env.sftp_server_id;
+const KMSKeyArn = process.env.kmsCustomerDataArn;
 
 const readOnlyActions = ["s3:GetObject","s3:GetObjectVersion"];
 const allActions = ["s3:DeleteObjectVersion","s3:PutObject","s3:DeleteObject"].concat(readOnlyActions);
@@ -87,7 +88,17 @@ const getPolicyResponse = (tenantId: string, group: string) => {
                         "Effect": "Allow",
                         "Action": ${JSON.stringify(groupActionsMap[group])},
                         "Resource": "arn:aws:s3:::\${transfer:HomeDirectory}*"
-                     }
+                     },
+                     {
+                        "Sid": "AllowDataDecryption",
+                        "Action": [
+                            "kms:Decrypt",
+                            "kms:Encrypt",
+                            "kms:GenerateDataKey"
+                        ],
+                        "Effect": "Allow",
+                        "Resource": "${KMSKeyArn}"
+                    }
                 ]
             }`,
             HomeBucket : S3Bucket,
