@@ -1,5 +1,5 @@
 {
-  "CreateEntryStreamLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-stream-dev-create-delivery-stream:5",
-  "ServiceEndpoint": "https://w2s48kp2a7.execute-api.ap-northeast-1.amazonaws.com/dev",
+  "CreateEntryStreamLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-stream-dev-create-delivery-stream:6",
+  "ServiceEndpoint": "https://hivvqih13m.execute-api.ap-northeast-1.amazonaws.com/dev",
   "ServerlessDeploymentBucketName": "fl-dev-deployments"
 }
