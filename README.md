@@ -63,6 +63,7 @@ Deployment should be performed in the following order
 - stacks/api-streams
 - stacks/api-appsync
 - stacks/api-forms
+- stacks/api-app
 
 Navigate to the subfolder within the stacks directory and run `npm run deploy`
 
@@ -80,6 +81,7 @@ Run `npm run release` in /client, this will re-run codegen and publish updated *
 
 ## Removing
 Navigate to the following directories **in the specified order** and run `npm run remove`
+- stacks/api-app
 - stacks/api-forms
 - stacks/api-appsync
 - stacks/api-userauth
