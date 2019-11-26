@@ -5,7 +5,7 @@
     "AppSyncRDSRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
-        "RoleName": "dev-formsli-appsync-iam-role",
+        "RoleName": "fl-dev-appsync-iam-role",
         "ManagedPolicyArns": [
           {
             "Ref": "AppSyncRDSPolicy"
@@ -91,7 +91,7 @@
     "AppSyncCloudWatchRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {
-        "RoleName": "dev-formsli-appsync-logging-iam-role",
+        "RoleName": "fl-dev-appsync-logging-iam-role",
         "ManagedPolicyArns": [
           {
             "Ref": "AppSyncCloudWatchPolicy"
@@ -144,6 +144,10 @@
         "GraphQlApi"
       ],
       "Properties": {
+        "Tags": {
+          "Key": "Name",
+          "Value": "fl-dev-cf-graphql"
+        },
         "DistributionConfig": {
           "Enabled": true,
           "HttpVersion": "http2",
@@ -174,12 +178,10 @@
               "CustomOriginConfig": {
                 "HTTPPort": 80,
                 "HTTPSPort": 443,
-                "OriginKeepaliveTimeout": 60,
+                "OriginKeepaliveTimeout": 300,
                 "OriginReadTimeout": 60,
                 "OriginProtocolPolicy": "https-only",
                 "OriginSSLProtocols": [
-                  "TLSv1",
-                  "TLSv1.1",
                   "TLSv1.2"
                 ]
               }
@@ -216,7 +218,7 @@
           },
           "ViewerCertificate": {
             "SslSupportMethod": "sni-only",
-            "MinimumProtocolVersion": "TLSv1.1_2016",
+            "MinimumProtocolVersion": "TLSv1.2_2018",
             "AcmCertificateArn": "arn:aws:acm:us-east-1:286358943194:certificate/8e043316-5cf7-467c-b453-159d3cf3d68e"
           }
         }
@@ -232,7 +234,11 @@
             "ApiId"
           ]
         },
-        "Type": "String"
+        "Type": "String",
+        "Tags": {
+          "Key": "Name",
+          "Value": "dev.formsli.graphql.api.id"
+        }
       }
     },
     "ssmAppsyncUrl": {
@@ -245,7 +251,11 @@
             "GraphQLUrl"
           ]
         },
-        "Type": "String"
+        "Type": "String",
+        "Tags": {
+          "Key": "Name",
+          "Value": "dev.formsli.graphql.api.url"
+        }
       }
     },
     "ssmAppsyncApiKey": {
@@ -258,7 +268,11 @@
             "ApiKey"
           ]
         },
-        "Type": "String"
+        "Type": "String",
+        "Tags": {
+          "Key": "Name",
+          "Value": "dev.formsli.graphql.api.key"
+        }
       }
     },
     "ssmAppsyncApiEndpoint": {
@@ -281,7 +295,11 @@
             }
           ]
         },
-        "Type": "String"
+        "Type": "String",
+        "Tags": {
+          "Key": "Name",
+          "Value": "dev.formsli.graphql.api.endpoint"
+        }
       }
     },
     "ssmRdsClusterArn": {
@@ -291,7 +309,11 @@
         "Value": {
           "Fn::Sub": "arn:aws:rds:${AWS::Region}:${AWS::AccountId}:cluster:fl-rds-cluster-dev"
         },
-        "Type": "String"
+        "Type": "String",
+        "Tags": {
+          "Key": "Name",
+          "Value": "dev.formsli.rds.arn"
+        }
       }
     },
     "AppsyncDnsRecord": {
@@ -318,7 +340,7 @@
     "GraphQlApi": {
       "Type": "AWS::AppSync::GraphQLApi",
       "Properties": {
-        "Name": "dev-formsli-graphql",
+        "Name": "fl-dev-graphql",
         "AuthenticationType": "AMAZON_COGNITO_USER_POOLS",
         "AdditionalAuthenticationProviders": [
           {
@@ -327,7 +349,7 @@
         ],
         "UserPoolConfig": {
           "AwsRegion": "ap-northeast-1",
-          "UserPoolId": "ap-northeast-1_Q798Nsl33",
+          "UserPoolId": "ap-northeast-1_0wTBnqAhr",
           "DefaultAction": "ALLOW"
         },
         "LogConfig": {
@@ -371,7 +393,7 @@
           ]
         },
         "Description": "serverless-appsync-plugin: AppSync API Key for GraphQlApiKeyDefault",
-        "Expires": 1602916333
+        "Expires": 1606281729
       }
     },
     "GraphQlSchema": {
