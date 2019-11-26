@@ -33,7 +33,6 @@ const CORS_HEADERS = {
 export const handle = async (event : APIGatewayEvent, context : APIGatewayEventRequestContext, callback : any) => {
     let {requestId, stage, identity, requestTime} = event.requestContext;
     let {tenantId, integrationId} = event.pathParameters;
-    let criteria = {tags: []}
 
     isDebug && console.log(`${ServiceName} - listUserIntegrations.handle init`);
     if (!event.requestContext.authorizer || !event.requestContext.authorizer.claims) {
@@ -42,7 +41,8 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
         return;
     }
     let claims: any = event.requestContext.authorizer.claims;
-    if(claims["custom:tenantId"] !== tenantId) {
+    let isAdmin = claims["group"] == "Admin";
+    if(claims["custom:tenantId"] !== tenantId && !isAdmin) {
         console.error(new Error("TenantMismatchError"));
         callback(null, {statusCode: 403, headers: CORS_HEADERS, body: JSON.stringify({message: "Forbidden"})});
         return;
