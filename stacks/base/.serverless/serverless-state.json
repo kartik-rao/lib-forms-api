@@ -261,6 +261,18 @@
               "PathPart": "app"
             }
           },
+          "ApiGatewayResourceIntegration": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ParentId": {
+                "Fn::GetAtt": "ApiGatewayRestApi.RootResourceId"
+              },
+              "PathPart": "integration"
+            }
+          },
           "SftpUserRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
@@ -1233,6 +1245,18 @@
             "PathPart": "app"
           }
         },
+        "ApiGatewayResourceIntegration": {
+          "Type": "AWS::ApiGateway::Resource",
+          "Properties": {
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "ParentId": {
+              "Fn::GetAtt": "ApiGatewayRestApi.RootResourceId"
+            },
+            "PathPart": "integration"
+          }
+        },
         "SftpUserRole": {
           "Type": "AWS::IAM::Role",
           "Properties": {
@@ -1978,7 +2002,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "formsli-base/formsli-base/dev/1573427083179-2019-11-10T23:04:43.179Z",
+    "artifactDirectoryName": "formsli-base/formsli-base/dev/1574745184575-2019-11-26T05:13:04.575Z",
     "artifact": ""
   }
 }

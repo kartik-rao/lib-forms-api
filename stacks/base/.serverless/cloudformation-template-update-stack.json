@@ -214,6 +214,18 @@
         "PathPart": "app"
       }
     },
+    "ApiGatewayResourceIntegration": {
+      "Type": "AWS::ApiGateway::Resource",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        },
+        "ParentId": {
+          "Fn::GetAtt": "ApiGatewayRestApi.RootResourceId"
+        },
+        "PathPart": "integration"
+      }
+    },
     "SftpUserRole": {
       "Type": "AWS::IAM::Role",
       "Properties": {

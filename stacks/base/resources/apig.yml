@@ -44,7 +44,7 @@ Resources:
       Description: ${self:provider.stage} ${self:service} api gateway
       MinimumCompressionSize: 4096
       Tags:
-        - 
+        -
           Key: Name
           Value : ${self:provider.environment.namePrefix}apig
   MyApiGatewayAuthorizer:
@@ -100,3 +100,10 @@ Resources:
       RestApiId: { Ref: "ApiGatewayRestApi" }
       ParentId: { Fn::GetAtt: "ApiGatewayRestApi.RootResourceId" }
       PathPart: app
+  # /integration (references the API Gateway as parent) - Used for 3rd party integration apis
+  ApiGatewayResourceIntegration:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: { Ref: "ApiGatewayRestApi" }
+      ParentId: { Fn::GetAtt: "ApiGatewayRestApi.RootResourceId" }
+      PathPart: integration
