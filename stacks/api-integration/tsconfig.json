@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "rootDir": ".",
+        "watch": false,
+        "target": "es6",
+        "lib": ["es6"],
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "esModuleInterop" : true
+    },
+    "include": [
+        "functions/*",
+        "../../types/aws-xray-sdk.d.ts"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}
