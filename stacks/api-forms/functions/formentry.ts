@@ -11,7 +11,7 @@ const Region              = process.env.region;
 const EntryQueueUrl       = process.env.sqs_entry_url;
 const FirehoseQueueUrl    = process.env.sqs_firehose_url;
 const IntegrationQueueUrl = process.env.sqs_integration_url;
-const AnalyticsQueueUrl   = process.env.sqs_integration_url;
+const AnalyticsQueueUrl   = process.env.sqs_analytics_url;
 
 const isDebug = Env !== "production";
 
