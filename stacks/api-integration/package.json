@@ -28,17 +28,18 @@
     "webpack-node-externals": "^1.7.2"
   },
   "dependencies": {
-    "aws-appsync": "^1.8.1",
     "apollo-boost": "^0.4.4",
     "apollo-link-context": "^1.0.19",
+    "aws-appsync": "^1.8.1",
     "aws-sdk": "^2.535.0",
     "aws-xray-sdk": "^2.3.6",
+    "data-api-client": "^1.0.0-beta",
+    "es6-promise": "^4.1.1",
     "graphql": "^14.5.8",
     "graphql-tag": "^2.10.1",
-    "short-uuid": "^3.1.1",
-    "source-map-support": "^0.5.13",
     "isomorphic-fetch": "^2.2.1",
-    "data-api-client": "^1.0.0-beta",
-    "es6-promise": "^4.1.1"
+    "lodash": "^4.17.15",
+    "short-uuid": "^3.1.1",
+    "source-map-support": "^0.5.13"
   }
 }
