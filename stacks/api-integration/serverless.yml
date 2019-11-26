@@ -41,6 +41,7 @@ provider:
     dbClusterId     : ${ssm:/${self:provider.stage}/formsli/rds/id}
     dbClusterArn    : "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:${self:provider.environment.dbClusterId}"
     dbClusterSecretArn : ${ssm:/${self:provider.stage}/formsli/rds/password/secret}
+    vendorAccountId    : formsli
     vendorApiUrl       : https://tray.io/graphql
     vendorApiToken     : ${ssm:/${self:provider.stage}/formsli/vendor/tray/apiToken}
     graphqlApiId    : ${ssm:/${self:provider.stage}/formsli/graphql/api/id}
