@@ -62,6 +62,7 @@ Deployment should be performed in the following order
 - stacks/api-userauth
 - stacks/api-streams
 - stacks/api-appsync
+- stacks/api-integration
 - stacks/api-forms
 - stacks/api-app
 
@@ -84,6 +85,7 @@ Navigate to the following directories **in the specified order** and run `npm ru
 - stacks/api-app
 - stacks/api-forms
 - stacks/api-appsync
+- stacks/api-integration
 - stacks/api-userauth
 - stacks/api-streams
 - stacks/base
