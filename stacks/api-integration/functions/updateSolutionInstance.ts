@@ -32,19 +32,22 @@ const CORS_HEADERS = {
 
 
 export const handle = async (event : APIGatewayEvent, context : APIGatewayEventRequestContext, callback : any) => {
-    let {requestId, stage, identity, requestTime} = event.requestContext;
-    let {tenantId} = event.pathParameters;
-
+    let {requestId} = event.requestContext;
     let payload;
     try {
         payload = JSON.parse(event.body);
         console.log(`${ServiceName} - invite.handle - payload`, payload);
+        if (!payload.tenantId || !payload.instanceId) {
+            callback(null, {statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({"message": "MissingPayloadAttributes"})});
+            return;
+        }
     } catch (error) {
         console.error(error);
         callback(null, {statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({"message": "Invalid payload"})});
         return;
     }
 
+    let {tenantId} = payload;
     isDebug && console.log(`${ServiceName} - updateSolutionInstance.handle init`);
     if (!event.requestContext.authorizer || !event.requestContext.authorizer.claims) {
         console.error(new Error("NoAuth"));
