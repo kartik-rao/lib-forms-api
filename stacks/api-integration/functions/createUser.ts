@@ -43,7 +43,7 @@ const CORS_HEADERS = {
 
 
 export const handle = async (event : APIGatewayEvent, context : APIGatewayEventRequestContext, callback : any) => {
-    let {requestId, stage, identity, requestTime} = event.requestContext;
+    let {requestId} = event.requestContext;
     let {tenantId} = event.pathParameters;
 
     isDebug && console.log(`${ServiceName} - createIntegrationTenant.handle init`);
@@ -103,7 +103,6 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
         }
 
         if (accountResponse && accountResponse.records && accountResponse.records.length > 0) {
-            // Load the account
             let externalUser;
             try {
                 let account = accountResponse.records[0];
