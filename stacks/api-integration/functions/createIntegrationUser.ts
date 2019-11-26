@@ -46,10 +46,23 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
     let {requestId, stage, identity, requestTime} = event.requestContext;
     let {tenantId} = event.pathParameters;
 
-    isDebug && console.log(`${ServiceName} - createIntegrationTenant.handle get integration user`);
+    isDebug && console.log(`${ServiceName} - createIntegrationTenant.handle init`);
+    if (!event.requestContext.authorizer || !event.requestContext.authorizer.claims) {
+        console.error(new Error("NoAuth"));
+        callback(null, {statusCode: 403, headers: CORS_HEADERS, body: JSON.stringify({message: "Forbidden"})});
+        return;
+    }
+    let claims: any = event.requestContext.authorizer.claims;
+    if(claims["custom:tenantId"] !== tenantId) {
+        console.error(new Error("TenantMismatchError"));
+        callback(null, {statusCode: 403, headers: CORS_HEADERS, body: JSON.stringify({message: "Forbidden"})});
+        return;
+    }
 
+    isDebug && console.log(`${ServiceName} - createIntegrationTenant.handle get integration user`);
     let integrationUser : any;
 
+    // Check if we have already created a tenant in the vendor
     try {
         integrationUser = await dataApi.query({
             sql: `SELECT ac.name as 'accountName', ai.id, ai.externalId, ai.createdAt from AccountIntegration ai, Account ac WHERE ac.id = :tenantId AND ai.accountId = ac.id`,
@@ -62,6 +75,7 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
     }
 
     if (integrationUser && integrationUser.records && integrationUser.records.length > 0) {
+        // Vendor tenant already exists
         isDebug && console.log(`${ServiceName} - createIntegrationTenant.handle OK - UserExists`);
         let data = integrationUser.records[0];
         callback(null, {statusCode: 304, headers: CORS_HEADERS, body: JSON.stringify({
@@ -71,6 +85,7 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
         })});
         return;
     } else {
+        // We need to create a new tenant using the vendor API
         isDebug && console.log(`${ServiceName} - createIntegrationTenant.handle - CreateUser - loading account`);
         let accountResponse: any;
         try {
@@ -86,6 +101,7 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
         }
 
         if (accountResponse && accountResponse.records && accountResponse.records.length > 0) {
+            // Load the account
             let externalUser;
             try {
                 let account = accountResponse.records[0];
@@ -97,6 +113,7 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
                             userId
                         }
                 }`;
+                // Call vendor createExternalUser API
                 let createUserResponse = await vendorAdminClient.mutate({mutation});
                 externalUser = createUserResponse.data["createExternalUser"];
             } catch (error) {
@@ -105,6 +122,7 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
             }
 
             try {
+                // Save vendor user details in AccountIntegration table
                 isDebug && console.log(`${ServiceName} - createIntegrationTenant.handle - CreateUser - saving vendor user`);
                 // Set up Apollo client
                 const appsync = new AWSAppSyncClient({
