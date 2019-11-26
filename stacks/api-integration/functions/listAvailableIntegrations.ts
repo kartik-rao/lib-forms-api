@@ -44,8 +44,11 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
         callback(null, {statusCode: 403, headers: CORS_HEADERS, body: JSON.stringify({message: "Forbidden"})});
         return;
     }
+
     let claims: any = event.requestContext.authorizer.claims;
-    if(claims["custom:tenantId"] !== tenantId) {
+    let isAdmin = claims["group"] == "Admin";
+
+    if(claims["custom:tenantId"] !== tenantId && !isAdmin) {
         console.error(new Error("TenantMismatchError"));
         callback(null, {statusCode: 403, headers: CORS_HEADERS, body: JSON.stringify({message: "Forbidden"})});
         return;
