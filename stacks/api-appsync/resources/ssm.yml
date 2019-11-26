@@ -6,8 +6,9 @@ Resources:
       Value: { Fn::GetAtt: [GraphQlApi, ApiId] }
       Type: String
       Tags:
-        Key: Name
-        Value: "${self:provider.stage}.formsli.graphql.api.id"
+        -
+          Key: Name
+          Value: "${self:provider.stage}.formsli.graphql.api.id"
   ssmAppsyncUrl:
     Type : "AWS::SSM::Parameter"
     Properties:
@@ -15,8 +16,9 @@ Resources:
       Value: { Fn::GetAtt: [GraphQlApi, GraphQLUrl] }
       Type: String
       Tags:
-        Key: Name
-        Value: "${self:provider.stage}.formsli.graphql.api.url"
+        -
+          Key: Name
+          Value: "${self:provider.stage}.formsli.graphql.api.url"
   ssmAppsyncApiKey:
     Type : "AWS::SSM::Parameter"
     Properties:
@@ -24,8 +26,9 @@ Resources:
       Value: { Fn::GetAtt: [GraphQlApiKeyDefault, ApiKey] }
       Type: String
       Tags:
-        Key: Name
-        Value: "${self:provider.stage}.formsli.graphql.api.key"
+        -
+          Key: Name
+          Value: "${self:provider.stage}.formsli.graphql.api.key"
   ssmAppsyncApiEndpoint:
     Type : "AWS::SSM::Parameter"
     Properties:
@@ -33,8 +36,9 @@ Resources:
       Value: !Select [2, !Split ['/', !GetAtt 'GraphQlApi.GraphQLUrl']]
       Type: String
       Tags:
-        Key: Name
-        Value: "${self:provider.stage}.formsli.graphql.api.endpoint"
+        -
+          Key: Name
+          Value: "${self:provider.stage}.formsli.graphql.api.endpoint"
   ssmRdsClusterArn:
     Type : "AWS::SSM::Parameter"
     Properties:
@@ -42,5 +46,6 @@ Resources:
       Value: "arn:aws:rds:#{AWS::Region}:#{AWS::AccountId}:cluster:${self:provider.environment.dbClusterId}"
       Type: String
       Tags:
-        Key: Name
-        Value: "${self:provider.stage}.formsli.rds.arn"
+        -
+          Key: Name
+          Value: "${self:provider.stage}.formsli.rds.arn"

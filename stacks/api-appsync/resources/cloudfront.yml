@@ -5,8 +5,9 @@ Resources:
       - GraphQlApi
     Properties:
       Tags:
-        Key: Name
-        Value: ${self:provider.environment.namePrefix}cf-graphql
+        -
+          Key: Name
+          Value: ${self:provider.environment.namePrefix}cf-graphql
       DistributionConfig:
         Enabled: true
         HttpVersion: http2
