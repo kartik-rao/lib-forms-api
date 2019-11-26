@@ -61,7 +61,7 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
         return;
     }
 
-    isDebug && console.log(`${ServiceName} - createIntegrationTenant.handle get integration user`);
+    isDebug && console.log(`${ServiceName} - createIntegrationTenant.handle getExternalId`);
     let integrationUser : any;
 
     // Check if we have already created a tenant in the vendor
