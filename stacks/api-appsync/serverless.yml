@@ -20,6 +20,7 @@ provider:
   deploymentPrefix: ${self:service}
   profile: fl-infrastructure
   environment:
+    namePrefix  : "fl-${self:provider.stage}-"
     appName        : ${ssm:/${self:provider.stage}/formsli/app/name}
     hostedZoneId   : Z3CMAQR65ETWUL
     serviceName    : ${self:service}

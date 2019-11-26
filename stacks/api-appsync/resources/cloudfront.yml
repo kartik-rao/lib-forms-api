@@ -6,7 +6,7 @@ Resources:
     Properties:
       Tags:
         Key: Name
-        Value: ${self:provider.namePrefix}cf-graphql
+        Value: ${self:provider.environment.namePrefix}cf-graphql
       DistributionConfig:
         Enabled: true
         HttpVersion: http2
