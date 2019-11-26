@@ -10,15 +10,6 @@ const Env                 = process.env.environment;
 const ServiceName         = process.env.serviceName;
 const VendorApiUrl        = process.env.vendorApiUrl;
 const VendorApiToken      = process.env.vendorApiToken;
-const DBClusterArn        = process.env.dbClusterArn;
-const DBSecretARN         = process.env.dbClusterSecretArn;
-const DatabaseName        = process.env.databaseName;
-
-const dataApi = require('data-api-client')({
-    secretArn: DBSecretARN,
-    resourceArn: DBClusterArn,
-    database: DatabaseName
-});
 
 const isDebug = Env !== "production";
 
@@ -29,54 +20,42 @@ const CORS_HEADERS = {
     "Content-Type": "application/json"
 }
 
-
 export const handle = async (event : APIGatewayEvent, context : APIGatewayEventRequestContext, callback : any) => {
-    let {requestId, stage, identity, requestTime} = event.requestContext;
-    let {tenantId, tags, after} = event.pathParameters;
-    let criteria = {tags: []}
-    if(tags && tags.length > 0) {
-        criteria.tags = tags.split("|")
-    }
 
-    isDebug && console.log(`${ServiceName} - listUserIntegrations.handle init`);
+    isDebug && console.log(`${ServiceName} - listSolutions.handle init`);
     if (!event.requestContext.authorizer || !event.requestContext.authorizer.claims) {
         console.error(new Error("NoAuth"));
         callback(null, {statusCode: 403, headers: CORS_HEADERS, body: JSON.stringify({message: "Forbidden"})});
         return;
     }
 
-    let claims: any = event.requestContext.authorizer.claims;
-    let isAdmin = claims["group"] == "Admin";
+    let {requestId} = event.requestContext;
+    let payload;
 
-    if(claims["custom:tenantId"] !== tenantId && !isAdmin) {
-        console.error(new Error("TenantMismatchError"));
-        callback(null, {statusCode: 403, headers: CORS_HEADERS, body: JSON.stringify({message: "Forbidden"})});
-        return;
-    }
-
-    isDebug && console.log(`${ServiceName} - listUserIntegrations.handle getExternalId`);
-
-    let integrationUser : any;
-    // Check if we have already created a tenant in the vendor
     try {
-        integrationUser = await dataApi.query({
-            sql: `SELECT ac.name as 'accountName', ai.id, ai.externalId, ai.createdAt from AccountIntegration ai, Account ac WHERE ac.id = :tenantId AND ai.accountId = ac.id`,
-            parameters: [
-                { tenantId: tenantId }
-            ]
-        });
+        payload = JSON.parse(event.body);
+        console.log(`${ServiceName} - listSolutions.handle - payload`, payload);
+        if(!payload.tags) {
+            payload.tags = [];
+        }
+        if(!payload.after) {
+            // https://tray.io/documentation/embedded/intro-to-the-apis/pagination/
+            payload.after = null;
+        }
     } catch (error) {
-        callback(null, {statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({message: "GetIntegrationUserError", status: 500, requestId: requestId})});
+        console.error(error);
+        callback(null, {statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({"message": "Invalid payload"})});
         return;
     }
 
-    if (integrationUser && integrationUser.records && integrationUser.records.length > 0) {
-        isDebug && console.log(`${ServiceName} - listUserIntegrations.handle list integrations`);
-        let vendorAdminClient = generateClient(VendorApiUrl, VendorApiToken);
-        let query = gql`
+    // https://tray.io/documentation/embedded/full-api-ref/list-solutions/
+
+    isDebug && console.log(`${ServiceName} - listSolutions.handle list vendor solutions`);
+    let vendorAdminClient = generateClient(VendorApiUrl, VendorApiToken);
+    let query = gql`
         query {
             viewer {
-                solutions (criteria: {tags: tags}, after: "${after ? after: ''}"){
+                solutions (criteria: {tags: payload.tags}, after: payload.after){
                     edges {
                         node {
                             id
@@ -101,15 +80,12 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
                     }
                 }
             }
-        }`;
+    }`;
 
-        try {
-            let integrations = await vendorAdminClient.query({query});
-            callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify(getNodesAt(integrations, 'data.viewer.solutions.edges'))})
-        } catch (error) {
-            callback(null, {statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({message: "ListUserIntegrationsError", status: 500, requestId: requestId})});
-        }
-    } else {
-        callback(null, {statusCode: 400, headers: CORS_HEADERS, body: JSON.stringify({message: "NoIntegrationUserError", status: 400, requestId: requestId})});
+    try {
+        let solutions = await vendorAdminClient.query({query});
+        callback(null, {statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify(getNodesAt(solutions, 'data.viewer.solutions.edges'))})
+    } catch (error) {
+        callback(null, {statusCode: 500, headers: CORS_HEADERS, body: JSON.stringify({message: "ListSolutionsError", status: 500, requestId: requestId})});
     }
 }
