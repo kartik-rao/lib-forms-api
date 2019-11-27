@@ -1,5 +1,5 @@
 {
-  "GraphQlApiUrl": "https://bke6pcak6zbbvdiarcuets2jze.appsync-api.ap-northeast-1.amazonaws.com/graphql",
-  "GraphQlApiKeyDefault": "da2-cuyd6n5zfvaedksxgq64v4ne2i",
+  "GraphQlApiUrl": "https://u5uwpqsymjem3h7us2hkrx563y.appsync-api.ap-northeast-1.amazonaws.com/graphql",
+  "GraphQlApiKeyDefault": "da2-p3v7um4iivfvlfrfok5wt6jhzq",
   "ServerlessDeploymentBucketName": "fl-dev-deployments"
 }
