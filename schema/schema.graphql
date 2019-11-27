@@ -424,6 +424,15 @@ type Account @model {
   numUsers: Int
   users(limit: Int): [User]
   forms(limit: Int): [Form]
+  integration: AccountIntegration
+}
+
+type AccountIntegration @model {
+  id: ID!
+  name: String!
+  externalId: String!
+  accountId: ID!
+  createdAt: AWSDateTime
 }
 
 input UpdateAccountInput {

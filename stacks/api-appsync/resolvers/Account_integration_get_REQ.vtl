@@ -1,0 +1,7 @@
+$util.qr($ctx.stash.paths.put("Account_integration_get_REQ.vtl"))
+{
+    "version": "2018-05-29",
+    "statements": [
+        "SELECT * FROM AccountIntegration WHERE accountId='${ctx.source.id}'"
+    ]
+}

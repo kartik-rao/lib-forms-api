@@ -137,6 +137,12 @@
   field: plan
   request: Account_plan_get_REQ.vtl
   response: Account_plan_get_RES.vtl
+# Account.integration
+- dataSource: AppData
+  type: Account
+  field: integration
+  request: Account_integration_get_REQ.vtl
+  response: Account_integration_get_RES.vtl
 # Account.ownedBy
 - dataSource: AppData
   type: Account
