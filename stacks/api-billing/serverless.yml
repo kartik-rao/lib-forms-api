@@ -5,12 +5,12 @@ provider:
   profile: fl-infrastructure
   name: aws
   stage: ${opt:stage, 'dev'}
-  runtime: nodejs10.x
+  runtime: nodejs12.x
   region: ${opt:region, 'ap-northeast-1'}
   apiGateway:
     restApiId: ${ssm:/${self:provider.stage}/formsli/apig/restApiId}
     restApiRootResourceId: ${ssm:/${self:provider.stage}/formsli/apig/rootResourceId}
-    restApiResources: 
+    restApiResources:
       /tenant: ${ssm:/${self:provider.stage}/formsli/apig/resource/tenant}
   logs:
     restApi:
@@ -101,4 +101,3 @@ custom:
       forceInclude:
         - source-map-support
 functions:
-  
