@@ -11,7 +11,7 @@ provider:
     restApiId: ${ssm:/${self:provider.stage}/formsli/apig/restApiId}
     restApiRootResourceId: ${ssm:/${self:provider.stage}/formsli/apig/rootResourceId}
     restApiResources:
-      /stream: ${ssm:/${self:provider.stage}/formsli/apig/resource/stream}
+      /integration: ${ssm:/${self:provider.stage}/formsli/apig/resource/integration}
   logs:
     restApi:
       enableAccessLogging: true

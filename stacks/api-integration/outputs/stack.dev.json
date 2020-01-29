@@ -1,0 +1,9 @@
+{
+  "CreateSolutionInstanceLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-integration-dev-create-solution-instance:1",
+  "UpdateSolutionInstanceLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-integration-dev-update-solution-instance:1",
+  "ListSolutionInstancesLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-integration-dev-list-solution-instance:1",
+  "ListSolutionsLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-integration-dev-list-solutions:1",
+  "CreateUserLambdaFunctionQualifiedArn": "arn:aws:lambda:ap-northeast-1:286358943194:function:formsli-integration-dev-create-user:1",
+  "ServiceEndpoint": "https://hivvqih13m.execute-api.ap-northeast-1.amazonaws.com/dev",
+  "ServerlessDeploymentBucketName": "fl-dev-deployments"
+}
