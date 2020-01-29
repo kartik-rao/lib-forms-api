@@ -834,7 +834,18 @@
             "Type": "AWS::SSM::Parameter",
             "Properties": {
               "Name": "/dev/formsli/apig/resource/app",
-              "Description": "API Gateway resource for /server path, used by AWS Transfer",
+              "Description": "API Gateway resource for /app path, used by front-end",
+              "Value": {
+                "Ref": "ApiGatewayResourceApp"
+              },
+              "Type": "String"
+            }
+          },
+          "ssmApigResourceIntegration": {
+            "Type": "AWS::SSM::Parameter",
+            "Properties": {
+              "Name": "/dev/formsli/apig/resource/integration",
+              "Description": "API Gateway resource for /integration paths",
               "Value": {
                 "Ref": "ApiGatewayResourceApp"
               },
@@ -1814,7 +1825,18 @@
           "Type": "AWS::SSM::Parameter",
           "Properties": {
             "Name": "/dev/formsli/apig/resource/app",
-            "Description": "API Gateway resource for /server path, used by AWS Transfer",
+            "Description": "API Gateway resource for /app path, used by front-end",
+            "Value": {
+              "Ref": "ApiGatewayResourceApp"
+            },
+            "Type": "String"
+          }
+        },
+        "ssmApigResourceIntegration": {
+          "Type": "AWS::SSM::Parameter",
+          "Properties": {
+            "Name": "/dev/formsli/apig/resource/integration",
+            "Description": "API Gateway resource for /integration paths",
             "Value": {
               "Ref": "ApiGatewayResourceApp"
             },
@@ -2002,7 +2024,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "formsli-base/formsli-base/dev/1574745184575-2019-11-26T05:13:04.575Z",
+    "artifactDirectoryName": "formsli-base/formsli-base/dev/1580267998454-2020-01-29T03:19:58.454Z",
     "artifact": ""
   }
 }

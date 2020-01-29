@@ -787,7 +787,18 @@
       "Type": "AWS::SSM::Parameter",
       "Properties": {
         "Name": "/dev/formsli/apig/resource/app",
-        "Description": "API Gateway resource for /server path, used by AWS Transfer",
+        "Description": "API Gateway resource for /app path, used by front-end",
+        "Value": {
+          "Ref": "ApiGatewayResourceApp"
+        },
+        "Type": "String"
+      }
+    },
+    "ssmApigResourceIntegration": {
+      "Type": "AWS::SSM::Parameter",
+      "Properties": {
+        "Name": "/dev/formsli/apig/resource/integration",
+        "Description": "API Gateway resource for /integration paths",
         "Value": {
           "Ref": "ApiGatewayResourceApp"
         },
