@@ -8,8 +8,10 @@ The repository contains both client and server code and is organized as follows.
     - base
     - api-userauth
     - api-streams
+    - api-integration
     - api-appsync
     - api-forms
+    - api-app
 - /client (Client library code used by consuming clients)
     - fragments.graphql
     - queries.graphql
@@ -24,7 +26,9 @@ The repository contains both client and server code and is organized as follows.
     - api-userauth (Creates invite, authftp and cognito postconfirmation lambdas)
     - api-streams (Creates kinesis delivery stream creator lambda and associated IAM roles)
     - api-appsync (Creates appsync api and Route53 mapping)
+    - api-integration (Creates data integration lambdas)
     - api-forms (Created form json, view entry lambdas and sqs queue listeners)
+    - api-app (Creates app specific lambdas - screenshot/versionview)
 
 ## Dependencies
 Run `npm i` in
