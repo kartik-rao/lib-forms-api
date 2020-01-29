@@ -27,7 +27,7 @@ $util.qr($ctx.stash.paths.add("User_update_REQ.vtl"))
     {
         "version": "2018-05-29",
         "statements": [
-            "UPDATE User SET updatedAt=:isotime #if($args.containsKey("phone_number")) ,phone_number=$args.phone_number #end #if($args.containsKey("group")) userGroup=:userGroup #end #if($args.given_name) given_name=:given_name #end #if($args.family_name) ,family_name=:family_name #end WHERE id=:id",
+            "UPDATE User SET updatedAt=:isotime #if($args.containsKey("phone_number")) ,phone_number=$args.phone_number #end #if($args.containsKey("group")) ,userGroup=:userGroup #end #if($args.given_name) ,given_name=:given_name #end #if($args.family_name) ,family_name=:family_name #end WHERE id=:id",
             "SELECT * FROM User WHERE id ='${args.id}'"
         ],
         "variableMap": {
