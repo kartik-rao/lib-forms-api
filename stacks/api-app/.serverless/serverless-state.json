@@ -9,7 +9,7 @@
       "variableSyntax": "\\${([ ~:a-zA-Z0-9._@'\",\\-\\/\\(\\)*]+?)}",
       "profile": "fl-infrastructure",
       "name": "aws",
-      "runtime": "nodejs10.x",
+      "runtime": "nodejs12.x",
       "region": "ap-northeast-1",
       "apiGateway": {
         "restApiId": "hivvqih13m",
@@ -29,6 +29,13 @@
       "memorySize": 512,
       "timeout": 30,
       "logRetentionInDays": 7,
+      "stackTags": {
+        "Application": "formsli",
+        "Environment": "dev",
+        "Stack": "formsli-api-app",
+        "Deployer": "Serverless"
+      },
+      "deploymentBucket": "fl-dev-deployments",
       "tags": {
         "stage": "dev",
         "service": "formsli-api-app",
@@ -80,29 +87,17 @@
           ]
         }
       ],
+      "deploymentBucketObject": {
+        "name": "fl-dev-deployments",
+        "blockPublicAccess": true,
+        "serverSideEncryption": "AES256"
+      },
       "versionFunctions": true,
       "remoteFunctionData": null,
       "compiledCloudFormationTemplate": {
         "AWSTemplateFormatVersion": "2010-09-09",
         "Description": "The AWS CloudFormation template for this Serverless application",
         "Resources": {
-          "ServerlessDeploymentBucket": {
-            "Type": "AWS::S3::Bucket",
-            "Properties": {
-              "BucketEncryption": {
-                "ServerSideEncryptionConfiguration": [
-                  {
-                    "ServerSideEncryptionByDefault": {
-                      "SSEAlgorithm": "AES256"
-                    }
-                  }
-                ]
-              },
-              "AccelerateConfiguration": {
-                "AccelerationStatus": "Enabled"
-              }
-            }
-          },
           "ScreenshotLogGroup": {
             "Type": "AWS::Logs::LogGroup",
             "Properties": {
@@ -203,22 +198,20 @@
             "Type": "AWS::Lambda::Function",
             "Properties": {
               "Code": {
-                "S3Bucket": {
-                  "Ref": "ServerlessDeploymentBucket"
-                },
-                "S3Key": "serverless/formsli-api-app/dev/1580269964915-2020-01-29T03:52:44.915Z/formsli-api-app.zip"
+                "S3Bucket": "fl-dev-deployments",
+                "S3Key": "serverless/formsli-api-app/dev/1580340264190-2020-01-29T23:24:24.190Z/formsli-api-app.zip"
               },
               "FunctionName": "formsli-api-app-dev-form-screenshot",
               "Handler": "functions/screenshot.handle",
-              "MemorySize": 1024,
+              "MemorySize": 2048,
               "Role": {
                 "Fn::GetAtt": [
                   "IamRoleLambdaExecution",
                   "Arn"
                 ]
               },
-              "Runtime": "nodejs8.10",
-              "Timeout": 120,
+              "Runtime": "nodejs12.x",
+              "Timeout": 30,
               "Tags": [
                 {
                   "Key": "stage",
@@ -250,6 +243,9 @@
                   "dbClusterSecretArn": "arn:aws:secretsmanager:ap-northeast-1:286358943194:secret:/dev/formsli/rds/password/secret-jOv5zX"
                 }
               },
+              "Layers": [
+                "arn:aws:lambda:ap-northeast-1:764866452798:layer:chrome-aws-lambda:8"
+              ],
               "TracingConfig": {
                 "Mode": "Active"
               }
@@ -259,24 +255,22 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "ScreenshotLambdaVersionolWlc8EXgsonOy9u3T9NQpM1WaeDIysw0kPtPeQlU": {
+          "ScreenshotLambdaVersionR8xo6dDU8VTA1SJ8gAUXnq1SmLJTMtkN6FcCpcN8HQ": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ScreenshotLambdaFunction"
               },
-              "CodeSha256": "tJztpaXNVbrgTo+G8x4fkT2/lDhe939ZplZGaXvkY10="
+              "CodeSha256": "/ewFEDRjXBPNU6YLiq9BVNggDILfZSuLLksHeXKmhXY="
             }
           },
           "FormversionviewLambdaFunction": {
             "Type": "AWS::Lambda::Function",
             "Properties": {
               "Code": {
-                "S3Bucket": {
-                  "Ref": "ServerlessDeploymentBucket"
-                },
-                "S3Key": "serverless/formsli-api-app/dev/1580269964915-2020-01-29T03:52:44.915Z/formsli-api-app.zip"
+                "S3Bucket": "fl-dev-deployments",
+                "S3Key": "serverless/formsli-api-app/dev/1580340264190-2020-01-29T23:24:24.190Z/formsli-api-app.zip"
               },
               "FunctionName": "formsli-api-app-dev-form-versionview",
               "Handler": "functions/formversionview.handle",
@@ -287,7 +281,7 @@
                   "Arn"
                 ]
               },
-              "Runtime": "nodejs10.x",
+              "Runtime": "nodejs12.x",
               "Timeout": 30,
               "Tags": [
                 {
@@ -329,14 +323,14 @@
               "FormversionviewLogGroup"
             ]
           },
-          "FormversionviewLambdaVersionLm7UZSwSc5mKzKfkNO5GkUhRkDzTEaRw7qiloKEo78": {
+          "FormversionviewLambdaVersiongkJcNLnKFASMrDPOipkQzCuFmyfBrQcTRNn54LbYuA": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "FormversionviewLambdaFunction"
               },
-              "CodeSha256": "tJztpaXNVbrgTo+G8x4fkT2/lDhe939ZplZGaXvkY10="
+              "CodeSha256": "/ewFEDRjXBPNU6YLiq9BVNggDILfZSuLLksHeXKmhXY="
             }
           },
           "ApiGatewayResourceAppScreenshot": {
@@ -569,7 +563,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1580269947625": {
+          "ApiGatewayDeployment1580340247452": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": "hivvqih13m",
@@ -675,10 +669,8 @@
             "Type": "AWS::Lambda::Function",
             "Properties": {
               "Code": {
-                "S3Bucket": {
-                  "Ref": "ServerlessDeploymentBucket"
-                },
-                "S3Key": "serverless/formsli-api-app/dev/1580269964915-2020-01-29T03:52:44.915Z/custom-resources.zip"
+                "S3Bucket": "fl-dev-deployments",
+                "S3Key": "serverless/formsli-api-app/dev/1580340264190-2020-01-29T23:24:24.190Z/custom-resources.zip"
               },
               "FunctionName": "formsli-api-app-dev-custom-resource-apigw-cw-role",
               "Handler": "apiGatewayCloudWatchRole/handler.handler",
@@ -1121,23 +1113,18 @@
         },
         "Outputs": {
           "ServerlessDeploymentBucketName": {
-            "Value": {
-              "Ref": "ServerlessDeploymentBucket"
-            }
-          },
-          "ServerlessDeploymentBucketAccelerated": {
-            "Value": true
+            "Value": "fl-dev-deployments"
           },
           "ScreenshotLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ScreenshotLambdaVersionolWlc8EXgsonOy9u3T9NQpM1WaeDIysw0kPtPeQlU"
+              "Ref": "ScreenshotLambdaVersionR8xo6dDU8VTA1SJ8gAUXnq1SmLJTMtkN6FcCpcN8HQ"
             }
           },
           "FormversionviewLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "FormversionviewLambdaVersionLm7UZSwSc5mKzKfkNO5GkUhRkDzTEaRw7qiloKEo78"
+              "Ref": "FormversionviewLambdaVersiongkJcNLnKFASMrDPOipkQzCuFmyfBrQcTRNn54LbYuA"
             }
           },
           "ServiceEndpoint": {
@@ -1160,39 +1147,6 @@
                 ]
               ]
             }
-          }
-        }
-      },
-      "coreCloudFormationTemplate": {
-        "AWSTemplateFormatVersion": "2010-09-09",
-        "Description": "The AWS CloudFormation template for this Serverless application",
-        "Resources": {
-          "ServerlessDeploymentBucket": {
-            "Type": "AWS::S3::Bucket",
-            "Properties": {
-              "BucketEncryption": {
-                "ServerSideEncryptionConfiguration": [
-                  {
-                    "ServerSideEncryptionByDefault": {
-                      "SSEAlgorithm": "AES256"
-                    }
-                  }
-                ]
-              },
-              "AccelerateConfiguration": {
-                "AccelerationStatus": "Enabled"
-              }
-            }
-          }
-        },
-        "Outputs": {
-          "ServerlessDeploymentBucketName": {
-            "Value": {
-              "Ref": "ServerlessDeploymentBucket"
-            }
-          },
-          "ServerlessDeploymentBucketAccelerated": {
-            "Value": true
           }
         }
       },
@@ -1254,9 +1208,11 @@
       "screenshot": {
         "name": "formsli-api-app-dev-form-screenshot",
         "handler": "functions/screenshot.handle",
-        "runtime": "nodejs8.10",
-        "memorySize": 1024,
-        "timeout": 120,
+        "layers": [
+          "arn:aws:lambda:ap-northeast-1:764866452798:layer:chrome-aws-lambda:8"
+        ],
+        "memorySize": 2048,
+        "timeout": 30,
         "events": [
           {
             "http": {
@@ -1300,7 +1256,8 @@
         "package": {
           "artifact": ".serverless/formsli-api-app.zip"
         },
-        "memory": 1024,
+        "memory": 2048,
+        "runtime": "nodejs12.x",
         "vpc": {}
       },
       "formversionview": {
@@ -1359,7 +1316,7 @@
         },
         "memory": 512,
         "timeout": 30,
-        "runtime": "nodejs10.x",
+        "runtime": "nodejs12.x",
         "vpc": {}
       }
     },
@@ -1367,7 +1324,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/formsli-api-app/dev/1580269964915-2020-01-29T03:52:44.915Z",
+    "artifactDirectoryName": "serverless/formsli-api-app/dev/1580340264190-2020-01-29T23:24:24.190Z",
     "artifact": ""
   }
 }
