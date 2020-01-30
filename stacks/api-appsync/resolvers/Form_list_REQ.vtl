@@ -11,18 +11,14 @@ $util.qr($limits.put("limit", $util.defaultIfNull($args.offsetLimit.limit, 50)))
 $util.qr($ctx.stash.put("limits", $limits))
 #set($sort = $util.defaultIfNull($ctx.stash.sortExpression, ""))
 #if($ctx.stash.filterExpression)
-    #if(!$identity.isAdmin)
-        #if($ctx.stash.filterExpression.indexOf('accountId') == -1 && !$identity.isAdmin)
-            #set($filter="${ctx.stash.filterExpression} AND accountId = '${identity.tenantId}'")
-        #end
-    #else
-        #set($filter=$ctx.stash.filterExpression)
+    #set($filter=$ctx.stash.filterExpression)
+    #if(!$identity.isAdmin && $ctx.stash.filterExpression.indexOf('accountId') == -1)
+        #set($filter="${ctx.stash.filterExpression} AND accountId = '${identity.tenantId}'")
     #end
 #else
+    #set($filter = "")
     #if(!$identity.isAdmin)
         #set($filter = "WHERE accountId = '${identity.tenantId}'")
-    #else
-        #set($filter = "")
     #end
 #end
 {
