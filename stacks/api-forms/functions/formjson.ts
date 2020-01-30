@@ -23,7 +23,7 @@ const CORS_HEADERS = {
 }
 
 export const handle = async (event : APIGatewayEvent, context : APIGatewayEventRequestContext, callback : any) => {
-    console.log(`${ServiceName} - formrender.handle`, event);
+    console.log(`${ServiceName} - formjson.handle`, event);
     try {
 
         let response : any = await dataApi.query({
@@ -34,7 +34,7 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
             ]
         });
 
-        console.log(`${ServiceName} - formrender.handle - QUERY ${event.pathParameters.formId} RES`, response);
+        console.log(`${ServiceName} - formjson.handle - QUERY ${event.pathParameters.formId} RES`, response);
         if (response && response.records && response.records.length > 0) {
             let starts, ends;
             let now = dayjs();
@@ -67,11 +67,11 @@ export const handle = async (event : APIGatewayEvent, context : APIGatewayEventR
                 })});
             }
         } else {
-            console.log(`${ServiceName} - formrender.handle WARN - Form [${event.pathParameters.formId}] - 404`);
+            console.log(`${ServiceName} - formjson.handle WARN - Form [${event.pathParameters.formId}] - 404`);
             callback(null, {stautusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({error: "NotFound"})});
         }
     } catch(e) {
-        console.log(`${ServiceName} - formrender.handle ERROR`, e);
+        console.log(`${ServiceName} - formjson.handle ERROR`, e);
         callback(null, {stautusCode: 200, headers: CORS_HEADERS, body: JSON.stringify({error: "ServerError"})});
     }
 }
