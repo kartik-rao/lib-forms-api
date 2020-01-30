@@ -390,7 +390,7 @@
           ]
         },
         "Description": "serverless-appsync-plugin: AppSync API Key for GraphQlApiKeyDefault",
-        "Expires": 1611886514
+        "Expires": 1611893261
       }
     },
     "GraphQlSchema": {
@@ -990,7 +990,7 @@
             "Name"
           ]
         },
-        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_get_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n#set($isAllowed = false)\n#if($identity.tenantId == $args.accountId || $identity.isAdmin == true)\n    #set($isAllowed = true)\n#end\n\n#if($isAllowed == true)\n    $util.qr($ctx.stash.put(\"request\", $args))\n    $util.qr($ctx.stash.request.put(\"id\", $args.versionId))\n    $util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n    $util.qr($ctx.stash.put(\"operation\", 'get'))\n    {\n        \"version\": \"2018-05-29\",\n        \"statements\": [\n            #if($identity.isAdmin != true)\n                \"SELECT * FROM FormVersion WHERE id='${args.versionId}' AND accountId='${identity.tenantId}'\"\n            #else\n                \"SELECT * FROM FormVersion WHERE id='${args.versionId}'\"\n            #end\n        ]\n    }\n#else\n    $util.error(\"User [${identity.callerId}] cannot execute [GET] on FormVersion[${args.versionId}]\", \"Unauthorized\")\n#end\n",
+        "RequestMappingTemplate": "$util.qr($ctx.stash.paths.add(\"FormVersion_get_REQ.vtl\"))\n#set($identity=$ctx.stash.identity)\n#set($args=$ctx.arguments)\n\n$util.qr($ctx.stash.put(\"request\", $args))\n$util.qr($ctx.stash.request.put(\"id\", $args.versionId))\n$util.qr($ctx.stash.request.put(\"itemType\", 'FormVersion'))\n$util.qr($ctx.stash.put(\"operation\", 'get'))\n{\n    \"version\": \"2018-05-29\",\n    \"statements\": [\n        #if($identity.isAdmin != true)\n            \"SELECT * FROM FormVersion WHERE id='${args.versionId}' AND accountId='${identity.tenantId}'\"\n        #else\n            \"SELECT * FROM FormVersion WHERE id='${args.versionId}'\"\n        #end\n    ]\n}\n",
         "ResponseMappingTemplate": "$util.qr($ctx.stash.paths.add(\"Form_formVersion_get_RES.vtl\"))\n#if($ctx.error)\n    $util.qr($ctx.stash.put(\"error\", $ctx.error))\n    $util.error($ctx.error.message, $ctx.error.type)\n#end\n\n#if($utils.rds.toJsonObject($ctx.result)[0].size() == 0)\n    $util.toJson(null)\n#else\n    #set($result=$utils.rds.toJsonObject($ctx.result)[0][0])\n    #if($result.formData)\n        $util.qr($result.put(\"formData\", $util.parseJson($result.formData)))\n    #end\n    $util.toJson($result)\n#end",
         "FunctionVersion": "2018-05-29"
       }
