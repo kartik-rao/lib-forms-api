@@ -48,7 +48,7 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^4.0.2",
     "mailslurp-client": "^3.0.25",
-    "set-value": "^3.0.1",
+    "set-value": "^4.0.1",
     "short-uuid": "^3.1.1",
     "source-map-support": "^0.5.12",
     "ts-loader": "^5.3.3",
