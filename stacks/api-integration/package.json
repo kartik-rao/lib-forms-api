@@ -15,7 +15,7 @@
     "@anttiviljami/serverless-stack-output": "^0.3.1",
     "@types/aws-lambda": "^8.10.33",
     "@types/node": "^12.7.8",
-    "serverless": "^1.51.0",
+    "serverless": "^3.25.1",
     "serverless-iam-roles-per-function": "^2.0.2",
     "serverless-plugin-aws-alerts": "^1.4.0",
     "serverless-plugin-log-subscription": "^1.2.0",
